@@ -1,0 +1,25 @@
+//connect to device
+device AMA3B1KK-KBR
+si SWD
+speed 1000
+r
+sleep 10
+
+//set C runtime environment
+wreg MSP, 0x10000100
+
+// unlock info0 access
+w4 0x40030078 1             // unlock the info0 secured portion
+w4 0x40030080 DEADBEEF DEADBEEF DEADBEEF DEADBEEF   // write the unlock key
+													// this should be replaced with actual customer key!!!
+mem32 0x4003007C 1          // dump the lock status for check
+
+// read back info0 for verify
+verifybin info0.bin 0x50020000   // verify the info 0 content with the original source file
+savebin info0_dump.bin 0x50020000 0x2000    // read out the info 0 content for saving
+
+w4 0x40030080 FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF   // lock the secured portion
+
+// reset and quit
+r
+qc

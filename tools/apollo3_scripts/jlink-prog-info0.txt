@@ -1,0 +1,36 @@
+//connect to device
+device AMA3B1KK-KBR
+si SWD
+speed 1000
+r
+sleep 10
+
+//set C runtime environment
+wreg MSP, 0x10000100
+
+// erase info0
+w4 0x10000000 0             // flash info instance
+w4 0x10000004 0xd894e09e    // info 0 key
+w4 0x10000008 0xFFFFFFFF    // clear return value
+setPC 0x08000085            // call the ROM helper function flash_info_erase_from_sram
+g
+sleep 50
+mem32 0x10000008 1          // dump return value for check
+
+// program info0
+w4 0x10000000 0             // flash info instance
+w4 0x10000004 0             // offset
+w4 0x10000008 0x800         // length in words
+w4 0x1000000C 0xd894e09e    // info 0 key
+w4 0x10000010 0xFFFFFFFF    // clear return value
+loadbin info0.bin 0x10001000     //load the info0 binary into sram
+setPC 0x08000061            // call the ROM helper function flash_program_info_area_from_sram
+g
+sleep 50
+mem32 0x10000010 1          // dump return value for check
+
+// perform software POI
+w4 0x40000004 0x1B
+
+// quit
+qc
