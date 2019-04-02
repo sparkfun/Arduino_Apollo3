@@ -1,39 +1,97 @@
+# Copyright (c) 2019 SparkFun Electronics
 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-edge.name=Owen's SparkFun Edge
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+###############################################################
+
+amap3bare.name=Ambiq Apollo3 Bare
+amap3bare.build.variant=Ambiq_Apollo3_Bare
+amap3bare.build.board=AM_AP3_BARE
+amap3bare.build.arch=APOLLO3
+amap3bare.build.mcu=cortex-m4
+amap3bare.build.f_cpu=48000000L
+amap3bare.build.core=arduino
+amap3bare.build.defs=
+amap3bare.build.includes=-I{build.variant.path}/bsp
+amap3bare.build.libs=
+amap3bare.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3bare.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3bare.upload.maximum_size=960000
+
+###############################################################
+
+amap3evb.name=Ambiq Apollo3 Evaluation Board
+amap3evb.build.variant=Ambiq_Apollo3_EVB
+amap3evb.build.board=AM_AP3_EVB
+amap3evb.build.arch=APOLLO3
+amap3evb.build.mcu=cortex-m4
+amap3evb.build.f_cpu=48000000L
+amap3evb.build.core=arduino
+amap3evb.build.defs=
+amap3evb.build.includes=-I{build.variant.path}/bsp
+amap3evb.build.libs=
+amap3evb.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3evb.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3evb.upload.maximum_size=960000
+
+###############################################################
+
+artemis.name=SparkFun Artemis Module
+artemis.build.variant=SparkFun_Artemis
+artemis.build.board=SFE_ARTEMIS
+artemis.build.arch=APOLLO3
+artemis.build.mcu=cortex-m4
+artemis.build.f_cpu=48000000L
+artemis.build.core=arduino
+artemis.build.defs=
+artemis.build.includes=-I{build.variant.path}/bsp
+artemis.build.libs=
+artemis.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+artemis.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+artemis.upload.maximum_size=960000
+
+###############################################################
+
+edge.name=SparkFun Edge
 edge.build.variant=SparkFun_Edge
-edge.build.board=SFE_APOLLO3_EDGE
+edge.build.board=SFE_EDGE
 edge.build.arch=APOLLO3
 edge.build.mcu=cortex-m4
 edge.build.f_cpu=48000000L
 edge.build.core=arduino
-
 edge.build.defs=
 edge.build.includes=-I{build.variant.path}/bsp
 edge.build.libs=
-
 edge.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 edge.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-
-
-
 edge.upload.maximum_size=960000
 #edge.upload.tool=bossac
 #edge.upload.protocol=sam-ba
-
 #edge.upload.use_1200bps_touch=true
 #edge.upload.wait_for_upload_port=true
 #edge.upload.native_usb=true
-
-
 #edge.build.usb_product="SFE SAMD21"
 #edge.build.usb_manufacturer="SparkFun"
-
-
-
 #edge.build.openocdscript=openocd_scripts/arduino_zero.cfg
-
-# edge.build.variant_system_lib=
-edge.build.extra_combine_flags=
+#edge.build.variant_system_lib=
+#edge.build.extra_combine_flags=
 #edge.bootloader.tool=openocd
 #edge.bootloader.file=zero/SparkFun_Edge.bin=
+
+###############################################################

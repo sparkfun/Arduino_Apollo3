@@ -6,6 +6,7 @@
 * [Development Status]()
 * [Installation]()
 * [Issue Template]()
+* [Repo Contents]()
 * [Acknowledgements]()
 
 ## Development Status
@@ -30,3 +31,19 @@ The structure of this repo is such that it will most closely resemble the struct
             * Within ```SparkFun``` create the ```apollo3``` directory
             * Unzip the contents of the .ZIP into the ```apollo3``` directory
     * Restart Arduino IDE for good measure
+
+## Issue Template
+=================
+
+Please do a thorough search of all issues before posting your own. When you're sure that your issue has not been covered please use the ISSUE_TEMPLATE.md to guide your report.
+
+
+## Repo Contents
+================
+* cores : source code and headers common to all Apollo3 Arduino boards
+* docs : 
+    * CONTRIBUTING.md
+    * ISSUE_TEMPLATE.md
+    * LICENSE.md
+* libraries : common source code for optional libraries that pertain to Apollo3 HW
+* variants : pin mapping and capability listing for individual boards
