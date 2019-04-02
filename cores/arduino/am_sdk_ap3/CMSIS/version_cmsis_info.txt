@@ -1,0 +1,18 @@
+
+This file contains origination information about the various
+CMSIS files located in this folder.
+
+
+ARM/Include/:
+    All .h files originate from CMSIS/5.3.0/CMSIS/Include/
+
+
+ARM/Lib/ARM/:
+AmbiqSuite SDK file:                Pack Origination:
+arm_cortexM4lf_math.lib             CMSIS/5.3.0/CMSIS/Lib/ARM/
+arm_cortexM4l_math.lib              CMSIS/5.3.0/CMSIS/Lib/ARM/
+libarm_cortexM4lf_math.a            CMSIS/5.3.0/CMSIS/Lib/GCC/
+libarm_cortexM4l_math.a             CMSIS/5.3.0/CMSIS/Lib/GCC/
+iar_cortexM4lf_math.a               CMSIS/5.4.0/CMSIS/Lib/IAR/
+iar_cortexM4l_math.a                CMSIS/5.4.0/CMSIS/Lib/IAR/
+

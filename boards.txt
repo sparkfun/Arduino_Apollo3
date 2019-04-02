@@ -1,0 +1,39 @@
+
+
+edge.name=Owen's SparkFun Edge
+edge.build.variant=SparkFun_Edge
+edge.build.board=SFE_APOLLO3_EDGE
+edge.build.arch=APOLLO3
+edge.build.mcu=cortex-m4
+edge.build.f_cpu=48000000L
+edge.build.core=arduino
+
+edge.build.defs=
+edge.build.includes=-I{build.variant.path}/bsp
+edge.build.libs=
+
+edge.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+edge.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+
+
+
+edge.upload.maximum_size=960000
+#edge.upload.tool=bossac
+#edge.upload.protocol=sam-ba
+
+#edge.upload.use_1200bps_touch=true
+#edge.upload.wait_for_upload_port=true
+#edge.upload.native_usb=true
+
+
+#edge.build.usb_product="SFE SAMD21"
+#edge.build.usb_manufacturer="SparkFun"
+
+
+
+#edge.build.openocdscript=openocd_scripts/arduino_zero.cfg
+
+# edge.build.variant_system_lib=
+edge.build.extra_combine_flags=
+#edge.bootloader.tool=openocd
+#edge.bootloader.file=zero/SparkFun_Edge.bin=
