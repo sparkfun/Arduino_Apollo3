@@ -1,5 +1,5 @@
-#ifndef Arduino_h
-#define Arduino_h
+#ifndef _ARDUINO_H_
+#define _ARDUINO_H_
 
 
 #ifdef __cplusplus
@@ -11,6 +11,7 @@ extern "C"
     #include "am_mcu_apollo.h"
     #include "am_util.h"
     #include "am_bsp.h"
+    #include "ap3_types.h"
 
     /* system functions */
     int main(void);
@@ -25,4 +26,12 @@ extern "C"
 } // extern "C"
 #endif
 
-#endif // Arduino_h
+#include "variant.h"
+#include "ap3_gpio.h"
+
+// constants
+#define LOW             (0x0)
+#define HIGH            (0x1)
+
+
+#endif // _ARDUINO_H_

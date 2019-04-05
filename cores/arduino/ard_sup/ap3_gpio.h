@@ -1,0 +1,72 @@
+/*
+Copyright (c) 2019 SparkFun Electronics
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#ifndef _AP3_GPIO_H_
+#define _AP3_GPIO_H_
+
+#include "Arduino.h"
+
+
+
+// User Config
+#define AP3_GPIO_MAX_EXT_INT_HANDLERS   AP3_GPIO_MAX_PADS
+// End User Config
+
+//GPIO FUNCTIONS
+extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_OUTPUT_WITH_READ_12;
+extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_OPEN_DRAIN_WITH_READ_12;
+extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_INPUT_PULLDOWN;
+
+#define INPUT           (g_AM_HAL_GPIO_INPUT)
+#define OUTPUT          (g_AM_HAL_GPIO_OUTPUT_WITH_READ_12)
+#define OPEN_DRAIN      (g_AM_HAL_GPIO_OPEN_DRAIN_WITH_READ_12)
+#define TRISTATE        (g_AM_HAL_GPIO_TRISTATE)
+#define INPUT_PULLUP    (g_AM_HAL_GPIO_INPUT_PULLUP)
+#define INPUT_PULLDOWN  (g_AM_HAL_GPIO_INPUT_PULLDOWN)
+
+
+
+#define AP3_GPIO_MAX_PADS           (50)
+#define AP3_GPIO_IS_VALID(pad)      ((pad >= 0) && (pad < AP3_GPIO_MAX_PADS))
+
+extern ap3_gpio_pad_t  ap3_gpio_pin2pad(ap3_gpio_pin_t pin);
+#define  AP3_GPIO_PAD_UNUSED (-1)
+
+// apollo3 pad capabilities
+inline bool ap3_gpio_is_valid(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
+inline bool ap3_gpio_has_gpio(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
+
+
+
+
+
+
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode);
+void digitalWrite(uint8_t pin, uint8_t val);
+int digitalRead(uint8_t pin);
+
+void attachInterrupt(uint8_t pin, void (*)(void), int mode);
+void attachInterruptArg(uint8_t pin, void (*)(void*), void * arg, int mode);
+void detachInterrupt(uint8_t pin);
+
+
+
+#endif //_AP3_GPIO_H_

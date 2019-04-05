@@ -1,21 +1,21 @@
 #include "Arduino.h"
+#include "ap3_initialization.h"
 
 
 // Weak empty variant initialization function.
 // May be redefined by variant files.
-void initVariant() __attribute__((weak));
-void initVariant() { }
+void ap3_variant_init( void ) __attribute__((weak));
+void ap3_variant_init( void ) { }
 
 // // Initialize C library
 // extern "C" void __libc_init_array(void);
 
 extern "C" int main( void )
 {
-  // init();
-
+  ap3_init();
   // __libc_init_array();
 
-  initVariant();
+  ap3_variant_init();
   setup();
   for (;;)
   {
