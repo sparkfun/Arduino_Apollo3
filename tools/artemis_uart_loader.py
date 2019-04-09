@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # UART wired update host for Corvette Bootloader
 
+# This script was originally written by Ambiq
+# Modified April 2nd, 2019 by SparkFun to auto-bootloading
+# Compiled to executable using Nuitka
+# py -3 -m nuitka --standalone --recurse-all artemis_uart_loader.py
+
 import argparse
 import serial
 import sys
