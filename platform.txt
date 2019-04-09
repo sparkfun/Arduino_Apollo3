@@ -119,3 +119,12 @@ recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.fl
 # Compute size
 recipe.size.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
+
+tools.ap3Loader.cmd=ap3Loader
+tools.ap3Loader.cmd.windows=artemis_uart_loader.exe
+tools.ap3Loader.path={runtime.platform.path}/tools
+
+tools.ap3Loader.upload.protocol=ap3
+tools.ap3Loader.upload.params.verbose=
+
+tools.ap3Loader.upload.pattern="{path}/{cmd}" -b 921600 "{serial.port}" -r 1 -f "{build.path}/{build.project_name}.bin" -i 6
