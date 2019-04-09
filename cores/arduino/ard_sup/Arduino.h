@@ -28,6 +28,7 @@ extern "C"
 
 #include "variant.h"
 #include "ap3_gpio.h"
+#include "ap3_timing.h"
 
 // constants
 #define LOW             (0x0)
