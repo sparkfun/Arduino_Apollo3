@@ -30,7 +30,7 @@ First, get an idea of whether or not your efforts will be worthwhile - you don't
 
 
 
-When you start to write code keep in mind the presentation of these changes. We accept changes using Github pull requests, as the most seamless way for both ourselves and contributors. When making commits for a change please use descriptive commit summaries. For considerable changes we expect a detailed yet formal and concise description of the change in the commit message. If you make 2 or more considerable changes, they should go in separate commits. The same applies to unrelated changes - for example, don't put formatting changes and actual code changes in one commit.
+When you start to write code keep in mind the presentation of these changes. We accept changes using Github pull requests, as the most seamless way for both ourselves and contributors. When making commits for a change please use descriptive commit summaries. For considerable changes we expect a detailed yet formal and concise description of the change in the commit message. If you make 2 or more considerable changes, they should go in separate commits. The same applies to unrelated changes - for example, don't put formatting changes and actual code changes in one commit. Follow the [Code Conventions](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/CODECONVENTIONS.md)
 
 In your first accepted Pull Request it is up to you to add your name to the [Acknowledgements](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file. Please do this in its own individual commit. If you are contributing for a second, third, or nth time there is no need to add any more to the acknowledgements file - your contributions are recorded by your commit messages.
 
