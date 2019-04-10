@@ -11,7 +11,13 @@
 
 ## Development Status
 
-This core has just been born. Right now you will get compilation and access to the Ambiq SDK functions (currently supporting Ambiq SDK Rel 2.1.0). Board Support Package (BSP) definitions can be used with Arduino **variants**. Currently upload must be performed manually.
+The basic necesseties are in-place. This means that you can compile and upload code to your Apollo3 board. Development can be done with the whole range of Hardware Abstraction Layer functions provided in the AmbiqSuite Software Development Kit (based on Release2.1.0). Current focus is to begin building support for the essential Arduino libraries including:
+  * GPIO
+  * Timing
+  * Wire
+  * SPI
+  * Serial
+
 
 ## Installation
 
@@ -32,10 +38,19 @@ The structure of this repo is such that it will most closely resemble the struct
             * Unzip the contents of the .ZIP into the ```apollo3``` directory
     * Restart Arduino IDE for good measure
 
-## Issue Template
+## How to Contribute
+The goal of this Arduino Core is to provide excellent Apollo3 support in a clear and extendable manner. The guidelines for contributing and submitting issues are designed to make it easy to integrate work from many people.  
+
+* **Issue Template**
+   * Please do a thorough search of all issues before posting your own. When you're sure that your issue has not been covered please use the [Issue Template](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ISSUE_TEMPLATE.md) to guide your report. Even better, if your issue is a feature request or a fix that you know how to implement please consider contributing with a Pull Request.
+   
+* **Contributor's Guidelines**
+   * Please read and follow the [Contributor's Guidelines](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/CONTRIBUTING.md) when making commits for a Pull Request.
+   
+* **Acknowledgements**
+   * The [Acknowledgments](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file exists to easily recognize contributors by name. Detailed contribution information will be recorded by the git commit history. 
 
 
-Please do a thorough search of all issues before posting your own. When you're sure that your issue has not been covered please use the ISSUE_TEMPLATE.md to guide your report.
 
 
 ## Repo Contents
@@ -46,4 +61,5 @@ Please do a thorough search of all issues before posting your own. When you're s
     * ISSUE_TEMPLATE.md
     * LICENSE.md
 * libraries : common source code for optional libraries that pertain to Apollo3 HW
+* tools : peripherals such as the serial uploader
 * variants : pin mapping and capability listing for individual boards
