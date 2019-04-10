@@ -33,6 +33,13 @@ Comments:
 * Be concise and only write comments for things that are not obvious.
 * Use // prefix, NOT /* ... */. No extra fluff.
 
+Constants:
+* Design for type-safety when possible 
+* Use ```enum``` and ```const``` where appropriate
+* Resort to ```#define MACROS``` only when no better option exists or it's a *good* use (get to know the [GNU PreProcessor Common Pitfalls](https://gcc.gnu.org/onlinedocs/cpp/Macro-Pitfalls.html)) 
+
+Error Handling:
+* When possible please use a unified status return from functions, and use pointers to pass arguments in *and* out
 
 Examples
 ========
