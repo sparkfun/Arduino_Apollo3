@@ -2,10 +2,23 @@ What to Contribute
 ==================
 Goals of this Arduino core, listed in order of priority, are:
 1. Coverage of the Arduino built-in functions demonstrated by Sketch compatibility.
-2. Efficient use of existing AmbiqSuite HAL code
-3. Backward-compatible improvements to the standard Arduino libraries
+1. Creation of a well-structured and easy to extend Arduino core.
+1. Efficient use of existing AmbiqSuite HAL code.
+1. Backward-compatible improvements to the standard Arduino libraries.
 
 If you find a standard Arduino capability that is not working then that is a great candidate for a contribution.
+
+Where to Contribute
+===================
+In keeping with the goal of creating a well-structured, easy to understand, and easy to extend Arduino core it is importatnt to carefully consider where new code should be located. 
+
+There are two main places where you might add code:
+1. The core ```Arduino_Apollo3\cores\arduino```
+2. Variants ```Arduino_Apollo3\variants```
+
+Code that goes in the core should be applicable to *any* Apollo3-based board as opposed to code that is specific to a particular variant.
+
+Within the core the majority of work will take place under the Arduino Support folder ```Arduino_Apollo3\cores\arduino\ard_sup```.
 
 How to Contribute
 =================
