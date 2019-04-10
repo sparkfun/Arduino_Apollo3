@@ -46,10 +46,10 @@ The goal of this Arduino Core is to provide excellent Apollo3 support in a clear
    * Please do a thorough search of all issues before posting your own. When you're sure that your issue has not been covered please use the [Issue Template](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ISSUE_TEMPLATE.md) to guide your report. Even better, if your issue is a feature request or a fix that you know how to implement please consider contributing with a Pull Request.
    
 * **Contributor's Guidelines**
-   Please read and follow the [Contributor's Guidelines](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/CONTRIBUTING.md) when making commits for a Pull Request.
+   * Please read and follow the [Contributor's Guidelines](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/CONTRIBUTING.md) when making commits for a Pull Request.
    
 * **Acknowledgements**
-   The [ACKNOWLEDGEMENTS](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file exists to easily recognize contributors by name. Detailed contribution information will be recorded by the git commit history. 
+   * The [ACKNOWLEDGEMENTS](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file exists to easily recognize contributors by name. Detailed contribution information will be recorded by the git commit history. 
 
 
 
