@@ -62,4 +62,5 @@ The goal of this Arduino Core is to provide excellent Apollo3 support in a clear
     * ISSUE_TEMPLATE.md
     * LICENSE.md
 * libraries : common source code for optional libraries that pertain to Apollo3 HW
+* tools : peripherals such as the serial uploader
 * variants : pin mapping and capability listing for individual boards
