@@ -3,8 +3,8 @@
 
 # This script was originally written by Ambiq
 # Modified April 2nd, 2019 by SparkFun to auto-bootloading
-# Compiled to executable using Nuitka
-# py -3 -m nuitka --standalone --recurse-all artemis_uart_loader.py
+# Compiled to executable using pyInstaller
+# pyinstaller --onefile artemis_uart_loader.py
 
 import argparse
 import serial

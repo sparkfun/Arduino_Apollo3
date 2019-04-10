@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Utility to generate image blobs for Corvette Bootloader assisted Wired updates
 
 import argparse

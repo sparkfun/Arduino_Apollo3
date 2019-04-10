@@ -120,11 +120,16 @@ recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.fl
 recipe.size.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
 
+# Convert the binary to a unsecure blob
+recipe.hooks.objcopy.postobjcopy.1.pattern="{runtime.platform.path}/tools/apollo3_scripts/artemis_bin_to_blob.exe" --bin "{build.path}/{build.project_name}.bin" --load-address 0xC000 --magic-num 0xCB -o "{build.path}/main_nonsecure_ota" --version 0x0
+recipe.hooks.objcopy.postobjcopy.2.pattern="{runtime.platform.path}/tools/apollo3_scripts/artemis_ota_to_wire.exe" --load-address 0x20000 --bin "{build.path}/main_nonsecure_ota.bin" -i 6 -o "{build.path}/main_nonsecure_wire" --options 0x1
+
 tools.ap3Loader.cmd=ap3Loader
 tools.ap3Loader.cmd.windows=artemis_uart_loader.exe
-tools.ap3Loader.path={runtime.platform.path}/tools
+tools.ap3Loader.path={runtime.platform.path}/tools/apollo3_scripts
 
 tools.ap3Loader.upload.protocol=ap3
 tools.ap3Loader.upload.params.verbose=
 
-tools.ap3Loader.upload.pattern="{path}/{cmd}" -b 921600 "{serial.port}" -r 1 -f "{build.path}/{build.project_name}.bin" -i 6
+tools.ap3Loader.upload.pattern="{path}/{cmd}" -b 921600 "{serial.port}" -r 1 -f "{build.path}/main_nonsecure_wire.bin" -i 6
+
