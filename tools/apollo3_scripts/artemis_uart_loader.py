@@ -15,6 +15,7 @@ import binascii
 import time
 
 from sf_am_defines import *
+from sys import exit
 
 #******************************************************************************
 #
@@ -38,7 +39,16 @@ def main():
 
     print('Connecting over serial port {}...'.format(args.port), flush=True)
 
-    with serial.Serial(args.port, args.baud, timeout=3) as ser:
+    #Check to see if the com port is available
+    try: 
+        with serial.Serial(args.port, args.baud, timeout=1) as ser:
+            pass
+    except:
+        print("Com Port not found - Did you select the right one?")
+        exit()
+
+    #Begin talking over com port
+    with serial.Serial(args.port, args.baud, timeout=1) as ser:
         #time.sleep(0.0050)
 
         #When serial.Serial is called, DTR goes low
@@ -48,7 +58,6 @@ def main():
 
         time.sleep(0.1) #Give bootloader a chance to run and check GP14 before communication begins
         connect_device(ser)
-
     print('Upload complete!')
 
 #******************************************************************************
@@ -185,8 +194,7 @@ def connect_device(ser):
             send_ackd_command(resetmsg, ser)
     else:
         # Received Wrong message
-        print("Bootloader failed to respond")
-        #print("Received Unknown Message")
+        print("Received Unknown Message")
         word = word_from_bytes(response, 4)
         verboseprint("msgType = ", hex(word & 0xFFFF))
         verboseprint("Length = ", hex(word >> 16))
@@ -243,12 +251,13 @@ def send_command(params, response_len, ser):
 
     # Make sure we got the number of bytes we asked for.
     if len(response) != response_len:
+        print("Upload failed: No reponse to command")
         verboseprint('No response for command 0x{:08X}'.format(word_from_bytes(params, 0) & 0xFFFF))
         n = len(response)
         if (n != 0):
             verboseprint("received bytes ", len(response))
             verboseprint([hex(n) for n in response])
-        raise NoResponseError
+        exit()
 
     return response
 
@@ -269,9 +278,10 @@ def send_bytewise_command(command, params, response_len, ser):
 
     # Make sure we got the number of bytes we asked for.
     if len(response) != response_len:
+        print("Upload failed: No reponse to command")
         verboseprint('No response for command 0x{:08X}'.format(command))
-        raise NoResponseError
-
+        exit()
+        
     return response
 
 #******************************************************************************
@@ -283,9 +293,6 @@ class BootError(Exception):
     pass
 
 class NoAckError(BootError):
-    pass
-
-class NoResponseError(BootError):
     pass
 
 #******************************************************************************
@@ -354,6 +361,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    #Create print function for verbose output if caller deems it: https://stackoverflow.com/questions/5980042/how-to-implement-the-verbose-or-v-option-into-a-script
     if args.verbose:
         def verboseprint(*args):
             # Print each argument separately so caller doesn't need to
