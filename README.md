@@ -49,7 +49,7 @@ The goal of this Arduino Core is to provide excellent Apollo3 support in a clear
    * Please read and follow the [Contributor's Guidelines](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/CONTRIBUTING.md) when making commits for a Pull Request.
    
 * **Acknowledgements**
-   * The [ACKNOWLEDGEMENTS](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file exists to easily recognize contributors by name. Detailed contribution information will be recorded by the git commit history. 
+   * The [Acknowledgments](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file exists to easily recognize contributors by name. Detailed contribution information will be recorded by the git commit history. 
 
 
 
