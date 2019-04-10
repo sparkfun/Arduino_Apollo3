@@ -11,14 +11,13 @@
 
 ## Development Status
 
-Right now you will get compilation and access to the Ambiq SDK functions (currently supporting Ambiq SDK Rel 2.1.0). Board Support Package (BSP) definitions can be used with Arduino **variants**. 
+The basic necesseties are in-place. This means that you can compile and upload code to your Apollo3 board. Development can be done with the whole range of Hardware Abstraction Layer functions provided in the AmbiqSuite Software Development Kit (based on Release2.1.0). Current focus is to begin building support for the essential Arduino libraries including:
+  * GPIO
+  * Timing
+  * Wire
+  * SPI
+  * Serial
 
-* **Base Arduino Support**
-   * delay and delayMicroseconds added April 9 2019
-   * pinMode, digitalWrite, and digitalRead added April 9 2019
-
-* **Tools/Utilities**
-   * Serial uploader support (at 921600 baud) added April 10 2019
 
 ## Installation
 
