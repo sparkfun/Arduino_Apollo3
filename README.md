@@ -11,7 +11,14 @@
 
 ## Development Status
 
-This core has just been born. Right now you will get compilation and access to the Ambiq SDK functions (currently supporting Ambiq SDK Rel 2.1.0). Board Support Package (BSP) definitions can be used with Arduino **variants**. Currently upload must be performed manually.
+Right now you will get compilation and access to the Ambiq SDK functions (currently supporting Ambiq SDK Rel 2.1.0). Board Support Package (BSP) definitions can be used with Arduino **variants**. 
+
+* **Base Arduino Support**
+   * delay and delayMicroseconds added April 9 2019
+   * pinMode, digitalWrite, and digitalRead added April 9 2019
+
+* **Tools/Utilities**
+   * Serial uploader support (at 921600 baud) added April 10 2019
 
 ## Installation
 
@@ -32,10 +39,19 @@ The structure of this repo is such that it will most closely resemble the struct
             * Unzip the contents of the .ZIP into the ```apollo3``` directory
     * Restart Arduino IDE for good measure
 
-## Issue Template
+## How to Contribute
+The goal of this Arduino Core is to provide excellent Apollo3 support in a clear and extendable manner. The guidelines for contributing and submitting issues are designed to make it easy to integrate work from many people.  
+
+* **Issue Template**
+   * Please do a thorough search of all issues before posting your own. When you're sure that your issue has not been covered please use the [Issue Template](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ISSUE_TEMPLATE.md) to guide your report. Even better, if your issue is a feature request or a fix that you know how to implement please consider contributing with a Pull Request.
+   
+* **Contributor's Guidelines**
+   Please read and follow the [Contributor's Guidelines](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/CONTRIBUTING.md) when making commits for a Pull Request.
+   
+* **Acknowledgements**
+   The [ACKNOWLEDGEMENTS](https://github.com/sparkfun/Arduino_Apollo3/blob/master/docs/ACKNOWLEDGEMENTS.md) file exists to easily recognize contributors by name. Detailed contribution information will be recorded by the git commit history. 
 
 
-Please do a thorough search of all issues before posting your own. When you're sure that your issue has not been covered please use the ISSUE_TEMPLATE.md to guide your report.
 
 
 ## Repo Contents
