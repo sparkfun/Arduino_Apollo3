@@ -36,7 +36,7 @@ def main():
     # Assuming worst case ~100 ms/page of flashing time, and allowing for the
     # image to be close to occupying full SRAM (256K) which is 128 pages.
 
-    print('Connecting with Corvette over serial port {}...'.format(args.port), flush=True)
+    print('Connecting over serial port {}...'.format(args.port), flush=True)
 
     with serial.Serial(args.port, args.baud, timeout=3) as ser:
         #time.sleep(0.0050)
@@ -49,7 +49,7 @@ def main():
         time.sleep(0.1) #Give bootloader a chance to run and check GP14 before communication begins
         connect_device(ser)
 
-    print('Done.')
+    print('Upload complete!')
 
 #******************************************************************************
 #
@@ -65,26 +65,28 @@ def connect_device(ser):
     #generate mutable byte array for the header
     hello = bytearray([0x00]*4)
     fill_word(hello, 0, ((8 << 16) | AM_SECBOOT_WIRED_MSGTYPE_HELLO))
-    print('Sending Hello.')
+    verboseprint('Sending Hello.')
     response = send_command(hello, 88, ser)
-    print("Received response for Hello")
+    verboseprint("Received response for Hello")
     word = word_from_bytes(response, 4)
     if ((word & 0xFFFF) == AM_SECBOOT_WIRED_MSGTYPE_STATUS):
         # Received Status
-        print("Received Status")
-        print("length = ", hex((word >> 16)))
-        print("version = ", hex(word_from_bytes(response, 8)))
-        print("Max Storage = ", hex(word_from_bytes(response, 12)))
-        print("Status = ", hex(word_from_bytes(response, 16)))
-        print("State = ", hex(word_from_bytes(response, 20)))
-        print("AMInfo = ")
+        print("Bootloader connected")
+
+        verboseprint("Received Status")
+        verboseprint("length = ", hex((word >> 16)))
+        verboseprint("version = ", hex(word_from_bytes(response, 8)))
+        verboseprint("Max Storage = ", hex(word_from_bytes(response, 12)))
+        verboseprint("Status = ", hex(word_from_bytes(response, 16)))
+        verboseprint("State = ", hex(word_from_bytes(response, 20)))
+        verboseprint("AMInfo = ")
         for x in range(24, 88, 4):
-            print(hex(word_from_bytes(response, x)))
+            verboseprint(hex(word_from_bytes(response, x)))
 
         abort = args.abort
         if (abort != -1):
             # Send OTA Desc
-            print('Sending Abort command.')
+            verboseprint('Sending Abort command.')
             abortMsg = bytearray([0x00]*8);
             fill_word(abortMsg, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_ABORT))
             fill_word(abortMsg, 4, abort)
@@ -93,7 +95,7 @@ def connect_device(ser):
         otadescaddr = args.otadesc
         if (otadescaddr != 0xFFFFFFFF):
             # Send OTA Desc
-            print('Sending OTA Descriptor = ', hex(otadescaddr))
+            verboseprint('Sending OTA Descriptor = ', hex(otadescaddr))
             otaDesc = bytearray([0x00]*8);
             fill_word(otaDesc, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_OTADESC))
             fill_word(otaDesc, 4, otadescaddr)
@@ -108,25 +110,25 @@ def connect_device(ser):
             # Gather the important binary metadata.
             totalLen = len(application)
             # Send Update command
-            print('Sending Update Command.')
+            verboseprint('Sending Update Command.')
 
             # It is assumed that maxSize is 256b multiple
             maxImageSize = args.split
             if ((maxImageSize & (FLASH_PAGE_SIZE - 1)) != 0):
-                print ("split needs to be multiple of flash page size")
+                verboseprint ("split needs to be multiple of flash page size")
                 return
 
             # Each Block of image consists of AM_WU_IMAGEHDR_SIZE Bytes Image header and the Image blob
             maxUpdateSize = AM_WU_IMAGEHDR_SIZE + maxImageSize
             numUpdates = (totalLen + maxUpdateSize - 1) // maxUpdateSize # Integer division
-            print("number of updates needed = ", numUpdates)
+            verboseprint("number of updates needed = ", numUpdates)
 
             end = totalLen
             for numUpdates in range(numUpdates, 0 , -1):
                 start = (numUpdates-1)*maxUpdateSize
                 crc = crc32(application[start:end])
                 applen = end - start
-                print("Sending block of size ", str(hex(applen)), " from ", str(hex(start)), " to ", str(hex(end)))
+                verboseprint("Sending block of size ", str(hex(applen)), " from ", str(hex(start)), " to ", str(hex(end)))
                 end = end - applen
 
                 update = bytearray([0x00]*16);
@@ -161,7 +163,7 @@ def connect_device(ser):
                     # seqNo
                     fill_word(dataMsg, 4, x)
 
-                    print("Sending Data Packet of length ", chunklen)
+                    verboseprint("Sending Data Packet of length ", chunklen)
                     send_ackd_command(dataMsg + chunk, ser)
 
         if (args.raw != ''):
@@ -170,12 +172,12 @@ def connect_device(ser):
             with open(args.raw, mode='rb') as rawfile:
                 blob = rawfile.read()
             # Send Raw command
-            print('Sending Raw Command.')
+            verboseprint('Sending Raw Command.')
             ser.write(blob)
 
         if (args.reset != 0):
             # Send reset
-            print('Sending Reset Command.')
+            verboseprint('Sending Reset Command.')
             resetmsg = bytearray([0x00]*8);
             fill_word(resetmsg, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_RESET))
             # options
@@ -183,12 +185,14 @@ def connect_device(ser):
             send_ackd_command(resetmsg, ser)
     else:
         # Received Wrong message
-        print("Received Unknown Message")
+        print("Bootloader failed to respond")
+        #print("Received Unknown Message")
         word = word_from_bytes(response, 4)
-        print("msgType = ", hex(word & 0xFFFF))
-        print("Length = ", hex(word >> 16))
-        print([hex(n) for n in response])
-        print("!!!Wired Upgrade Unsuccessful!!!....Terminating the script")
+        verboseprint("msgType = ", hex(word & 0xFFFF))
+        verboseprint("Length = ", hex(word >> 16))
+        verboseprint([hex(n) for n in response])
+        #print("!!!Wired Upgrade Unsuccessful!!!....Terminating the script")
+        print("Upload failed")
         exit()
 
 #******************************************************************************
@@ -205,11 +209,12 @@ def send_ackd_command(command, ser):
     if ((word & 0xFFFF) == AM_SECBOOT_WIRED_MSGTYPE_ACK):
         # Received ACK
         if (word_from_bytes(response, 12) != AM_SECBOOT_WIRED_ACK_STATUS_SUCCESS):
-            print("Received NACK")
-            print("msgType = ", hex(word_from_bytes(response, 8)))
-            print("error = ", hex(word_from_bytes(response, 12)))
-            print("seqNo = ", hex(word_from_bytes(response, 16)))
-            print("!!!Wired Upgrade Unsuccessful!!!....Terminating the script")
+            verboseprint("Received NACK")
+            verboseprint("msgType = ", hex(word_from_bytes(response, 8)))
+            verboseprint("error = ", hex(word_from_bytes(response, 12)))
+            verboseprint("seqNo = ", hex(word_from_bytes(response, 16)))
+            #print("!!!Wired Upgrade Unsuccessful!!!....Terminating the script")
+            print("Upload failed: No ack to command")
             exit()
 
     return response
@@ -238,11 +243,11 @@ def send_command(params, response_len, ser):
 
     # Make sure we got the number of bytes we asked for.
     if len(response) != response_len:
-        print('No response for command 0x{:08X}'.format(word_from_bytes(params, 0) & 0xFFFF))
+        verboseprint('No response for command 0x{:08X}'.format(word_from_bytes(params, 0) & 0xFFFF))
         n = len(response)
         if (n != 0):
-            print("received bytes ", len(response))
-            print([hex(n) for n in response])
+            verboseprint("received bytes ", len(response))
+            verboseprint([hex(n) for n in response])
         raise NoResponseError
 
     return response
@@ -264,7 +269,7 @@ def send_bytewise_command(command, params, response_len, ser):
 
     # Make sure we got the number of bytes we asked for.
     if len(response) != response_len:
-        print('No response for command 0x{:08X}'.format(command))
+        verboseprint('No response for command 0x{:08X}'.format(command))
         raise NoResponseError
 
     return response
@@ -342,9 +347,22 @@ if __name__ == '__main__':
     parser.add_argument('--split', dest='split', type=auto_int, default=hex(MAX_DOWNLOAD_SIZE),
                         help='Specify the max block size if the image will be downloaded in pieces')
 
+    parser.add_argument("-v", "--verbose", default=0, help="Enable verbose output",
+                        action="store_true")
+
     # parser.add_argument('-pts', dest='scriptsPath', required = True, help = 'Relative or Absolute path to Ambiq Apollo3 Scripts Folder (in the SDK)')
 
     args = parser.parse_args()
 
+    if args.verbose:
+        def verboseprint(*args):
+            # Print each argument separately so caller doesn't need to
+            # stuff everything to be printed into a single string
+            for arg in args:
+                print(arg, end=''),
+            print()
+    else:   
+        verboseprint = lambda *a: None      # do-nothing function
+    
     main()
 
