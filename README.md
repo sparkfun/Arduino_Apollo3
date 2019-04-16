@@ -26,6 +26,7 @@ The structure of this repo is such that it will most closely resemble the struct
 
 * Using Arduino IDE Boards Manager (not yet supported)
 * [Manually Install in Arduino Sketchbook]()
+    * **First** Install the Arduino SAMD Boards through the Arduino Board Manager. This is required for the ARM Cortex-M toolchain.
     * Open your Arduno sketchbook folder, listed in Arduino's preferences pane (it is where your libraries folder lives)
     * If there is no ```hardware``` folder create it
     * Inside the ```hardware``` folder create ```SparkFun```
