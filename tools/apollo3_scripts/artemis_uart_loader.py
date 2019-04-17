@@ -49,14 +49,16 @@ def main():
 
     #Begin talking over com port
     with serial.Serial(args.port, args.baud, timeout=1) as ser:
-        #time.sleep(0.0050)
+        time.sleep(0.007) #5ms and 10ms work well. Not 50, and not 0.
 
         #When serial.Serial is called, DTR goes low
         ser.setRTS(0) #Set RTS high
         ser.setDTR(0) #Set DTR high
-        #Setting RTS/DTR high causes the GP14 to go high, then fall across 100ms
+        #Setting RTS/DTR high causes the bootload pin to go high, then fall across 100ms
 
-        time.sleep(0.1) #Give bootloader a chance to run and check GP14 before communication begins
+        #Give bootloader a chance to run and check bootload pin before communication begins. But must initiate com before bootloader timeout of 250ms.
+        time.sleep(0.100) #100ms works well
+
         connect_device(ser)
     print('Upload complete!')
 
