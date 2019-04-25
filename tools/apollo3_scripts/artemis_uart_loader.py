@@ -17,6 +17,9 @@ import time
 from sf_am_defines import *
 from sys import exit
 
+loadTries = 0 #If we fail, try again. Tracks the number of tries we've attempted
+loadSuccess = False
+
 #******************************************************************************
 #
 # Main function
@@ -24,11 +27,11 @@ from sys import exit
 #******************************************************************************
 def main():
 
+    global loadTries
+    global loadSuccess
+
     # Open a serial port, and communicate with Device
     #
-    # We will use a UART timeout value of 12 second. This should be long
-    # enough that the slave will respond to us, but short enough that a human
-    # operator should see errors quickly..
     # Max flashing time depends on the amount of SRAM available.
     # For very large images, the flashing happens page by page.
     # However if the image can fit in the free SRAM, it could take a long time
@@ -48,19 +51,38 @@ def main():
         exit()
 
     #Begin talking over com port
-    with serial.Serial(args.port, args.baud, timeout=1) as ser:
-        time.sleep(0.007) #5ms and 10ms work well. Not 50, and not 0.
 
-        #When serial.Serial is called, DTR goes low
-        ser.setRTS(0) #Set RTS high
-        ser.setDTR(0) #Set DTR high
-        #Setting RTS/DTR high causes the bootload pin to go high, then fall across 100ms
+    #The auto-bootload sequence is good but not fullproof. The bootloader
+    #fails to correctly catch the BOOT signal about 1 out of ten times.
+    #Auto-retry this number of times before we give up.
 
-        #Give bootloader a chance to run and check bootload pin before communication begins. But must initiate com before bootloader timeout of 250ms.
-        time.sleep(0.100) #100ms works well
+    while loadTries < 10: 
+        loadSuccess = False
 
-        connect_device(ser)
-    print('Upload complete!')
+        with serial.Serial(args.port, args.baud, timeout=1) as ser:
+            time.sleep(0.005) #3ms and 10ms work well. Not 50, and not 0.
+
+            #When serial.Serial is called, DTR goes low
+            ser.setRTS(0) #Set RTS high
+            ser.setDTR(0) #Set DTR high
+            #Setting RTS/DTR high causes the bootload pin to go high, then fall across 100ms
+
+            #Give bootloader a chance to run and check bootload pin before communication begins. But must initiate com before bootloader timeout of 250ms.
+            time.sleep(0.100) #100ms works well
+
+            connect_device(ser)
+
+            if(loadSuccess == True):
+                print("Tries =", loadTries)
+                print('Upload complete!')
+                exit()
+            
+            loadTries = loadTries + 1
+            
+    print("Tries =", loadTries)
+    print("Upload failed")
+    exit()
+
 
 #******************************************************************************
 #
@@ -72,12 +94,20 @@ def main():
 #******************************************************************************
 def connect_device(ser):
 
+    global loadSuccess
+
     # Send Hello
     #generate mutable byte array for the header
     hello = bytearray([0x00]*4)
     fill_word(hello, 0, ((8 << 16) | AM_SECBOOT_WIRED_MSGTYPE_HELLO))
     verboseprint('Sending Hello.')
     response = send_command(hello, 88, ser)
+
+    #Check if response failed
+    if response == False:
+        verboseprint("Failed to respond")
+        return
+
     verboseprint("Received response for Hello")
     word = word_from_bytes(response, 4)
     if ((word & 0xFFFF) == AM_SECBOOT_WIRED_MSGTYPE_STATUS):
@@ -101,7 +131,10 @@ def connect_device(ser):
             abortMsg = bytearray([0x00]*8);
             fill_word(abortMsg, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_ABORT))
             fill_word(abortMsg, 4, abort)
-            send_ackd_command(abortMsg, ser)
+            if send_ackd_command(abortMsg, ser) == False:
+                verboseprint("Failed to ack command")
+                return
+
 
         otadescaddr = args.otadesc
         if (otadescaddr != 0xFFFFFFFF):
@@ -110,7 +143,10 @@ def connect_device(ser):
             otaDesc = bytearray([0x00]*8);
             fill_word(otaDesc, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_OTADESC))
             fill_word(otaDesc, 4, otadescaddr)
-            send_ackd_command(otaDesc, ser)
+            if send_ackd_command(otaDesc, ser) == False:
+                verboseprint("Failed to ack command")
+                return
+
 
         imageType = args.imagetype
         if (args.binfile != ''):
@@ -149,7 +185,9 @@ def connect_device(ser):
                 # Size = 0 => We're not piggybacking any data to IMAGE command
                 fill_word(update, 12, 0)
 
-                send_ackd_command(update, ser)
+                if send_ackd_command(update, ser) == False:
+                    verboseprint("Failed to ack command")
+                    return
 
                 # Loop over the bytes in the image, and send them to the target.
                 resp = 0
@@ -175,7 +213,9 @@ def connect_device(ser):
                     fill_word(dataMsg, 4, x)
 
                     verboseprint("Sending Data Packet of length ", chunklen)
-                    send_ackd_command(dataMsg + chunk, ser)
+                    if send_ackd_command(dataMsg + chunk, ser) == False:
+                        verboseprint("Failed to ack command")
+                        return
 
         if (args.raw != ''):
 
@@ -193,17 +233,23 @@ def connect_device(ser):
             fill_word(resetmsg, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_RESET))
             # options
             fill_word(resetmsg, 4, args.reset)
-            send_ackd_command(resetmsg, ser)
+            if send_ackd_command(resetmsg, ser) == False:
+                verboseprint("Failed to ack command")
+                return
+
+        
+        #Success! We're all done
+        loadSuccess = True
     else:
         # Received Wrong message
-        print("Received Unknown Message")
+        verboseprint("Received Unknown Message")
         word = word_from_bytes(response, 4)
         verboseprint("msgType = ", hex(word & 0xFFFF))
         verboseprint("Length = ", hex(word >> 16))
         verboseprint([hex(n) for n in response])
         #print("!!!Wired Upgrade Unsuccessful!!!....Terminating the script")
-        print("Upload failed")
-        exit()
+
+        #exit()
 
 #******************************************************************************
 #
@@ -213,7 +259,13 @@ def connect_device(ser):
 #
 #******************************************************************************
 def send_ackd_command(command, ser):
+
     response = send_command(command, 20, ser)
+
+    #Check if response failed
+    if response == False:
+        verboseprint("Response not valid")
+        return False #Return error
 
     word = word_from_bytes(response, 4)
     if ((word & 0xFFFF) == AM_SECBOOT_WIRED_MSGTYPE_ACK):
@@ -224,8 +276,9 @@ def send_ackd_command(command, ser):
             verboseprint("error = ", hex(word_from_bytes(response, 12)))
             verboseprint("seqNo = ", hex(word_from_bytes(response, 16)))
             #print("!!!Wired Upgrade Unsuccessful!!!....Terminating the script")
-            print("Upload failed: No ack to command")
-            exit()
+            verboseprint("Upload failed: No ack to command")
+
+            return False #Return error
 
     return response
 
@@ -253,13 +306,12 @@ def send_command(params, response_len, ser):
 
     # Make sure we got the number of bytes we asked for.
     if len(response) != response_len:
-        print("Upload failed: No reponse to command")
         verboseprint('No response for command 0x{:08X}'.format(word_from_bytes(params, 0) & 0xFFFF))
         n = len(response)
         if (n != 0):
             verboseprint("received bytes ", len(response))
             verboseprint([hex(n) for n in response])
-        exit()
+        return False
 
     return response
 
