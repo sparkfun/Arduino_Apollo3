@@ -7,13 +7,16 @@
 void ap3_variant_init( void ) __attribute__((weak));
 void ap3_variant_init( void ) { }
 
-// // Initialize C library
-// extern "C" void __libc_init_array(void);
+// Initialize C library
+extern "C" void __libc_init_array(void);
+extern "C" void _init( void ){
+  // Empty definition to resolve linker error within '__libc_init_array'
+}
 
 extern "C" int main( void )
 {
   ap3_init();
-  // __libc_init_array();
+  __libc_init_array();
 
   ap3_variant_init();
   setup();

@@ -20,6 +20,13 @@ SECTIONS
         KEEP(*(.patch))
         *(.text)
         *(.text*)
+
+        . = ALIGN(4);  
+        __init_array_start = .;
+        KEEP(*(.init_array))        /* C++ constructors */ 
+        KEEP(*(.ctors))             /* and vtable init */
+        __init_array_end = .; 
+
         *(.rodata)
         *(.rodata*)
         . = ALIGN(4);
