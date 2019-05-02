@@ -25,8 +25,8 @@ SOFTWARE.
 #include "Arduino.h"
 
 
-// unsigned long micros(); // todo: 
-// unsigned long millis(); // todo:
+unsigned long micros(); // todo: add a real implementation for this
+unsigned long millis(); // todo: add a real implementation for this
 void delay(uint32_t ms);
 void delayMicroseconds(uint32_t us);
 

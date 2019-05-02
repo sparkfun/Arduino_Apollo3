@@ -19,20 +19,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "ap3_timing.h"
+#ifndef _AP3_DEBUGGING_H_
+#define _AP3_DEBUGGING_H_
 
-unsigned long micros(){ // todo: add a real implementation for this
-    return 0;
+#include "Arduino.h"
+
+inline ap3_err_t ap3_return(ap3_err_t retval){
+    #ifdef AP3_DEBUG_RETURN_HOOK
+    AP3_DEBUG_RETURN_HOOK
+    #endif 
+    return retval;
 }
 
-unsigned long millis(){ // todo: add a real implementation for this
-    return 0;
-}
-
-void delay(uint32_t ms){
-    am_util_delay_ms(ms);
-}
-
-void delayMicroseconds(uint32_t us){
-    am_util_delay_us(us);
-}
+#endif // _AP3_DEBUGGING_H_

@@ -77,7 +77,6 @@ void loop(void);
 #include "ap3_debugging.h"
 #include "ap3_uart.h"
 
-#include "variant.h" // problem - when variant is included all available class names must already be defined, 
-// however many class definitions depend on "Arduino.h" for type names of their own
+#include "variant.h"
 
 #endif // _ARDUINO_H_

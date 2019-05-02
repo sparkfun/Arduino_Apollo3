@@ -148,12 +148,7 @@ ap3_err_t Uart::_begin( void ){
     }
 
     if( _pinTX != AP3_UART_PIN_UNUSED ){
-        
-
         retval = ap3_uart_pad_funcsel( _instance, AP3_UART_TX, ap3_gpio_pin2pad( _pinTX ), &funcsel);
-
-            ap3_debug_check_retval_edge(retval);
-
         if( retval != AP3_OK ){ return retval; }
         pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
         pinMode( _pinTX, pincfg, &retval );   if( retval != AP3_OK){ return ap3_return(retval); }
@@ -188,8 +183,6 @@ ap3_err_t Uart::_begin( void ){
     retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);                                if( retval != AP3_OK){ return ap3_return(retval); }
     retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);             if( retval != AP3_OK){ return ap3_return(retval); }
     retval = (ap3_err_t)am_hal_uart_configure(_handle, &_config);                                   if( retval != AP3_OK){ return ap3_return(retval); }
-
-    ap3_debug_check_retval_edge( retval );
 
     return retval;
 }
