@@ -30,10 +30,10 @@ extern "C"
 {
 #endif // __cplusplus
 
-#ifdef      OVERFLOW
-#define     ARDUINO_REDEFINE_OVERFLOW OVERFLOW
-#undef      OVERFLOW
-#warning    "OVERFLOW is defined already... trying to save it, include Apollo3 headers, then restore it"
+#ifdef OVERFLOW
+#define ARDUINO_REDEFINE_OVERFLOW OVERFLOW
+#undef OVERFLOW
+#warning "OVERFLOW is defined already... trying to save it, include Apollo3 headers, then restore it"
 #endif
 
 // Include Apollo headers
@@ -41,27 +41,27 @@ extern "C"
 #include "am_util.h"
 #include "am_bsp.h"
 
-#ifdef      ARDUINO_REDEFINE_OVERFLOW
-#warning    "restoring OVERFLOW from value in ARDUINO_REDEFINE_OVERFLOW"
-#define     OVERFLOW ARDUINO_REDEFINE_OVERFLOW
-#undef      ARDUINO_REDEFINE_OVERFLOW
+#ifdef ARDUINO_REDEFINE_OVERFLOW
+#warning "restoring OVERFLOW from value in ARDUINO_REDEFINE_OVERFLOW"
+#define OVERFLOW ARDUINO_REDEFINE_OVERFLOW
+#undef ARDUINO_REDEFINE_OVERFLOW
 #endif
 
-/* system functions */
-int main(void);
-// void init(void);
+    /* system functions */
+    int main(void);
+    // void init(void);
 
-/* sketch */
-void setup(void);
-void loop(void);
+    /* sketch */
+    void setup(void);
+    void loop(void);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
 // constants
-#define LOW             (0x0)
-#define HIGH            (0x1)
+#define LOW (0x0)
+#define HIGH (0x1)
 
 #include "ap3_types.h"
 
