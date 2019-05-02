@@ -6,8 +6,8 @@
   License: MIT. See license file for more information but you can
   basically do whatever you want with this code.
 
-  This blinks each IO pin alternatively (no neighbors) to verify we have digitalWrite
-  control of every pin
+  This blinks a given IO pin to verify we have digitalWrite
+  control of every pin. 
   
   Feel like supporting open source hardware?
   Buy a board from SparkFun!
@@ -18,7 +18,7 @@
   Upload code
   Verify GPIOs are going high/low every 2 seconds
 
-  D2 on Blackboard is GP44 on Apollo3
+  D2 = GP44 on Apollo3
   D4 = GP38
   SDA = GP40
   SCL = GP39
@@ -49,8 +49,6 @@
   D15 = GP42
   PMDATA = GP36
   D16 = GP37
-  
-  
  */
 
 #define testPin 29 //Should toggle A5
