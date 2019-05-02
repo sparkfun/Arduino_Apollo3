@@ -8,6 +8,7 @@
 
 import argparse
 import serial
+import serial.tools.list_ports as list_ports
 import sys
 import array
 import os
@@ -40,6 +41,7 @@ def main():
     # Assuming worst case ~100 ms/page of flashing time, and allowing for the
     # image to be close to occupying full SRAM (256K) which is 128 pages.
 
+
     print('Connecting over serial port {}...'.format(args.port), flush=True)
 
     #Check to see if the com port is available
@@ -47,7 +49,26 @@ def main():
         with serial.Serial(args.port, args.baud, timeout=1) as ser:
             pass
     except:
-        print("Com Port not found - Did you select the right one?")
+
+        #Show a list of com ports and recommend one
+        print("Detected Serial Ports:")
+        devices = list_ports.comports()
+        port = None
+        for dev in devices:
+            print(dev.description)
+            # The SparkFun BlackBoard has CH340 in the description
+            if 'CH340' in dev.description:
+                print("The port you selected was not found. But we did detect a CH340 on " + dev.device + " so you might try again on that port.")
+                break
+            elif 'FTDI' in dev.description:
+                print("The port you selected was not found. But we did detect an FTDI on " + dev.device + " so you might try again on that port.")
+                break
+            elif 'USB Serial Device' in dev.description:
+                print("The port you selected was not found. But we did detect a USB Serial Device on " + dev.device + " so you might try again on that port.")
+                break
+        else: 
+            print("Com Port not found - Did you select the right one?")
+
         exit()
 
     #Begin talking over com port
@@ -56,16 +77,17 @@ def main():
     #fails to correctly catch the BOOT signal about 1 out of ten times.
     #Auto-retry this number of times before we give up.
 
-    while loadTries < 10: 
+    while loadTries < 3: 
         loadSuccess = False
 
-        with serial.Serial(args.port, args.baud, timeout=1) as ser:
+        with serial.Serial(args.port, args.baud, timeout=0.1, write_timeout=0.1) as ser:
+            #DTR is driven low when serial port open. DTR has now pulled RST low.
+
             time.sleep(0.005) #3ms and 10ms work well. Not 50, and not 0.
 
-            #When serial.Serial is called, DTR goes low
-            ser.setRTS(0) #Set RTS high
-            ser.setDTR(0) #Set DTR high
             #Setting RTS/DTR high causes the bootload pin to go high, then fall across 100ms
+            ser.setDTR(0) #Set DTR high
+            ser.setRTS(0) #Set RTS high - support the CH340E
 
             #Give bootloader a chance to run and check bootload pin before communication begins. But must initiate com before bootloader timeout of 250ms.
             time.sleep(0.100) #100ms works well
@@ -76,6 +98,8 @@ def main():
                 print("Tries =", loadTries)
                 print('Upload complete!')
                 exit()
+            else:
+                print("Fail")
             
             loadTries = loadTries + 1
             
