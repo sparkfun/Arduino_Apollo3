@@ -22,21 +22,9 @@ SOFTWARE.
 #ifndef _AP3_INITIALIZATION_H_
 #define _AP3_INITIALIZATION_H_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-
-
-
 #include "Arduino.h"
 
 void ap3_init( void ); // called immediately upon startup. Common to any AP3 board using Arduino Core, contains anything required to begin using the core
 
-
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 
 #endif // _AP3_INITIALIZATION_H_

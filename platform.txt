@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 name=SparkFun Apollo3
-version=1.0.0
+version=0.1.0
 
 
 ## Extra Flags (can be overridden in platform.local.txt)
@@ -45,7 +45,7 @@ ap3core.ambiq_sdk.path={ap3core.path}/am_sdk_ap3
 includes.extra=
 includes.ambiq_sdk=-I{ap3core.ambiq_sdk.path}/mcu/apollo3 -I{ap3core.ambiq_sdk.path}/mcu/apollo3/hal -I{ap3core.ambiq_sdk.path}/mcu/apollo3/regs -I{ap3core.ambiq_sdk.path}/utils
 includes.cmsis=-I{ap3core.ambiq_sdk.path}/CMSIS/AmbiqMicro/Include -I{ap3core.ambiq_sdk.path}/CMSIS/ARM/Include
-includes.core=-I{ap3core.path}/ard_sup
+includes.core=-I{ap3core.path}/ard_sup -I{ap3core.path}/ard_sup/ard_supers
 includes.variant={build.includes}
 
 
@@ -85,7 +85,7 @@ compiler.flags.common_cpp_c=-mcpu={build.mcu} -mthumb -mfloat-abi=hard -fdata-se
 compiler.flags.cpp={compiler.flags.common_cpp_c_S} {compiler.flags.common_cpp_c} {compiler.extra_flags.cpp} -ffunction-sections  {compiler.warning_flags} -std=gnu++11 -fno-threadsafe-statics -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions
 compiler.flags.c={compiler.flags.common_cpp_c_S} {compiler.flags.common_cpp_c} {compiler.extra_flags.c} --function-sections -mfpu=fpv4-sp-d16 -MP -std=gnu11 -Wall 
 compiler.flags.S={compiler.flags.common_cpp_c_S} {compiler.extra_flags.S} -x assembler-with-cpp
-compiler.flags.ld={compiler.extra_flags.ld} "-L{ap3core.ambiq_sdk.path}/CMSIS/ARM/Lib/ARM" -larm_cortexM4l_math
+compiler.flags.ld={compiler.extra_flags.ld} "-L{ap3core.ambiq_sdk.path}/CMSIS/ARM/Lib/ARM" -larm_cortexM4l_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
 compiler.flags.ar=rcs {compiler.extra_flags.ar}
 compiler.flags.axf2bin={compiler.extra_flags.axf2bin} -O binary
 
@@ -111,7 +111,7 @@ archive_file_path={build.path}/{archive_file}
 recipe.ar.pattern="{compiler.path}/{compiler.cmd.ar}" {compiler.flags.ar} "{archive_file_path}" "{object_file}"
 
 # Combine gc-sections, archives, and objects (.axf)
-recipe.c.combine.pattern="{compiler.path}/{compiler.cmd.axf}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -nostartfiles -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group {compiler.flags.ld} -lm -lc -lgcc -Wl,--end-group
+recipe.c.combine.pattern="{compiler.path}/{compiler.cmd.axf}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.flags.ld}
 
 # Create output (.bin)
 recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.flags.axf2bin} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"

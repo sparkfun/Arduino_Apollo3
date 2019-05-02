@@ -22,19 +22,16 @@ SOFTWARE.
 #ifndef _AP3_VARIANT_H_
 #define _AP3_VARIANT_H_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-
 #include "Arduino.h"
 
-#define AP3_VARIANT_NUM_PINS 50
+#define AP3_VARIANT_NUM_PINS (50)
+
+// Pin map declaration
 extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
 
+// Uart declarations
+class Uart;         // Forward declaration of Uart
+extern Uart Serial;
 
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 
 #endif // _AP3_VARIANT_H_

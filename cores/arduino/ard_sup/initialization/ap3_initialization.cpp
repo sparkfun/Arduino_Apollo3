@@ -11,6 +11,6 @@ void ap3_init( void ){
     // Configure the board for low power operation.
     am_bsp_low_power_init();
 
-    // Initialize the printf interface for ITM/SWO output.
-    am_bsp_uart_printf_enable(); // Enable UART - will set debug output to UART
+    // // Initialize the printf interface for ITM/SWO output.
+    // am_bsp_uart_printf_enable(); // Enable UART - will set debug output to UART
 }
