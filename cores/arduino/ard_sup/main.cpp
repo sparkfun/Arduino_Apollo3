@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "ap3_initialization.h"
 
-
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void ap3_variant_init( void ) __attribute__((weak));
