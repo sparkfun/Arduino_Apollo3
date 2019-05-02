@@ -12,6 +12,9 @@ extern "C" void __libc_init_array(void);
 extern "C" void _init( void ){
   // Empty definition to resolve linker error within '__libc_init_array'
 }
+extern "C" void end( void ){
+  // Empty definition to satisfy linker error in '_sbrk'
+}
 
 extern "C" int main( void )
 {

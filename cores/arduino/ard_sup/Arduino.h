@@ -34,5 +34,6 @@ extern "C"
 #define LOW             (0x0)
 #define HIGH            (0x1)
 
+#include "ap3_uart.h"
 
 #endif // _ARDUINO_H_

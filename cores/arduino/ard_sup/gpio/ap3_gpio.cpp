@@ -1,4 +1,5 @@
 #include "ap3_gpio.h"
+#include "variant.h"
 
 ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin){
     return ap3_variant_pinmap[pin];  
@@ -22,13 +23,20 @@ typedef struct {
 } InterruptHandle_t;
 // static InterruptHandle_t __pinInterruptHandlers[AP3_GPIO_MAX_EXT_INT_HANDLERS] = {0,};
 
-extern void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode)
-{
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
     if(!ap3_gpio_is_valid(pad)) {
+        if( retval != NULL){
+            *retval = AP3_OUT_OF_RANGE; 
+        }
         return;
     }
     am_hal_gpio_pinconfig(pad, mode);
+}
+
+extern void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode)
+{
+    pinMode(pin, mode, NULL);
 }
 
 extern void digitalWrite(uint8_t pin, uint8_t val)

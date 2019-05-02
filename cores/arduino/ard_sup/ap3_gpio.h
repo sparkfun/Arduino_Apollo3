@@ -24,13 +24,12 @@ SOFTWARE.
 
 #include "Arduino.h"
 
-
-
 // User Config
 #define AP3_GPIO_MAX_EXT_INT_HANDLERS   AP3_GPIO_MAX_PADS
 // End User Config
 
 //GPIO FUNCTIONS
+extern const am_hal_gpio_pincfg_t AP3_GPIO_PINCFG_NULL;
 extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_OUTPUT_WITH_READ_12;
 extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_OPEN_DRAIN_WITH_READ_12;
 extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_INPUT_PULLDOWN;
@@ -42,31 +41,26 @@ extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_INPUT_PULLDOWN;
 #define INPUT_PULLUP    (g_AM_HAL_GPIO_INPUT_PULLUP)
 #define INPUT_PULLDOWN  (g_AM_HAL_GPIO_INPUT_PULLDOWN)
 
-
-
 #define AP3_GPIO_MAX_PADS           (50)
 #define AP3_GPIO_IS_VALID(pad)      ((pad >= 0) && (pad < AP3_GPIO_MAX_PADS))
 
 extern ap3_gpio_pad_t  ap3_gpio_pin2pad(ap3_gpio_pin_t pin);
 #define  AP3_GPIO_PAD_UNUSED (-1)
 
+#define AP3_GPIO_DEFAULT_PINCFG AP3_GPIO_PINCFG_NULL
+
 // apollo3 pad capabilities
 inline bool ap3_gpio_is_valid(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 inline bool ap3_gpio_has_gpio(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 
-
-
-
-
-
 void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode);
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval);
 void digitalWrite(uint8_t pin, uint8_t val);
 int digitalRead(uint8_t pin);
 
 void attachInterrupt(uint8_t pin, void (*)(void), int mode);
 void attachInterruptArg(uint8_t pin, void (*)(void*), void * arg, int mode);
 void detachInterrupt(uint8_t pin);
-
 
 
 #endif //_AP3_GPIO_H_
