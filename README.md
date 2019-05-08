@@ -11,12 +11,25 @@
 
 ## Development Status
 
-The basic necesseties are in-place. This means that you can compile and upload code to your Apollo3 board. Development can be done with the whole range of Hardware Abstraction Layer functions provided in the AmbiqSuite Software Development Kit (based on Release2.1.0). Current focus is to begin building support for the essential Arduino libraries including:
+The basic necesseties are in-place. This means that you can compile and upload code to your Apollo3 board. Development can be done with the whole range of Hardware Abstraction Layer functions provided in the AmbiqSuite Software Development Kit (based on Release2.1.0). 
+
+Current focus is to begin building support for the essential Arduino libraries including:
+  * Serial: Fully implemented (will fix bugs and tweak performance over time)
   * GPIO
+    * Working:
+      * ditigal functions (read / write)
+    * Under Construction:
+      * analog functions
+      * interrupts
   * Timing
+    * Working:
+      * delay
+      * delayMicroseconds
+    * Under Construction:
+      * millis
+      * micros
   * Wire
   * SPI
-  * Serial
 
 
 ## Installation
