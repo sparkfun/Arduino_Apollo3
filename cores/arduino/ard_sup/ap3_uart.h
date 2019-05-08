@@ -27,6 +27,13 @@ SOFTWARE.
 #include "ap3_uart_types.h"
 
 #include "HardwareSerial.h"
+#include "RingBuffer.h"
+
+#ifndef AP3_UART_RINGBUFF_SIZE
+#define AP3_UART_RINGBUFF_SIZE 256
+#endif
+
+typedef RingBufferN<AP3_UART_RINGBUFF_SIZE> AP3UartRingBuffer;
 
 extern const am_hal_uart_config_t ap3_uart_config_default;
 
@@ -58,13 +65,17 @@ class Uart : public HardwareSerial
 		size_t write(const uint8_t data);
 		size_t write(const uint8_t *buffer, size_t size);
 		uint32_t printf(const char *pcFmt, ...);
-		// using Print::write; // pull in write(str) and write(buf, size) from Print
+		using Print::write; // pull in write(str) and write(buf, size) from Print
 
-		// void IrqHandler();
+		void rx_isr( void );
 
 		operator bool() { return true; } // todo: wait for a serial terminal to be open... probably depends on RTS or CTS...
 
 	private:
+	public: //temporary
+		AP3UartRingBuffer		_rx_buffer;	// These buffers guarantee the lifespan of the data to transmit
+		AP3UartRingBuffer		_tx_buffer;	//		to allow for asynchronous tranfsers
+
 		uint8_t 				_instance;
 		void*  					_handle;
 		am_hal_uart_config_t	_config;

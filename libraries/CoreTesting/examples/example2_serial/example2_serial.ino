@@ -23,7 +23,7 @@ void setup() {
 
   SERIAL_PORT.begin(115200);
 
-  //  while(!SERIAL_PORT){}; // todo
+    while(!SERIAL_PORT){}; // todo: right now this falls straight through
 
   SERIAL_PORT.println("SparkFun Arduino Apollo3 Serial Example");
   SERIAL_PORT.printf("Compiled on %s, %s\n\n", __DATE__, __TIME__); // Look! You can use printf, if you so choose
@@ -31,8 +31,16 @@ void setup() {
   SERIAL_PORT.print("Your Apollo3 variant has ");
   SERIAL_PORT.print(AP3_VARIANT_NUM_PINS);
   SERIAL_PORT.println(" pins.");
+  SERIAL_PORT.println();
 }
 
 void loop() {
+
+  if(SERIAL_PORT.available()){
+    while(SERIAL_PORT.available()){
+      char c = SERIAL_PORT.read();
+      SERIAL_PORT.write(c);
+    }
+  }
 
 }

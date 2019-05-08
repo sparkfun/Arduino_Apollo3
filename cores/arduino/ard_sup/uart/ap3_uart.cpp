@@ -21,6 +21,10 @@ SOFTWARE.
 */
 #include "ap3_uart.h"
 
+#define AP3_NUM_UART 2
+
+Uart* ap3_uart_handles[AP3_NUM_UART] = {0};
+
 Uart::Uart(uint8_t instance, ap3_gpio_pin_t pinRX, ap3_gpio_pin_t pinTX, ap3_gpio_pin_t pinRTS, ap3_gpio_pin_t pinCTS){
     _instance   =   instance;
     _handle     =   NULL;
@@ -52,27 +56,28 @@ void Uart::begin(unsigned long baudrate, am_hal_uart_config_t config){
 }
 
 void Uart::end(){
-
+    // todo:
 }
 
 int Uart::available(){
-
+    return _rx_buffer.available();
 }
 
 int Uart::availableForWrite(){
-
+    // return _tx_buffer.availableForStore();
+    return 127; // todo:
 }
 
 int Uart::peek(){
-
+    return _rx_buffer.peek();
 }
 
 int Uart::read(){
-
+    return _rx_buffer.read_char();
 }
 
 void Uart::flush(){
-
+    // todo:
 }
 
 size_t Uart::write(const uint8_t data){
@@ -82,6 +87,8 @@ size_t Uart::write(const uint8_t data){
 size_t Uart::write(const uint8_t *buffer, size_t size){
     uint32_t ui32BytesWritten = 0;
 
+    // todo: use a local buffer to guarantee lifespan of data (maybe txbuffer, but maybe not a ring buffer? b/c of efficiency + not breaking up transfers)
+
     const am_hal_uart_transfer_t sUartWrite =
     {
         .ui32Direction = AM_HAL_UART_WRITE,
@@ -90,9 +97,7 @@ size_t Uart::write(const uint8_t *buffer, size_t size){
         .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
         .pui32BytesTransferred = (uint32_t*)&ui32BytesWritten,
     };
-
     am_hal_uart_transfer(_handle, &sUartWrite);
-
     return ui32BytesWritten;
 }
 
@@ -184,6 +189,16 @@ ap3_err_t Uart::_begin( void ){
     retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);             if( retval != AP3_OK){ return ap3_return(retval); }
     retval = (ap3_err_t)am_hal_uart_configure(_handle, &_config);                                   if( retval != AP3_OK){ return ap3_return(retval); }
 
+    UARTn(_instance)->LCRH_b.FEN = 0; // Disable that pesky FIFO
+
+    // Enable RX interrupts
+    NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + _instance));
+    am_hal_uart_interrupt_enable(_handle, (AM_HAL_UART_INT_RX));
+    am_hal_interrupt_master_enable();
+
+    // Register the class into the local list
+    ap3_uart_handles[_instance] = this;
+
     return retval;
 }
 
@@ -254,89 +269,52 @@ invalid_args:
     return retval;
 }
 
-// ap3_err_t Uart::_begin_pins( uint8_t instance, ap3_gpio_pin_t pinRX, ap3_gpio_pin_t pinTX, ap3_gpio_pin_t pinRTS, ap3_gpio_pin_t pinCTS ){
-//     ap3_err_t retval = AP3_OK;
-//     am_hal_gpio_pincfg_t pincfg = AP3_GPIO_DEFAULT_PINCFG;
-//     uint8_t funcsel = 0;
+//*****************************************************************************
+//
+// Interrupt handler for the UART.
+//
+//*****************************************************************************
+inline void Uart::rx_isr( void ){
 
-//     // Check for a valid instance
-//     // Check pins for compatibility with the selcted instance
+  uint32_t ui32Status;
 
-//     if( (_pinRX == AP3_UART_PIN_UNUSED) && (_pinTX == AP3_UART_PIN_UNUSED) && (_pinRTS == AP3_UART_PIN_UNUSED) && (_pinCTS == AP3_UART_PIN_UNUSED) ){
-//         return AP3_ERR; // must provide at least one pin
-//     }
+  // Read the masked interrupt status from the UART.
+  am_hal_uart_interrupt_status_get(_handle, &ui32Status, true);
+  am_hal_uart_interrupt_clear(_handle, ui32Status);
+  am_hal_uart_interrupt_service(_handle, ui32Status, 0);
 
-//     _pinRX = pinRX;
+  if (ui32Status & AM_HAL_UART_INT_RX)
+  {
+    uint32_t    ui32BytesRead = 0x00;
+    uint8_t     rx_c = 0x00;
 
-//     ap3_debug_check_value_edge( _pinRX );
-//     ap3_debug_check_value_edge( 13 );
+    am_hal_uart_transfer_t sRead =
+    {
+      .ui32Direction = AM_HAL_UART_READ,
+      .pui8Data = (uint8_t *) &rx_c,
+      .ui32NumBytes = 1,
+      .ui32TimeoutMs = 0,
+      .pui32BytesTransferred = &ui32BytesRead,
+    };
+    am_hal_uart_transfer(_handle, &sRead);
 
-//     if( _pinTX != AP3_UART_PIN_UNUSED ){
-
-//         // ap3_debug_check_retval_edge( (ap3_err_t)_pinTX );
-//         // ap3_debug_check_value_edge( 13 );
-        
-
-//         retval = ap3_uart_pad_funcsel( _instance, AP3_UART_TX, ap3_gpio_pin2pad( _pinTX ), &funcsel);
-//         if( retval != AP3_OK ){ return retval; }
-//         pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-//         pinMode( _pinTX, pincfg, &retval );   if( retval != AP3_OK){ return ap3_return(retval); }
-//         pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
-//     }
-
-//     if( _pinRX != AP3_UART_PIN_UNUSED ){
-//         retval = ap3_uart_pad_funcsel( _instance, AP3_UART_RX, ap3_gpio_pin2pad( _pinRX ), &funcsel);
-//         if( retval != AP3_OK ){ return retval; }
-//         pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-//         pinMode( _pinRX, pincfg, &retval );   if( retval != AP3_OK){ return ap3_return(retval); }
-//         pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
-//     }
-
-//     if( _pinRTS != AP3_UART_PIN_UNUSED ){
-//         retval = ap3_uart_pad_funcsel( _instance, AP3_UART_TX, ap3_gpio_pin2pad( _pinRTS ), &funcsel);
-//         if( retval != AP3_OK ){ return retval; }
-//         pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-//         pinMode( _pinRTS, pincfg, &retval );   if( retval != AP3_OK){ return ap3_return(retval); }
-//         pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
-//     }
-
-//     if( _pinCTS != AP3_UART_PIN_UNUSED ){
-//         retval = ap3_uart_pad_funcsel( _instance, AP3_UART_RX, ap3_gpio_pin2pad( _pinCTS ), &funcsel);
-//         if( retval != AP3_OK ){ return retval; }
-//         pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-//         pinMode( _pinCTS, pincfg, &retval );   if( retval != AP3_OK){ return ap3_return(retval); }
-//         pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
-//     }
-
-//     // Now that pins are initialized start the actual driver
-//     retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);                                if( retval != AP3_OK){ return ap3_return(retval); }
-//     retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);             if( retval != AP3_OK){ return ap3_return(retval); }
-//     retval = (ap3_err_t)am_hal_uart_configure(_handle, &_config);                                   if( retval != AP3_OK){ return ap3_return(retval); }
-
-//     return retval;
-// }
+    if( ui32BytesRead ){
+        _rx_buffer.store_char(rx_c);
+    }
+  }
+}
 
 
-// ap3_err_t Uart::initialize( ){
-//     ap3_err_t retval = AP3_OK;
+// Individual ISR implementations for the two UART peripherals on the Apollo3
+extern "C" void am_uart_isr(void){    
+    if(ap3_uart_handles[0] != NULL){
+        ap3_uart_handles[0]->rx_isr();
+    }
+}
 
-//     //
-//     // Initialize, power up, and configure the communication UART. Use the
-//     // custom configuration if it was provided. Otherwise, just use the default
-//     // configuration.
-//     //
-//     retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);                        if( retval != AP3_OK){ return ap3_return(retval); }
-//     retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);     if( retval != AP3_OK){ return ap3_return(retval); }
-//     // retval = (ap3_err_t)am_hal_uart_configure(_handle, &g_sBspUartConfig);                  if( retval != AP3_OK){ return ap3_return(retval); }
+extern "C" void am_uart1_isr(void){
+    if(ap3_uart_handles[1] != NULL){
+        ap3_uart_handles[1]->rx_isr();
+    }
+}
 
-//     //
-//     // Enable the UART pins.
-//     //
-//     am_hal_gpio_pinconfig(AM_BSP_GPIO_COM_UART_TX, g_AM_BSP_GPIO_COM_UART_TX);
-//     am_hal_gpio_pinconfig(AM_BSP_GPIO_COM_UART_RX, g_AM_BSP_GPIO_COM_UART_RX);
-
-//     //
-//     // Register the BSP print function to the STDIO driver.
-//     //
-//     am_util_stdio_printf_init(am_bsp_uart_string_print);
-// }

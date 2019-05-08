@@ -150,8 +150,8 @@ const am_hal_uart_config_t ap3_uart_config_default = {
     //
     // Buffers
     //
-    .pui8TxBuffer = NULL,
+    .pui8TxBuffer = 0,
     .ui32TxBufferSize = 0,
-    .pui8RxBuffer = NULL,
+    .pui8RxBuffer = 0,
     .ui32RxBufferSize = 0,
 };

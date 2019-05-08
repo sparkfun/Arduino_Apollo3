@@ -29,11 +29,6 @@
 /* default implementation: may be overridden */
 size_t Print::write(const uint8_t *buffer, size_t size)
 {
-  digitalWrite(46, LOW);
-  digitalWrite(37, LOW);
-  digitalWrite(44, HIGH);
-  digitalWrite(47, LOW);
-
   size_t n = 0;
   while (size--) {
     if (write(*buffer++)) n++;
