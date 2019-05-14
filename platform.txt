@@ -120,6 +120,10 @@ recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.fl
 recipe.size.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
 
+## Preprocessor
+preproc.macros.flags=-w -x c++ -E -CC
+recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
+
 # Convert the binary to a unsecure blob
 recipe.hooks.objcopy.postobjcopy.1.pattern="{runtime.platform.path}/tools/apollo3_scripts/artemis_bin_to_blob.exe" --bin "{build.path}/{build.project_name}.bin" --load-address 0xC000 --magic-num 0xCB -o "{build.path}/main_nonsecure_ota" --version 0x0 --loglevel 0
 recipe.hooks.objcopy.postobjcopy.2.pattern="{runtime.platform.path}/tools/apollo3_scripts/artemis_ota_to_wire.exe" --load-address 0x20000 --bin "{build.path}/main_nonsecure_ota.bin" -i 6 -o "{build.path}/main_nonsecure_wire" --options 0x1 --loglevel 0
