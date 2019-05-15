@@ -96,27 +96,27 @@ libs.all={archive_file_path} {libs.extra} {libs.ambiq_sdk} {libs.cmsis} {libs.co
 
 ## Arduino Patterns
 
-# compile c files
+## compile c files
 recipe.c.o.pattern="{compiler.path}/{compiler.cmd.c}" {compiler.flags.c} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
 
-# compile c++ files
+## compile c++ files
 recipe.cpp.o.pattern="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
 
-# compile S files
+## compile S files
 recipe.S.o.pattern="{compiler.path}/{compiler.cmd.S}" {compiler.flags.S} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
 
-# Create archives
-# archive_file_path is needed for backwards compatibility with IDE 1.6.5 or older, IDE 1.6.6 or newer overrides this value
+## Create archives
+## archive_file_path is needed for backwards compatibility with IDE 1.6.5 or older, IDE 1.6.6 or newer overrides this value
 archive_file_path={build.path}/{archive_file}
 recipe.ar.pattern="{compiler.path}/{compiler.cmd.ar}" {compiler.flags.ar} "{archive_file_path}" "{object_file}"
 
-# Combine gc-sections, archives, and objects (.axf)
+## Combine gc-sections, archives, and objects (.axf)
 recipe.c.combine.pattern="{compiler.path}/{compiler.cmd.axf}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.flags.ld}
 
-# Create output (.bin)
+## Create output (.bin)
 recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.flags.axf2bin} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"
 
-# Compute size
+## Compute size
 recipe.size.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
 
@@ -124,7 +124,7 @@ recipe.size.regex=\.text\s+([0-9]+).*
 preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
 
-# Convert the binary to a unsecure blob
+## Convert the binary to a unsecure blob
 recipe.hooks.objcopy.postobjcopy.1.pattern="{runtime.platform.path}/tools/apollo3_scripts/artemis_bin_to_blob.exe" --bin "{build.path}/{build.project_name}.bin" --load-address 0xC000 --magic-num 0xCB -o "{build.path}/main_nonsecure_ota" --version 0x0 --loglevel 0
 recipe.hooks.objcopy.postobjcopy.2.pattern="{runtime.platform.path}/tools/apollo3_scripts/artemis_ota_to_wire.exe" --load-address 0x20000 --bin "{build.path}/main_nonsecure_ota.bin" -i 6 -o "{build.path}/main_nonsecure_wire" --options 0x1 --loglevel 0
 
