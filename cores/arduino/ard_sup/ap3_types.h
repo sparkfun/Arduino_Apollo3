@@ -51,4 +51,7 @@ typedef uint8_t ap3_gpio_pin_t;     // pins are the "prettified" names for conne
 typedef uint8_t ap3_gpio_pad_t;     // pads refer directly to what's on the MCU
                                     // Therefore you use the pinmap to find out the pad that is associated to the requested pin
 
+
+typedef uint8_t byte;
+
 #endif // _AP3_TYPES_H_

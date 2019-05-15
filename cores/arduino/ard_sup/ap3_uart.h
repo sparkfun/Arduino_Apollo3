@@ -79,10 +79,10 @@ class Uart : public HardwareSerial
 		uint8_t 				_instance;
 		void*  					_handle;
 		am_hal_uart_config_t	_config;
-		uint8_t 				_pinRX;
-		uint8_t 				_pinTX;
-		uint8_t 				_pinRTS;
-		uint8_t 				_pinCTS;
+		ap3_gpio_pin_t 			_pinRX;
+		ap3_gpio_pin_t 			_pinTX;
+		ap3_gpio_pin_t 			_pinRTS;
+		ap3_gpio_pin_t 			_pinCTS;
 
 		ap3_err_t				set_config( HardwareSerial_Config_e HWSconfig );
 		ap3_err_t 				_begin( void ); // call once all members + config structure are set up
