@@ -188,9 +188,6 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 
 	// ToDo: better error reporting	
 	uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
-
-	Serial.println(retVal32, HEX);
-
 	switch( retVal32 ){
 		case AM_HAL_STATUS_SUCCESS : 
 			return 0;
