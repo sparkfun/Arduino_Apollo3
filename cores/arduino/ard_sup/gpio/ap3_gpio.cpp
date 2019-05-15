@@ -23,8 +23,7 @@ typedef struct {
 } InterruptHandle_t;
 // static InterruptHandle_t __pinInterruptHandlers[AP3_GPIO_MAX_EXT_INT_HANDLERS] = {0,};
 
-void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
-    ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
+void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
     if(!ap3_gpio_is_valid(pad)) {
         if( retval != NULL){
             *retval = AP3_OUT_OF_RANGE; 
@@ -34,8 +33,16 @@ void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
     am_hal_gpio_pinconfig(pad, mode);
 }
 
-extern void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode)
-{
+void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode){
+    padMode(pad, mode, NULL);
+}
+
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
+    ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
+    padMode(pad, mode, retval);
+}
+
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode){
     pinMode(pin, mode, NULL);
 }
 

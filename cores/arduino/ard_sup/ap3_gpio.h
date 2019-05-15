@@ -53,6 +53,9 @@ extern ap3_gpio_pad_t  ap3_gpio_pin2pad(ap3_gpio_pin_t pin);
 inline bool ap3_gpio_is_valid(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 inline bool ap3_gpio_has_gpio(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 
+void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode);
+void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t* retval);
+
 void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode);
 void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval);
 void digitalWrite(uint8_t pin, uint8_t val);
