@@ -19,27 +19,32 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _AP3_VARIANT_H_
-#define _AP3_VARIANT_H_
+
+// IOMaster is a parent class that contains SPI and I2C functionality for the Apollo3
+
+#ifndef _AP3_IOMASTER_H_
+#define _AP3_IOMASTER_H_
 
 #include "Arduino.h"
+#include "ap3_iomaster_types.h"
 
-#define AP3_VARIANT_NUM_PINS (50)
+class IOMaster {
+private:
+protected:
+    uint8_t             _instance;
+    void*               _handle;
+    am_hal_iom_config_t _config;
 
-// Pin map declaration
-extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
+public:
+    IOMaster(uint8_t instance);
+    ap3_err_t initialize( void );
+    ap3_err_t initialize(am_hal_iom_config_t config);
+};
 
-// Uart declarations
-class Uart;         // Forward declaration of Uart
-extern Uart Serial;
 
-// Wire defines
-#define WIRE_INTERFACES_COUNT 2
 
-#define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
-#define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
+ap3_err_t ap3_iom_pad_funcsel( uint8_t instance, ap3_iom_pad_type_e type, ap3_gpio_pad_t* pad, uint8_t* funcsel );
 
-#define WireAccel Wire1
-#define AP3_Wire1_IOM 3
 
-#endif // _AP3_VARIANT_H_
+
+#endif // _AP3_IOMASTER_H_

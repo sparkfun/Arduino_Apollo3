@@ -19,27 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _AP3_VARIANT_H_
-#define _AP3_VARIANT_H_
 
-#include "Arduino.h"
+#ifndef _AP3_IOM_TYPES_H_
+#define _AP3_IOM_TYPES_H_
 
-#define AP3_VARIANT_NUM_PINS (50)
+#define AP3_IOM_PIN_UNUSED 0xFF
 
-// Pin map declaration
-extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
+typedef enum{
+	AP3_IOM_I2C_SCL = 0x00,
+	AP3_IOM_I2C_SDA,
+    AP3_IOM_SPI_SCLK,
+	AP3_IOM_SPI_MOSI,
+    AP3_IOM_SPI_MISO,
+    
+    AP3_IOM_PAD_TYPES_NUM,
+}ap3_iom_pad_type_e;
 
-// Uart declarations
-class Uart;         // Forward declaration of Uart
-extern Uart Serial;
-
-// Wire defines
-#define WIRE_INTERFACES_COUNT 2
-
-#define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
-#define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
-
-#define WireAccel Wire1
-#define AP3_Wire1_IOM 3
-
-#endif // _AP3_VARIANT_H_
+#endif // _AP3_IOM_TYPES_H_
