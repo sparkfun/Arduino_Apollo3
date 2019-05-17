@@ -20,9 +20,9 @@
 
 ###############################################################
 
-amap3bare.name=Ambiq Apollo3 Bare
-amap3bare.build.variant=Ambiq_Apollo3_Bare
-amap3bare.build.board=AM_AP3_BARE
+amap3bare.name=SparkFun BlackBoard Artemis
+amap3bare.build.variant=SparkFun_BlackBoard_Artemis
+amap3bare.build.board=AM_AP3_SFE_BB_ARTEMIS
 amap3bare.upload.tool=ap3Loader
 amap3bare.upload.maximum_size=960000
 amap3bare.build.arch=APOLLO3
