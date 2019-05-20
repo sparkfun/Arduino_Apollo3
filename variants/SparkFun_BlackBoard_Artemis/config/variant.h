@@ -38,4 +38,11 @@ extern Uart Serial;
 
 #define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
 #define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
+
+// SPI Defines
+#define SPI_INTERFACES_COUNT 1
+
+#define AP3_SPI_IOM 0                   // Specify that SPI uses IOMaster 0
+#define AP3_SPI_DUP ap3_spi_full_duplex // Specify that SPI is full-duplex (as opposed to ap3_spi_tx_only or ap3_spi_rx_only)
+
 #endif // _AP3_VARIANT_H_

@@ -124,7 +124,7 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
     uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
     if (retVal32 != 0)
     {
-        Serial.println("got an error on requestFrom");
+        // Serial.println("got an error on requestFrom");
         return retVal32;
     }
 

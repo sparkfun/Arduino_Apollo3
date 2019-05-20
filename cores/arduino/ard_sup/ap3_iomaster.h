@@ -39,6 +39,7 @@ public:
     IOMaster(uint8_t instance);
     ap3_err_t initialize( void );
     ap3_err_t initialize(am_hal_iom_config_t config);
+    ap3_err_t deinitialize( void );
 };
 
 

@@ -35,25 +35,35 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config){
     uint32_t retVal32 = 0;
     _config = config;
 
-    // Initialize the IOM.
+    am_hal_iom_disable(_handle);
+    am_hal_iom_uninitialize(_handle);
+    
     retVal32 = am_hal_iom_initialize(_instance, &_handle);
-    if (retVal32 != AM_HAL_STATUS_SUCCESS) return AP3_ERR; // -1;
+    if (retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
 
     retVal32 = am_hal_iom_power_ctrl(_handle, AM_HAL_SYSCTRL_WAKE, false);
-    if (retVal32 != AM_HAL_STATUS_SUCCESS) return AP3_ERR; // -2;
+    if (retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
     
-    // Set the required configuration settings for the IOM.
     retVal32 = am_hal_iom_configure(_handle, &_config);
-    if (retVal32 != AM_HAL_STATUS_SUCCESS) return AP3_ERR; // -3;
+    if (retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
 
-    // Enable the IOM.
     retVal32 = am_hal_iom_enable(_handle);
-    if (retVal32 != AM_HAL_STATUS_SUCCESS) return AP3_ERR; // -4;
+    if (retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
 
     // Configure the IOM pins. (Must be done by the inherited classes [this is just a reminder])
 }
 
+ap3_err_t IOMaster::deinitialize( void ){
+    uint32_t retVal32 = 0;
+    
+    retVal32 = am_hal_iom_disable(_handle);
+    if( retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
 
+    retVal32 = am_hal_iom_uninitialize(_handle);
+    if( retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
+
+    return AP3_OK;
+}
 
 
 ap3_err_t ap3_iom_pad_funcsel( uint8_t instance, ap3_iom_pad_type_e type, ap3_gpio_pad_t* pad, uint8_t* funcsel){
