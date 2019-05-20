@@ -29,7 +29,9 @@ Current focus is to begin building support for the essential Arduino libraries i
       * millis
       * micros
   * Wire
+   * Working: 90% use case, master I2C interface. 
   * SPI
+   * Working: transfers with SPISettings.
 
 
 ## Installation
