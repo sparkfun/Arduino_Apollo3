@@ -76,7 +76,7 @@ const ap3_uart_pad_map_elem_t ap3_uart0_cts_map[AP3_UART0_NUM_CTS_PADS] = {
     {.pad = 38, .funcsel = AM_HAL_PIN_38_UART0CTS},
 };
 
-const ap3_uart_pad_map_elem_t ap3_uart1_tx_map[AP3_UART0_NUM_TX_PADS] = {
+const ap3_uart_pad_map_elem_t ap3_uart1_tx_map[AP3_UART1_NUM_TX_PADS] = {
     {.pad = 8, .funcsel = AM_HAL_PIN_8_UART1TX},
     {.pad = 12, .funcsel = AM_HAL_PIN_12_UART1TX},
     {.pad = 14, .funcsel = AM_HAL_PIN_14_UART1TX},
@@ -90,7 +90,7 @@ const ap3_uart_pad_map_elem_t ap3_uart1_tx_map[AP3_UART0_NUM_TX_PADS] = {
     {.pad = 46, .funcsel = AM_HAL_PIN_46_UART1TX},
 };
 
-const ap3_uart_pad_map_elem_t ap3_uart1_rx_map[AP3_UART0_NUM_RX_PADS] = {
+const ap3_uart_pad_map_elem_t ap3_uart1_rx_map[AP3_UART1_NUM_RX_PADS] = {
     {.pad = 9, .funcsel = AM_HAL_PIN_9_UART1RX},
     {.pad = 13, .funcsel = AM_HAL_PIN_13_UART1RX},
     {.pad = 15, .funcsel = AM_HAL_PIN_15_UART1RX},
@@ -104,7 +104,7 @@ const ap3_uart_pad_map_elem_t ap3_uart1_rx_map[AP3_UART0_NUM_RX_PADS] = {
     {.pad = 47, .funcsel = AM_HAL_PIN_47_UART1RX},
 };
 
-const ap3_uart_pad_map_elem_t ap3_uart1_rts_map[AP3_UART0_NUM_RTS_PADS] = {
+const ap3_uart_pad_map_elem_t ap3_uart1_rts_map[AP3_UART1_NUM_RTS_PADS] = {
     {.pad = 10, .funcsel = AM_HAL_PIN_10_UART1RTS},
     {.pad = 16, .funcsel = AM_HAL_PIN_16_UART1RTS},
     {.pad = 20, .funcsel = AM_HAL_PIN_20_UART1RTS},
@@ -115,7 +115,7 @@ const ap3_uart_pad_map_elem_t ap3_uart1_rts_map[AP3_UART0_NUM_RTS_PADS] = {
     {.pad = 44, .funcsel = AM_HAL_PIN_44_UART1RTS},
 };
 
-const ap3_uart_pad_map_elem_t ap3_uart1_cts_map[AP3_UART0_NUM_CTS_PADS] = {
+const ap3_uart_pad_map_elem_t ap3_uart1_cts_map[AP3_UART1_NUM_CTS_PADS] = {
     {.pad = 11, .funcsel = AM_HAL_PIN_11_UART1CTS},
     {.pad = 17, .funcsel = AM_HAL_PIN_17_UART1CTS},
     {.pad = 21, .funcsel = AM_HAL_PIN_21_UART1CTS},
