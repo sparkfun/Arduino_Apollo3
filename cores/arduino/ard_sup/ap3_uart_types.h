@@ -35,16 +35,18 @@ SOFTWARE.
 #define AP3_UART1_NUM_RTS_PADS 8
 #define AP3_UART1_NUM_CTS_PADS 8
 
-typedef enum{
+typedef enum
+{
 	AP3_UART_TX = 0x00,
 	AP3_UART_RX,
 	AP3_UART_RTS,
 	AP3_UART_CTS,
-}ap3_uart_pad_type_e;
+} ap3_uart_pad_type_e;
 
-typedef struct _ap3_uart_pad_map_elem_t{
-    ap3_gpio_pad_t  pad;
-    uint8_t         funcsel;
-}ap3_uart_pad_map_elem_t;
+typedef struct _ap3_uart_pad_map_elem_t
+{
+	ap3_gpio_pad_t pad;
+	uint8_t funcsel;
+} ap3_uart_pad_map_elem_t;
 
 #endif // _AP3_UART_TYPES_H_
