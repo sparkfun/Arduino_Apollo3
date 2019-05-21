@@ -46,6 +46,7 @@ void Uart::begin(unsigned long baudrate, uint16_t config)
 {
     ap3_err_t retval = AP3_OK;
     retval = set_config((HardwareSerial_Config_e)config);
+    _config.ui32BaudRate = baudrate;
     if (retval != AP3_OK)
     {
         return;
@@ -58,6 +59,7 @@ void Uart::begin(unsigned long baudrate, am_hal_uart_config_t config)
 {
     ap3_err_t retval = AP3_OK;
     _config = config;
+    _config.ui32BaudRate = baudrate;
 
     retval = _begin();
     return;
