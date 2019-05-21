@@ -30,14 +30,15 @@ SOFTWARE.
 extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
 
 // Uart declarations
-class Uart;         // Forward declaration of Uart
+class Uart; // Forward declaration of Uart
 extern Uart Serial;
+extern Uart Serial1;
 
 // Wire defines
 #define WIRE_INTERFACES_COUNT 1
 
-#define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
-#define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
+#define WireQwiic Wire // Giving Wire an alias of "WireQwiic" in case people want to use it
+#define AP3_Wire_IOM 4 // Secify that Wire uses IOMaster instance 4
 
 // SPI Defines
 #define SPI_INTERFACES_COUNT 1
