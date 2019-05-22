@@ -52,7 +52,7 @@ ap3_err_t ap3_uart_pad_funcsel(uint8_t instance, ap3_uart_pad_type_e type, ap3_g
 class Uart : public HardwareSerial
 {
 public:
-	Uart(uint8_t instance, ap3_gpio_pin_t pinRX = 3, ap3_gpio_pin_t pinTX = 5, ap3_gpio_pin_t pinRTS = 7, ap3_gpio_pin_t pinCTS = AP3_UART_PIN_UNUSED);
+	Uart(uint8_t instance, ap3_gpio_pin_t pinRX, ap3_gpio_pin_t pinTX, ap3_gpio_pin_t pinRTS = AP3_UART_PIN_UNUSED, ap3_gpio_pin_t pinCTS = AP3_UART_PIN_UNUSED);
 	void begin(unsigned long baudRate);
 	void begin(unsigned long baudrate, uint16_t config);
 	void begin(unsigned long baudrate, am_hal_uart_config_t config);
