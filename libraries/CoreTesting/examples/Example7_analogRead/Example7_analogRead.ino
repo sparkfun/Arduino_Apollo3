@@ -19,126 +19,65 @@
   Max reading on ADC is 2V
 */
 
+#include <ap3_analog.h>
 
-/*
-  Should we pipe HAL print statements to a debug buffer?
-  am_util_stdio_printf() overwrite?
-*/
+#define LED 5 //Status LED
 
-//#define A1  13 //A1 on BB is GP13, SE8
+//Incase user uses the original Arduino style of pin referencing
+#define A16 16
+#define A29 29
 
-#define LED 5 //Should toggle LED on pin D13
 
-// ADC Device Handle.
-static void *g_ADCHandle;
+//Maintain a record of which pins are setup as analog
+//When user calls analogRead for the first time, setup pin and mark it
 
-// Define the ADC SE0 pin to be used.
-const am_hal_gpio_pincfg_t g_AM_PIN_16_ADCSE0 =
-{
-  .uFuncSel = AM_HAL_PIN_16_ADCSE0,
+
+//Map of pins and how they are configured
+//By default, all pins are GPIO at POR
+uint8_t configuredToAnalog[10] {
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
 };
 
 void setup() {
   Serial.begin(9600);
   Serial.println("SparkFun Arduino Apollo3 Analog Read example");
 
+  delay(100);
+
   pinMode(LED, OUTPUT);
 
-  // Set a pin to act as our ADC input
-  //am_hal_gpio_pinconfig(13, g_AM_PIN_13_ADCSE8);
-  am_hal_gpio_pinconfig(16, g_AM_PIN_16_ADCSE0);
+  //What is best way to prevent user from doing
+  //analogRead(not an analog pin); ?
+  //Force users to use A31 nomenclature?
 
-  adc_config();
-  //enable14BitAnalog(); //All analogReads will return 14 bit values instead of 12 bit
+  //There are 10 analog channels: SE0 to SE9 and map uncleanly to adc=pin, 2=11, 1=29, etc
+  //Do we want to label boards A29 or A1? I think A29. Continue the direct map to pin nomenclature.
 
-  //int myValue = analogRead(A1); //Returns 12-bit ADC value by default.
+  uint8_t retval = analogSetup(29); //Set pad to ADC input
+
+  adc_config(29);
+
+  analogReadResolution(14); //Set resolution to 14 bit
+  //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
 }
 
 void loop() {
   digitalWrite(LED, LOW);
 
-  int myValue14Bit = analogRead14(16); //Always returns 14-bit ADC value
+  int myValue = analogRead(16); //Always returns 14-bit ADC value
   Serial.print("analog: ");
-  Serial.print(myValue14Bit);
+  Serial.print(myValue);
   Serial.println();
   delay(50);
 
   digitalWrite(LED, HIGH);
-}
-
-//Maintain a record of which pins are setup as analog
-//When user calls analogRead for the first time, setup pin and mark it
-
-uint32_t analogRead14(uint8_t pin)
-{
-  uint32_t ui32IntMask;
-  am_hal_adc_sample_t Sample;
-  uint32_t ui32NumSamples = 1;
-
-  am_hal_adc_sw_trigger(g_ADCHandle);
-
-  if (AM_HAL_STATUS_SUCCESS != am_hal_adc_samples_read(g_ADCHandle,
-      true,
-      NULL,
-      &ui32NumSamples,
-      &Sample))
-  {
-    am_util_stdio_printf("Error - ADC sample read failed.\n");
-  }
-
-  return (Sample.ui32Sample);
-}
-
-// Configure the ADC.
-void adc_config(void)
-{
-  am_hal_adc_config_t           ADCConfig;
-  am_hal_adc_slot_config_t      ADCSlotConfig;
-
-  // Initialize the ADC and get the handle.
-  if ( AM_HAL_STATUS_SUCCESS != am_hal_adc_initialize(0, &g_ADCHandle) )
-  {
-    Serial.println("Error - reservation of the ADC instance failed.\n");
-  }
-
-  // Power on the ADC.
-  if (AM_HAL_STATUS_SUCCESS != am_hal_adc_power_control(g_ADCHandle,
-      AM_HAL_SYSCTRL_WAKE,
-      false) )
-  {
-    Serial.println("Error - ADC power on failed.\n");
-  }
-
-  // Set up the ADC configuration parameters. These settings are reasonable
-  // for accurate measurements at a low sample rate.
-  ADCConfig.eClock             = AM_HAL_ADC_CLKSEL_HFRC;
-  ADCConfig.ePolarity          = AM_HAL_ADC_TRIGPOL_RISING;
-  ADCConfig.eTrigger           = AM_HAL_ADC_TRIGSEL_SOFTWARE;
-  ADCConfig.eReference         = AM_HAL_ADC_REFSEL_INT_2P0;
-  ADCConfig.eClockMode         = AM_HAL_ADC_CLKMODE_LOW_POWER;
-  ADCConfig.ePowerMode         = AM_HAL_ADC_LPMODE0;
-  ADCConfig.eRepeat            = AM_HAL_ADC_SINGLE_SCAN;
-  if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure(g_ADCHandle, &ADCConfig))
-  {
-    Serial.println("Error - configuring ADC failed.\n");
-  }
-
-  // Set up an ADC slot
-  ADCSlotConfig.eMeasToAvg      = AM_HAL_ADC_SLOT_AVG_1;
-  ADCSlotConfig.ePrecisionMode  = AM_HAL_ADC_SLOT_10BIT;
-  ADCSlotConfig.eChannel        = AM_HAL_ADC_SLOT_CHSEL_SE0;
-  ADCSlotConfig.bWindowCompare  = false;
-  ADCSlotConfig.bEnabled        = true;
-  if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure_slot(g_ADCHandle, 0, &ADCSlotConfig))
-  {
-    Serial.println("Error - configuring ADC Slot 0 failed.\n");
-  }
-
-  // Enable the ADC.
-  if (AM_HAL_STATUS_SUCCESS != am_hal_adc_enable(g_ADCHandle))
-  {
-    Serial.println("Error - enabling ADC failed.\n");
-  }
-
-  Serial.println("ADC config complete");
 }
