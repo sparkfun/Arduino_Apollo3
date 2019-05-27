@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 #include "ap3_types.h"
+//#include "ap3_analog.h"
 #include "ap3_analog_types.h"
 
 const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS] = {
@@ -49,15 +50,6 @@ ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS] = {
     {.pad = 33, .isAnalog = false},
     {.pad = 34, .isAnalog = false},
     {.pad = 35, .isAnalog = false},
-};
-
-enum EXTRA_ADC_PADS
-{
-    ADC_DIFF0 = 50, //AP3_VARIANT_NUM_PINS
-    ADC_DIFF1,
-    ADC_TEMP,
-    ADC_DIV3,
-    ADC_VSS,
 };
 
 const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS] = {

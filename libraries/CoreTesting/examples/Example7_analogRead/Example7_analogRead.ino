@@ -35,15 +35,6 @@ void setup() {
 
   pinMode(LED, OUTPUT);
 
-  //What is best way to prevent user from doing
-  //analogRead(not an analog pin); ?
-  //Force users to use A31 nomenclature?
-  //Allow but return 0 or some error
-  //
-
-  //There are 10 analog channels: SE0 to SE9 and map uncleanly to adc=pin, 2=11, 1=29, etc
-  //Do we want to label boards A29 or A1? I think A29. Continue the direct map to pin nomenclature.
-
   //TODO reset analog configuration status back to false when user changes pin back to GPIO
   //pinMode()
   //Research way to tell what config the pin is in
@@ -52,14 +43,12 @@ void setup() {
 
   //analogReadResolution(14); //Set resolution to 14 bit
   //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
-
-  ap3_adc_setup();
 }
 
 void loop() {
   digitalWrite(LED, LOW);
 
-  int myValue1 = analogRead(34);
+  int myValue1 = analogRead(34); //Read pad 34, ADC channel 6
   Serial.print(" left val: ");
   Serial.print(myValue1);
 
@@ -67,6 +56,31 @@ void loop() {
   Serial.print(" right val: ");
   Serial.print(myValue2);
 
+  int internalTemp = analogRead(ADC_TEMP); //Read internal temp sensor
+  Serial.print(" internalTemp: ");
+  Serial.print(internalTemp);
+
+  int vss = analogRead(ADC_VSS); //Read internal VSS
+  Serial.print(" vss: ");
+  Serial.print(vss);
+
+  //TODO enable battload
+  int div3 = analogRead(ADC_DIV3); //Read VCC across a 1/3 resistor divider
+  Serial.print(" VCC/3: ");
+  Serial.print(div3);
+
+  //Todo: test overall read time
+  /*long startTime = millis();
+  uint32_t total = 0;
+  for(int x = 0 ; x < 100 ; x++)
+  {
+    total += analogRead(16);
+  }
+  Serial.print(" total: ");
+  Serial.print(total);
+  Serial.print(" totalTime: ");
+  Serial.print( (millis() - startTime) / 100);*/
+ 
   Serial.println();
 
   digitalWrite(LED, HIGH);

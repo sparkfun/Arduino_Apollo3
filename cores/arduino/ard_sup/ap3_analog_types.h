@@ -26,6 +26,15 @@ SOFTWARE.
 #define AP3_ANALOG_PADS 10
 #define AP3_ANALOG_CHANNELS 15
 
+enum EXTRA_ADC_PADS
+{
+    ADC_DIFF0 = 50, //AP3_VARIANT_NUM_PINS
+    ADC_DIFF1,
+    ADC_TEMP,
+    ADC_DIV3,
+    ADC_VSS,
+};
+
 typedef struct _ap3_analog_pad_map_elem_t
 {
     ap3_gpio_pad_t pad;

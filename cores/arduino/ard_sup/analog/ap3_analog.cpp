@@ -23,15 +23,6 @@ SOFTWARE.
 
 uint16_t _analogBits = 10; //10-bit by default
 
-enum EXTRA_ADC_PADS
-{
-    ADC_DIFF0 = 50, //AP3_VARIANT_NUM_PINS
-    ADC_DIFF1,
-    ADC_TEMP,
-    ADC_DIV3,
-    ADC_VSS,
-};
-
 uint16_t analogRead(uint8_t padNumber)
 {
     uint32_t ui32IntMask;

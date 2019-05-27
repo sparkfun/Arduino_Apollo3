@@ -24,7 +24,6 @@ SOFTWARE.
 
 #include "Arduino.h"
 
-void ap3_init( void ); // called immediately upon startup. Common to any AP3 board using Arduino Core, contains anything required to begin using the core
-
+void ap3_init(void); // called immediately upon startup. Common to any AP3 board using Arduino Core, contains anything required to begin using the core
 
 #endif // _AP3_INITIALIZATION_H_
