@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// #include "ap3_uart.h"
 #include "ap3_types.h"
 #include "ap3_analog_types.h"
 
@@ -37,7 +36,31 @@ const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS] = {
     {.pad = 35, .funcsel = AM_HAL_PIN_35_ADCSE7},
 };
 
-const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_PADS] = {
+//By default, all pins are GPIO at POR
+//This keeps track of what pads have function set to analog input
+ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS] = {
+    {.pad = 11, .isAnalog = false},
+    {.pad = 12, .isAnalog = false},
+    {.pad = 13, .isAnalog = false},
+    {.pad = 16, .isAnalog = false},
+    {.pad = 29, .isAnalog = false},
+    {.pad = 31, .isAnalog = false},
+    {.pad = 32, .isAnalog = false},
+    {.pad = 33, .isAnalog = false},
+    {.pad = 34, .isAnalog = false},
+    {.pad = 35, .isAnalog = false},
+};
+
+enum EXTRA_ADC_PADS
+{
+    ADC_DIFF0 = 50, //AP3_VARIANT_NUM_PINS
+    ADC_DIFF1,
+    ADC_TEMP,
+    ADC_DIV3,
+    ADC_VSS,
+};
+
+const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS] = {
     {.pad = 11, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE2},
     {.pad = 12, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE9},
     {.pad = 13, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE8},
@@ -48,4 +71,9 @@ const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_PADS] = {
     {.pad = 33, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE5},
     {.pad = 34, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE6},
     {.pad = 35, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE7},
+    {.pad = ADC_DIFF0, .eChannel = AM_HAL_ADC_SLOT_CHSEL_DF0},
+    {.pad = ADC_DIFF1, .eChannel = AM_HAL_ADC_SLOT_CHSEL_DF1},
+    {.pad = ADC_TEMP, .eChannel = AM_HAL_ADC_SLOT_CHSEL_TEMP},
+    {.pad = ADC_DIV3, .eChannel = AM_HAL_ADC_SLOT_CHSEL_BATT},
+    {.pad = ADC_VSS, .eChannel = AM_HAL_ADC_SLOT_CHSEL_VSS},
 };

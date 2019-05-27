@@ -23,14 +23,68 @@ SOFTWARE.
 
 uint16_t _analogBits = 10; //10-bit by default
 
+enum EXTRA_ADC_PADS
+{
+    ADC_DIFF0 = 50, //AP3_VARIANT_NUM_PINS
+    ADC_DIFF1,
+    ADC_TEMP,
+    ADC_DIV3,
+    ADC_VSS,
+};
+
 uint16_t analogRead(uint8_t padNumber)
 {
-
     uint32_t ui32IntMask;
     am_hal_adc_sample_t Sample;
     uint32_t ui32NumSamples = 1;
 
+    //Look up configuration status based on pad number
+    uint8_t indi;
+    for (indi = 0; indi < AP3_ANALOG_PADS; indi++)
+    {
+        if (ap3_analog_configure_map[indi].pad == padNumber)
+        {
+            if (ap3_analog_configure_map[indi].isAnalog == false)
+            {
+                if (ap3_set_pin_to_analog(padNumber) != AP3_OK)
+                {
+                    return 0; //Error
+                }
+                ap3_analog_configure_map[indi].isAnalog = true;
+            }
+            break;
+        }
+    }
+    if (indi == AP3_ANALOG_PADS)
+    {
+        return 0; //Error
+    }
+
+    ap3_change_channel(padNumber); //Point ADC channel at this pad
+
+    // Clear the ADC interrupt.
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask))
+    {
+        //am_util_stdio_printf("Error clearing ADC interrupt status\n");
+        return 0; //Error
+    }
+
     am_hal_adc_sw_trigger(g_ADCHandle);
+
+    //Wait for interrupt
+    while (1)
+    {
+        // Read the interrupt status.
+        if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false))
+        {
+            //am_util_stdio_printf("Error reading ADC interrupt status\n");
+            return 0; //Error
+        }
+        if (ui32IntMask & AM_HAL_ADC_INT_CNVCMP)
+            break;
+
+        delay(1);
+    }
 
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_samples_read(g_ADCHandle,
                                                          false,
@@ -38,76 +92,35 @@ uint16_t analogRead(uint8_t padNumber)
                                                          &ui32NumSamples,
                                                          &Sample))
     {
-        am_util_stdio_printf("Error - ADC sample read failed.\n");
+        //Serial.println("Error - ADC sample read failed.\n");
+        return 0; //Error
     }
+
+    uint32_t result = Sample.ui32Sample;
 
     //Shift result depending on resolution
     if (_analogBits <= 14)
     {
-        return (Sample.ui32Sample >> (14 - _analogBits));
+        return (result >> (14 - _analogBits));
     }
     else
     {
-        return (Sample.ui32Sample << (_analogBits - 14)); //Pad with zeros
+        return (result << (_analogBits - 14)); //Pad with zeros
     }
 }
 
 //Apollo3 is capapble of 14-bit ADC but Arduino defaults to 10-bit
-//This modifies the global var that controls what is returned from an analogRead()
+//This modifies the global var that controls what is returned from analogRead()
 void analogReadResolution(uint8_t bits)
 {
     _analogBits = bits;
 }
 
-//Set pad number to analog input
-ap3_err_t analogSetup(ap3_gpio_pad_t padNumber)
-{
-    ap3_err_t retval = AP3_ERR;
-
-    uint8_t funcsel = 0;
-    am_hal_gpio_pincfg_t pincfg = INPUT;
-
-    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(padNumber), &funcsel);
-    if (retval != AP3_OK)
-    {
-        return retval;
-    }
-    pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-    pinMode(padNumber, pincfg, &retval);
-}
-
-//Given pad number, assign ADC function
-ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel)
-{
-    ap3_err_t retval = AP3_ERR;
-
-    const ap3_analog_pad_map_elem_t *map = NULL;
-    uint8_t map_len = 0;
-
-    map = ap3_analog_map;
-    map_len = AP3_ANALOG_PADS;
-
-    for (uint16_t indi = 0; indi < map_len; indi++)
-    {
-        if (map[indi].pad == padNumber)
-        {
-            *funcsel = map[indi].funcsel;
-            return AP3_OK;
-        }
-    }
-    return retval;
-
-invalid_args:
-    retval = AP3_INVALID_ARG;
-    return retval;
-}
-
-ap3_err_t adc_config(ap3_gpio_pad_t padNumber)
+ap3_err_t ap3_adc_setup()
 {
     ap3_err_t retval = AP3_ERR;
 
     am_hal_adc_config_t ADCConfig;
-    am_hal_adc_slot_config_t ADCSlotConfig;
 
     // Initialize the ADC and get the handle.
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_initialize(0, &g_ADCHandle))
@@ -131,41 +144,12 @@ ap3_err_t adc_config(ap3_gpio_pad_t padNumber)
     ADCConfig.ePolarity = AM_HAL_ADC_TRIGPOL_RISING;
     ADCConfig.eTrigger = AM_HAL_ADC_TRIGSEL_SOFTWARE;
     ADCConfig.eReference = AM_HAL_ADC_REFSEL_INT_2P0;
-    ADCConfig.eClockMode = AM_HAL_ADC_CLKMODE_LOW_POWER;
+    ADCConfig.eClockMode = AM_HAL_ADC_CLKMODE_LOW_LATENCY;
     ADCConfig.ePowerMode = AM_HAL_ADC_LPMODE0;
     ADCConfig.eRepeat = AM_HAL_ADC_SINGLE_SCAN;
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure(g_ADCHandle, &ADCConfig))
     {
         //Serial.println("Error - configuring ADC failed.\n");
-        return AP3_ERR;
-    }
-
-    // Set up an ADC slot
-    ADCSlotConfig.eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1;
-    ADCSlotConfig.ePrecisionMode = AM_HAL_ADC_SLOT_14BIT;
-
-    //ADCSlotConfig.eChannel = AM_HAL_ADC_SLOT_CHSEL_SE0;
-
-    //Look up adc channel based on pad number
-    uint8_t indi;
-    for (indi = 0; indi < AP3_ANALOG_PADS; indi++)
-    {
-        if (ap3_analog_channel_map[indi].pad == padNumber)
-        {
-            ADCSlotConfig.eChannel = ap3_analog_channel_map[indi].eChannel;
-            break;
-        }
-    }
-    if (indi == AP3_ANALOG_PADS)
-    {
-        return AP3_ERR;
-    }
-
-    ADCSlotConfig.bWindowCompare = false;
-    ADCSlotConfig.bEnabled = true;
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure_slot(g_ADCHandle, 0, &ADCSlotConfig))
-    {
-        //Serial.println("Error - configuring ADC Slot 0 failed.\n");
         return AP3_ERR;
     }
 
@@ -177,4 +161,73 @@ ap3_err_t adc_config(ap3_gpio_pad_t padNumber)
     }
 
     return AP3_OK;
+}
+
+//Set function of pad number to analog input
+//TODO Support differential pairs 0/1
+ap3_err_t ap3_set_pin_to_analog(ap3_gpio_pad_t padNumber)
+{
+    ap3_err_t retval = AP3_ERR;
+
+    uint8_t funcsel = 0;
+    am_hal_gpio_pincfg_t pincfg = INPUT;
+
+    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(padNumber), &funcsel);
+    if (retval != AP3_OK)
+    {
+        return retval;
+    }
+    pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
+    pinMode(padNumber, pincfg, &retval);
+    return AP3_OK;
+}
+
+//Given pad number, assign ADC function
+ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel)
+{
+    ap3_err_t retval = AP3_ERR;
+
+    for (uint16_t indi = 0; indi < AP3_ANALOG_PADS; indi++)
+    {
+        if (ap3_analog_map[indi].pad == padNumber)
+        {
+            *funcsel = ap3_analog_map[indi].funcsel;
+            return AP3_OK;
+        }
+    }
+    return retval;
+}
+
+ap3_err_t ap3_change_channel(uint8_t channelNumber)
+{
+    am_hal_adc_slot_config_t ADCSlotConfig;
+
+    // Set up an ADC slot
+    ADCSlotConfig.eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1;
+    ADCSlotConfig.ePrecisionMode = AM_HAL_ADC_SLOT_14BIT;
+
+    //Look up adc channel based on pad number
+    uint8_t indi;
+    for (indi = 0; indi < AP3_ANALOG_CHANNELS; indi++)
+    {
+        if (ap3_analog_channel_map[indi].pad == channelNumber)
+        {
+            ADCSlotConfig.eChannel = ap3_analog_channel_map[indi].eChannel;
+            break;
+        }
+    }
+    if (indi == AP3_ANALOG_CHANNELS)
+    {
+        //Serial.println("Error - channel not found");
+        return AP3_ERR;
+    }
+
+    ADCSlotConfig.bWindowCompare = false;
+    ADCSlotConfig.bEnabled = true;
+
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure_slot(g_ADCHandle, 0, &ADCSlotConfig))
+    {
+        //Serial.println("Error - configuring ADC Slot 0 failed.\n");
+        return AP3_ERR;
+    }
 }

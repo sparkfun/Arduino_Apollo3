@@ -27,26 +27,6 @@
 #define A16 16
 #define A29 29
 
-
-//Maintain a record of which pins are setup as analog
-//When user calls analogRead for the first time, setup pin and mark it
-
-
-//Map of pins and how they are configured
-//By default, all pins are GPIO at POR
-uint8_t configuredToAnalog[10] {
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-};
-
 void setup() {
   Serial.begin(9600);
   Serial.println("SparkFun Arduino Apollo3 Analog Read example");
@@ -58,26 +38,37 @@ void setup() {
   //What is best way to prevent user from doing
   //analogRead(not an analog pin); ?
   //Force users to use A31 nomenclature?
+  //Allow but return 0 or some error
+  //
 
   //There are 10 analog channels: SE0 to SE9 and map uncleanly to adc=pin, 2=11, 1=29, etc
   //Do we want to label boards A29 or A1? I think A29. Continue the direct map to pin nomenclature.
 
-  uint8_t retval = analogSetup(29); //Set pad to ADC input
+  //TODO reset analog configuration status back to false when user changes pin back to GPIO
+  //pinMode()
+  //Research way to tell what config the pin is in
 
-  adc_config(29);
+  //There is internal temp sensor channel 0xC, and Batt 0xD
 
-  analogReadResolution(14); //Set resolution to 14 bit
+  //analogReadResolution(14); //Set resolution to 14 bit
   //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
+
+  ap3_adc_setup();
 }
 
 void loop() {
   digitalWrite(LED, LOW);
 
-  int myValue = analogRead(16); //Always returns 14-bit ADC value
-  Serial.print("analog: ");
-  Serial.print(myValue);
+  int myValue1 = analogRead(34);
+  Serial.print(" left val: ");
+  Serial.print(myValue1);
+
+  int myValue2 = analogRead(16);
+  Serial.print(" right val: ");
+  Serial.print(myValue2);
+
   Serial.println();
-  delay(50);
 
   digitalWrite(LED, HIGH);
+  delay(5);
 }

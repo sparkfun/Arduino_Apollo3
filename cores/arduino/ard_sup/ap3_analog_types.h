@@ -24,6 +24,7 @@ SOFTWARE.
 #define _AP3_ANALOG_TYPES_H_
 
 #define AP3_ANALOG_PADS 10
+#define AP3_ANALOG_CHANNELS 15
 
 typedef struct _ap3_analog_pad_map_elem_t
 {
@@ -36,5 +37,11 @@ typedef struct _ap3_analog_channel_map_elem_t
     ap3_gpio_pad_t pad;
     am_hal_adc_slot_chan_e eChannel;
 } ap3_analog_channel_map_elem_t;
+
+typedef struct _ap3_analog_configure_map_elem_t
+{
+    ap3_gpio_pad_t pad;
+    bool isAnalog;
+} ap3_analog_configure_map_elem_t;
 
 #endif // _AP3_ANALOG_TYPES_H_
