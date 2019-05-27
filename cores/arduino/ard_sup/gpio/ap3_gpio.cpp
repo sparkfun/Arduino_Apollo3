@@ -27,6 +27,21 @@ void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t *retval)
         return;
     }
     am_hal_gpio_pinconfig(pad, mode);
+
+    //Reset analog configuration flag if this pin has analog capabilities
+    uint8_t indi;
+    for (indi = 0; indi < AP3_ANALOG_PADS; indi++)
+    {
+        if (ap3_analog_configure_map[indi].pad == pad)
+        {
+            ap3_analog_configure_map[indi].isAnalog = false;
+            break;
+        }
+    }
+    if (indi == AP3_ANALOG_PADS)
+    {
+        //Serial.println("Error - analog status reset, pin not found");
+    }
 }
 
 void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode)

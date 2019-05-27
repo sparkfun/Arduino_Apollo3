@@ -39,7 +39,7 @@ uint16_t analogRead(uint8_t padNumber)
             {
                 if (ap3_set_pin_to_analog(padNumber) != AP3_OK)
                 {
-                    Serial.println("Error - set pin to analog");
+                    //Serial.println("Error - set pin to analog");
                     return 0; //Error
                 }
                 ap3_analog_configure_map[indi].isAnalog = true;
@@ -49,7 +49,7 @@ uint16_t analogRead(uint8_t padNumber)
     }
     if (indi == AP3_ANALOG_CHANNELS)
     {
-        Serial.println("Error - pin set to analog not found");
+        //Serial.println("Error - pin set to analog not found");
         return 0; //Error
     }
 
@@ -58,7 +58,7 @@ uint16_t analogRead(uint8_t padNumber)
     // Clear the ADC interrupt.
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask))
     {
-        Serial.println("Error clearing ADC interrupt status");
+        //Serial.println("Error clearing ADC interrupt status");
         return 0; //Error
     }
 
@@ -70,7 +70,7 @@ uint16_t analogRead(uint8_t padNumber)
         // Read the interrupt status.
         if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false))
         {
-            Serial.println("Error reading ADC interrupt status");
+            //Serial.println("Error reading ADC interrupt status");
             return 0; //Error
         }
         if (ui32IntMask & AM_HAL_ADC_INT_CNVCMP)
@@ -85,7 +85,7 @@ uint16_t analogRead(uint8_t padNumber)
                                                          &ui32NumSamples,
                                                          &Sample))
     {
-        Serial.println("Error - ADC sample read failed.\n");
+        //Serial.println("Error - ADC sample read failed.\n");
         return 0; //Error
     }
 
@@ -172,7 +172,7 @@ ap3_err_t ap3_set_pin_to_analog(ap3_gpio_pad_t padNumber)
     }
     pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
     pinMode(padNumber, pincfg, &retval);
-    return AP3_OK;
+    return retval;
 }
 
 //Given pad number, assign ADC function
