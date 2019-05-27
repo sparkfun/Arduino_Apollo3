@@ -1,60 +1,63 @@
 #include "ap3_gpio.h"
 #include "variant.h"
 
-ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin){
-    return ap3_variant_pinmap[pin];  
+ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin)
+{
+    return ap3_variant_pinmap[pin];
 }
 
-
-
-
-
-
-
-
-
-
 typedef void (*voidFuncPtr)(void);
-typedef void (*voidFuncPtrArg)(void*);
-typedef struct {
+typedef void (*voidFuncPtrArg)(void *);
+typedef struct
+{
     voidFuncPtr fn;
-    void* arg;
+    void *arg;
     bool functional;
 } InterruptHandle_t;
 // static InterruptHandle_t __pinInterruptHandlers[AP3_GPIO_MAX_EXT_INT_HANDLERS] = {0,};
 
-void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
-    if(!ap3_gpio_is_valid(pad)) {
-        if( retval != NULL){
-            *retval = AP3_OUT_OF_RANGE; 
+void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t *retval)
+{
+    if (!ap3_gpio_is_valid(pad))
+    {
+        if (retval != NULL)
+        {
+            *retval = AP3_OUT_OF_RANGE;
         }
         return;
     }
     am_hal_gpio_pinconfig(pad, mode);
 }
 
-void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode){
+void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode)
+{
     padMode(pad, mode, NULL);
 }
 
-void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval){
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t *retval)
+{
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
     padMode(pad, mode, retval);
 }
 
-void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode){
+void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode)
+{
     pinMode(pin, mode, NULL);
 }
 
 extern void digitalWrite(uint8_t pin, uint8_t val)
 {
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
-    if(!ap3_gpio_is_valid(pad)) {
+    if (!ap3_gpio_is_valid(pad))
+    {
         return;
     }
-    if(val){
+    if (val)
+    {
         am_hal_gpio_output_set(ap3_gpio_pin2pad(pin));
-    }else{
+    }
+    else
+    {
         am_hal_gpio_output_clear(ap3_gpio_pin2pad(pin));
     }
 }
@@ -62,7 +65,8 @@ extern void digitalWrite(uint8_t pin, uint8_t val)
 extern int digitalRead(uint8_t pin)
 {
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
-    if(!ap3_gpio_is_valid(pad)) {
+    if (!ap3_gpio_is_valid(pad))
+    {
         return 0;
     }
     // determine if output or input
@@ -70,9 +74,12 @@ extern int digitalRead(uint8_t pin)
     uint32_t ui32BaseShift = ((pad % 8) * 4) + 1;
     uint8_t output = ((AM_REGVAL(&GPIO->CFGA + ui32BaseAddr) >> ui32BaseShift) & 0x03);
 
-    if(output){
+    if (output)
+    {
         return (int)am_hal_gpio_output_read(pad);
-    }else{
+    }
+    else
+    {
         return (int)am_hal_gpio_input_read(pad);
     }
     return 0;
@@ -120,9 +127,9 @@ static void onPinInterrupt()
     // }
 }
 
-extern void cleanupFunctional(void* arg);
+extern void cleanupFunctional(void *arg);
 
-extern void attachInterruptFunctionalArg(uint8_t pin, voidFuncPtrArg userFunc, void * arg, int intr_type, bool functional)
+extern void attachInterruptFunctionalArg(uint8_t pin, voidFuncPtrArg userFunc, void *arg, int intr_type, bool functional)
 {
     // static bool interrupt_initialized = false;
 
@@ -150,12 +157,13 @@ extern void attachInterruptFunctionalArg(uint8_t pin, voidFuncPtrArg userFunc, v
     // esp_intr_enable(gpio_intr_handle);
 }
 
-extern void attachInterruptArg(uint8_t pin, voidFuncPtrArg userFunc, void * arg, int intr_type)
+extern void attachInterruptArg(uint8_t pin, voidFuncPtrArg userFunc, void *arg, int intr_type)
 {
-	// __attachInterruptFunctionalArg(pin, userFunc, arg, intr_type, false);
+    // __attachInterruptFunctionalArg(pin, userFunc, arg, intr_type, false);
 }
 
-extern void attachInterrupt(uint8_t pin, voidFuncPtr userFunc, int intr_type) {
+extern void attachInterrupt(uint8_t pin, voidFuncPtr userFunc, int intr_type)
+{
     // __attachInterruptFunctionalArg(pin, (voidFuncPtrArg)userFunc, NULL, intr_type, false);
 }
 
@@ -174,7 +182,6 @@ extern void detachInterrupt(uint8_t pin)
     // GPIO.pin[pin].int_type = 0;
     // esp_intr_enable(gpio_intr_handle);
 }
-
 
 // // Look, here's something that the ESP32 core did. Might be worth trying out.
 // extern void __pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode)
