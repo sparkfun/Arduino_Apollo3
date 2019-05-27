@@ -23,10 +23,6 @@
 
 #define LED 5 //Status LED
 
-//Incase user uses the original Arduino style of pin referencing
-#define A16 16
-#define A29 29
-
 void setup() {
   Serial.begin(9600);
   Serial.println("SparkFun Arduino Apollo3 Analog Read example");
@@ -35,10 +31,6 @@ void setup() {
 
   pinMode(LED, OUTPUT);
 
-  //TODO reset analog configuration status back to false when user changes pin back to GPIO
-  //pinMode()
-  //Research way to tell what config the pin is in
-
   //analogReadResolution(14); //Set resolution to 14 bit
   //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
 }
@@ -46,15 +38,15 @@ void setup() {
 void loop() {
   digitalWrite(LED, LOW);
 
-  int myValue1 = analogRead(34); //Read pad 34, ADC channel 6
+  int myValue1 = analogRead(A2); //Automatically sets pad (D34) to analog input. Sets mux to ADC channel 6.
   Serial.print(" left val: ");
   Serial.print(myValue1);
 
-  int myValue2 = analogRead(16);
+  int myValue2 = analogRead(A4); //Read pad 16, ADC channel 0
   Serial.print(" right val: ");
   Serial.print(myValue2);
 
-  int internalTemp = analogRead(ADC_TEMP); //Read internal temp sensor
+  int internalTemp = analogRead(ADC_TEMP); //Read internal temp sensor. 3.8mV/C, +/-3C
   Serial.print(" internalTemp: ");
   Serial.print(internalTemp);
 
@@ -67,18 +59,25 @@ void loop() {
   Serial.print(" VCC/3: ");
   Serial.print(div3);
 
+  //  float vcc = (float)div3 * 6 / 1024.0; //Convert 1/3 VCC to VCC
+  //  Serial.print(" VCC: ");
+  //  Serial.print(vcc, 2);
+  //  Serial.print("V");
+
+  //pinMode(16, OUTPUT); //Reset analog function to false.
+
   //Todo: test overall read time
   /*long startTime = millis();
-  uint32_t total = 0;
-  for(int x = 0 ; x < 100 ; x++)
-  {
+    uint32_t total = 0;
+    for(int x = 0 ; x < 100 ; x++)
+    {
     total += analogRead(16);
-  }
-  Serial.print(" total: ");
-  Serial.print(total);
-  Serial.print(" totalTime: ");
-  Serial.print( (millis() - startTime) / 100);*/
- 
+    }
+    Serial.print(" total: ");
+    Serial.print(total);
+    Serial.print(" totalTime: ");
+    Serial.print( (millis() - startTime) / 100);*/
+
   Serial.println();
 
   digitalWrite(LED, HIGH);
