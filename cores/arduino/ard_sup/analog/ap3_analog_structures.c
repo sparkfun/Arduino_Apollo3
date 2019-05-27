@@ -39,7 +39,7 @@ const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS] = {
 
 //By default, all pins are GPIO at POR
 //This keeps track of what pads have function set to analog input
-ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS] = {
+ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_CHANNELS] = {
     {.pad = 11, .isAnalog = false},
     {.pad = 12, .isAnalog = false},
     {.pad = 13, .isAnalog = false},
@@ -50,6 +50,11 @@ ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS] = {
     {.pad = 33, .isAnalog = false},
     {.pad = 34, .isAnalog = false},
     {.pad = 35, .isAnalog = false},
+    {.pad = ADC_DIFF0, .isAnalog = true},
+    {.pad = ADC_DIFF1, .isAnalog = true},
+    {.pad = ADC_TEMP, .isAnalog = true},
+    {.pad = ADC_DIV3, .isAnalog = true},
+    {.pad = ADC_VSS, .isAnalog = true},
 };
 
 const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS] = {

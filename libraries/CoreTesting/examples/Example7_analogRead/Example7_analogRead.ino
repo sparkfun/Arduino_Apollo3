@@ -39,8 +39,6 @@ void setup() {
   //pinMode()
   //Research way to tell what config the pin is in
 
-  //There is internal temp sensor channel 0xC, and Batt 0xD
-
   //analogReadResolution(14); //Set resolution to 14 bit
   //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
 }

@@ -31,7 +31,7 @@ uint16_t analogRead(uint8_t padNumber)
 
     //Look up configuration status based on pad number
     uint8_t indi;
-    for (indi = 0; indi < AP3_ANALOG_PADS; indi++)
+    for (indi = 0; indi < AP3_ANALOG_CHANNELS; indi++)
     {
         if (ap3_analog_configure_map[indi].pad == padNumber)
         {
@@ -39,6 +39,7 @@ uint16_t analogRead(uint8_t padNumber)
             {
                 if (ap3_set_pin_to_analog(padNumber) != AP3_OK)
                 {
+                    Serial.println("Error - set pin to analog");
                     return 0; //Error
                 }
                 ap3_analog_configure_map[indi].isAnalog = true;
@@ -46,8 +47,9 @@ uint16_t analogRead(uint8_t padNumber)
             break;
         }
     }
-    if (indi == AP3_ANALOG_PADS)
+    if (indi == AP3_ANALOG_CHANNELS)
     {
+        Serial.println("Error - pin set to analog not found");
         return 0; //Error
     }
 
@@ -56,7 +58,7 @@ uint16_t analogRead(uint8_t padNumber)
     // Clear the ADC interrupt.
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask))
     {
-        //am_util_stdio_printf("Error clearing ADC interrupt status\n");
+        Serial.println("Error clearing ADC interrupt status");
         return 0; //Error
     }
 
@@ -68,7 +70,7 @@ uint16_t analogRead(uint8_t padNumber)
         // Read the interrupt status.
         if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false))
         {
-            //am_util_stdio_printf("Error reading ADC interrupt status\n");
+            Serial.println("Error reading ADC interrupt status");
             return 0; //Error
         }
         if (ui32IntMask & AM_HAL_ADC_INT_CNVCMP)
@@ -83,7 +85,7 @@ uint16_t analogRead(uint8_t padNumber)
                                                          &ui32NumSamples,
                                                          &Sample))
     {
-        //Serial.println("Error - ADC sample read failed.\n");
+        Serial.println("Error - ADC sample read failed.\n");
         return 0; //Error
     }
 
