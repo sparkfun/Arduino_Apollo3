@@ -28,11 +28,11 @@ SOFTWARE.
 
 enum EXTRA_ADC_PADS
 {
-    ADC_DIFF0 = 50, //AP3_VARIANT_NUM_PINS,
-    ADC_DIFF1,
-    ADC_TEMP,
-    ADC_DIV3,
-    ADC_VSS,
+    AP3_ADC_DIFF0_PAD = 51, //More than physical pads on Apollo3
+    AP3_ADC_DIFF1_PAD,
+    AP3_ADC_TEMP_PAD,
+    AP3_ADC_DIV3_PAD,
+    AP3_ADC_VSS_PAD,
 };
 
 typedef struct _ap3_analog_pad_map_elem_t

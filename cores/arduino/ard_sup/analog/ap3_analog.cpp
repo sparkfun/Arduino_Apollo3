@@ -19,15 +19,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+/*
+    TODO
+    analogReference
+*/
+
 #include "ap3_analog.h"
 
 uint16_t _analogBits = 10; //10-bit by default
 
-uint16_t analogRead(uint8_t padNumber)
+uint16_t analogRead(uint8_t pinNumber)
 {
     uint32_t ui32IntMask;
     am_hal_adc_sample_t Sample;
     uint32_t ui32NumSamples = 1;
+
+    uint8_t padNumber = ap3_gpio_pin2pad(pinNumber);
+    // Serial.print("pinNumber: ");
+    // Serial.println(pinNumber);
+    // Serial.print("padNumber: ");
+    // Serial.println(padNumber);
 
     //Look up configuration status based on pad number
     uint8_t indi;
@@ -37,7 +49,7 @@ uint16_t analogRead(uint8_t padNumber)
         {
             if (ap3_analog_configure_map[indi].isAnalog == false)
             {
-                if (ap3_set_pin_to_analog(padNumber) != AP3_OK)
+                if (ap3_set_pin_to_analog(pinNumber) != AP3_OK)
                 {
                     //Serial.println("Error - set pin to analog");
                     return 0; //Error
@@ -156,26 +168,26 @@ ap3_err_t ap3_adc_setup()
     return AP3_OK;
 }
 
-//Set function of pad number to analog input
+//Set function of pin to analog input
 //TODO Support differential pairs 0/1
-ap3_err_t ap3_set_pin_to_analog(ap3_gpio_pad_t padNumber)
+ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber)
 {
     ap3_err_t retval = AP3_ERR;
 
     uint8_t funcsel = 0;
     am_hal_gpio_pincfg_t pincfg = INPUT;
 
-    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(padNumber), &funcsel);
+    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
     if (retval != AP3_OK)
     {
         return retval;
     }
     pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-    pinMode(padNumber, pincfg, &retval);
+    pinMode(pinNumber, pincfg, &retval);
     return retval;
 }
 
-//Given pad number, assign ADC function
+//Given pin number, assign ADC function
 ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel)
 {
     ap3_err_t retval = AP3_ERR;
@@ -191,7 +203,7 @@ ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel)
     return retval;
 }
 
-ap3_err_t ap3_change_channel(uint8_t channelNumber)
+ap3_err_t ap3_change_channel(uint8_t padNumber)
 {
     am_hal_adc_slot_config_t ADCSlotConfig;
 
@@ -203,7 +215,7 @@ ap3_err_t ap3_change_channel(uint8_t channelNumber)
     uint8_t indi;
     for (indi = 0; indi < AP3_ANALOG_CHANNELS; indi++)
     {
-        if (ap3_analog_channel_map[indi].pad == channelNumber)
+        if (ap3_analog_channel_map[indi].pad == padNumber)
         {
             ADCSlotConfig.eChannel = ap3_analog_channel_map[indi].eChannel;
             break;

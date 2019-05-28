@@ -50,11 +50,11 @@ ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_CHANNELS] = 
     {.pad = 33, .isAnalog = false},
     {.pad = 34, .isAnalog = false},
     {.pad = 35, .isAnalog = false},
-    {.pad = ADC_DIFF0, .isAnalog = true},
-    {.pad = ADC_DIFF1, .isAnalog = true},
-    {.pad = ADC_TEMP, .isAnalog = true},
-    {.pad = ADC_DIV3, .isAnalog = true},
-    {.pad = ADC_VSS, .isAnalog = true},
+    {.pad = AP3_ADC_DIFF0_PAD, .isAnalog = true},
+    {.pad = AP3_ADC_DIFF1_PAD, .isAnalog = true},
+    {.pad = AP3_ADC_TEMP_PAD, .isAnalog = true},
+    {.pad = AP3_ADC_DIV3_PAD, .isAnalog = true},
+    {.pad = AP3_ADC_VSS_PAD, .isAnalog = true},
 };
 
 const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS] = {
@@ -68,9 +68,9 @@ const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS] 
     {.pad = 33, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE5},
     {.pad = 34, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE6},
     {.pad = 35, .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE7},
-    {.pad = ADC_DIFF0, .eChannel = AM_HAL_ADC_SLOT_CHSEL_DF0},
-    {.pad = ADC_DIFF1, .eChannel = AM_HAL_ADC_SLOT_CHSEL_DF1},
-    {.pad = ADC_TEMP, .eChannel = AM_HAL_ADC_SLOT_CHSEL_TEMP},
-    {.pad = ADC_DIV3, .eChannel = AM_HAL_ADC_SLOT_CHSEL_BATT},
-    {.pad = ADC_VSS, .eChannel = AM_HAL_ADC_SLOT_CHSEL_VSS},
+    {.pad = AP3_ADC_DIFF0_PAD, .eChannel = AM_HAL_ADC_SLOT_CHSEL_DF0},
+    {.pad = AP3_ADC_DIFF1_PAD, .eChannel = AM_HAL_ADC_SLOT_CHSEL_DF1},
+    {.pad = AP3_ADC_TEMP_PAD, .eChannel = AM_HAL_ADC_SLOT_CHSEL_TEMP},
+    {.pad = AP3_ADC_DIV3_PAD, .eChannel = AM_HAL_ADC_SLOT_CHSEL_BATT},
+    {.pad = AP3_ADC_VSS_PAD, .eChannel = AM_HAL_ADC_SLOT_CHSEL_VSS},
 };

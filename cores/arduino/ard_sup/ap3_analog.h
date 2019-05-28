@@ -33,12 +33,12 @@ extern ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS]
 // ADC Device Handle.
 static void *g_ADCHandle;
 
-ap3_err_t ap3_set_pin_to_analog(ap3_gpio_pad_t padNumber);
-ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel);
 ap3_err_t ap3_adc_setup(void);
-ap3_err_t ap3_change_channel(uint8_t channelNumber);
+ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber);
+ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel);
+ap3_err_t ap3_change_channel(ap3_gpio_pad_t padNumber);
 
-uint16_t analogRead(uint8_t padNumber);
+uint16_t analogRead(uint8_t pinNumber);
 void analogReadResolution(uint8_t bits);
 
 #endif // _AP3_ANALOG_H_

@@ -21,7 +21,7 @@
 
 #include <ap3_analog.h>
 
-#define LED 5 //Status LED
+#define LED 13 //Status LED
 
 void setup() {
   Serial.begin(9600);
@@ -38,13 +38,17 @@ void setup() {
 void loop() {
   digitalWrite(LED, LOW);
 
-  int myValue1 = analogRead(A2); //Automatically sets pad (D34) to analog input. Sets mux to ADC channel 6.
+  int myValue1 = analogRead(A1); //Automatically sets pin to analog input
   Serial.print(" left val: ");
   Serial.print(myValue1);
 
-  int myValue2 = analogRead(A4); //Read pad 16, ADC channel 0
+  int myValue2 = analogRead(A3);
   Serial.print(" right val: ");
   Serial.print(myValue2);
+
+  int a5 = analogRead(A5);
+  Serial.print(" A5: ");
+  Serial.print(a5);
 
   int internalTemp = analogRead(ADC_TEMP); //Read internal temp sensor. 3.8mV/C, +/-3C
   Serial.print(" internalTemp: ");
@@ -64,7 +68,7 @@ void loop() {
   //  Serial.print(vcc, 2);
   //  Serial.print("V");
 
-  //pinMode(16, OUTPUT); //Reset analog function to false.
+  //pinMode(A4, OUTPUT); //Reset analog function to false.
 
   //Todo: test overall read time
   /*long startTime = millis();
