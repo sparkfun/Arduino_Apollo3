@@ -19,11 +19,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _AP3_INITIALIZATION_H_
-#define _AP3_INITIALIZATION_H_
 
-#include "Arduino.h"
+#ifndef _AP3_ANALOG_TYPES_H_
+#define _AP3_ANALOG_TYPES_H_
 
-void ap3_init(void); // called immediately upon startup. Common to any AP3 board using Arduino Core, contains anything required to begin using the core
+#define AP3_ANALOG_PADS 10
+#define AP3_ANALOG_CHANNELS 15
 
-#endif // _AP3_INITIALIZATION_H_
+enum EXTRA_ADC_PADS
+{
+    AP3_ADC_DIFF0_PAD = 51, //More than physical pads on Apollo3
+    AP3_ADC_DIFF1_PAD,
+    AP3_ADC_TEMP_PAD,
+    AP3_ADC_DIV3_PAD,
+    AP3_ADC_VSS_PAD,
+};
+
+typedef struct _ap3_analog_pad_map_elem_t
+{
+    ap3_gpio_pad_t pad;
+    uint8_t funcsel;
+} ap3_analog_pad_map_elem_t;
+
+typedef struct _ap3_analog_channel_map_elem_t
+{
+    ap3_gpio_pad_t pad;
+    am_hal_adc_slot_chan_e eChannel;
+} ap3_analog_channel_map_elem_t;
+
+typedef struct _ap3_analog_configure_map_elem_t
+{
+    ap3_gpio_pad_t pad;
+    bool isAnalog;
+} ap3_analog_configure_map_elem_t;
+
+#endif // _AP3_ANALOG_TYPES_H_

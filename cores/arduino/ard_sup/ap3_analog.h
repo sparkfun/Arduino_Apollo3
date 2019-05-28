@@ -19,11 +19,26 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _AP3_INITIALIZATION_H_
-#define _AP3_INITIALIZATION_H_
+
+#ifndef _AP3_ANALOG_H_
+#define _AP3_ANALOG_H_
 
 #include "Arduino.h"
+#include "ap3_analog_types.h"
 
-void ap3_init(void); // called immediately upon startup. Common to any AP3 board using Arduino Core, contains anything required to begin using the core
+extern const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS];
+extern const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_PADS];
+extern ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS];
 
-#endif // _AP3_INITIALIZATION_H_
+// ADC Device Handle.
+static void *g_ADCHandle;
+
+ap3_err_t ap3_adc_setup(void);
+ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber);
+ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel);
+ap3_err_t ap3_change_channel(ap3_gpio_pad_t padNumber);
+
+uint16_t analogRead(uint8_t pinNumber);
+void analogReadResolution(uint8_t bits);
+
+#endif // _AP3_ANALOG_H_

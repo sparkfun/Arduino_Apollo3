@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "Arduino.h"
 
-#define AP3_VARIANT_NUM_PINS (50)
+#define AP3_VARIANT_NUM_PINS (37)
 
 // Pin map declaration
 extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
@@ -45,5 +45,23 @@ extern Uart Serial1;
 
 #define AP3_SPI_IOM 0                   // Specify that SPI uses IOMaster 0
 #define AP3_SPI_DUP ap3_spi_full_duplex // Specify that SPI is full-duplex (as opposed to ap3_spi_tx_only or ap3_spi_rx_only)
+
+// Mapping of analog pins to digital pins of variant
+#define A0 16
+#define A1 17
+#define A2 18
+#define A3 19
+#define A4 20
+#define A5 21
+//No A7 for better alignment
+#define A6 2
+#define A8 8
+#define A9 9
+#define A10 10
+#define ADC_DIFF0 32 //Not legal pins. Used for pad lookup
+#define ADC_DIFF1 33
+#define ADC_TEMP 34
+#define ADC_DIV3 35
+#define ADC_VSS 36
 
 #endif // _AP3_VARIANT_H_

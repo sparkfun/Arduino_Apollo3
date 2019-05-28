@@ -70,9 +70,10 @@ extern "C"
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
 
-enum BitOrder {
-	LSBFIRST = 0,
-	MSBFIRST = 1
+enum BitOrder
+{
+    LSBFIRST = 0,
+    MSBFIRST = 1
 };
 
 #include "ap3_types.h"
@@ -88,6 +89,7 @@ enum BitOrder {
 #include "ap3_gpio.h"
 #include "ap3_debugging.h"
 #include "ap3_uart.h"
+#include "ap3_analog.h"
 
 #include "variant.h"
 

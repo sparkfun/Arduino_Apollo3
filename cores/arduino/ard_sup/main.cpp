@@ -3,24 +3,29 @@
 
 // Weak empty variant initialization function.
 // May be redefined by variant files.
-void ap3_variant_init( void ) __attribute__((weak));
-void ap3_variant_init( void ) { }
+void ap3_variant_init(void) __attribute__((weak));
+void ap3_variant_init(void) {}
 
 // Initialize C library
 extern "C" void __libc_init_array(void);
-extern "C" void _init( void ){
+extern "C" void _init(void)
+{
   // Empty definition to resolve linker error within '__libc_init_array'
 }
-extern "C" void end( void ){
+extern "C" void end(void)
+{
   // Empty definition to satisfy linker error in '_sbrk'
 }
 
-extern "C" int main( void )
+extern "C" int main(void)
 {
   ap3_init();
   __libc_init_array();
 
   ap3_variant_init();
+
+  ap3_adc_setup();
+
   setup();
   for (;;)
   {
@@ -29,12 +34,7 @@ extern "C" int main( void )
   return 0;
 }
 
-
-
-
-
-
-// // A potential future version of this core could be implemented using FreeRTOS by default. 
+// // A potential future version of this core could be implemented using FreeRTOS by default.
 // #include "FreeRTOS.h"
 // #include "task.h"
 // #include "queue.h"
@@ -59,7 +59,6 @@ extern "C" int main( void )
 //         __asm("BKPT #0\n") ; // Break into the debugger
 //     }
 // }
-
 
 // void loopTask( void* pvParameters )
 // {
