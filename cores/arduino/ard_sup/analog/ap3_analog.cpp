@@ -36,10 +36,6 @@ uint16_t analogRead(uint8_t pinNumber)
     uint32_t ui32NumSamples = 1;
 
     uint8_t padNumber = ap3_gpio_pin2pad(pinNumber);
-    // Serial.print("pinNumber: ");
-    // Serial.println(pinNumber);
-    // Serial.print("padNumber: ");
-    // Serial.println(padNumber);
 
     //Look up configuration status based on pad number
     uint8_t indi;
@@ -87,8 +83,6 @@ uint16_t analogRead(uint8_t pinNumber)
         }
         if (ui32IntMask & AM_HAL_ADC_INT_CNVCMP)
             break;
-
-        delay(1);
     }
 
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_samples_read(g_ADCHandle,

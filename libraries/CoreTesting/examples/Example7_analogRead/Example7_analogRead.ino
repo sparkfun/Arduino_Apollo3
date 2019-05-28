@@ -19,8 +19,6 @@
   Max reading on ADC is 2V
 */
 
-#include <ap3_analog.h>
-
 #define LED 13 //Status LED
 
 void setup() {
