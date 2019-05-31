@@ -18,16 +18,17 @@ Current focus is to begin building support for the essential Arduino libraries i
   * GPIO
     * Working:
       * ditigal functions (read / write)
+      * analogRead
     * Under Construction:
-      * analog functions
+      * analogWrite
       * interrupts
   * Timing
     * Working:
       * delay
       * delayMicroseconds
-    * Under Construction:
       * millis
       * micros
+      * seconds (extension)
   * Wire
     * Working: 90% use case, master I2C interface. 
   * SPI
