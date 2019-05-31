@@ -127,7 +127,7 @@ recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} 
 # temporary: for now specify the path to your installation of Python3 here
 tools.ap3Loader.pgm=/usr/local/bin/python3
 tools.ap3Loader.scr={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/artemis_bin_to_board.py
-tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 -v
+tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
 tools.ap3Loader.pgm.windows=
 tools.ap3Loader.scr.windows={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_uart_loader_combined.exe
