@@ -38,6 +38,24 @@ amap3bare.upload.maximum_size=960000
 
 ###############################################################
 
+amap3nano.name=SparkFun Artemis Nano
+amap3nano.build.variant=SparkFun_Artemis_Nano
+amap3nano.build.board=AM_AP3_SFE_ARTEMIS_NANO
+amap3nano.upload.tool=ap3Loader
+amap3nano.upload.maximum_size=960000
+amap3nano.build.arch=APOLLO3
+amap3nano.build.mcu=cortex-m4
+amap3nano.build.f_cpu=48000000L
+amap3nano.build.core=arduino
+amap3nano.build.defs=
+amap3nano.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
+amap3nano.build.libs=
+amap3nano.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3nano.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3nano.upload.maximum_size=960000
+
+###############################################################
+
 amap3evb.name=Ambiq Apollo3 Evaluation Board
 amap3evb.build.variant=Ambiq_Apollo3_EVB
 amap3evb.build.board=AM_AP3_EVB
