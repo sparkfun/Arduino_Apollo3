@@ -205,7 +205,7 @@ def bin2blob_process(loadaddress, appFile, magicNum, crcI, crcB, authI, authB, p
     fill_word(hdr_binarray, AM_IMAGEHDR_OFFSET_CRC, w1)
 
     # now output all three binary arrays in the proper order
-    output = 'bin/' + output + '_OTA_blob.bin'
+    output = output + '_OTA_blob.bin'
     blob2wiredfile = output # save the output of bin2blob for use by blob2wired
     am_print("Writing to file ", output)
     with open(output, mode = 'wb') as out:
@@ -269,7 +269,7 @@ def blob2wired_process(appFile, imagetype, loadaddress, authalgo, encalgo, authK
 
     start = 0
     # now output all three binary arrays in the proper order
-    output = 'bin/' + output + '_Wired_OTA_blob.bin'
+    output = output + '_Wired_OTA_blob.bin'
     uploadbinfile = output; # save the name of the output from blob2wired
     out = open(output, mode = 'wb')
 
