@@ -124,13 +124,17 @@ recipe.size.regex=\.text\s+([0-9]+).*
 preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
 
-tools.ap3Loader.cmd=ap3Loader
-tools.ap3Loader.cmd.windows=artemis_uart_loader_combined.exe
-tools.ap3Loader.path={runtime.platform.path}/tools/apollo3_scripts
+tools.ap3Loader.pgm=python
+tools.ap3Loader.scr={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/
+tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port COM4 -r 1 -v
+
+tools.ap3Loader.pgm.windows=
+tools.ap3Loader.scr.windows={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_uart_loader_combined.exe
+tools.ap3Loader.args.windows=-b 921600 "{serial.port}" -r 1 -f "{build.path}/{build.project_name}.bin" -i 6 {upload.verbose} -toolLocation "{runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows"
 
 tools.ap3Loader.upload.protocol=ap3
 tools.ap3Loader.upload.params.verbose=-v
 tools.ap3Loader.upload.params.quiet=
 
-tools.ap3Loader.upload.pattern="{path}/{cmd}" -b 921600 "{serial.port}" -r 1 -f "{build.path}/{build.project_name}.bin" -i 6 {upload.verbose} -toolLocation "{runtime.platform.path}/tools/apollo3_scripts"
+tools.ap3Loader.upload.pattern={pgm} "{scr}" {args}
 

@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # Utility functioins
 
-# Added this file here (in SparkFun Edge BSP/tools) because it is required for the uart_wired_update_sparkfun.py
-#   Had previously tried to allow adding the path to this module as an argument but realized that the typed 
-#   defined in that file are used to create the list of commands
-
 import sys
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA 
