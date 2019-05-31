@@ -11,7 +11,7 @@ void setup() {
   SERIAL_PORT.begin(115200);
   while(!SERIAL_PORT){};
 
-  SERIAL_PORT.println("SparkFun Arduino Apollo3 SPI Example - Hey there abc");
+  SERIAL_PORT.println("SparkFun Arduino Apollo3 SPI Example");
   SERIAL_PORT.printf("Compiled on %s, %s\n\n", __DATE__, __TIME__);
 }
 
