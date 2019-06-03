@@ -44,11 +44,11 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     12,                //A16 - ~PDMCLK/TX1
     32,                //17 - ~SDA2/MISO3/RX1
     12,                //18 - ~SCL2/SCK2
-    48,                //19 - Not exposed, TX0
-    49,                //20 - Not exposed, RX0
-    36,                //21 - Not exposed, PDMDATA of Mic
-    37,                //22 - Not exposed, PDMCLK of Mic
-    19,                //23 - ~Not exposed, Status LED
+    19,                //19 - ~Not exposed, Status LED
+    48,                //20 - Not exposed, TX0
+    49,                //21 - Not exposed, RX0
+    36,                //22 - Not exposed, PDMDATA of Mic
+    37,                //23 - Not exposed, PDMCLK of Mic
     AP3_ADC_DIFF0_PAD, //24 - Not a real pad, ADC_DIFF0
     AP3_ADC_DIFF1_PAD, //25 - Not a real pad, ADC_DIFF1
     AP3_ADC_TEMP_PAD,  //26 - Not a real pad, ADC_TEMP
@@ -58,5 +58,5 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
 
 // Uart Definitions
 //Serial(instance, RX, TX)
-Uart Serial(0, 20, 19); // Declares a Uart object called Serial using instance 0 of Apollo3 UART peripherals with RX on variant pin 49 and TX on pin 48 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
+Uart Serial(0, 21, 20); // Declares a Uart object called Serial using instance 0 of Apollo3 UART peripherals with RX on variant pin 49 and TX on pin 48 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
 Uart Serial1(1, 10, 9); // Declares a Uart object called Serial1 using instance 1 of Apollo3 UART peripherals with RX on pin 10 and TX on pin 9 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
