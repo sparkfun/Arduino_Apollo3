@@ -333,11 +333,15 @@ ap3_err_t Uart::_begin(void)
         pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
     }
 
-    // Now that pins are initialized start the actual driver
-    retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);
-    if (retval != AP3_OK)
+    //User may want to change settings mid-sketch. Only init UART if it's new.
+    if (_handle == NULL)
     {
-        return ap3_return(retval);
+        // Now that pins are initialized start the actual driver
+        retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);
+        if (retval != AP3_OK)
+        {
+            return ap3_return(retval);
+        }
     }
     retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);
     if (retval != AP3_OK)
