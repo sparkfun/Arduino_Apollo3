@@ -124,18 +124,23 @@ recipe.size.regex=\.text\s+([0-9]+).*
 preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
 
-# temporary: for now specify the path to your installation of Python3 here
-tools.ap3Loader.pgm=/usr/local/bin/python3
-tools.ap3Loader.scr={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/artemis_bin_to_board.py
-tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+# # temporary: for now specify the path to your installation of Python3 here
+# tools.ap3Loader.pgm=/usr/local/bin/python3
+# tools.ap3Loader.scr={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/artemis_bin_to_board.py
+# tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
-tools.ap3Loader.pgm.windows=
-tools.ap3Loader.scr.windows={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe
+
+
+tools.ap3Loader.pgm.macosx={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
+tools.ap3Loader.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+
+tools.ap3Loader.pgm.windows="{runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe"
 tools.ap3Loader.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
 tools.ap3Loader.upload.protocol=ap3
 tools.ap3Loader.upload.params.verbose=-v
 tools.ap3Loader.upload.params.quiet=
 
-tools.ap3Loader.upload.pattern={pgm} "{scr}" {args}
+# Upload tool pattern
+tools.ap3Loader.upload.pattern={pgm} {args}
 
