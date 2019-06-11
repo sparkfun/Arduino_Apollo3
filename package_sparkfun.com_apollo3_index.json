@@ -1,0 +1,67 @@
+{
+  "packages": [
+  {
+    "name": "SparkFunA3",
+    "maintainer": "SparkFun Electronics",
+    "websiteURL": "https://github.com/sparkfun/Arduino_Apollo3",
+    "email": "support@sparkfun.com",
+    
+    "platforms": [
+      {
+        "name": "SparkFun Apollo3 Boards",
+        "architecture": "apollo3",
+        "version": "0.0.0",
+        "category": "Contributed",
+        "url": "https://github.com/sparkfun/Arduino_Apollo3/archive/v0.0.0.tar.gz",
+        "archiveFileName": "Arduino_Apollo3-0.0.0.tar.gz",
+        "checksum": "SHA-256:todo", // todo: add the checksum of the core archive here!
+        "size": "1", // todo: add the size here
+        "help": {
+          "online": "https://learn.sparkfun.com/tutorials/installing-arduino-ide/board-add-ons-with-arduino-board-manager"
+        },
+        "boards": [
+          { "name": "SparkFun Artemis Module" },
+          { "name": "SparkFun Artemis Nano" },
+          { "name": "SparkFun BlackBoard Artemis" },
+          { "name": "SparkFun Edge" }
+        ],
+        "toolsDependencies": [
+          // {
+          //   "packager": "arduino",
+          //   "name": "arm-none-eabi-gcc",
+          //   "version": "4.8.3-2014q1"
+          // },
+          // {
+          //   "packager": "arduino",
+          //   "name": "bossac",
+          //   "version": "1.8.0-48-gb176eee"
+          // },
+          // {
+          //   "packager": "arduino",
+          //   "name": "openocd",
+          //   "version": "0.9.0-arduino"
+          // },
+          // {
+          //   "packager": "arduino",
+          //   "name": "CMSIS",
+          //   "version": "4.5.0"
+          // },
+          // {
+          //   "packager": "arduino",
+          //   "name": "CMSIS-Atmel",
+          //   "version": "1.2.0"
+          // }
+        ]
+      }
+    ],
+    
+    "tools": [
+        TOOLS_COMPILER_AVR,
+        TOOLS_UPLOADER_AVR,
+        TOOLS_COMPILER_ARM,
+        TOOLS_XXXXXXX,
+        TOOLS_YYYYYYY,
+        ],
+    }
+  ]
+}
