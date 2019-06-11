@@ -24,7 +24,7 @@ SOFTWARE.
 
 const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     //~ = PWM, A = ADC
-    //Apollo Pad, //Silkscreen indicator
+    //Apollo Pad,      //Silkscreen indicator - Pin functions
     25,                //0 - ~RX1/SDA2/MISO2
     24,                //1 - ~TX1/32kHz/SWO
     35,                //2/A6 - ~A/TX1/I2SDAT/PDMCLK
