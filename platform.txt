@@ -126,22 +126,22 @@ recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} 
 
 # Host-specific definitions for upload tool
     # Default host 
-tools.ap3Loader.pgm={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
-tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+tools.artemis_bin2board.pgm={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
+tools.artemis_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
     # MacOSX
-tools.ap3Loader.pgm.macosx={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
-tools.ap3Loader.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+tools.artemis_bin2board.pgm.macosx={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
+tools.artemis_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
     # Windows
-tools.ap3Loader.pgm.windows="{runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe"
-tools.ap3Loader.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+tools.artemis_bin2board.pgm.windows="{runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe"
+tools.artemis_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
 # Additional Loader Parameters
-tools.ap3Loader.upload.protocol=ap3
-tools.ap3Loader.upload.params.verbose=-v
-tools.ap3Loader.upload.params.quiet=
+tools.artemis_bin2board.upload.protocol=ap3
+tools.artemis_bin2board.upload.params.verbose=-v
+tools.artemis_bin2board.upload.params.quiet=
 
 # Upload tool pattern
-tools.ap3Loader.upload.pattern={pgm} {args}
+tools.artemis_bin2board.upload.pattern={pgm} {args}
 
