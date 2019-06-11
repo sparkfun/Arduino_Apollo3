@@ -130,8 +130,8 @@ tools.ap3Loader.scr={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artem
 tools.ap3Loader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
 tools.ap3Loader.pgm.windows=
-tools.ap3Loader.scr.windows={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_uart_loader_combined.exe
-tools.ap3Loader.args.windows=-b 921600 "{serial.port}" -r 1 -f "{build.path}/{build.project_name}.bin" -i 6 {upload.verbose} -toolLocation "{runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows"
+tools.ap3Loader.scr.windows={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe
+tools.ap3Loader.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
 
 tools.ap3Loader.upload.protocol=ap3
 tools.ap3Loader.upload.params.verbose=-v
