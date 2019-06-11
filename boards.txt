@@ -20,27 +20,27 @@
 
 ###############################################################
 
-amap3bare.name=SparkFun BlackBoard Artemis
-amap3bare.build.variant=SparkFun_BlackBoard_Artemis
-amap3bare.build.board=AM_AP3_SFE_BB_ARTEMIS
-amap3bare.upload.tool=ap3Loader
-amap3bare.upload.maximum_size=960000
-amap3bare.build.arch=APOLLO3
-amap3bare.build.mcu=cortex-m4
-amap3bare.build.f_cpu=48000000L
-amap3bare.build.core=arduino
-amap3bare.build.defs=
-amap3bare.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
-amap3bare.build.libs=
-amap3bare.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-amap3bare.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-amap3bare.upload.maximum_size=960000
+amap3blackboard.name=SparkFun BlackBoard Artemis
+amap3blackboard.build.variant=SparkFun_BlackBoard_Artemis
+amap3blackboard.build.board=AM_AP3_SFE_BB_ARTEMIS
+amap3blackboard.upload.tool=ap3Loader
+amap3blackboard.upload.maximum_size=960000
+amap3blackboard.build.arch=APOLLO3
+amap3blackboard.build.mcu=cortex-m4
+amap3blackboard.build.f_cpu=48000000L
+amap3blackboard.build.core=arduino
+amap3blackboard.build.defs=
+amap3blackboard.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
+amap3blackboard.build.libs=
+amap3blackboard.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3blackboard.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3blackboard.upload.maximum_size=960000
 
 ###############################################################
 
-amap3nano.name=SparkFun Artemis Nano
-amap3nano.build.variant=SparkFun_Artemis_Nano
-amap3nano.build.board=AM_AP3_SFE_ARTEMIS_NANO
+amap3nano.name=SparkFun BlackBoard Artemis Nano
+amap3nano.build.variant=SparkFun_BlackBoard_Artemis_Nano
+amap3nano.build.board=AM_AP3_SFE_BB_ARTEMIS_NANO
 amap3nano.upload.tool=ap3Loader
 amap3nano.upload.maximum_size=960000
 amap3nano.build.arch=APOLLO3
@@ -56,21 +56,21 @@ amap3nano.upload.maximum_size=960000
 
 ###############################################################
 
-amap3evb.name=Ambiq Apollo3 Evaluation Board
-amap3evb.build.variant=Ambiq_Apollo3_EVB
-amap3evb.build.board=AM_AP3_EVB
-amap3evb.upload.tool=ap3Loader
-amap3evb.upload.maximum_size=960000
-amap3evb.build.arch=APOLLO3
-amap3evb.build.mcu=cortex-m4
-amap3evb.build.f_cpu=48000000L
-amap3evb.build.core=arduino
-amap3evb.build.defs=
-amap3evb.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
-amap3evb.build.libs=
-amap3evb.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-amap3evb.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-amap3evb.upload.maximum_size=960000
+amap3mega.name=SparkFun BlackBoard Artemis Mega
+amap3mega.build.variant=SparkFun_BlackBoard_Artemis_Mega
+amap3mega.build.board=AM_AP3_SFE_BB_ARTEMIS_MEGA
+amap3mega.upload.tool=ap3Loader
+amap3mega.upload.maximum_size=960000
+amap3mega.build.arch=APOLLO3
+amap3mega.build.mcu=cortex-m4
+amap3mega.build.f_cpu=48000000L
+amap3mega.build.core=arduino
+amap3mega.build.defs=
+amap3mega.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
+amap3mega.build.libs=
+amap3mega.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3mega.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3mega.upload.maximum_size=960000
 
 ###############################################################
 
@@ -118,5 +118,23 @@ edge.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloade
 #edge.build.extra_combine_flags=
 #edge.bootloader.tool=openocd
 #edge.bootloader.file=zero/SparkFun_Edge.bin=
+
+###############################################################
+
+amap3evb.name=Ambiq Apollo3 Evaluation Board
+amap3evb.build.variant=Ambiq_Apollo3_EVB
+amap3evb.build.board=AM_AP3_EVB
+amap3evb.upload.tool=ap3Loader
+amap3evb.upload.maximum_size=960000
+amap3evb.build.arch=APOLLO3
+amap3evb.build.mcu=cortex-m4
+amap3evb.build.f_cpu=48000000L
+amap3evb.build.core=arduino
+amap3evb.build.defs=
+amap3evb.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
+amap3evb.build.libs=
+amap3evb.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3evb.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3evb.upload.maximum_size=960000
 
 ###############################################################
