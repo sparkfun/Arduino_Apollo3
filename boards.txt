@@ -20,21 +20,21 @@
 
 ###############################################################
 
-amap3bare.name=SparkFun BlackBoard Artemis
-amap3bare.build.variant=SparkFun_BlackBoard_Artemis
-amap3bare.build.board=AM_AP3_SFE_BB_ARTEMIS
-amap3bare.upload.tool=ap3Loader
-amap3bare.upload.maximum_size=960000
-amap3bare.build.arch=APOLLO3
-amap3bare.build.mcu=cortex-m4
-amap3bare.build.f_cpu=48000000L
-amap3bare.build.core=arduino
-amap3bare.build.defs=
-amap3bare.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
-amap3bare.build.libs=
-amap3bare.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-amap3bare.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-amap3bare.upload.maximum_size=960000
+artemis.name=SparkFun Artemis Module
+artemis.build.variant=SparkFun_Artemis
+artemis.build.board=SFE_ARTEMIS
+artemis.upload.tool=ap3Loader
+artemis.upload.maximum_size=960000
+artemis.build.arch=APOLLO3
+artemis.build.mcu=cortex-m4
+artemis.build.f_cpu=48000000L
+artemis.build.core=arduino
+artemis.build.defs=
+artemis.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
+artemis.build.libs=
+artemis.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+artemis.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+artemis.upload.maximum_size=960000
 
 ###############################################################
 
@@ -56,39 +56,21 @@ amap3nano.upload.maximum_size=960000
 
 ###############################################################
 
-amap3evb.name=Ambiq Apollo3 Evaluation Board
-amap3evb.build.variant=Ambiq_Apollo3_EVB
-amap3evb.build.board=AM_AP3_EVB
-amap3evb.upload.tool=ap3Loader
-amap3evb.upload.maximum_size=960000
-amap3evb.build.arch=APOLLO3
-amap3evb.build.mcu=cortex-m4
-amap3evb.build.f_cpu=48000000L
-amap3evb.build.core=arduino
-amap3evb.build.defs=
-amap3evb.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
-amap3evb.build.libs=
-amap3evb.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-amap3evb.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-amap3evb.upload.maximum_size=960000
-
-###############################################################
-
-artemis.name=SparkFun Artemis Module
-artemis.build.variant=SparkFun_Artemis
-artemis.build.board=SFE_ARTEMIS
-artemis.upload.tool=ap3Loader
-artemis.upload.maximum_size=960000
-artemis.build.arch=APOLLO3
-artemis.build.mcu=cortex-m4
-artemis.build.f_cpu=48000000L
-artemis.build.core=arduino
-artemis.build.defs=
-artemis.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
-artemis.build.libs=
-artemis.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-artemis.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-artemis.upload.maximum_size=960000
+amap3bare.name=SparkFun BlackBoard Artemis
+amap3bare.build.variant=SparkFun_BlackBoard_Artemis
+amap3bare.build.board=AM_AP3_SFE_BB_ARTEMIS
+amap3bare.upload.tool=ap3Loader
+amap3bare.upload.maximum_size=960000
+amap3bare.build.arch=APOLLO3
+amap3bare.build.mcu=cortex-m4
+amap3bare.build.f_cpu=48000000L
+amap3bare.build.core=arduino
+amap3bare.build.defs=
+amap3bare.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
+amap3bare.build.libs=
+amap3bare.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3bare.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3bare.upload.maximum_size=960000
 
 ###############################################################
 
@@ -106,17 +88,5 @@ edge.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
 edge.build.libs=
 edge.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 edge.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-
-#edge.upload.protocol=sam-ba
-#edge.upload.use_1200bps_touch=true
-#edge.upload.wait_for_upload_port=true
-#edge.upload.native_usb=true
-#edge.build.usb_product="SFE SAMD21"
-#edge.build.usb_manufacturer="SparkFun"
-#edge.build.openocdscript=openocd_scripts/arduino_zero.cfg
-#edge.build.variant_system_lib=
-#edge.build.extra_combine_flags=
-#edge.bootloader.tool=openocd
-#edge.bootloader.file=zero/SparkFun_Edge.bin=
 
 ###############################################################
