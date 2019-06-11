@@ -64,4 +64,6 @@ extern Uart Serial1;
 #define ADC_DIV3 35
 #define ADC_VSS 36
 
+#define LED_BUILTIN 13
+
 #endif // _AP3_VARIANT_H_
