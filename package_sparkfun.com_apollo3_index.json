@@ -1,7 +1,7 @@
 {
   "packages": [
   {
-    "name": "SparkFunA3",
+    "name": "SparkFun Apollo3",
     "maintainer": "SparkFun Electronics",
     "websiteURL": "https://github.com/sparkfun/Arduino_Apollo3",
     "email": "support@sparkfun.com",
@@ -26,42 +26,44 @@
           { "name": "SparkFun Edge" }
         ],
         "toolsDependencies": [
-          // {
-          //   "packager": "arduino",
-          //   "name": "arm-none-eabi-gcc",
-          //   "version": "4.8.3-2014q1"
-          // },
-          // {
-          //   "packager": "arduino",
-          //   "name": "bossac",
-          //   "version": "1.8.0-48-gb176eee"
-          // },
-          // {
-          //   "packager": "arduino",
-          //   "name": "openocd",
-          //   "version": "0.9.0-arduino"
-          // },
-          // {
-          //   "packager": "arduino",
-          //   "name": "CMSIS",
-          //   "version": "4.5.0"
-          // },
-          // {
-          //   "packager": "arduino",
-          //   "name": "CMSIS-Atmel",
-          //   "version": "1.2.0"
-          // }
+          {
+            "packager": "sparkfun",
+            "name": "arm-none-eabi-gcc",
+            "version": "8-2018-q4-major"
+          }
         ]
       }
     ],
     
     "tools": [
-        TOOLS_COMPILER_AVR,
-        TOOLS_UPLOADER_AVR,
-        TOOLS_COMPILER_ARM,
-        TOOLS_XXXXXXX,
-        TOOLS_YYYYYYY,
-        ],
+      {
+        "version": "8-2018-q4-major", 
+        "name": "arm-none-eabi-gcc", 
+        "systems": [
+          {
+            "url": "https://static.sparkfun.com/large/gcc-arm-none-eabi-8-2018-q4-major-mac.tar.bz2", 
+            "checksum": "SHA-256:0b528ed24db9f0fa39e5efdae9bcfc56bf9e07555cb267c70ff3fee84ec98460", 
+            "host": "i386-apple-darwin11", 
+            "archiveFileName": "gcc-arm-none-eabi-8-2018-q4-major-mac.tar.bz2", 
+            "size": "111430151"
+          }, 
+          {
+            "url": "https://static.sparkfun.com/large/gcc-arm-none-eabi-8-2018-q4-major-linux.tar.bz2", 
+            "checksum": "SHA-256:fb31fbdfe08406ece43eef5df623c0b2deb8b53e405e2c878300f7a1f303ee52", 
+            "host": "i686-linux-gnu", 
+            "archiveFileName": "gcc-arm-none-eabi-8-2018-q4-major-linux.tar.bz2", 
+            "size": "107253352"
+          }, 
+          {
+            "url": "https://static.sparkfun.com/large/gcc-arm-none-eabi-8-2018-q4-major-win32.zip", 
+            "checksum": "SHA-256:be5e2f68549efaecb79bdc34ff03c06f27deb2fcec3badddb5729cfb5ce43d6b", 
+            "host": "i686-mingw32", 
+            "archiveFileName": "gcc-arm-none-eabi-8-2018-q4-major-win32.zip", 
+            "size": "137648411"
+          }
+        ]
+      }
+    ]
     }
   ]
 }
