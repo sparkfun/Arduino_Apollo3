@@ -543,7 +543,7 @@ def connect_device(ser, args, verboseprint):
                 # Size = 0 => We're not piggybacking any data to IMAGE command
                 fill_word(update, 12, 0)
 
-                if send_ackd_command(update, ser) == False:
+                if send_ackd_command(update, ser, verboseprint) == False:
                     verboseprint("Failed to ack command")
                     return
 
