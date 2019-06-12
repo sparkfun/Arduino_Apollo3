@@ -81,7 +81,7 @@ compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
 compiler.flags.common_cpp_c_S={build.extra_flags} -c -g -MMD
-compiler.flags.common_cpp_c=-mcpu={build.mcu} -mthumb -mfloat-abi=hard -fdata-sections -O0
+compiler.flags.common_cpp_c=-mcpu={build.mcu} -mthumb -mfloat-abi=hard -fdata-sections -Os
 compiler.flags.cpp={compiler.flags.common_cpp_c_S} {compiler.flags.common_cpp_c} {compiler.extra_flags.cpp} -ffunction-sections  {compiler.warning_flags} -std=gnu++11 -fno-threadsafe-statics -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions
 compiler.flags.c={compiler.flags.common_cpp_c_S} {compiler.flags.common_cpp_c} {compiler.extra_flags.c} --function-sections -mfpu=fpv4-sp-d16 -std=gnu11 -Wall 
 compiler.flags.S={compiler.flags.common_cpp_c_S} {compiler.extra_flags.S} -x assembler-with-cpp
