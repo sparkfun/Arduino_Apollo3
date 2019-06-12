@@ -35,7 +35,7 @@ amap3blackboard.build.libs=
 amap3blackboard.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 amap3blackboard.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
 amap3blackboard.upload.maximum_size=960000
-amap3blackboard.upload.use_menu_baud = 0
+edge.upload.use_menu_baud=0
 amap3blackboard.upload.baud=115200
 
 ###############################################################
@@ -55,7 +55,7 @@ amap3nano.build.libs=
 amap3nano.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 amap3nano.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
 amap3nano.upload.maximum_size=960000
-amap3nano.upload.use_menu_baud = 0
+edge.upload.use_menu_baud=0
 amap3nano.upload.baud=115200
 
 ###############################################################
@@ -75,7 +75,7 @@ amap3mega.build.libs=
 amap3mega.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 amap3mega.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
 amap3mega.upload.maximum_size=960000
-amap3mega.upload.use_menu_baud = 0
+edge.upload.use_menu_baud=0
 amap3mega.upload.baud=115200
 
 ###############################################################
@@ -95,7 +95,7 @@ artemis.build.libs=
 artemis.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 artemis.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
 artemis.upload.maximum_size=960000
-artemis.upload.use_menu_baud = 0
+edge.upload.use_menu_baud=0
 artemis.upload.baud=115200
 
 ###############################################################
@@ -114,7 +114,7 @@ edge.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
 edge.build.libs=
 edge.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 edge.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-edge.upload.use_menu_baud = 0
+edge.upload.use_menu_baud=0
 edge.upload.baud=921600
 
 ###############################################################
@@ -134,7 +134,7 @@ edgeV2.build.libs=
 edgeV2.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 edgeV2.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
 edgeV2.upload.maximum_size=960000
-edgeV2.upload.use_menu_baud = 0
+edge.upload.use_menu_baud=0
 edgeV2.upload.baud=115200
 
 ###############################################################
