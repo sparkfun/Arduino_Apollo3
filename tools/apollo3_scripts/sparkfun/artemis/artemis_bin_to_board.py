@@ -459,7 +459,7 @@ def connect_device(ser, args, verboseprint):
     hello = bytearray([0x00]*4)
     fill_word(hello, 0, ((8 << 16) | AM_SECBOOT_WIRED_MSGTYPE_HELLO))
     verboseprint('Sending Hello.')
-    response = send_command(hello, 88, ser)
+    response = send_command(hello, 88, ser, verboseprint)
 
     #Check if response failed
     if response == False:
@@ -489,7 +489,7 @@ def connect_device(ser, args, verboseprint):
             abortMsg = bytearray([0x00]*8);
             fill_word(abortMsg, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_ABORT))
             fill_word(abortMsg, 4, abort)
-            if send_ackd_command(abortMsg, ser) == False:
+            if send_ackd_command(abortMsg, ser, verboseprint) == False:
                 verboseprint("Failed to ack command")
                 return
 
@@ -501,7 +501,7 @@ def connect_device(ser, args, verboseprint):
             otaDesc = bytearray([0x00]*8);
             fill_word(otaDesc, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_OTADESC))
             fill_word(otaDesc, 4, otadescaddr)
-            if send_ackd_command(otaDesc, ser) == False:
+            if send_ackd_command(otaDesc, ser, verboseprint) == False:
                 verboseprint("Failed to ack command")
                 return
 
@@ -571,7 +571,7 @@ def connect_device(ser, args, verboseprint):
                     fill_word(dataMsg, 4, x)
 
                     verboseprint("Sending Data Packet of length ", chunklen)
-                    if send_ackd_command(dataMsg + chunk, ser) == False:
+                    if send_ackd_command(dataMsg + chunk, ser, verboseprint) == False:
                         verboseprint("Failed to ack command")
                         return
 
@@ -591,7 +591,7 @@ def connect_device(ser, args, verboseprint):
             fill_word(resetmsg, 0, ((12 << 16) | AM_SECBOOT_WIRED_MSGTYPE_RESET))
             # options
             fill_word(resetmsg, 4, args.reset)
-            if send_ackd_command(resetmsg, ser) == False:
+            if send_ackd_command(resetmsg, ser, verboseprint) == False:
                 verboseprint("Failed to ack command")
                 return
 
@@ -616,9 +616,9 @@ def connect_device(ser, args, verboseprint):
 # Sends a command, and waits for an ACK.
 #
 #******************************************************************************
-def send_ackd_command(command, ser):
+def send_ackd_command(command, ser, verboseprint):
 
-    response = send_command(command, 20, ser)
+    response = send_command(command, 20, ser, verboseprint)
 
     #Check if response failed
     if response == False:
@@ -647,7 +647,7 @@ def send_ackd_command(command, ser):
 # Sends a command, and waits for the response.
 #
 #******************************************************************************
-def send_command(params, response_len, ser):
+def send_command(params, response_len, ser, verboseprint):
 
     # Compute crc
     crc = crc32(params)
