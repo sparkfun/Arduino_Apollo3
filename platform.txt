@@ -127,15 +127,15 @@ recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} 
 # Host-specific definitions for upload tool
     # Default host 
 tools.artemis_bin2board.pgm={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
-tools.artemis_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+tools.artemis_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.baud} -port "{serial.port}" -r 1 {upload.verbose}
 
     # MacOSX
 tools.artemis_bin2board.pgm.macosx={runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
-tools.artemis_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+tools.artemis_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.baud} -port "{serial.port}" -r 1 {upload.verbose}
 
     # Windows
 tools.artemis_bin2board.pgm.windows="{runtime.platform.path}/tools/apollo3_scripts/sparkfun/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe"
-tools.artemis_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 921600 -port "{serial.port}" -r 1 {upload.verbose}
+tools.artemis_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.baud} -port "{serial.port}" -r 1 {upload.verbose}
 
 # Additional Loader Parameters
 tools.artemis_bin2board.upload.protocol=ap3
