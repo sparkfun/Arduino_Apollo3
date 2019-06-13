@@ -37,7 +37,7 @@ void loop() {
     unsigned int cheeseCount = Serial.parseInt(); //That's a lot of potential cheese
 
     //Print to second serial port
-    for (unsigned int x ; x < cheeseCount ; x++)
+    for (unsigned int x = 0; x < cheeseCount ; x++)
     {
       Serial1.println("Cheese!");
     }
