@@ -20,6 +20,26 @@
 
 ###############################################################
 
+artemis.name=SparkFun Artemis Module
+artemis.build.variant=SparkFun_Artemis
+artemis.build.board=SFE_ARTEMIS
+artemis.upload.tool=artemis_bin2board
+artemis.upload.maximum_size=960000
+artemis.build.arch=APOLLO3
+artemis.build.mcu=cortex-m4
+artemis.build.f_cpu=48000000L
+artemis.build.core=arduino
+artemis.build.defs=
+artemis.build.includes=-I{build.variant.path}/config
+artemis.build.libs=
+artemis.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+artemis.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+artemis.upload.maximum_size=960000
+edge.upload.use_menu_baud=0
+artemis.upload.baud=115200
+
+###############################################################
+
 amap3blackboard.name=SparkFun BlackBoard Artemis
 amap3blackboard.build.variant=SparkFun_BlackBoard_Artemis
 amap3blackboard.build.board=AM_AP3_SFE_BB_ARTEMIS
@@ -77,26 +97,6 @@ amap3mega.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_boot
 amap3mega.upload.maximum_size=960000
 edge.upload.use_menu_baud=0
 amap3mega.upload.baud=115200
-
-###############################################################
-
-artemis.name=SparkFun Artemis Module
-artemis.build.variant=SparkFun_Artemis
-artemis.build.board=SFE_ARTEMIS
-artemis.upload.tool=artemis_bin2board
-artemis.upload.maximum_size=960000
-artemis.build.arch=APOLLO3
-artemis.build.mcu=cortex-m4
-artemis.build.f_cpu=48000000L
-artemis.build.core=arduino
-artemis.build.defs=
-artemis.build.includes=-I{build.variant.path}/bsp -I{build.variant.path}/config
-artemis.build.libs=
-artemis.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-artemis.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-artemis.upload.maximum_size=960000
-edge.upload.use_menu_baud=0
-artemis.upload.baud=115200
 
 ###############################################################
 
