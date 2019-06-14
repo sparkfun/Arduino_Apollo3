@@ -30,7 +30,7 @@ SOFTWARE.
 // Include Apollo headers
 #include "am_mcu_apollo.h"
 #include "am_util.h"
-#include "am_bsp.h"
+// #include "am_bsp.h"
 
 typedef enum {
     AP3_OK = 0x00,          // One singular "OK" value.

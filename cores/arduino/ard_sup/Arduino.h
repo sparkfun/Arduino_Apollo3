@@ -39,7 +39,7 @@ extern "C"
 // Include Apollo headers
 #include "am_mcu_apollo.h"
 #include "am_util.h"
-#include "am_bsp.h"
+// #include "am_bsp.h"
 
 #ifdef ARDUINO_REDEFINE_OVERFLOW
 #warning "restoring OVERFLOW from value in ARDUINO_REDEFINE_OVERFLOW"

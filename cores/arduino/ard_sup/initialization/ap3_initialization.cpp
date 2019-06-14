@@ -1,5 +1,9 @@
 #include "ap3_initialization.h"
 
+// If the bsp low power init function exists we want to use it at startup
+void am_bsp_low_power_init(void) __attribute__((weak));
+void am_bsp_low_power_init(void) {}
+
 void ap3_init( void ){
     // Set the clock frequency.
     am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_SYSCLK_MAX, 0);
@@ -19,7 +23,4 @@ void ap3_init( void ){
 
     // Enable interruts master
     am_hal_interrupt_master_enable();
-
-    // // Initialize the printf interface for ITM/SWO output.
-    // am_bsp_uart_printf_enable(); // Enable UART - will set debug output to UART
 }
