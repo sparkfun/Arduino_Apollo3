@@ -48,4 +48,6 @@ extern Uart Serial;
 #define AP3_SPI_IOM 0                   // Speciy that SPI uses IOMaster 0
 #define AP3_SPI_DUP ap3_spi_full_duplex // Specify that SPI is full-duplex (as opposed to ap3_spi_tx_only or ap3_spi_rx_only)
 
+#define LED_BUILTIN 46
+
 #endif // _AP3_VARIANT_H_
