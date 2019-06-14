@@ -46,7 +46,6 @@
 
 #include <stdint.h>
 #include "am_mcu_apollo.h"              // Defines AM_CMSIS_REGS
-#include "Arduino.h"
 
 //*****************************************************************************
 //
