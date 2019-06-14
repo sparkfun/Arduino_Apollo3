@@ -43,6 +43,7 @@ The structure of this repo is such that it will most closely resemble the struct
 * [Using Arduino IDE Boards Manager](https://github.com/sparkfun/Arduino_Boards) (Reccomended)
     * Follow the instructions at the [SparkFun Arduino Boards Repo](https://github.com/sparkfun/Arduino_Boards)
     * Open 'Boards Manager' and select 'SparkFun Apollo3 Boards,' install the latest version.
+    * JSON boards manager link for convenience: https://raw.githubusercontent.com/sparkfun/Arduino_Boards/master/IDE_Board_Manager/package_sparkfun_index.json
 
 
 * [Manually Install in Arduino Sketchbook]()
