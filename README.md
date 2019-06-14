@@ -19,8 +19,8 @@ Current focus is to begin building support for the essential Arduino libraries i
     * Working:
       * ditigal functions (read / write)
       * analogRead
-    * Under Construction:
       * analogWrite
+    * Under Construction:
       * interrupts
   * Timing
     * Working:
@@ -40,7 +40,11 @@ Current focus is to begin building support for the essential Arduino libraries i
 
 The structure of this repo is such that it will most closely resemble the structure required when it is time to add it to the Arduino boards manager. Until then you'll have to use the manual installation process.
 
-* Using Arduino IDE Boards Manager (not yet supported)
+* [Using Arduino IDE Boards Manager](https://github.com/sparkfun/Arduino_Boards) (Reccomended)
+    * Follow the instructions at the [SparkFun Arduino Boards Repo](https://github.com/sparkfun/Arduino_Boards)
+    * Open 'Boards Manager' and select 'SparkFun Apollo3 Boards,' install the latest version.
+
+
 * [Manually Install in Arduino Sketchbook]()
     * **First** Install the Arduino SAMD Boards through the Arduino Board Manager. This is required for the ARM Cortex-M toolchain.
     * Open your Arduno sketchbook folder, listed in Arduino's preferences pane (it is where your libraries folder lives)
