@@ -119,22 +119,22 @@ edge.upload.baud=921600
 
 ###############################################################
 
-edgeV2.name=SparkFun Edge V2
-edgeV2.build.variant=SparkFun_Edge_V2
-edgeV2.build.board=SFE_EDGE_V2
-edgeV2.upload.tool=artemis_bin2board
-edgeV2.upload.maximum_size=960000
-edgeV2.build.arch=APOLLO3
-edgeV2.build.mcu=cortex-m4
-edgeV2.build.f_cpu=48000000L
-edgeV2.build.core=arduino
-edgeV2.build.defs=
-edgeV2.build.includes=-I{build.variant.path}/config
-edgeV2.build.libs=
-edgeV2.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-edgeV2.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-edgeV2.upload.maximum_size=960000
-edge.upload.use_menu_baud=0
-edgeV2.upload.baud=115200
+# edgeV2.name=SparkFun Edge V2
+# edgeV2.build.variant=SparkFun_Edge_V2
+# edgeV2.build.board=SFE_EDGE_V2
+# edgeV2.upload.tool=artemis_bin2board
+# edgeV2.upload.maximum_size=960000
+# edgeV2.build.arch=APOLLO3
+# edgeV2.build.mcu=cortex-m4
+# edgeV2.build.f_cpu=48000000L
+# edgeV2.build.core=arduino
+# edgeV2.build.defs=
+# edgeV2.build.includes=-I{build.variant.path}/config
+# edgeV2.build.libs=
+# edgeV2.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+# edgeV2.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+# edgeV2.upload.maximum_size=960000
+# edge.upload.use_menu_baud=0
+# edgeV2.upload.baud=115200
 
-###############################################################
+# ###############################################################
