@@ -7,7 +7,7 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-    FLASH (rx) : ORIGIN = 0x0000C000, LENGTH = 960K
+    FLASH (rx) : ORIGIN = 0x00010000, LENGTH = 960K /*Modified from 0xC000 to work with SparkFun ABL*/
     SRAM (rwx) : ORIGIN = 0x10000000, LENGTH = 384K
 }
 
