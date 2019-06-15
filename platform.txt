@@ -125,6 +125,7 @@ preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
 
 ##### The following tool settings are for the Ambiq SBL
+
 # Host-specific definitions for upload tool
     # Default host 
 tools.artemis_bin2board.pgm={runtime.platform.path}/tools/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
