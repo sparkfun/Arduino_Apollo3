@@ -60,6 +60,26 @@ amap3blackboard.upload.baud=115200
 
 ###############################################################
 
+amap3blackboardBL.name=SparkFun BlackBoard Artemis 80k Offset
+amap3blackboardBL.build.variant=SparkFun_BlackBoard_Artemis_BL
+amap3blackboardBL.build.board=AM_AP3_SFE_BB_ARTEMIS_BL
+amap3blackboardBL.upload.tool=artemis_bin2board
+amap3blackboardBL.upload.maximum_size=960000
+amap3blackboardBL.build.arch=APOLLO3
+amap3blackboardBL.build.mcu=cortex-m4
+amap3blackboardBL.build.f_cpu=48000000L
+amap3blackboardBL.build.core=arduino
+amap3blackboardBL.build.defs=
+amap3blackboardBL.build.includes=-I{build.variant.path}/config
+amap3blackboardBL.build.libs=
+amap3blackboardBL.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3blackboardBL.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3blackboardBL.upload.maximum_size=960000
+edge.upload.use_menu_baud=0
+amap3blackboardBL.upload.baud=115200
+
+###############################################################
+
 amap3nano.name=SparkFun BlackBoard Artemis Nano
 amap3nano.build.variant=SparkFun_BlackBoard_Artemis_Nano
 amap3nano.build.board=AM_AP3_SFE_BB_ARTEMIS_NANO
