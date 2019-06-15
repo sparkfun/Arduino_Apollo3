@@ -124,6 +124,7 @@ recipe.size.regex=\.text\s+([0-9]+).*
 preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
 
+##### The following tool settings are for the Ambiq SBL
 # Host-specific definitions for upload tool
     # Default host 
 tools.artemis_bin2board.pgm={runtime.platform.path}/tools/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
@@ -145,3 +146,16 @@ tools.artemis_bin2board.upload.params.quiet=
 # Upload tool pattern
 tools.artemis_bin2board.upload.pattern={pgm} {args}
 
+##### The following tool settings are for the SparkFun variable bootloader
+
+    # Windows
+tools.artemis_uart.pgm.windows="{runtime.platform.path}/tools/artemis/windows/artemis_uart_loader.exe"
+tools.artemis_uart.args.windows="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
+
+# Additional Loader Parameters
+tools.artemis_uart.upload.protocol=ap3
+tools.artemis_uart.upload.params.verbose=-v
+tools.artemis_uart.upload.params.quiet=
+
+# Upload tool pattern
+tools.artemis_uart.upload.pattern={pgm} {args}
