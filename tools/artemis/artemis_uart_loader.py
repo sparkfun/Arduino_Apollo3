@@ -15,7 +15,7 @@ import time
 from sys import exit
 
 # Bootloader command constants
-BL_COMMAND_ANNOUNCE = 5
+BL_COMMAND_ANNOUNCE = 127
 BL_COMMAND_AOK = 6
 BL_COMMAND_BAD_CRC = 7
 BL_COMMAND_NEXT_FRAME = 8
