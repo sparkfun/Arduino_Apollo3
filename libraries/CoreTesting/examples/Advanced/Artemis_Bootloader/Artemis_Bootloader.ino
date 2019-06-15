@@ -30,17 +30,22 @@
              -------
 
   The factory secure bootloader (SBL) lives at 0x00 to 0xC000.
-  The SparkFun Artemis bootloader begins at 0xC000 and takes ~20k bytes
-  We load user code starting at 0xC000 + 0x8000 (32768) = 0x14000
-  If our bootloader times out, we jump to 0x14000 to begin running user code
+  The SparkFun Artemis bootloader begins at 0xC000 and takes ~7300 bytes (with debug statements it's ~10k)
+  We load user code starting at 0xC000 + 8192 = 0xE000
+  If our bootloader completes or times out, we jump to 0xE000+4 to begin running user code
 
   TODO:
   Protect bootloader section in flash
+  Combine Ambiq SBL with SparkFun BL
+  Upload combined over JTAG
+  Adjust Arduino linker script for all varients
+  Adjust Arduino tools to artemis uart loader
   Make sure all RAM is released
 */
+
 static uint32_t ui32Source[512];
 
-#define MAX_WAIT_IN_MS 100 //Millisecond wait before bootload timeout and begin user code
+#define MAX_WAIT_IN_MS 50 //Millisecond wait before bootload timeout and begin user code
 
 enum BL_COMMANDS {
   BL_COMMAND_ANNOUNCE = 0x05,
@@ -56,10 +61,11 @@ uint16_t frame_size = 0;
 uint32_t incoming_crc32 = 0;
 uint32_t crc32 = 0;
 uint32_t frame_address = 0;
+uint16_t last_page_erased = 0;
 
 // Location in flash to begin storing user's code
-//#define USERCODE_OFFSET 0x14000
-#define USERCODE_OFFSET 0x80000 // Should be start of flash instance 1
+// Linker script needs to be adjusted to offset user's flash to this address
+#define USERCODE_OFFSET 0xC000 + 0x4000
 
 //Comment out this line to turn off debug statements on Serial1
 #define DEBUG 1
@@ -74,6 +80,7 @@ void setup() {
   Serial1.println("Debug");
 #endif
 
+  delay(3); //Necessary to separate a blip on TX line when port opens from annouce command
   Serial.write(BL_COMMAND_ANNOUNCE); //Tell the world we can be bootloaded
 
   //Check to see if the computer responded
@@ -82,33 +89,26 @@ void setup() {
   {
     if (count++ > MAX_WAIT_IN_MS)
     {
+#ifdef DEBUG
+      Serial1.println("No reponse from computer");
+#endif
       app_start();
     }
     delay(1);
   }
-  if (Serial.read() != BL_COMMAND_AOK) app_start(); //If the computer did not respond correctly with a AOK, we jump to user's program
+  if (Serial.read() != BL_COMMAND_AOK)
+  {
+#ifdef DEBUG
+    Serial1.println("Invalid response from computer");
+#endif
+    app_start(); //If the computer did not respond correctly with a AOK, we jump to user's program
+  }
 
   //Now get upload baud rate from caller
   uint32_t uploadRate = get4Bytes();
 
   Serial.flush();
   Serial.begin(uploadRate); //Go to new baud rate
-
-  //We need to give the computer some time to switch baud rates
-  //Let's erase the flash while we wait
-
-#ifdef DEBUG
-  Serial1.printf("Erasing all of flash instance %d.\n\r", AM_HAL_FLASH_ADDR2INST(USERCODE_OFFSET));
-#endif
-
-  int32_t i32ReturnCode = am_hal_flash_mass_erase(AM_HAL_FLASH_PROGRAM_KEY, AM_HAL_FLASH_ADDR2INST(USERCODE_OFFSET));
-
-#ifdef DEBUG
-  if (i32ReturnCode)
-  {
-    Serial1.printf("FLASH_MASS_ERASE i32ReturnCode =  0x%x.\n\r", i32ReturnCode);
-  }
-#endif
 
   delay(10); //Give the computer some time to switch baud rates
 
@@ -150,6 +150,9 @@ RESTART:
 
   if (frame_size == BL_COMMAND_ALL_DONE) //Check to see if we are done
   {
+#ifdef DEBUG
+    Serial1.println("Done!");
+#endif
     am_hal_reset_control(AM_HAL_RESET_CONTROL_SWPOI, 0); //Cause a system Power On Init to release as much of the stack as possible
   }
 
@@ -183,13 +186,41 @@ RESTART:
   if (incoming_crc32 == crc32)
   {
 #ifdef DEBUG
-    Serial1.println("CRC good. Record array");
+    Serial1.println("CRC good.");
 #endif
-    int32_t i32ReturnCode = program_array(frame_address + USERCODE_OFFSET);
+
+    int32_t i32ReturnCode = 0;
+
+    //Frames coming from the computer are 2k bytes, but we erase 8k bytes in a page
+    //Only erase a page if we haven't erased it before
+    if (last_page_erased < AM_HAL_FLASH_ADDR2PAGE(frame_address + USERCODE_OFFSET))
+    {
+#ifdef DEBUG
+      Serial1.printf("Erasing instance %d, page %d\n\r", AM_HAL_FLASH_ADDR2INST(frame_address + USERCODE_OFFSET), AM_HAL_FLASH_ADDR2PAGE(frame_address + USERCODE_OFFSET));
+#endif
+
+      //Erase the 8k page for this address
+      i32ReturnCode = am_hal_flash_page_erase(AM_HAL_FLASH_PROGRAM_KEY,
+                                              AM_HAL_FLASH_ADDR2INST(frame_address + USERCODE_OFFSET),
+                                              AM_HAL_FLASH_ADDR2PAGE(frame_address + USERCODE_OFFSET) );
+      last_page_erased = AM_HAL_FLASH_ADDR2PAGE(frame_address + USERCODE_OFFSET);
+    }
 
 #ifdef DEBUG
     if (i32ReturnCode)
-      Serial1.printf("FLASH_WRITE error =  0x%x.\n", i32ReturnCode);
+    {
+      Serial1.printf("FLASH_MASS_ERASE i32ReturnCode = 0x%x.\n\r", i32ReturnCode);
+    }
+#endif
+
+    //Record the array
+    i32ReturnCode = program_array(frame_address + USERCODE_OFFSET);
+
+#ifdef DEBUG
+    if (i32ReturnCode)
+      Serial1.printf("FLASH_WRITE error = 0x%x.\n\r", i32ReturnCode);
+    else
+      Serial1.println("Array recorded to flash");
 #endif
   }
   else
@@ -244,19 +275,21 @@ uint32_t get4BytesReversed(void)
 
 void app_start()
 {
+#ifdef DEBUG
   // Print a section of flash
-  //  uint32_t start_address = USERCODE_OFFSET;
-  //  Serial1.printf("Printing page starting at offset 0x%04X", start_address);
-  //  for (uint16_t x = 0; x < 512; x++)
-  //  {
-  //    if (x % 8 == 0)
-  //    {
-  //      Serial1.println();
-  //      Serial1.printf("Adr: 0x%04X", start_address + (x * 4));
-  //    }
-  //    Serial1.printf(" 0x%08X", *(uint32_t *)(start_address + (x * 4)));
-  //  }
-  //  Serial1.println();
+  uint32_t start_address = USERCODE_OFFSET;
+  Serial1.printf("Printing page starting at offset 0x%04X", start_address);
+  for (uint16_t x = 0; x < 512; x++)
+  {
+    if (x % 8 == 0)
+    {
+      Serial1.println();
+      Serial1.printf("Adr: 0x%04X", start_address + (x * 4));
+    }
+    Serial1.printf(" 0x%08X", *(uint32_t *)(start_address + (x * 4)));
+  }
+  Serial1.println();
+#endif
 
   uint32_t entryPoint = *(uint32_t *)(USERCODE_OFFSET + 4);
 
