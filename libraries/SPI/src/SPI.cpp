@@ -210,7 +210,7 @@ void SPIClass::setBitOrder(BitOrder order)
 
 void SPIClass::setDataMode(uint8_t mode)
 {
-  _config.eSpiMode = mode;
+  _config.eSpiMode = (am_hal_iom_spi_mode_e)mode;
   initialize();
 }
 
