@@ -97,16 +97,16 @@ def main():
 
             response = ser.read()
 
-        if(ord(response) == BL_COMMAND_ANNOUNCE):
-            # Respond with 'AOK'
-            # values = bytearray([6])
-            ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
+            if(ord(response) == BL_COMMAND_ANNOUNCE):
+                # Respond with 'AOK'
+                # values = bytearray([6])
+                ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
 
-            verboseprint("Bootload response received")
-        else:
-            print("Unkown response: " + str(ord(response)) +
-                  ". Perhaps you have the wrong port?")
-            exit()
+                verboseprint("Bootload response received")
+                break
+            else:
+                verboseprint("Unkown response: " + str(ord(response)))
+                response = ''
 
         # Send upload baud rate
         baud_in_bytes = args.baud.to_bytes(4, byteorder='big')
@@ -198,6 +198,9 @@ def main():
 
                 if end > totalLen:
                     end = totalLen
+            else:
+                print("Unknown BL response")
+                exit()
 
     exit()
 
