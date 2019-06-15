@@ -39,7 +39,9 @@ extern "C"
 // Include Apollo headers
 #include "am_mcu_apollo.h"
 #include "am_util.h"
-// #include "am_bsp.h"
+    // #include "am_bsp.h"
+
+#include <math.h> //Gets us pow()
 
 #ifdef ARDUINO_REDEFINE_OVERFLOW
 #warning "restoring OVERFLOW from value in ARDUINO_REDEFINE_OVERFLOW"
@@ -69,6 +71,8 @@ extern "C"
 #define DEG_TO_RAD 0.017453292519943295769236907684886
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
+
+typedef bool boolean;
 
 enum BitOrder
 {
