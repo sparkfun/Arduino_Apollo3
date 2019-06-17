@@ -126,37 +126,45 @@ recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} 
 
 ##### The following tool settings are for the Ambiq SBL
 
-# Host-specific definitions for upload tool
-    # Default host 
-tools.artemis_bin2board.pgm={runtime.platform.path}/tools/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
-tools.artemis_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.baud} -port "{serial.port}" -r 2 {upload.verbose}
+# Host-specific definitions for upload tool (using Ambiq's Secure Bootloader SBL)
+    # Linux
+tools.ambiq_bin2board.pgm={runtime.platform.path}/tools/ambiq/linux/ambiq_bin_to_board/ambiq_bin_to_board
+tools.ambiq_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 115200 -port "{serial.port}" -r 2 {upload.verbose}
 
     # MacOSX
-tools.artemis_bin2board.pgm.macosx={runtime.platform.path}/tools/artemis/macosx/artemis_bin_to_board/artemis_bin_to_board
-tools.artemis_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.baud} -port "{serial.port}" -r 2 {upload.verbose}
+tools.ambiq_bin2board.pgm.macosx={runtime.platform.path}/tools/ambiq/macosx/ambiq_bin_to_board/ambiq_bin_to_board
+tools.ambiq_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 115200 -port "{serial.port}" -r 2 {upload.verbose}
 
     # Windows
-tools.artemis_bin2board.pgm.windows="{runtime.platform.path}/tools/artemis/windows/artemis_bin_to_board/artemis_bin_to_board.exe"
-tools.artemis_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.baud} -port "{serial.port}" -r 2 {upload.verbose}
+tools.ambiq_bin2board.pgm.windows="{runtime.platform.path}/tools/ambiq/windows/ambiq_bin_to_board/ambiq_bin_to_board.exe"
+tools.ambiq_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 115200 -port "{serial.port}" -r 2 {upload.verbose}
 
 # Additional Loader Parameters
-tools.artemis_bin2board.upload.protocol=ap3
-tools.artemis_bin2board.upload.params.verbose=-v
-tools.artemis_bin2board.upload.params.quiet=
+tools.ambiq_bin2board.upload.protocol=ap3
+tools.ambiq_bin2board.upload.params.verbose=-v
+tools.ambiq_bin2board.upload.params.quiet=
 
 # Upload tool pattern
-tools.artemis_bin2board.upload.pattern={pgm} {args}
+tools.ambiq_bin2board.upload.pattern={pgm} {args}
 
-##### The following tool settings are for the SparkFun variable bootloader
+##### The following tool settings are for the SparkFun variable bootloader (Artemis SVL) (Saturn Five Loader)
+
+    # Linux
+tools.artemis_svl.pgm={runtime.platform.path}/tools/ambiq/linux/artemis_svl/artemis_svl
+tools.artemis_svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
+
+    # MacOSX
+tools.artemis_svl.pgm.macosx={runtime.platform.path}/tools/ambiq/macosx/artemis_svl/artemis_svl
+tools.artemis_svl.args.macosx="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
 
     # Windows
-tools.artemis_uart.pgm.windows="{runtime.platform.path}/tools/artemis/windows/artemis_uart_loader.exe"
-tools.artemis_uart.args.windows="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
+tools.artemis_svl.pgm.windows="{runtime.platform.path}/tools/artemis/windows/artemis_svl.exe"
+tools.artemis_svl.args.windows="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
 
 # Additional Loader Parameters
-tools.artemis_uart.upload.protocol=ap3
-tools.artemis_uart.upload.params.verbose=-v
-tools.artemis_uart.upload.params.quiet=
+tools.artemis_svl.upload.protocol=ap3
+tools.artemis_svl.upload.params.verbose=-v
+tools.artemis_svl.upload.params.quiet=
 
 # Upload tool pattern
-tools.artemis_uart.upload.pattern={pgm} {args}
+tools.artemis_svl.upload.pattern={pgm} {args}
