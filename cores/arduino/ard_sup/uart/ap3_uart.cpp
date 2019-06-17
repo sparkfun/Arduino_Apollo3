@@ -91,6 +91,11 @@ int Uart::read()
     return _rx_buffer.read_char();
 }
 
+void Uart::flush()
+{
+    // todo:
+}
+
 size_t Uart::write(const uint8_t data)
 {
     return write(&data, 1);
