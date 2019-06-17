@@ -15,7 +15,7 @@ import time
 from sys import exit
 
 # Bootloader command constants
-BL_COMMAND_ANNOUNCE = 5
+BL_COMMAND_ANNOUNCE = 127
 BL_COMMAND_AOK = 6
 BL_COMMAND_BAD_CRC = 7
 BL_COMMAND_NEXT_FRAME = 8
@@ -97,20 +97,34 @@ def main():
 
             response = ser.read()
 
-            if(ord(response) == BL_COMMAND_ANNOUNCE):
-                # Respond with 'AOK'
-                # values = bytearray([6])
-                ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
+            if(len(response) > 0):
+                if(ord(response) == BL_COMMAND_ANNOUNCE):
+                    # Respond with 'AOK'
+                    # values = bytearray([6])
+                    ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
 
-                verboseprint("Bootload response received")
-                break
-            else:
-                verboseprint("Unkown response: " + str(ord(response)))
-                response = ''
+                    verboseprint("Bootload response received")
+                    break
+                else:
+                    verboseprint("Unkown response: " + str(ord(response)))
+                    response = ''
 
         # Send upload baud rate
         baud_in_bytes = args.baud.to_bytes(4, byteorder='big')
         ser.write(baud_in_bytes)
+
+        # Wait for incoming char indicating bootloader version
+        i = 0
+        response = ''
+        while len(response) == 0:
+            i = i + 1
+            if(i == 10):
+                print("No version from Artemis bootloader")
+                exit()
+
+            response = ser.read()
+
+        verboseprint("Bootloader version: " + str(ord(response)))
 
         ser.flush()
         # Wait for all previous bytes to transmit before changing bauds

@@ -30,68 +30,90 @@ const SPISettings DEFAULT_SPI_SETTINGS = SPISettings();
 
 SPIClass::SPIClass(uint8_t iom_instance) : IOMaster(iom_instance)
 {
-	_duplex = ap3_spi_full_duplex;
+  _duplex = ap3_spi_full_duplex;
 }
 
 SPIClass::SPIClass(uint8_t iom_instance, ap3_spi_duplex_e duplex) : IOMaster(iom_instance)
 {
-	_duplex = duplex;
+  _duplex = duplex;
 }
 
 void SPIClass::begin()
 {
-	ap3_err_t retval = AP3_OK;
-	am_hal_gpio_pincfg_t pincfg = AP3_GPIO_DEFAULT_PINCFG;
-	uint8_t funcsel = 0;
+  ap3_err_t retval = AP3_OK;
+  am_hal_gpio_pincfg_t pincfg = AP3_GPIO_DEFAULT_PINCFG;
+  uint8_t funcsel = 0;
 
-	// init();
+  // init();
 
-	// Set up pins
-	// clock
-	retval = ap3_iom_pad_funcsel( _instance, AP3_IOM_SPI_SCLK, &_padSCLK, &funcsel);
-	if( retval != AP3_OK ){ return /*retval*/; }
-	pincfg.uFuncSel = funcsel;
-	pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
-	pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
-	pincfg.uIOMnum = _instance;
-	padMode( _padSCLK, pincfg, &retval );   if( retval != AP3_OK){ return /*ap3_return(retval)*/; }
-	pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
+  // Set up pins
+  // clock
+  retval = ap3_iom_pad_funcsel(_instance, AP3_IOM_SPI_SCLK, &_padSCLK, &funcsel);
+  if (retval != AP3_OK)
+  {
+    return /*retval*/;
+  }
+  pincfg.uFuncSel = funcsel;
+  pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
+  pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
+  pincfg.uIOMnum = _instance;
+  padMode(_padSCLK, pincfg, &retval);
+  if (retval != AP3_OK)
+  {
+    return /*ap3_return(retval)*/;
+  }
+  pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
 
-	// mosi
-	if( _duplex & ap3_spi_tx_only ){
-		retval = ap3_iom_pad_funcsel( _instance, AP3_IOM_SPI_MOSI, &_padMOSI, &funcsel);
-		if( retval != AP3_OK ){ return /*retval*/; }
-		pincfg.uFuncSel = funcsel;
-		pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
-		pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
-		pincfg.uIOMnum = _instance;
-		padMode( _padMOSI, pincfg, &retval );   if( retval != AP3_OK){ return /*ap3_return(retval)*/; }
-		pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
-	}
+  // mosi
+  if (_duplex & ap3_spi_tx_only)
+  {
+    retval = ap3_iom_pad_funcsel(_instance, AP3_IOM_SPI_MOSI, &_padMOSI, &funcsel);
+    if (retval != AP3_OK)
+    {
+      return /*retval*/;
+    }
+    pincfg.uFuncSel = funcsel;
+    pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
+    pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
+    pincfg.uIOMnum = _instance;
+    padMode(_padMOSI, pincfg, &retval);
+    if (retval != AP3_OK)
+    {
+      return /*ap3_return(retval)*/;
+    }
+    pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
+  }
 
-	// miso
-	if( _duplex & ap3_spi_rx_only ){
-		retval = ap3_iom_pad_funcsel( _instance, AP3_IOM_SPI_MISO, &_padMISO, &funcsel);
-		if( retval != AP3_OK ){ return /*retval*/; }
-		pincfg.uFuncSel = funcsel;
-		pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
-		pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
-		pincfg.uIOMnum = _instance;
-		padMode( _padMISO, pincfg, &retval );   if( retval != AP3_OK){ return /*ap3_return(retval)*/; }
-		pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
-	}
+  // miso
+  if (_duplex & ap3_spi_rx_only)
+  {
+    retval = ap3_iom_pad_funcsel(_instance, AP3_IOM_SPI_MISO, &_padMISO, &funcsel);
+    if (retval != AP3_OK)
+    {
+      return /*retval*/;
+    }
+    pincfg.uFuncSel = funcsel;
+    pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
+    pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
+    pincfg.uIOMnum = _instance;
+    padMode(_padMISO, pincfg, &retval);
+    if (retval != AP3_OK)
+    {
+      return /*ap3_return(retval)*/;
+    }
+    pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
+  }
 
-
-	config(DEFAULT_SPI_SETTINGS);
+  config(DEFAULT_SPI_SETTINGS);
 }
 
 void SPIClass::config(SPISettings settings)
 {
-	memset( (void*)&_config, 0x00, sizeof(am_hal_iom_config_t) ); // Set the IOM configuration
-	_config.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
-	_config.ui32ClockFreq = settings.clockFreq;
-	_config.eSpiMode = settings.dataMode;
-	_order = settings.bitOrder;
+  memset((void *)&_config, 0x00, sizeof(am_hal_iom_config_t)); // Set the IOM configuration
+  _config.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
+  _config.ui32ClockFreq = settings.clockFreq;
+  _config.eSpiMode = settings.dataMode;
+  _order = settings.bitOrder;
 
   initialize(); // Initialize the IOM
 }
@@ -188,7 +210,7 @@ void SPIClass::setBitOrder(BitOrder order)
 
 void SPIClass::setDataMode(uint8_t mode)
 {
-  _config.eSpiMode = mode;
+  _config.eSpiMode = (am_hal_iom_spi_mode_e)mode;
   initialize();
 }
 
@@ -203,18 +225,29 @@ void SPIClass::setDataMode(uint8_t mode)
 
 byte SPIClass::transfer(uint8_t data)
 {
-	_transfer( &data, NULL, 1);
+  _transfer(&data, NULL, 1);
 }
 
-uint16_t SPIClass::transfer16(uint16_t data) {
-  union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } t;
+uint16_t SPIClass::transfer16(uint16_t data)
+{
+  union {
+    uint16_t val;
+    struct
+    {
+      uint8_t lsb;
+      uint8_t msb;
+    };
+  } t;
 
   t.val = data;
 
-  if ( _order == LSBFIRST) {
+  if (_order == LSBFIRST)
+  {
     t.lsb = transfer(t.lsb);
     t.msb = transfer(t.msb);
-  } else {
+  }
+  else
+  {
     t.msb = transfer(t.msb);
     t.lsb = transfer(t.lsb);
   }
@@ -222,75 +255,84 @@ uint16_t SPIClass::transfer16(uint16_t data) {
   return t.val;
 }
 
-void SPIClass::transfer(void *buf, size_t count){
-	_transfer( buf, buf, count); // todo: not sure how the HAL will handle sending and receiving from the same buffer...
-}
-
-void SPIClass::transferOut(void *buf, size_t count){
-	_transfer( buf, NULL, count);
-}
-
-void SPIClass::transferIn(void *buf, size_t count){
-	_transfer( NULL, buf, count);
-}
-
-void SPIClass::_transfer(void* buf_out, void* buf_in, size_t count)
+void SPIClass::transfer(void *buf, size_t count)
 {
-	am_hal_iom_transfer_t iomTransfer = {0};
-    // iomTransfer.uPeerInfo.ui32SpiChipSelect = cs_pad;
-    iomTransfer.ui32InstrLen = 0;           // No instructions
-    iomTransfer.ui32Instr = 0;   			// No instructions
-    iomTransfer.ui32NumBytes = count;       // How many bytes to transfer
-    // iomTransfer.eDirection = AM_HAL_IOM_TX; // AM_HAL_IOM_FULLDUPLEX - Note: Ambiq SDK says that FULLDUPLEX is not yet supported // todo:
-    iomTransfer.pui32TxBuffer = (uint32_t*)buf_out;		// todo: does this have the proper lifetime?
-    iomTransfer.pui32RxBuffer = (uint32_t*)buf_in;
-    iomTransfer.bContinue = false;
-    iomTransfer.ui8RepeatCount = 0;         // ?
-    iomTransfer.ui8Priority = 1;            // ?
-    iomTransfer.ui32PauseCondition = 0;     // ?
-    iomTransfer.ui32StatusSetClr = 0;       // ?
+  _transfer(buf, buf, count); // todo: not sure how the HAL will handle sending and receiving from the same buffer...
+}
 
-	// Determine direction
-	if( (buf_out != NULL) && (buf_in != NULL) ){
-		iomTransfer.eDirection = AM_HAL_IOM_TX; // AM_HAL_IOM_FULLDUPLEX - Note: Ambiq SDK says that FULLDUPLEX is not yet supported // todo:
-	}else if( buf_out != NULL ){
-		iomTransfer.eDirection = AM_HAL_IOM_TX;
-	}else if( buf_in != NULL ){
-		iomTransfer.eDirection = AM_HAL_IOM_RX;
-	}
+void SPIClass::transferOut(void *buf, size_t count)
+{
+  _transfer(buf, NULL, count);
+}
 
-	uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
+void SPIClass::transferIn(void *buf, size_t count)
+{
+  _transfer(NULL, buf, count);
+}
+
+void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
+{
+  am_hal_iom_transfer_t iomTransfer = {0};
+  // iomTransfer.uPeerInfo.ui32SpiChipSelect = cs_pad;
+  iomTransfer.ui32InstrLen = 0;     // No instructions
+  iomTransfer.ui32Instr = 0;        // No instructions
+  iomTransfer.ui32NumBytes = count; // How many bytes to transfer
+  // iomTransfer.eDirection = AM_HAL_IOM_TX; // AM_HAL_IOM_FULLDUPLEX - Note: Ambiq SDK says that FULLDUPLEX is not yet supported // todo:
+  iomTransfer.pui32TxBuffer = (uint32_t *)buf_out; // todo: does this have the proper lifetime?
+  iomTransfer.pui32RxBuffer = (uint32_t *)buf_in;
+  iomTransfer.bContinue = false;
+  iomTransfer.ui8RepeatCount = 0;     // ?
+  iomTransfer.ui8Priority = 1;        // ?
+  iomTransfer.ui32PauseCondition = 0; // ?
+  iomTransfer.ui32StatusSetClr = 0;   // ?
+
+  // Determine direction
+  if ((buf_out != NULL) && (buf_in != NULL))
+  {
+    iomTransfer.eDirection = AM_HAL_IOM_TX; // AM_HAL_IOM_FULLDUPLEX - Note: Ambiq SDK says that FULLDUPLEX is not yet supported // todo:
+  }
+  else if (buf_out != NULL)
+  {
+    iomTransfer.eDirection = AM_HAL_IOM_TX;
+  }
+  else if (buf_in != NULL)
+  {
+    iomTransfer.eDirection = AM_HAL_IOM_RX;
+  }
+
+  uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
   if (retVal32 != 0)
   {
-      // Serial.printf("got an error on _transfer: %d\n", retVal32);
-      return /*retVal32*/;
+    // Serial.printf("got an error on _transfer: %d\n", retVal32);
+    return /*retVal32*/;
   }
 }
 
-void SPIClass::attachInterrupt() {
+void SPIClass::attachInterrupt()
+{
   // Should be enableInterrupt()
 }
 
-void SPIClass::detachInterrupt() {
+void SPIClass::detachInterrupt()
+{
   // Should be disableInterrupt()
 }
 
 #if SPI_INTERFACES_COUNT > 0
-  SPIClass SPI ( AP3_SPI_IOM, AP3_SPI_DUP );
+SPIClass SPI(AP3_SPI_IOM, AP3_SPI_DUP);
 #endif
 #if SPI_INTERFACES_COUNT > 1
-  SPIClass SPI1(AP3_SPI1_IOM, AP3_SPI1_DUP );
+SPIClass SPI1(AP3_SPI1_IOM, AP3_SPI1_DUP);
 #endif
 #if SPI_INTERFACES_COUNT > 2
-  SPIClass SPI2(AP3_SPI2_IOM, AP3_SPI2_DUP );
+SPIClass SPI2(AP3_SPI2_IOM, AP3_SPI2_DUP);
 #endif
 #if SPI_INTERFACES_COUNT > 3
-  SPIClass SPI3(AP3_SPI3_IOM, AP3_SPI3_DUP );
+SPIClass SPI3(AP3_SPI3_IOM, AP3_SPI3_DUP);
 #endif
 #if SPI_INTERFACES_COUNT > 4
-  SPIClass SPI4(AP3_SPI4_IOM, AP3_SPI4_DUP );
+SPIClass SPI4(AP3_SPI4_IOM, AP3_SPI4_DUP);
 #endif
 #if SPI_INTERFACES_COUNT > 5
-  SPIClass SPI5(AP3_SPI5_IOM, AP3_SPI5_DUP );
+SPIClass SPI5(AP3_SPI5_IOM, AP3_SPI5_DUP);
 #endif
-

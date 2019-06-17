@@ -23,7 +23,7 @@
 artemis.name=SparkFun Artemis Module
 artemis.build.variant=SparkFun_Artemis
 artemis.build.board=SFE_ARTEMIS
-artemis.upload.tool=artemis_bin2board
+artemis.upload.tool=artemis_uart
 artemis.upload.maximum_size=960000
 artemis.build.arch=APOLLO3
 artemis.build.mcu=cortex-m4
@@ -43,7 +43,7 @@ artemis.upload.baud=115200
 amap3blackboard.name=SparkFun BlackBoard Artemis
 amap3blackboard.build.variant=SparkFun_BlackBoard_Artemis
 amap3blackboard.build.board=AM_AP3_SFE_BB_ARTEMIS
-amap3blackboard.upload.tool=artemis_bin2board
+amap3blackboard.upload.tool=artemis_uart
 amap3blackboard.upload.maximum_size=960000
 amap3blackboard.build.arch=APOLLO3
 amap3blackboard.build.mcu=cortex-m4
@@ -60,30 +60,10 @@ amap3blackboard.upload.baud=115200
 
 ###############################################################
 
-amap3blackboardBL.name=SparkFun BlackBoard Artemis 80k Offset
-amap3blackboardBL.build.variant=SparkFun_BlackBoard_Artemis_BL
-amap3blackboardBL.build.board=AM_AP3_SFE_BB_ARTEMIS_BL
-amap3blackboardBL.upload.tool=artemis_bin2board
-amap3blackboardBL.upload.maximum_size=960000
-amap3blackboardBL.build.arch=APOLLO3
-amap3blackboardBL.build.mcu=cortex-m4
-amap3blackboardBL.build.f_cpu=48000000L
-amap3blackboardBL.build.core=arduino
-amap3blackboardBL.build.defs=
-amap3blackboardBL.build.includes=-I{build.variant.path}/config
-amap3blackboardBL.build.libs=
-amap3blackboardBL.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-amap3blackboardBL.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-amap3blackboardBL.upload.maximum_size=960000
-edge.upload.use_menu_baud=0
-amap3blackboardBL.upload.baud=115200
-
-###############################################################
-
 amap3nano.name=SparkFun BlackBoard Artemis Nano
 amap3nano.build.variant=SparkFun_BlackBoard_Artemis_Nano
 amap3nano.build.board=AM_AP3_SFE_BB_ARTEMIS_NANO
-amap3nano.upload.tool=artemis_bin2board
+amap3nano.upload.tool=artemis_uart
 amap3nano.upload.maximum_size=960000
 amap3nano.build.arch=APOLLO3
 amap3nano.build.mcu=cortex-m4
@@ -103,7 +83,7 @@ amap3nano.upload.baud=115200
 amap3mega.name=SparkFun BlackBoard Artemis Mega
 amap3mega.build.variant=SparkFun_BlackBoard_Artemis_Mega
 amap3mega.build.board=AM_AP3_SFE_BB_ARTEMIS_MEGA
-amap3mega.upload.tool=artemis_bin2board
+amap3mega.upload.tool=artemis_uart
 amap3mega.upload.maximum_size=960000
 amap3mega.build.arch=APOLLO3
 amap3mega.build.mcu=cortex-m4
@@ -139,10 +119,29 @@ edge.upload.baud=921600
 
 ###############################################################
 
+amap3SBL.name=Abmiq SBL
+amap3SBL.build.variant=SparkFun_Ambiq_SBL
+amap3SBL.build.board=SFE_AMB_SBL
+amap3SBL.upload.tool=artemis_bin2board
+amap3SBL.upload.maximum_size=960000
+amap3SBL.build.arch=APOLLO3
+amap3SBL.build.mcu=cortex-m4
+amap3SBL.build.f_cpu=48000000L
+amap3SBL.build.core=arduino
+amap3SBL.build.defs=
+amap3SBL.build.includes=-I{build.variant.path}/config
+amap3SBL.build.libs=
+amap3SBL.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3SBL.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3SBL.upload.use_menu_baud=0
+amap3SBL.upload.baud=115200
+
+###############################################################
+
 # edgeV2.name=SparkFun Edge V2
 # edgeV2.build.variant=SparkFun_Edge_V2
 # edgeV2.build.board=SFE_EDGE_V2
-# edgeV2.upload.tool=artemis_bin2board
+# edgeV2.upload.tool=artemis_uart
 # edgeV2.upload.maximum_size=960000
 # edgeV2.build.arch=APOLLO3
 # edgeV2.build.mcu=cortex-m4
@@ -158,3 +157,4 @@ edge.upload.baud=921600
 # edgeV2.upload.baud=115200
 
 # ###############################################################
+
