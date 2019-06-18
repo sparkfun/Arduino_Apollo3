@@ -124,6 +124,10 @@ recipe.size.regex=\.text\s+([0-9]+).*
 preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
 
+## Exporting Compiled Files
+recipe.output.tmp_file={build.project_name}.{build.preferred_export_format}
+recipe.output.save_file={build.project_name}.{build.preferred_export_format}
+
 ##### The following tool settings are for the Ambiq SBL
 
 # Host-specific definitions for upload tool (using Ambiq's Secure Bootloader SBL)
