@@ -34,21 +34,22 @@ class Uart;         // Forward declaration of Uart
 extern Uart Serial;
 
 
-// Todo: determine IOMaster allocation for Edge V2
-// // Wire defines
-// #define WIRE_INTERFACES_COUNT 2
+Todo: determine IOMaster allocation for Edge V2
+// Wire defines
+#define WIRE_INTERFACES_COUNT 3
 
-// #define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
-// #define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
+#define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
+#define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
 
-// #define WireAccel Wire1
-// #define AP3_Wire1_IOM 3
+#define WireAccel Wire1
+#define AP3_Wire1_IOM 3
 
-// // SPI Defines
-// #define SPI_INTERFACES_COUNT 1
+#define WireCamera Wire2
+#define AP3_Wire1_IOM 2
 
-// #define AP3_SPI_IOM 0                   // Speciy that SPI uses IOMaster 0
-// #define AP3_SPI_DUP ap3_spi_full_duplex // Specify that SPI is full-duplex (as opposed to ap3_spi_tx_only or ap3_spi_rx_only)
+// SPI Defines
+#define SPI_INTERFACES_COUNT 0          //Edge V2 doesn't have any fully-exposed SPI ports
+
 
 #define LED_BUILTIN 19
 
