@@ -66,5 +66,13 @@ SECTIONS
         _ebss = .;
     } > SRAM
 
+    .heap (COPY):
+	{
+		__end__ = .;
+		PROVIDE(end = .);
+		*(.heap*)
+		__HeapLimit = .;
+	} > SRAM
+
     .ARM.attributes 0 : { *(.ARM.attributes) }
 }

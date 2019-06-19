@@ -12,10 +12,7 @@ extern "C" void _init(void)
 {
   // Empty definition to resolve linker error within '__libc_init_array'
 }
-extern "C" void end(void)
-{
-  // Empty definition to satisfy linker error in '_sbrk'
-}
+void *__dso_handle; // providing the __dso_handle symbol manually. Todo: more research for the *correct* solution
 
 extern "C" int main(void)
 {
