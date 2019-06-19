@@ -66,5 +66,15 @@ SECTIONS
         _ebss = .;
     } > SRAM
 
+    .heap (COPY):
+	{
+		__end__ = .;
+		PROVIDE(end = .);
+		*(.heap*)
+		__HeapLimit = .;
+	} > SRAM
+
+    /* TODO: Collision Checking (at link time) */
+
     .ARM.attributes 0 : { *(.ARM.attributes) }
 }
