@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "variant.h"
 
+// Apollo3 pads 30 and 46 are not exposed by Artemis module
 const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     AP3_GPIO_PAD_UNUSED,
     AP3_GPIO_PAD_UNUSED,
@@ -39,10 +40,10 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     13,
     14,
     15,
-    AP3_GPIO_PAD_UNUSED,
+    16,
     17,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
+    18,
+    19,
     20,
     21,
     22,
