@@ -32,22 +32,21 @@ explained so that this file can serve as a starting point for creating new varia
 
 */
 
-
 #ifndef _AP3_VARIANT_H_
 #define _AP3_VARIANT_H_
 
 #include "Arduino.h"
 
-// In the Apollo3 Arduino core *pins* refer to the connections that can be accessed 
+// In the Apollo3 Arduino core *pins* refer to the connections that can be accessed
 // via Arduino code. This may be, for example, an exposed connection that the user could
-// utilize directly or it may be a connection to an onboard sensor. 
-// 
+// utilize directly or it may be a connection to an onboard sensor.
+//
 // *pads* on the other hand refer directly to the pad numbers of the Apollo3 microcontroller
 //
 // When developing a variant you might connect *pin* x of your board to *pad* y on the
 // Apollo3. When a user asks to write to *pin* x the core will use a map to determine which
-// *pad* to control. 
-// 
+// *pad* to control.
+//
 // AP3_VARIANT_NUM_PINS determines the size of this map and its value must be N+1 where N
 // is the largest _pin_id_ of your variant. Let's try an example:
 //
@@ -67,16 +66,16 @@ extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
 
 // Uart declarations
 // - "HardwareSerial" is the class that is built into Arduino to allow "Serial.print()"
-// and related functions to work. 
+// and related functions to work.
 // - The "Uart" class inherits from HardwareSerial and contains Apollo3-specific code
 // - Declaring your Uart objects here makes them available in any Arduino code and you
 // can give them extra descriptive names
-// - The maximum number of Uarts is 2 (instances 0 and 1) 
+// - The maximum number of Uarts is 2 (instances 0 and 1)
 //
 // In this case the declarations are commented out because we don't know which pins of
 // the Artemis module you would like to use
 class Uart; // Forward declaration of Uart class
-// extern Uart Serial;
+extern Uart Serial;
 // extern Uart Serial1;
 
 // A note about IOMaster peripherals:
@@ -84,8 +83,8 @@ class Uart; // Forward declaration of Uart class
 // of the Apollo3 that a given IOMaster [0,5] use are not configurable
 
 // Wire defines
-// - Wire is the I2C class for Arduino. 
-// - Wire is handled differently than HardwareSerial/Uart because Wire is a library that 
+// - Wire is the I2C class for Arduino.
+// - Wire is handled differently than HardwareSerial/Uart because Wire is a library that
 // you have to include manually (saves space if you won't be using I2C)
 // - In this case we rely on communication between the variant.h file and the Wire library
 // through the use of #define statements
@@ -107,7 +106,7 @@ class Uart; // Forward declaration of Uart class
 #define AP3_Wire5_IOM 5 // Secify that Wire5 uses IOMaster instance 5
 // This is also a convenient location to provide some aliased names for certain Wire objects
 // For example: (examples commented out because they aren't real)
-// 
+//
 // #define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" to indicat that it is the I2C controller for the Qwiic bus
 // #define WireAccel Wire1 // Useful if the variant has an onboard accelerometer connected to the Wire1 bus
 
@@ -121,19 +120,18 @@ class Uart; // Forward declaration of Uart class
 // you need to specify two settings:
 // - - AP3_SPI_IOM - which IOMaster peripher the SPI object will use
 // - - AP3_SPI_DUP - which duplex mode the SPI object will use (full duplex is the most common, ap3_spi_tx_only and ap3_spi_rx_only are the other options )
-#define AP3_SPI_IOM     0
-#define AP3_SPI_DUP     ap3_spi_full_duplex 
-#define AP3_SPI1_IOM    1
-#define AP3_SPI1_DUP    ap3_spi_full_duplex
-#define AP3_SPI2_IOM    2
-#define AP3_SPI2_DUP    ap3_spi_full_duplex
-#define AP3_SPI3_IOM    3
-#define AP3_SPI3_DUP    ap3_spi_full_duplex
-#define AP3_SPI4_IOM    4
-#define AP3_SPI4_DUP    ap3_spi_full_duplex
-#define AP3_SPI5_IOM    5
-#define AP3_SPI5_DUP    ap3_spi_full_duplex
-
+#define AP3_SPI_IOM 0
+#define AP3_SPI_DUP ap3_spi_full_duplex
+#define AP3_SPI1_IOM 1
+#define AP3_SPI1_DUP ap3_spi_full_duplex
+#define AP3_SPI2_IOM 2
+#define AP3_SPI2_DUP ap3_spi_full_duplex
+#define AP3_SPI3_IOM 3
+#define AP3_SPI3_DUP ap3_spi_full_duplex
+#define AP3_SPI4_IOM 4
+#define AP3_SPI4_DUP ap3_spi_full_duplex
+#define AP3_SPI5_IOM 5
+#define AP3_SPI5_DUP ap3_spi_full_duplex
 
 // Additional Pin Aliasing
 // - It is required that every pin is accessible by a number between 0 and (AP3_VARIANT_NUM_PINS - 1)

@@ -94,6 +94,7 @@ enum BitOrder
 #include "ap3_debugging.h"
 #include "ap3_uart.h"
 #include "ap3_analog.h"
+#include "WMath.h"
 
 #include "variant.h"
 

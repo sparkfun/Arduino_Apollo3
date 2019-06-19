@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "variant.h"
 
-// This is the actual pinmap. 
+// This is the actual pinmap.
 // For a variant pin X the corresponding Apollo3 pad Y is stored in ap3_variant_pinmap[X]
 // X [0, (AP3_VARIANT_NUM_PINS - 1)]
 // Y [0, 49]
@@ -86,12 +86,9 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
 
 // Uart Definitions
 //Serial(instance, RX, TX)
-//
-// Commented out because we don't know which pins should be used on the Artemis module
-//
-// Uart Serial(0, 23, 22); // Declares a Uart object called Serial using instance 0 of Apollo3 UART peripherals with RX on variant pin 23 and TX on pin 24 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
-// Uart Serial1(1, 0, 1);  // Declares a Uart object called Serial1 using instance 1 of Apollo3 UART peripherals with RX on pin 0 and TX on pin 1 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
-
+//We default Serial to 22/23 but can be moved to any TX0/RX0 pin
+Uart Serial(0, 23, 22); // Declares a Uart object called Serial using instance 0 of Apollo3 UART peripherals with RX on variant pin 23 and TX on pin 24 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
+                        // Uart Serial1(1, 0, 1);  // Declares a Uart object called Serial1 using instance 1 of Apollo3 UART peripherals with RX on pin 0 and TX on pin 1 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
 
 // Pin aliasing using the const uint8_t approach
 //
@@ -101,7 +98,6 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
 // const uint8_t A3 = 19;
 // const uint8_t A4 = 20;
 // const uint8_t A5 = 21;
-
 
 // Indirect pinmap example
 //
