@@ -3,8 +3,12 @@
 
 
 // Constants
-#define LOW (0x0)
-#define HIGH (0x1)
+#define LOW         (0x0)
+#define HIGH        (0x1)
+
+#define CHANGE      (0x02)
+#define FALLING     (0x03)
+#define RISING      (0x04)
 
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
@@ -39,3 +43,4 @@
 
 #define bit(b) (1UL << (b))
 
+#define digitalPinToInterrupt(P)   (P) // all apollo3 pads are interrupt capable

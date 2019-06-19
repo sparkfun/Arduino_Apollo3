@@ -62,4 +62,7 @@ enum BitOrder
     MSBFIRST = 1
 };
 
+typedef void (*voidFuncPtr)(void);
+typedef void (*voidFuncPtrArgs)(void*);
+
 #endif // _AP3_TYPES_H_

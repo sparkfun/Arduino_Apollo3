@@ -53,6 +53,9 @@ extern ap3_gpio_pad_t  ap3_gpio_pin2pad(ap3_gpio_pin_t pin);
 inline bool ap3_gpio_is_valid(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 inline bool ap3_gpio_has_gpio(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 
+// Frankenstein HAL GPIO config OR function
+uint32_t ap3_gpio_pinconfig_ORnot(uint32_t ui32Pin, am_hal_gpio_pincfg_t bfGpioCfg, bool ORnot);
+
 void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode);
 void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t* retval);
 
@@ -61,8 +64,8 @@ void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t* retval);
 void digitalWrite(uint8_t pin, uint8_t val);
 int digitalRead(uint8_t pin);
 
-void attachInterrupt(uint8_t pin, void (*)(void), int mode);
-void attachInterruptArg(uint8_t pin, void (*)(void*), void * arg, int mode);
+void attachInterrupt(uint8_t pin, voidFuncPtr callback, int mode);
+void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void * arg, int mode);
 void detachInterrupt(uint8_t pin);
 
 
