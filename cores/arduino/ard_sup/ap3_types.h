@@ -52,6 +52,14 @@ typedef uint8_t ap3_gpio_pad_t;     // pads refer directly to what's on the MCU
                                     // Therefore you use the pinmap to find out the pad that is associated to the requested pin
 
 
+// Arduino compatibility
 typedef uint8_t byte;
+typedef bool boolean;
+
+enum BitOrder
+{
+    LSBFIRST = 0,
+    MSBFIRST = 1
+};
 
 #endif // _AP3_TYPES_H_
