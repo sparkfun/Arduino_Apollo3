@@ -33,8 +33,6 @@ extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
 class Uart;         // Forward declaration of Uart
 extern Uart Serial;
 
-
-Todo: determine IOMaster allocation for Edge V2
 // Wire defines
 #define WIRE_INTERFACES_COUNT 3
 

@@ -34,13 +34,16 @@ class Uart;         // Forward declaration of Uart
 extern Uart Serial;
 
 // Wire defines
-#define WIRE_INTERFACES_COUNT 2
+#define WIRE_INTERFACES_COUNT 3
 
 #define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
 #define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
 
 #define WireAccel Wire1
 #define AP3_Wire1_IOM 3
+
+#define WireCamera Wire2
+#define AP3_Wire1_IOM 2
 
 // SPI Defines
 #define SPI_INTERFACES_COUNT 1
