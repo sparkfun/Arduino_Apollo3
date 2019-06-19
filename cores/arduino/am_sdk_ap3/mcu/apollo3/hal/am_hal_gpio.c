@@ -432,9 +432,9 @@ am_hal_gpio_pinconfig(uint32_t ui32Pin, am_hal_gpio_pincfg_t bfGpioCfg)
                 return AM_HAL_GPIO_ERR_PULLDOWN;
             }
         }
-        else if (bfGpioCfg.ePullup == AM_HAL_GPIO_PIN_PULLUP_WEAK)
+        else if (bfGpioCfg.ePullup != AM_HAL_GPIO_PIN_PULLUP_WEAK)
         {
-            if (g_ui8Bit76Capabilities[ui32Pin] & (CAP_PUP | CAP_PDN))
+            if ((g_ui8Bit76Capabilities[ui32Pin] & (CAP_PUP | CAP_PDN)) == 0)
             {
                 return AM_HAL_GPIO_ERR_PULLUP;
             }
