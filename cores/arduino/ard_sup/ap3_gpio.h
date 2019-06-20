@@ -54,7 +54,7 @@ inline bool ap3_gpio_is_valid(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad)
 inline bool ap3_gpio_has_gpio(ap3_gpio_pad_t pad){ return AP3_GPIO_IS_VALID(pad); }
 
 // Interrupt enable/disable function
-uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, bool enable);
+uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir );
 
 void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode);
 void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode, ap3_err_t* retval);

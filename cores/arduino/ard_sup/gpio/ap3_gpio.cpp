@@ -10,6 +10,21 @@ typedef struct{
 ap3_gpio_isr_entry_t    gpio_isr_entries[AP3_GPIO_MAX_PADS] = {NULL};
 uint8_t                 gpio_num_isr = 0;
 
+//*****************************************************************************
+//  Local defines. Copied from am_hal_gpio.c
+//*****************************************************************************
+//
+// Generally define GPIO PADREG and GPIOCFG bitfields
+//
+#define PADREG_FLD_76_S 6
+#define PADREG_FLD_FNSEL_S 3
+#define PADREG_FLD_DRVSTR_S 2
+#define PADREG_FLD_INPEN_S 1
+#define PADREG_FLD_PULLUP_S 0
+
+#define GPIOCFG_FLD_INTD_S 3
+#define GPIOCFG_FLD_OUTCFG_S 1
+#define GPIOCFG_FLD_INCFG_S 0
 
 
 
@@ -126,6 +141,17 @@ extern "C" void am_gpio_isr(void)
             }
             if( !((gpio_isr_entries[indi].mode == LOW) || (gpio_isr_entries[indi].mode == HIGH)) ){    // if not a HIGH or LOW interrupt then clear the flag
                 am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad));
+            }else{                                                                                      // In the case of a HIGH or LOW mode interrupt we need to manually check for the end state
+                uint8_t val = digitalRead( gpio_isr_entries[indi].pad ); 
+                if( gpio_isr_entries[indi].mode == LOW ){
+                    if( val ){
+                        am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad));
+                    }
+                }else{
+                    if( !val ){
+                        am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad));
+                    }
+                }
             }
         }
     }
@@ -149,18 +175,16 @@ void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void * arg, i
         gpio_isr_entries[indi].arg = arg;
         gpio_isr_entries[indi].mode = mode;
 
-        // todo: need to somehow enable interrupts for the pad in question (Arduino does this by default when attachInterrupt is called)
-        // needs to respect the 'mode'
-        // needs to no overwrite the old configuration
-        am_hal_gpio_pincfg_t int_pincfg; 
+        // enable interrupts for the pad in question (Arduino does this by default when attachInterrupt is called)
+        uint8_t eIntDir = 0x00;
         if(( mode == FALLING ) || ( mode == LOW )){
-            int_pincfg.eIntDir = AM_HAL_GPIO_PIN_INTDIR_HI2LO;
+            eIntDir = AM_HAL_GPIO_PIN_INTDIR_HI2LO;
         }else if(( mode == RISING ) || ( mode == HIGH )){
-            int_pincfg.eIntDir = AM_HAL_GPIO_PIN_INTDIR_LO2HI;
+            eIntDir = AM_HAL_GPIO_PIN_INTDIR_LO2HI;
         }else{
-            int_pincfg.eIntDir = AM_HAL_GPIO_PIN_INTDIR_BOTH; 
+            eIntDir = AM_HAL_GPIO_PIN_INTDIR_BOTH; 
         }
-        ap3_gpio_pinconfig_ORnot( pad, int_pincfg, true);
+        ap3_gpio_enable_interrupts( pad, eIntDir);
 
         // clear the flag and enable the interrupt in the NVIC 
         am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(pad));
@@ -197,14 +221,12 @@ extern void detachInterrupt(uint8_t pin)
         return;
     }
 
-    // disable interrupts for the given pad without blasting the configuration
-    am_hal_gpio_pincfg_t int_pincfg; 
-    int_pincfg.eIntDir = AM_HAL_GPIO_PIN_INTDIR_BOTH; // disable any interrupts
-    
-    ap3_gpio_pinconfig_ORnot( pad, int_pincfg, false);
-
     // disable the interrupt in the NVIC
     am_hal_gpio_interrupt_disable(AM_HAL_GPIO_BIT(pad));
+    am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(pad));
+
+    // disable interrupts for the given pad without blasting the configuration    
+    ap3_gpio_enable_interrupts( pad, AM_HAL_GPIO_PIN_INTDIR_NONE);
 
     // Shift down the remaining interrupt entries
     for(indi; indi < gpio_num_isr-1; indi++){
@@ -236,7 +258,7 @@ extern void detachInterrupt(uint8_t pin)
 
 
 
-uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, bool enable)
+uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir )
 {
     uint32_t ui32Padreg, ui32AltPadCfg, ui32GPCfg;
     uint32_t ui32Funcsel, ui32PowerSw;
@@ -262,7 +284,7 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, bool enable)
     // Bit0 of eIntDir maps to GPIOCFG.INTD  (b3).
     // Bit1 of eIntDir maps to GPIOCFG.INCFG (b0).
     //
-    ui32GPCfg |= (((bfGpioCfg.eIntDir >> 0) & 0x1) << GPIOCFG_FLD_INTD_S) | (((bfGpioCfg.eIntDir >> 1) & 0x1) << GPIOCFG_FLD_INCFG_S);
+    ui32GPCfg |= (((eIntDir >> 0) & 0x1) << GPIOCFG_FLD_INTD_S) | (((eIntDir >> 1) & 0x1) << GPIOCFG_FLD_INCFG_S);
 
 
     //
@@ -296,12 +318,7 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, bool enable)
     GPIO->PADKEY = GPIO_PADKEY_PADKEY_Key;
 
     // Here's where the magic happens
-    if(ORnot){
-        AM_REGVAL(ui32GPCfgAddr) = (AM_REGVAL(ui32GPCfgAddr) & ui32GPCfgClearMask) | ui32GPCfg;
-    }else{
-        AM_REGVAL(ui32GPCfgAddr) = (AM_REGVAL(ui32GPCfgAddr) & ui32GPCfgClearMask) & ~ui32GPCfg;
-    }
-
+    AM_REGVAL(ui32GPCfgAddr) = (AM_REGVAL(ui32GPCfgAddr) & ui32GPCfgClearMask) | ui32GPCfg;
 
     GPIO->PADKEY = 0;
 
