@@ -70,6 +70,7 @@ extern "C"
 #include "avr/interrupt.h"
 #include "avr/io.h"
 
+#include "ap3_interrupts.h"
 #include "ap3_timing.h"
 #include "ap3_gpio.h"
 #include "ap3_debugging.h"
