@@ -16,15 +16,15 @@
   SparkFun Edge: https://www.sparkfun.com/products/15170
 
   Hardware Connections:
-  Connect an Edge via programmer
   Upload code
-  Use a trimpot or other device to send a 0 to 3V (no 5V!) signal to pin 'A16'
+  Use a trimpot or other device to send a 0 to 3.3V (no 5V!) signal to pin 'A16'
   ADC can resolve up to 2V but is 3.3V safe
 */
 
-#define LED 13 //Status LED on Artemis BlackBoard
+#define LED LED_BUILTIN //Status LED on Artemis carrier boards
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   Serial.println("SparkFun Arduino Apollo3 Analog Read example");
 
@@ -34,7 +34,8 @@ void setup() {
   //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
 }
 
-void loop() {
+void loop()
+{
   digitalWrite(LED, LOW);
 
   int myValue1 = analogRead(A1); //Automatically sets pin to analog input

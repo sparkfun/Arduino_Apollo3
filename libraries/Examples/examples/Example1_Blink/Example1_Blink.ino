@@ -11,14 +11,16 @@
 //Most have LED_BUILTIN defined so just use that
 //But if you want, you can blink any pin
 
-//#define blinkPin 37
+//#define blinkPin 5
 #define blinkPin LED_BUILTIN
 
-void setup() {
+void setup()
+{
   pinMode(blinkPin, OUTPUT);
 }
 
-void loop() {
+void loop()
+{
   digitalWrite(blinkPin, LOW);
   delay(1000);
   digitalWrite(blinkPin, HIGH);
