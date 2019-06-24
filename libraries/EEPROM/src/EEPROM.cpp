@@ -250,7 +250,6 @@ void ap3_EEPROM::writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
   //Check to see if location needs updating
   if (*(uint32_t *)(flashLocation) == dataToWrite)
   {
-    Serial.println("Value already good");
     return;
   }
 
