@@ -4,7 +4,7 @@
 # This script was originally written by Ambiq
 # Modified April 2nd, 2019 by SparkFun to auto-bootloading
 # Compiled to executable using pyInstaller
-# pyinstaller --onefile artemis_uart_loader.py
+# pyinstaller --onefile artemis_svl.py
 
 import argparse
 import serial
@@ -86,12 +86,12 @@ def main():
 
         verboseprint("Waiting for command from bootloader")
 
-        # Wait for incoming char(5) indicating ability to boot
+        # Wait for incoming BL_COMMAND_ANNOUNCE
         i = 0
         response = ''
         while len(response) == 0:
             i = i + 1
-            if(i == 10):
+            if(i == 30):
                 print("No announcement from Artemis bootloader")
                 exit()
 
