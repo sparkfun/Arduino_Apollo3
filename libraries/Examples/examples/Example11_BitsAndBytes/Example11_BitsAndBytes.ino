@@ -1,22 +1,27 @@
-void setup() {
-  // put your setup code here, to run once:
+/* Author: Owen Lyke
+ Created: June 21 2019
+ License: MIT. See SparkFun Arduino Apollo3 Project for more information
+
+ This example demonstrates usage of the various bit and byte 
+ functions built into Arduino.
+*/
+
+void setup()
+{
   Serial.begin(9600);
 
   Serial.printf("abs(-5.14): %f\n", abs(-5.14));
 
-
-
-
   Serial.printf("constrain(1, 3, 5): %f\n", constrain(1, 3, 5));
 
-  Serial.printf("max(4,2.4): %f\n", max(4,2.4));
-  Serial.printf("min(4,2.4): %f\n", min(4,2.4));
+  Serial.printf("max(4,2.4): %f\n", max(4, 2.4));
+  Serial.printf("min(4,2.4): %f\n", min(4, 2.4));
   Serial.printf("sq(9.3): %f\n", sq(9.3));
   Serial.printf("sqrt(9.3): %f\n", sqrt(9.3));
 
-  Serial.printf("cos((float)3.1415/3): %f\n", cos((float)3.1415/3));
-  Serial.printf("sin((float)3.1415/3): %f\n", sin((float)3.1415/3));
-  Serial.printf("tan((float)3.1415/3): %f\n", tan((float)3.1415/3));
+  Serial.printf("cos((float)3.1415/3): %f\n", cos((float)3.1415 / 3));
+  Serial.printf("sin((float)3.1415/3): %f\n", sin((float)3.1415 / 3));
+  Serial.printf("tan((float)3.1415/3): %f\n", tan((float)3.1415 / 3));
 
   Serial.printf("isAplha('a'): %d\n", isAlpha('a'));
   Serial.printf("isAplha('1'): %d\n", isAlpha('1'));
@@ -40,22 +45,18 @@ void setup() {
   Serial.printf("isLowerCase('1'): %d\n", isLowerCase('1'));
   Serial.printf("isLowerCase(0x03): %d\n", isLowerCase(0x03));
 
-//  bit(3)
-//  bit(5)
-//  bit(30)
-//  bit(31)
-//
-//  bitClear(0xFF, 3)
-//  bitClear(0xFF, 31)
-//
-//  bitRead(0xAA,3)
-//  bitRead(0xAA,4)
-  
-  
-  
+  //  bit(3)
+  //  bit(5)
+  //  bit(30)
+  //  bit(31)
+  //
+  //  bitClear(0xFF, 3)
+  //  bitClear(0xFF, 31)
+  //
+  //  bitRead(0xAA,3)
+  //  bitRead(0xAA,4)
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
+void loop()
+{
 }
