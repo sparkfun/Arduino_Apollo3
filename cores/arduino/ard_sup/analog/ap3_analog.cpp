@@ -202,6 +202,34 @@ uint16_t analogRead(uint8_t pinNumber)
     }
 }
 
+//Power down ADC. Comes from adc_lpmode2.c example from Ambiq SDK
+bool power_adc_disable()
+{
+    // Disable the ADC.
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_disable(g_ADCHandle))
+    {
+        //am_util_stdio_printf("Error - disable ADC failed.\n");
+        return (false);
+    }
+
+    // Enable the ADC power domain.
+    if (AM_HAL_STATUS_SUCCESS != am_hal_pwrctrl_periph_disable(AM_HAL_PWRCTRL_PERIPH_ADC))
+    {
+        //am_util_stdio_printf("Error - disabling the ADC power domain failed.\n");
+        return (false);
+    }
+
+    // Deinitialize the ADC
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_deinitialize(g_ADCHandle))
+    {
+        //am_util_stdio_printf("Error - return of the ADC instance failed.\n");
+        return (false);
+    }
+
+    g_ADCHandle = NULL;
+    return (true);
+}
+
 //Apollo3 is capapble of 14-bit ADC but Arduino defaults to 10-bit
 //This modifies the global var that controls what is returned from analogRead()
 void analogReadResolution(uint8_t bits)
