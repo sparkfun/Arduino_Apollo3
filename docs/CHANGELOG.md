@@ -10,6 +10,7 @@ Each log entry will use the version number of the release that contains the chan
 - Add burst mode support (PR #13)
 - Made examples under 'Core Testing' visible through File->Examples menu (PR #10)
 - Add EEPROM library (PR #11)
+- Fix handling of spaces in paths (PR #20)
 
 1.0.0
 =====
