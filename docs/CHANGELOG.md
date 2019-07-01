@@ -12,6 +12,7 @@ Each log entry will use the version number of the release that contains the chan
 - Add EEPROM library (PR #11)
 - Fix handling of spaces in paths (PR #20)
 - Fix paths to SparkFun SVL for Mac and Linux
+- Add ADC power functions and Serial end/flush (PR #18)
 
 1.0.0
 =====
