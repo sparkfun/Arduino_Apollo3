@@ -353,10 +353,44 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
     }
 }
 
+
+//**********************************************
+// ap3_pwm_output
+// - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th). 
+// - Due to contraints of the hardware th must be lesser than fw by at least 2. 
+// - Furthermore fw must be at least 3 to see any high pulses
+//
+// This causes the most significant deviations for small values of fw. For example:
+//
+// th = 0, fw = 2 -->   0% duty cycle as expected
+// th = 1, fw = 2 --> 100% duty cycle --- expected 50%, so 50% error ---
+// th = 2, fw = 2 --> 100% duty cycle as expected
+//
+// th = 0, fw = 3 -->   0% duty cycle as expected
+// th = 1, fw = 3 -->  33% duty cycle as expected
+// th = 2, fw = 3 --> 100% duty cycle --- expected 66%, so 33% error ---
+// th = 3, fw = 3 --> 100% duty cycle as expected
+//
+// th = 0, fw = 4 -->   0% duty cycle as expected
+// th = 1, fw = 4 -->  25% duty cycle as expected
+// th = 2, fw = 4 -->  50% duty cycle as expected
+// th = 3, fw = 4 --> 100% duty cycle --- expected 75%, so 25% error ---
+// th = 4, fw = 4 --> 100% duty cycle as expected
+//
+// ...
+//
+// Then we conclude that for the case th == (fw - 1) the duty cycle will be 100% and 
+// the percent error from the expected duty cycle will be 100/fw
+//**********************************************
+
 ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
 {
     // handle configuration, if necessary
     ap3_err_t retval = AP3_OK;
+
+    if( fw > 0 ){   // reduce fw so that the user's desired value is the period
+        fw--;
+    }
 
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
     if ((pad == AP3_GPIO_PAD_UNUSED) || (pad >= AP3_GPIO_MAX_PADS))
@@ -402,9 +436,7 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
         }
     }
     else
-    {
-        const uint8_t n = 0; // use the zeroeth index into the options for any pd except 37 and 39
-
+    {   // Use the 0th index of the outcfg_tbl to select the functions
         timer = OUTCTIMN(ctx, 0);
         if (OUTCTIMB(ctx, 0))
         {
@@ -414,6 +446,21 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
         {
             output = AM_HAL_CTIMER_OUTPUT_SECONDARY;
         }
+    }
+
+    // Ensure that th is not greater than the fw
+    if(th > fw){
+        th = fw;
+    }
+
+    // Test for AM_HAL_CTIMER_OUTPUT_FORCE0 or AM_HAL_CTIMER_OUTPUT_FORCE1
+    if(( th == 0 ) || ( fw == 0 ))
+    {
+        output = AM_HAL_CTIMER_OUTPUT_FORCE0;
+    }
+    else if( th == fw )
+    {
+        output = AM_HAL_CTIMER_OUTPUT_FORCE1;
     }
 
     // Configure the pin
@@ -455,17 +502,14 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
 
     am_hal_ctimer_start(timer, segment);
 
-    // todo: check fw and th -- if they are the same then change the mode to "force output high" to avoid noise
-    // todo: handle the case where th==0 in a more elegant way (i.e. set mode to "force output low")
-
     return AP3_OK;
 }
 
 ap3_err_t analogWriteResolution(uint8_t res)
 {
-    if (res > 15)
+    if (res > 16)
     {
-        _analogWriteBits = 15; // max out the resolution when this happens
+        _analogWriteBits = 16; // max out the resolution when this happens
         return AP3_ERR;
     }
     _analogWriteBits = res;
@@ -475,28 +519,22 @@ ap3_err_t analogWriteResolution(uint8_t res)
 ap3_err_t analogWrite(uint8_t pin, uint32_t val)
 {
     // Determine the high time based on input value and the current resolution setting
-    uint32_t fsv = (0x01 << _analogWriteBits); // full scale value for the current resolution setting
-    val = val % fsv;                           // prevent excess
-    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;   // Use an Ambiq HAL provided value to select which clock
-    //uint32_t fw = 32768;                            // Choose the frame width in clock periods (32768 -> ~ 350 Hz)
-    // uint32_t th = (uint32_t)( (fw * val) / fsv );
-
-    if (val == 0)
-    {
-        val = 1; // todo: change this so that when val==0 we set the mode to "force output low"
+    uint32_t fw = 0xFFFF;                       // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
+    if( val == ((0x01 << _analogWriteBits ) - 1) ){
+        val = fw;                                       // Enable FORCE1
+    }else{  
+        val <<= (16 - _analogWriteBits);                // Shift over the value to fill available resolution
     }
-    if (val == fsv)
-    {
-        val -= 1; // todo: change this so that when val==fsv we just set the mode to "force output high"
-    }
-    return ap3_pwm_output(pin, val, fsv, clk);
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;    // Use an Ambiq HAL provided value to select which clock
+    
+    return ap3_pwm_output(pin, val, fw, clk);
 }
 
 ap3_err_t servoWriteResolution(uint8_t res)
 {
-    if (res > 15)
+    if (res > 16)
     {
-        _servoWriteBits = 15; // max out the resolution when this happens
+        _servoWriteBits = 16; // max out the resolution when this happens
         return AP3_ERR;
     }
     _servoWriteBits = res;

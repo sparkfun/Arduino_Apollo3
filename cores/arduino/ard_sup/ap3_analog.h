@@ -45,6 +45,7 @@ bool power_adc_disable();
 uint16_t analogRead(uint8_t pinNumber);
 void analogReadResolution(uint8_t bits);
 
+ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk);
 ap3_err_t analogWriteResolution(uint8_t res);
 ap3_err_t analogWrite(uint8_t pin, uint32_t val);
 ap3_err_t servoWriteResolution(uint8_t res);
