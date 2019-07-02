@@ -204,9 +204,15 @@ uint16_t analogRead(uint8_t pinNumber)
 
 //Apollo3 is capapble of 14-bit ADC but Arduino defaults to 10-bit
 //This modifies the global var that controls what is returned from analogRead()
-void analogReadResolution(uint8_t bits)
+ap3_err_t analogReadResolution(uint8_t bits)
 {
-    _analogBits = bits;
+    if (bits > 16)
+    {
+        _analogBits = 16; // max out the resolution when this happens
+        return AP3_ERR;
+    }
+    _analogBits = res;
+    return AP3_OK;
 }
 
 ap3_err_t ap3_adc_setup()
