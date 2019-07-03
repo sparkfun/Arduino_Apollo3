@@ -354,6 +354,37 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
 }
 
 
+void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, uint32_t margin){
+
+    volatile uint32_t *pui32CompareReg;
+    volatile uint32_t ctimer_val;
+    uint32_t cmpr0;
+
+    // Get the comapre register address
+    if( segment == AM_HAL_CTIMER_TIMERA ){
+        if( output == AM_HAL_CTIMER_OUTPUT_NORMAL ){
+            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRA0);
+        }else{
+            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
+        }
+    }else{
+        if( output == AM_HAL_CTIMER_OUTPUT_NORMAL ){
+            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRB0);
+        }else{
+            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
+        }
+    }
+
+    // Get the compare value
+    cmpr0 = ((uint32_t)(*(pui32CompareReg)) & 0x0000FFFF);
+    
+    // Wait for the timer value to be less than the compare value so that it is safe to change
+    ctimer_val = am_hal_ctimer_read( timer, segment);
+    while( (ctimer_val + 0) > cmpr0 ){
+        ctimer_val = am_hal_ctimer_read( timer, segment);
+    }
+}
+
 //**********************************************
 // ap3_pwm_output
 // - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th). 
@@ -475,6 +506,9 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
                                 segment,
                                 // (AM_HAL_CTIMER_FN_PWM_REPEAT | AP3_ANALOG_CLK | AM_HAL_CTIMER_INT_ENABLE) );
                                 (AM_HAL_CTIMER_FN_PWM_REPEAT | clk));
+
+    // Wait until after high pulse to change the state (avoids inversion)
+    ap3_pwm_wait_for_pulse( timer, segment, output, 10);
 
     // If this pad uses secondary output:
     if (output == AM_HAL_CTIMER_OUTPUT_SECONDARY)
