@@ -239,7 +239,7 @@ ap3_err_t analogReadResolution(uint8_t bits)
         _analogBits = 16; // max out the resolution when this happens
         return AP3_ERR;
     }
-    _analogBits = res;
+    _analogBits = bits;
     return AP3_OK;
 }
 

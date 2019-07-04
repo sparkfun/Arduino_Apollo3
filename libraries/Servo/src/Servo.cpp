@@ -48,11 +48,10 @@ void Servo::write(uint8_t servoPosition)
 	servoWrite(_servoPadNumber, newServoPosition); // This and the above write should both produce 1.5 ms wide pulses, though using different resolutions
 }
 
-void Servo::writeMicroseconds(uint8_t servoPosition)
-{
-
-	servoWrite(_servoPadNumber, newServoPosition); // This and the above write should both produce 1.5 ms wide pulses, though using different resolutions
-}
+// void Servo::writeMicroseconds(uint8_t servoPosition)
+// {
+// 	servoWrite(_servoPadNumber, newServoPosition); // This and the above write should both produce 1.5 ms wide pulses, though using different resolutions
+// }
 
 void Servo::detach(void)
 {
