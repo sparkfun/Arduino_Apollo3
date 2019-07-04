@@ -107,14 +107,13 @@ static const uint8_t outcfg_tbl[32][4] =
         {OUTC(1, 4, 1), OUTC(0, 2, 0), OUTC(1, 4, 0), OUTC(1, 1, 1)}, // CTX19: B4OUT2, A2OUT,  B4OUT,  B1OUT2
         {OUTC(0, 5, 0), OUTC(0, 1, 0), OUTC(0, 1, 1), OUTC(1, 2, 1)}, // CTX20: A5OUT,  A1OUT,  A1OUT2, B2OUT2
         {OUTC(0, 5, 1), OUTC(0, 1, 0), OUTC(1, 5, 0), OUTC(0, 0, 1)}, // CTX21: A5OUT2, A1OUT,  B5OUT,  A0OUT2
-        //{OUTC(1, 5, 0), OUTC(0, 6, 0), OUTC(0, 1, 0), OUTC(0, 2, 1)}, // CTX22: B5OUT,  (error B1OUT) A6OUT,  (error remove)A1OUT,  A2OUT2
-        {OUTC(1, 5, 0), OUTC(1, 1, 0), OUTC(0, 6, 0), OUTC(0, 2, 1)}, // CTX22: B5OUT,  B1OUT,  A6OUT,  A2OUT2
+        {OUTC(1, 5, 0), OUTC(0, 6, 0), OUTC(0, 1, 0), OUTC(0, 2, 1)}, // CTX22: B5OUT,  A6OUT,  A1OUT,  A2OUT2
         {OUTC(1, 5, 1), OUTC(0, 7, 0), OUTC(0, 5, 0), OUTC(1, 0, 1)}, // CTX23: B5OUT2, A7OUT,  A5OUT,  B0OUT2
         {OUTC(0, 6, 0), OUTC(0, 2, 0), OUTC(0, 1, 0), OUTC(1, 1, 1)}, // CTX24: A6OUT,  A2OUT,  A1OUT,  B1OUT2
         {OUTC(1, 4, 1), OUTC(1, 2, 0), OUTC(0, 6, 0), OUTC(0, 2, 1)}, // CTX25: B4OUT2, B2OUT,  A6OUT,  A2OUT2
         {OUTC(1, 6, 0), OUTC(1, 2, 0), OUTC(0, 5, 0), OUTC(0, 1, 1)}, // CTX26: B6OUT,  B2OUT,  A5OUT,  A1OUT2
         {OUTC(1, 6, 1), OUTC(0, 1, 0), OUTC(1, 6, 0), OUTC(1, 2, 1)}, // CTX27: B6OUT2, A1OUT,  B6OUT,  B2OUT2
-        {OUTC(0, 7, 1), OUTC(0, 3, 0), OUTC(0, 5, 1), OUTC(1, 0, 1)}, // CTX28: A7OUT(error B?),  A3OUT,  A5OUT2, B0OUT2
+        {OUTC(0, 7, 0), OUTC(0, 3, 0), OUTC(0, 5, 1), OUTC(1, 0, 1)}, // CTX28: A7OUT,  A3OUT,  A5OUT2, B0OUT2
         {OUTC(1, 5, 1), OUTC(0, 1, 0), OUTC(0, 7, 0), OUTC(0, 3, 1)}, // CTX29: B5OUT2, A1OUT,  A7OUT,  A3OUT2
         {OUTC(1, 7, 0), OUTC(1, 3, 0), OUTC(0, 4, 1), OUTC(0, 0, 1)}, // CTX30: B7OUT,  B3OUT,  A4OUT2, A0OUT2
         {OUTC(1, 7, 1), OUTC(0, 6, 0), OUTC(1, 7, 0), OUTC(1, 3, 1)}, // CTX31: B7OUT2, A6OUT,  B7OUT,  B3OUT2
@@ -201,6 +200,34 @@ uint16_t analogRead(uint8_t pinNumber)
     {
         return (result << (_analogBits - 14)); //Pad with zeros
     }
+}
+
+//Power down ADC. Comes from adc_lpmode2.c example from Ambiq SDK
+bool power_adc_disable()
+{
+    // Disable the ADC.
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_disable(g_ADCHandle))
+    {
+        //am_util_stdio_printf("Error - disable ADC failed.\n");
+        return (false);
+    }
+
+    // Enable the ADC power domain.
+    if (AM_HAL_STATUS_SUCCESS != am_hal_pwrctrl_periph_disable(AM_HAL_PWRCTRL_PERIPH_ADC))
+    {
+        //am_util_stdio_printf("Error - disabling the ADC power domain failed.\n");
+        return (false);
+    }
+
+    // Deinitialize the ADC
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_deinitialize(g_ADCHandle))
+    {
+        //am_util_stdio_printf("Error - return of the ADC instance failed.\n");
+        return (false);
+    }
+
+    g_ADCHandle = NULL;
+    return (true);
 }
 
 //Apollo3 is capapble of 14-bit ADC but Arduino defaults to 10-bit
@@ -332,10 +359,86 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
     }
 }
 
+void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, uint32_t margin)
+{
+
+    volatile uint32_t *pui32CompareReg;
+    volatile uint32_t ctimer_val;
+    uint32_t cmpr0;
+
+    // Get the comapre register address
+    if (segment == AM_HAL_CTIMER_TIMERA)
+    {
+        if (output == AM_HAL_CTIMER_OUTPUT_NORMAL)
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRA0);
+        }
+        else
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
+        }
+    }
+    else
+    {
+        if (output == AM_HAL_CTIMER_OUTPUT_NORMAL)
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRB0);
+        }
+        else
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
+        }
+    }
+
+    // Get the compare value
+    cmpr0 = ((uint32_t)(*(pui32CompareReg)) & 0x0000FFFF);
+
+    // Wait for the timer value to be less than the compare value so that it is safe to change
+    ctimer_val = am_hal_ctimer_read(timer, segment);
+    while ((ctimer_val + 0) > cmpr0)
+    {
+        ctimer_val = am_hal_ctimer_read(timer, segment);
+    }
+}
+
+//**********************************************
+// ap3_pwm_output
+// - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th).
+// - Due to contraints of the hardware th must be lesser than fw by at least 2.
+// - Furthermore fw must be at least 3 to see any high pulses
+//
+// This causes the most significant deviations for small values of fw. For example:
+//
+// th = 0, fw = 2 -->   0% duty cycle as expected
+// th = 1, fw = 2 --> 100% duty cycle --- expected 50%, so 50% error ---
+// th = 2, fw = 2 --> 100% duty cycle as expected
+//
+// th = 0, fw = 3 -->   0% duty cycle as expected
+// th = 1, fw = 3 -->  33% duty cycle as expected
+// th = 2, fw = 3 --> 100% duty cycle --- expected 66%, so 33% error ---
+// th = 3, fw = 3 --> 100% duty cycle as expected
+//
+// th = 0, fw = 4 -->   0% duty cycle as expected
+// th = 1, fw = 4 -->  25% duty cycle as expected
+// th = 2, fw = 4 -->  50% duty cycle as expected
+// th = 3, fw = 4 --> 100% duty cycle --- expected 75%, so 25% error ---
+// th = 4, fw = 4 --> 100% duty cycle as expected
+//
+// ...
+//
+// Then we conclude that for the case th == (fw - 1) the duty cycle will be 100% and
+// the percent error from the expected duty cycle will be 100/fw
+//**********************************************
+
 ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
 {
     // handle configuration, if necessary
     ap3_err_t retval = AP3_OK;
+
+    if (fw > 0)
+    { // reduce fw so that the user's desired value is the period
+        fw--;
+    }
 
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
     if ((pad == AP3_GPIO_PAD_UNUSED) || (pad >= AP3_GPIO_MAX_PADS))
@@ -381,9 +484,7 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
         }
     }
     else
-    {
-        const uint8_t n = 0; // use the zeroeth index into the options for any pd except 37 and 39
-
+    { // Use the 0th index of the outcfg_tbl to select the functions
         timer = OUTCTIMN(ctx, 0);
         if (OUTCTIMB(ctx, 0))
         {
@@ -393,6 +494,22 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
         {
             output = AM_HAL_CTIMER_OUTPUT_SECONDARY;
         }
+    }
+
+    // Ensure that th is not greater than the fw
+    if (th > fw)
+    {
+        th = fw;
+    }
+
+    // Test for AM_HAL_CTIMER_OUTPUT_FORCE0 or AM_HAL_CTIMER_OUTPUT_FORCE1
+    if ((th == 0) || (fw == 0))
+    {
+        output = AM_HAL_CTIMER_OUTPUT_FORCE0;
+    }
+    else if (th == fw)
+    {
+        output = AM_HAL_CTIMER_OUTPUT_FORCE1;
     }
 
     // Configure the pin
@@ -407,6 +524,9 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
                                 segment,
                                 // (AM_HAL_CTIMER_FN_PWM_REPEAT | AP3_ANALOG_CLK | AM_HAL_CTIMER_INT_ENABLE) );
                                 (AM_HAL_CTIMER_FN_PWM_REPEAT | clk));
+
+    // Wait until after high pulse to change the state (avoids inversion)
+    ap3_pwm_wait_for_pulse(timer, segment, output, 10);
 
     // If this pad uses secondary output:
     if (output == AM_HAL_CTIMER_OUTPUT_SECONDARY)
@@ -434,17 +554,14 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
 
     am_hal_ctimer_start(timer, segment);
 
-    // todo: check fw and th -- if they are the same then change the mode to "force output high" to avoid noise
-    // todo: handle the case where th==0 in a more elegant way (i.e. set mode to "force output low")
-
     return AP3_OK;
 }
 
 ap3_err_t analogWriteResolution(uint8_t res)
 {
-    if (res > 15)
+    if (res > 16)
     {
-        _analogWriteBits = 15; // max out the resolution when this happens
+        _analogWriteBits = 16; // max out the resolution when this happens
         return AP3_ERR;
     }
     _analogWriteBits = res;
@@ -454,28 +571,25 @@ ap3_err_t analogWriteResolution(uint8_t res)
 ap3_err_t analogWrite(uint8_t pin, uint32_t val)
 {
     // Determine the high time based on input value and the current resolution setting
-    uint32_t fsv = (0x01 << _analogWriteBits); // full scale value for the current resolution setting
-    val = val % fsv;                           // prevent excess
-    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;   // Use an Ambiq HAL provided value to select which clock
-    //uint32_t fw = 32768;                            // Choose the frame width in clock periods (32768 -> ~ 350 Hz)
-    // uint32_t th = (uint32_t)( (fw * val) / fsv );
+    uint32_t fw = 0xFFFF; // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
+    if (val == ((0x01 << _analogWriteBits) - 1))
+    {
+        val = fw; // Enable FORCE1
+    }
+    else
+    {
+        val <<= (16 - _analogWriteBits); // Shift over the value to fill available resolution
+    }
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ; // Use an Ambiq HAL provided value to select which clock
 
-    if (val == 0)
-    {
-        val = 1; // todo: change this so that when val==0 we set the mode to "force output low"
-    }
-    if (val == fsv)
-    {
-        val -= 1; // todo: change this so that when val==fsv we just set the mode to "force output high"
-    }
-    return ap3_pwm_output(pin, val, fsv, clk);
+    return ap3_pwm_output(pin, val, fw, clk);
 }
 
 ap3_err_t servoWriteResolution(uint8_t res)
 {
-    if (res > 15)
+    if (res > 16)
     {
-        _servoWriteBits = 15; // max out the resolution when this happens
+        _servoWriteBits = 16; // max out the resolution when this happens
         return AP3_ERR;
     }
     _servoWriteBits = res;

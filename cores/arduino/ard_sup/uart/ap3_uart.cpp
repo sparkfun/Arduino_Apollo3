@@ -67,7 +67,20 @@ void Uart::begin(unsigned long baudrate, am_hal_uart_config_t config)
 
 void Uart::end()
 {
-    // todo:
+    if (_handle != NULL)
+    {
+        flush();
+
+        // Power down the UART, and surrender the handle.
+        am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_DEEPSLEEP, false);
+        am_hal_uart_deinitialize(_handle);
+
+        // Disable the UART pins.
+        am_hal_gpio_pinconfig(_pinTX, g_AM_HAL_GPIO_DISABLE);
+        am_hal_gpio_pinconfig(_pinRX, g_AM_HAL_GPIO_DISABLE);
+
+        _handle = NULL;
+    }
 }
 
 int Uart::available()
@@ -93,7 +106,8 @@ int Uart::read()
 
 void Uart::flush()
 {
-    // todo:
+    // Make sure the UART has finished sending everything it's going to send.
+    am_hal_uart_tx_flush(_handle);
 }
 
 size_t Uart::write(const uint8_t data)
