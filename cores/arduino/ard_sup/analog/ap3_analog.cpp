@@ -353,42 +353,52 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
     }
 }
 
-
-void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, uint32_t margin){
+void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, uint32_t margin)
+{
 
     volatile uint32_t *pui32CompareReg;
     volatile uint32_t ctimer_val;
     uint32_t cmpr0;
 
     // Get the comapre register address
-    if( segment == AM_HAL_CTIMER_TIMERA ){
-        if( output == AM_HAL_CTIMER_OUTPUT_NORMAL ){
-            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRA0);
-        }else{
-            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
+    if (segment == AM_HAL_CTIMER_TIMERA)
+    {
+        if (output == AM_HAL_CTIMER_OUTPUT_NORMAL)
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRA0);
         }
-    }else{
-        if( output == AM_HAL_CTIMER_OUTPUT_NORMAL ){
-            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRB0);
-        }else{
-            pui32CompareReg = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
+        else
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
+        }
+    }
+    else
+    {
+        if (output == AM_HAL_CTIMER_OUTPUT_NORMAL)
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRB0);
+        }
+        else
+        {
+            pui32CompareReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
         }
     }
 
     // Get the compare value
     cmpr0 = ((uint32_t)(*(pui32CompareReg)) & 0x0000FFFF);
-    
+
     // Wait for the timer value to be less than the compare value so that it is safe to change
-    ctimer_val = am_hal_ctimer_read( timer, segment);
-    while( (ctimer_val + 0) > cmpr0 ){
-        ctimer_val = am_hal_ctimer_read( timer, segment);
+    ctimer_val = am_hal_ctimer_read(timer, segment);
+    while ((ctimer_val + 0) > cmpr0)
+    {
+        ctimer_val = am_hal_ctimer_read(timer, segment);
     }
 }
 
 //**********************************************
 // ap3_pwm_output
-// - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th). 
-// - Due to contraints of the hardware th must be lesser than fw by at least 2. 
+// - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th).
+// - Due to contraints of the hardware th must be lesser than fw by at least 2.
 // - Furthermore fw must be at least 3 to see any high pulses
 //
 // This causes the most significant deviations for small values of fw. For example:
@@ -410,7 +420,7 @@ void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, u
 //
 // ...
 //
-// Then we conclude that for the case th == (fw - 1) the duty cycle will be 100% and 
+// Then we conclude that for the case th == (fw - 1) the duty cycle will be 100% and
 // the percent error from the expected duty cycle will be 100/fw
 //**********************************************
 
@@ -419,7 +429,8 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
     // handle configuration, if necessary
     ap3_err_t retval = AP3_OK;
 
-    if( fw > 0 ){   // reduce fw so that the user's desired value is the period
+    if (fw > 0)
+    { // reduce fw so that the user's desired value is the period
         fw--;
     }
 
@@ -467,7 +478,7 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
         }
     }
     else
-    {   // Use the 0th index of the outcfg_tbl to select the functions
+    { // Use the 0th index of the outcfg_tbl to select the functions
         timer = OUTCTIMN(ctx, 0);
         if (OUTCTIMB(ctx, 0))
         {
@@ -480,16 +491,17 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
     }
 
     // Ensure that th is not greater than the fw
-    if(th > fw){
+    if (th > fw)
+    {
         th = fw;
     }
 
     // Test for AM_HAL_CTIMER_OUTPUT_FORCE0 or AM_HAL_CTIMER_OUTPUT_FORCE1
-    if(( th == 0 ) || ( fw == 0 ))
+    if ((th == 0) || (fw == 0))
     {
         output = AM_HAL_CTIMER_OUTPUT_FORCE0;
     }
-    else if( th == fw )
+    else if (th == fw)
     {
         output = AM_HAL_CTIMER_OUTPUT_FORCE1;
     }
@@ -508,7 +520,7 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
                                 (AM_HAL_CTIMER_FN_PWM_REPEAT | clk));
 
     // Wait until after high pulse to change the state (avoids inversion)
-    ap3_pwm_wait_for_pulse( timer, segment, output, 10);
+    ap3_pwm_wait_for_pulse(timer, segment, output, 10);
 
     // If this pad uses secondary output:
     if (output == AM_HAL_CTIMER_OUTPUT_SECONDARY)
@@ -553,14 +565,17 @@ ap3_err_t analogWriteResolution(uint8_t res)
 ap3_err_t analogWrite(uint8_t pin, uint32_t val)
 {
     // Determine the high time based on input value and the current resolution setting
-    uint32_t fw = 0xFFFF;                       // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
-    if( val == ((0x01 << _analogWriteBits ) - 1) ){
-        val = fw;                                       // Enable FORCE1
-    }else{  
-        val <<= (16 - _analogWriteBits);                // Shift over the value to fill available resolution
+    uint32_t fw = 0xFFFF; // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
+    if (val == ((0x01 << _analogWriteBits) - 1))
+    {
+        val = fw; // Enable FORCE1
     }
-    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;    // Use an Ambiq HAL provided value to select which clock
-    
+    else
+    {
+        val <<= (16 - _analogWriteBits); // Shift over the value to fill available resolution
+    }
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ; // Use an Ambiq HAL provided value to select which clock
+
     return ap3_pwm_output(pin, val, fw, clk);
 }
 
