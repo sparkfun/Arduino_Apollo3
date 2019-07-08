@@ -689,6 +689,7 @@ extern "C"
 // Note - these macros are most efficient if 'n' is a constant value, and
 //        of course when compiled with -O3.
 //
+#define am_hal_gpio_fastgpio_read(n) ((APBDMA->BBINPUT >> (n & 0x7)) & 0x1)
 #define am_hal_gpio_fastgpio_set(n) (APBDMA->BBSETCLEAR = _VAL2FLD(APBDMA_BBSETCLEAR_SET, (1 << (n & 0x7))))
 #define am_hal_gpio_fastgpio_clr(n) (APBDMA->BBSETCLEAR = _VAL2FLD(APBDMA_BBSETCLEAR_CLEAR, (1 << (n & 0x7))))
 #define am_hal_gpio_fastgpio_setmsk(m) (APBDMA->BBSETCLEAR = _VAL2FLD(APBDMA_BBSETCLEAR_SET, m))
