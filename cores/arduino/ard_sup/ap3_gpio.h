@@ -68,4 +68,7 @@ void attachInterrupt(uint8_t pin, voidFuncPtr callback, int mode);
 void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void *arg, int mode);
 void detachInterrupt(uint8_t pin);
 
+unsigned long pulseIn(uint8_t pinNumber, uint8_t state, unsigned long timeout = 1000000L);
+unsigned long pulseInLong(uint8_t pinNumber, uint8_t state, unsigned long timeout);
+
 #endif //_AP3_GPIO_H_

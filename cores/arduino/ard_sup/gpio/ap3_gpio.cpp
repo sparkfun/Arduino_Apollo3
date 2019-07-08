@@ -336,3 +336,64 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir)
     return AM_HAL_STATUS_SUCCESS;
 
 } // am_hal_gpio_pinconfig()
+
+/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+   or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+   to 3 minutes in length, but must be called at least a few dozen microseconds
+   before the start of the pulse.
+
+   Original Arduino function could operate in noInterrupt() context. This
+   function cannot.
+*/
+unsigned long pulseIn(uint8_t pinNumber, uint8_t state, unsigned long timeout)
+{
+    return (pulseInLong(pinNumber, state, timeout));
+}
+
+/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+   or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+   to 3 minutes in length, but must be called at least a few dozen microseconds
+   before the start of the pulse.
+
+   ATTENTION: This function relies on micros() so cannot be used in noInterrupt() context
+*/
+unsigned long pulseInLong(uint8_t pinNumber, uint8_t state, unsigned long timeout)
+{
+    uint8_t padNumber = ap3_gpio_pin2pad(pinNumber);
+
+    if (timeout > 3 * 60 * 1000000L)
+        timeout = 3 * 60 * 1000000L; //Limit timeout to 3 minutes
+
+    //Enable fast GPIO for this pad
+    am_hal_gpio_fastgpio_disable(padNumber);
+    am_hal_gpio_fastgpio_clr(padNumber);
+    am_hal_gpio_fast_pinconfig((uint64_t)0x1 << padNumber, g_AM_HAL_GPIO_OUTPUT_WITH_READ, 0);
+
+    uint32_t startMicros = micros();
+
+    while (am_hal_gpio_fastgpio_read(padNumber) == state) //Wait for previous pulse to end
+    {
+        if (micros() - startMicros > timeout)
+            return (0); //Pulse did not end
+    }
+
+    while (am_hal_gpio_fastgpio_read(padNumber) != state) //Wait for pin to change state
+    {
+        if (micros() - startMicros > timeout)
+            return (0); //Pulse did not start
+    }
+
+    startMicros = micros(); //Restart time
+
+    while (am_hal_gpio_fastgpio_read(padNumber) == state) //Wait for pin to exit sought state
+    {
+        if (micros() - startMicros > timeout)
+            return (0); //Pulse did not end
+    }
+
+    uint32_t stopMicros = micros();
+
+    am_hal_gpio_fastgpio_disable(padNumber);
+
+    return (stopMicros - startMicros);
+}
