@@ -603,3 +603,40 @@ ap3_err_t servoWrite(uint8_t pin, uint32_t val)
 
     return ap3_pwm_output(pin, th, fw, clk);
 }
+
+ap3_err_t tone(uint8_t pin, uint32_t freq)
+{
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;
+
+    uint32_t fw = 0;
+    if (freq > 0)
+    {
+        // Determine the frame width based on input freq
+        fw = 12000000 / freq;
+    }
+    uint32_t th = fw / 2; // 50% time high
+
+    return ap3_pwm_output(pin, th, fw, clk);
+}
+ap3_err_t tone(uint8_t pin, uint32_t freq, uint32_t duration)
+{
+    ap3_err_t status = AP3_OK;
+    status = tone(pin, freq);
+    if (status != AP3_OK)
+    {
+        return (status);
+    }
+
+    uint32_t startTime = millis();
+
+    while (millis() - startTime < duration)
+        ;
+
+    status = noTone(pin);
+    return (status);
+}
+
+ap3_err_t noTone(uint8_t pin)
+{
+    return tone(pin, 0);
+}
