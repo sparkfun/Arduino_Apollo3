@@ -121,8 +121,7 @@ public:
 private:
   void config(SPISettings settings);
 
-  // Bit Order (need a better way to handle this)
-  BitOrder _order;
+  BitOrder _bitOrder;
 
   // Duplex
   ap3_spi_duplex_e _duplex;
