@@ -28,24 +28,21 @@ SOFTWARE.
 #include "Arduino.h"
 #include "ap3_iomaster_types.h"
 
-class IOMaster {
+class IOMaster
+{
 private:
 protected:
-    uint8_t             _instance;
-    void*               _handle;
+    uint8_t _instance;
+    void *_handle;
     am_hal_iom_config_t _config;
 
 public:
     IOMaster(uint8_t instance);
-    ap3_err_t initialize( void );
-    ap3_err_t initialize(am_hal_iom_config_t config);
-    ap3_err_t deinitialize( void );
+    ap3_err_t initialize(uint8_t bitOrder);
+    ap3_err_t initialize(am_hal_iom_config_t config, uint8_t bitOrder);
+    ap3_err_t deinitialize(void);
 };
 
-
-
-ap3_err_t ap3_iom_pad_funcsel( uint8_t instance, ap3_iom_pad_type_e type, ap3_gpio_pad_t* pad, uint8_t* funcsel );
-
-
+ap3_err_t ap3_iom_pad_funcsel(uint8_t instance, ap3_iom_pad_type_e type, ap3_gpio_pad_t *pad, uint8_t *funcsel);
 
 #endif // _AP3_IOMASTER_H_

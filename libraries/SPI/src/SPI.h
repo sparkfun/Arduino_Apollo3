@@ -121,7 +121,7 @@ public:
 private:
   void config(SPISettings settings);
 
-  BitOrder _bitOrder;
+  BitOrder _bitOrder = MSBFIRST;
 
   // Duplex
   ap3_spi_duplex_e _duplex;

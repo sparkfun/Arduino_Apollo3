@@ -115,7 +115,7 @@ void SPIClass::config(SPISettings settings)
   _config.eSpiMode = settings.dataMode;
   _bitOrder = settings.bitOrder;
 
-  initialize(); // Initialize the IOM
+  initialize(_bitOrder); // Initialize the IOM
 }
 
 void SPIClass::end()
@@ -203,29 +203,23 @@ void SPIClass::endTransaction(void)
   // }
 }
 
+//This sets local/private var _bitOrder
+//_bitOrder is passed any time initialize is called due to HAL hack to get SPILSB bit set
 void SPIClass::setBitOrder(BitOrder order)
 {
   _bitOrder = order;
-
-  //MSB/LSB is not exposed in the HAL v2.2 in a nice way
-  //This is a hack to set the SPILSB bit of the MSPICFG register
-  //Note that calling initialize() will overwrite the LSB bit
-  if (order == LSBFIRST)
-  {
-    AM_REGVAL(0x50004300 + ((uint32_t)0x1000 * _instance)) |= (1 << 23);
-  }
 }
 
 void SPIClass::setDataMode(uint8_t mode)
 {
   _config.eSpiMode = (am_hal_iom_spi_mode_e)mode;
-  initialize();
+  initialize(_bitOrder);
 }
 
 void SPIClass::setClockDivider(uint8_t div)
 {
   _config.ui32ClockFreq = F_CPU / div;
-  initialize();
+  initialize(_bitOrder);
 }
 
 byte SPIClass::transfer(uint8_t data)

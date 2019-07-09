@@ -27,12 +27,12 @@ IOMaster::IOMaster(uint8_t instance)
     _instance = instance;
 }
 
-ap3_err_t IOMaster::initialize(void)
+ap3_err_t IOMaster::initialize(uint8_t bitOrder)
 {
-    return initialize(_config);
+    return initialize(_config, bitOrder);
 }
 
-ap3_err_t IOMaster::initialize(am_hal_iom_config_t config)
+ap3_err_t IOMaster::initialize(am_hal_iom_config_t config, uint8_t bitOrder)
 {
     uint32_t retVal32 = 0;
     _config = config;
@@ -62,6 +62,18 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config)
     if (retVal32 != AM_HAL_STATUS_SUCCESS)
     {
         return AP3_ERR;
+    }
+
+    //MSB/LSB is not exposed in the HAL v2.2 in a nice way
+    //This is a hack to set the SPILSB bit of the MSPICFG register
+    //Note that calling am_hal_iom_configure will overwrite the LSB bit so we do this at the end
+    if (bitOrder == LSBFIRST)
+    {
+        AM_REGVAL(0x50004300 + (0x1000 * _instance)) |= (1 << 23);
+    }
+    else
+    {
+        AM_REGVAL(0x50004300 + (0x1000 * _instance)) &= ~(uint32_t)(1 << 23);
     }
 
     // Configure the IOM pins. (Must be done by the inherited classes [this is just a reminder])
