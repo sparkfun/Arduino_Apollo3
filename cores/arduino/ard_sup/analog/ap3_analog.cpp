@@ -502,7 +502,7 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
             // 37
             timer = 7;
             segment = AM_HAL_CTIMER_TIMERA;
-            output = AM_HAL_CTIMER_OUTPUT_NORMAL;
+            output = AM_HAL_CTIMER_OUTPUT_SECONDARY;
         }
     }
     else
