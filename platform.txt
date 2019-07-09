@@ -132,15 +132,15 @@ recipe.output.save_file={build.project_name}.{build.preferred_export_format}
 
 # Host-specific definitions for upload tool (using Ambiq's Secure Bootloader SBL)
     # Linux
-tools.ambiq_bin2board.pgm={runtime.platform.path}/tools/ambiq/linux/ambiq_bin2board/ambiq_bin2board
+tools.ambiq_bin2board.pgm={runtime.platform.path}/tools/ambiq/linux/ambiq_bin2board
 tools.ambiq_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 115200 -port "{serial.port}" -r 2 {upload.verbose}
 
     # MacOSX
-tools.ambiq_bin2board.pgm.macosx={runtime.platform.path}/tools/ambiq/macosx/ambiq_bin2board/ambiq_bin2board
+tools.ambiq_bin2board.pgm.macosx={runtime.platform.path}/tools/ambiq/macosx/ambiq_bin2board
 tools.ambiq_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 115200 -port "{serial.port}" -r 2 {upload.verbose}
 
     # Windows
-tools.ambiq_bin2board.pgm.windows="{runtime.platform.path}/tools/ambiq/windows/ambiq_bin_to_board/ambiq_bin_to_board.exe"
+tools.ambiq_bin2board.pgm.windows="{runtime.platform.path}/tools/ambiq/windows/ambiq_bin2board.exe"
 tools.ambiq_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b 115200 -port "{serial.port}" -r 2 {upload.verbose}
 
 # Additional Loader Parameters
