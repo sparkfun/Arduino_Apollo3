@@ -206,6 +206,14 @@ void SPIClass::endTransaction(void)
 void SPIClass::setBitOrder(BitOrder order)
 {
   _order = order;
+
+  //MSB/LSB is not exposed in the HAL v2.2 in a nice way
+  //This is a hack to set the SPILSB bit of the MSPICFG register
+  //Note that calling initialize() will overwrite the LSB bit
+  if (order == LSBFIRST)
+  {
+    AM_REGVAL(0x50004300 + ((uint32_t)0x1000 * _instance)) |= (1 << 23);
+  }
 }
 
 void SPIClass::setDataMode(uint8_t mode)
@@ -214,14 +222,11 @@ void SPIClass::setDataMode(uint8_t mode)
   initialize();
 }
 
-// void SPIClass::setClockDivider(uint8_t div)
-// {
-//   // if (div < SPI_MIN_CLOCK_DIVIDER) {
-//   //   _p_sercom->setBaudrateSPI(SPI_MIN_CLOCK_DIVIDER);
-//   // } else {
-//   //   _p_sercom->setBaudrateSPI(div);
-//   // }
-// }
+void SPIClass::setClockDivider(uint8_t div)
+{
+  _config.ui32ClockFreq = F_CPU / div;
+  initialize();
+}
 
 byte SPIClass::transfer(uint8_t data)
 {
