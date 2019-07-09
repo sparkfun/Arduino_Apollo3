@@ -154,11 +154,11 @@ tools.ambiq_bin2board.upload.pattern={pgm} {args}
 ##### The following tool settings are for the SparkFun variable bootloader (Artemis SVL) (Saturn Five Loader)
 
     # Linux
-tools.artemis_svl.pgm={runtime.platform.path}/tools/artemis/linux/artemis_svl/artemis_svl
+tools.artemis_svl.pgm={runtime.platform.path}/tools/artemis/linux/artemis_svl
 tools.artemis_svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
 
     # MacOSX
-tools.artemis_svl.pgm.macosx={runtime.platform.path}/tools/artemis/macosx/artemis_svl/artemis_svl
+tools.artemis_svl.pgm.macosx={runtime.platform.path}/tools/artemis/macosx/artemis_svl
 tools.artemis_svl.args.macosx="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.baud} {upload.verbose}
 
     # Windows
