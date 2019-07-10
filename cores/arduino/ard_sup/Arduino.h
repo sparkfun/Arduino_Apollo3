@@ -77,6 +77,7 @@ extern "C"
 #include "ap3_uart.h"
 #include "ap3_analog.h"
 #include "ap3_clock_sources.h"
+#include "ap3_shift.h"
 #include "WMath.h"
 #include "WCharacter.h"
 
