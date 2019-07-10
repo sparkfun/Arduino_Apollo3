@@ -426,8 +426,8 @@ void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, u
 
 //**********************************************
 // ap3_pwm_output
-// - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th). 
-// - Due to contraints of the hardware th must be lesser than fw by at least 2. 
+// - This function allows you to specify an arbitrary pwm output signal with a given frame width (fw) and time high (th).
+// - Due to contraints of the hardware th must be lesser than fw by at least 2.
 // - Furthermore fw must be at least 3 to see any high pulses
 //
 // This causes the most significant deviations for small values of fw. For example:
@@ -449,7 +449,7 @@ void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, u
 //
 // ...
 //
-// Then we conclude that for the case th == (fw - 1) the duty cycle will be 100% and 
+// Then we conclude that for the case th == (fw - 1) the duty cycle will be 100% and
 // the percent error from the expected duty cycle will be 100/fw
 //**********************************************
 
@@ -458,7 +458,8 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
     // handle configuration, if necessary
     ap3_err_t retval = AP3_OK;
 
-    if( fw > 0 ){   // reduce fw so that the user's desired value is the period
+    if (fw > 0)
+    { // reduce fw so that the user's desired value is the period
         fw--;
     }
 
@@ -506,7 +507,7 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
         }
     }
     else
-    {   // Use the 0th index of the outcfg_tbl to select the functions
+    { // Use the 0th index of the outcfg_tbl to select the functions
         timer = OUTCTIMN(ctx, 0);
         if (OUTCTIMB(ctx, 0))
         {
@@ -519,16 +520,17 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
     }
 
     // Ensure that th is not greater than the fw
-    if(th > fw){
+    if (th > fw)
+    {
         th = fw;
     }
 
     // Test for AM_HAL_CTIMER_OUTPUT_FORCE0 or AM_HAL_CTIMER_OUTPUT_FORCE1
-    if(( th == 0 ) || ( fw == 0 ))
+    if ((th == 0) || (fw == 0))
     {
         output = AM_HAL_CTIMER_OUTPUT_FORCE0;
     }
-    else if( th == fw )
+    else if (th == fw)
     {
         output = AM_HAL_CTIMER_OUTPUT_FORCE1;
     }
@@ -592,14 +594,17 @@ ap3_err_t analogWriteResolution(uint8_t res)
 ap3_err_t analogWrite(uint8_t pin, uint32_t val)
 {
     // Determine the high time based on input value and the current resolution setting
-    uint32_t fw = 0xFFFF;                       // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
-    if( val == ((0x01 << _analogWriteBits ) - 1) ){
-        val = fw;                                       // Enable FORCE1
-    }else{  
-        val <<= (16 - _analogWriteBits);                // Shift over the value to fill available resolution
+    uint32_t fw = 0xFFFF; // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
+    if (val == ((0x01 << _analogWriteBits) - 1))
+    {
+        val = fw; // Enable FORCE1
     }
-    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;    // Use an Ambiq HAL provided value to select which clock
-    
+    else
+    {
+        val <<= (16 - _analogWriteBits); // Shift over the value to fill available resolution
+    }
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ; // Use an Ambiq HAL provided value to select which clock
+
     return ap3_pwm_output(pin, val, fw, clk);
 }
 
@@ -626,4 +631,41 @@ ap3_err_t servoWrite(uint8_t pin, uint32_t val)
     uint32_t th = (uint32_t)(((max - min) * val) / fsv) + min;
 
     return ap3_pwm_output(pin, th, fw, clk);
+}
+
+ap3_err_t tone(uint8_t pin, uint32_t freq)
+{
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;
+
+    uint32_t fw = 0;
+    if (freq > 0)
+    {
+        // Determine the frame width based on input freq
+        fw = 12000000 / freq;
+    }
+    uint32_t th = fw / 2; // 50% time high
+
+    return ap3_pwm_output(pin, th, fw, clk);
+}
+ap3_err_t tone(uint8_t pin, uint32_t freq, uint32_t duration)
+{
+    ap3_err_t status = AP3_OK;
+    status = tone(pin, freq);
+    if (status != AP3_OK)
+    {
+        return (status);
+    }
+
+    uint32_t startTime = millis();
+
+    while (millis() - startTime < duration)
+        ;
+
+    status = noTone(pin);
+    return (status);
+}
+
+ap3_err_t noTone(uint8_t pin)
+{
+    return tone(pin, 0);
 }

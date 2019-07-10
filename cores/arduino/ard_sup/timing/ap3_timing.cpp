@@ -24,48 +24,56 @@ SOFTWARE.
 volatile uint32_t ap3_stimer_overflows = 0x00;
 uint64_t ticks = 0;
 
-void _fill_ticks( void ){
+void _fill_ticks(void)
+{
     ticks = ap3_stimer_overflows;
     ticks <<= 32;
     ticks |= (am_hal_stimer_counter_get() & 0xFFFFFFFF);
 }
 
-unsigned long micros( void ){
+unsigned long micros(void)
+{
     _fill_ticks();
-    return (uint32_t)(ticks/AP3_STIMER_FREQ_MHZ);
+    return (uint32_t)(ticks / AP3_STIMER_FREQ_MHZ);
 }
 
-unsigned long millis( void ){
+unsigned long millis(void)
+{
     _fill_ticks();
-    return (uint32_t)(ticks/AP3_STIMER_FREQ_KHZ);
+    return (uint32_t)(ticks / AP3_STIMER_FREQ_KHZ);
 }
 
-unsigned long seconds( void ){
+unsigned long secs(void)
+{
     _fill_ticks();
-    return (uint32_t)(ticks/AP3_STIMER_FREQ_HZ);
+    return (uint32_t)(ticks / AP3_STIMER_FREQ_HZ);
 }
 
-unsigned long systicks( void ){
+unsigned long systicks(void)
+{
     return am_hal_stimer_counter_get();
 }
 
-unsigned long sysoverflows( void ){
+unsigned long sysoverflows(void)
+{
     return ap3_stimer_overflows;
 }
 
-void delay(uint32_t ms){
+void delay(uint32_t ms)
+{
     am_util_delay_ms(ms);
 }
 
-void delayMicroseconds(uint32_t us){
+void delayMicroseconds(uint32_t us)
+{
     am_util_delay_us(us);
 }
 
-extern "C" void am_stimer_isr(void){
-  am_hal_stimer_int_clear(AM_HAL_STIMER_INT_OVERFLOW);
-  ap3_stimer_overflows += 1;
-  // At the fastest rate (3MHz) the 64 bits of the stimer 
-  // along with this overflow counter can keep track of
-  // the time for ~ 195,000 years without wrapping to 0
+extern "C" void am_stimer_isr(void)
+{
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_OVERFLOW);
+    ap3_stimer_overflows += 1;
+    // At the fastest rate (3MHz) the 64 bits of the stimer
+    // along with this overflow counter can keep track of
+    // the time for ~ 195,000 years without wrapping to 0
 }
-

@@ -66,4 +66,13 @@ extern Uart Serial1;
 
 #define LED_BUILTIN 13
 
+// Pins with dedicated silk covering the pin number
+#define MOSI 7
+#define MISO 6
+#define SCK 5
+#define SCL 15
+#define SDA 14
+#define TX1 1
+#define RX1 0
+
 #endif // _AP3_VARIANT_H_
