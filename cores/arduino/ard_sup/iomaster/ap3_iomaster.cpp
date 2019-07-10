@@ -64,16 +64,13 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config, BitOrder bitOrder)
         return AP3_ERR;
     }
 
-    //MSB/LSB is not exposed in the HAL v2.2 in a nice way
-    //This is a hack to set the SPILSB bit of the MSPICFG register
-    //Note that calling am_hal_iom_configure will overwrite the LSB bit so we do this at the end
-    if (bitOrder == LSBFIRST)
+    //Arduino defines LSBFIRST as 0, Ambiq HAL defines this bit as 1
+    //So we invert
+    uint8_t temp = (bitOrder ? 0 : 1);
+    retVal32 = am_hal_iom_control(_handle, AM_HAL_IOM_REQ_SPI_LSB, &temp);
+    if (retVal32 != AM_HAL_STATUS_SUCCESS)
     {
-        AM_REGVAL(0x50004300 + (0x1000 * _instance)) |= (uint32_t)(1 << 23);
-    }
-    else
-    {
-        AM_REGVAL(0x50004300 + (0x1000 * _instance)) &= ~(uint32_t)(1 << 23);
+        return AP3_ERR;
     }
 
     return AP3_OK;
