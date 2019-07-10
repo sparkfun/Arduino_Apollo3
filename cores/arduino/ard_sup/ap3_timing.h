@@ -24,15 +24,15 @@ SOFTWARE.
 
 #include "Arduino.h"
 
-#define AP3_STIMER_FREQ_HZ  (3000000)
-#define AP3_STIMER_FREQ_KHZ (AP3_STIMER_FREQ_HZ/1000)
-#define AP3_STIMER_FREQ_MHZ (AP3_STIMER_FREQ_HZ/1000000)
+#define AP3_STIMER_FREQ_HZ (3000000)
+#define AP3_STIMER_FREQ_KHZ (AP3_STIMER_FREQ_HZ / 1000)
+#define AP3_STIMER_FREQ_MHZ (AP3_STIMER_FREQ_HZ / 1000000)
 
-unsigned long micros( void );
-unsigned long millis( void );
-unsigned long seconds( void );
-unsigned long systicks( void );
-unsigned long sysoverflows( void );
+unsigned long micros(void);
+unsigned long millis(void);
+unsigned long secs(void);
+unsigned long systicks(void);
+unsigned long sysoverflows(void);
 void delay(uint32_t ms);
 void delayMicroseconds(uint32_t us);
 
