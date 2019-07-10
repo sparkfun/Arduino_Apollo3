@@ -27,12 +27,12 @@ IOMaster::IOMaster(uint8_t instance)
     _instance = instance;
 }
 
-ap3_err_t IOMaster::initialize(uint8_t bitOrder)
+ap3_err_t IOMaster::initialize(BitOrder bitOrder)
 {
     return initialize(_config, bitOrder);
 }
 
-ap3_err_t IOMaster::initialize(am_hal_iom_config_t config, uint8_t bitOrder)
+ap3_err_t IOMaster::initialize(am_hal_iom_config_t config, BitOrder bitOrder)
 {
     uint32_t retVal32 = 0;
     _config = config;
@@ -69,12 +69,14 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config, uint8_t bitOrder)
     //Note that calling am_hal_iom_configure will overwrite the LSB bit so we do this at the end
     if (bitOrder == LSBFIRST)
     {
-        AM_REGVAL(0x50004300 + (0x1000 * _instance)) |= (1 << 23);
+        AM_REGVAL(0x50004300 + (0x1000 * _instance)) |= (uint32_t)(1 << 23);
     }
     else
     {
         AM_REGVAL(0x50004300 + (0x1000 * _instance)) &= ~(uint32_t)(1 << 23);
     }
+
+    return AP3_OK;
 
     // Configure the IOM pins. (Must be done by the inherited classes [this is just a reminder])
 }

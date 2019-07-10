@@ -38,8 +38,8 @@ protected:
 
 public:
     IOMaster(uint8_t instance);
-    ap3_err_t initialize(uint8_t bitOrder);
-    ap3_err_t initialize(am_hal_iom_config_t config, uint8_t bitOrder);
+    ap3_err_t initialize(BitOrder bitOrder);
+    ap3_err_t initialize(am_hal_iom_config_t config, BitOrder bitOrder);
     ap3_err_t deinitialize(void);
 };
 
