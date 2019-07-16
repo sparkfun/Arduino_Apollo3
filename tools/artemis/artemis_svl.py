@@ -111,7 +111,8 @@ def phase_set_baud(ser):
                                                                             #       Target begins sending, then host reads 'len(baud_set_command)' bytes (incorrectly) and returns. While loop gives target time to finish transmitting
                                                                             #   Target baud is high, host baud is low: 
                                                                             #       Target begins sending, host reads past the end of target transmission, then ready to go again. While loop not needed, but does not hurt
-    
+        # ser.write(global_timeout.to_bytes(1,'big'))
+
     verboseprint('Try #' + str(tri) + '. Result: ' + str(result))
     if(len(result) != len(baud_set_command)):
         print("Baud Set: lengths did not match")
@@ -146,12 +147,148 @@ def main():
     # Assuming worst case ~100 ms/page of flashing time, and allowing for the
     # image to be close to occupying full SRAM (256K) which is 128 pages.
 
-    # Check to see if the com port is available
-    try:
-        with serial.Serial(args.port, args.baud, timeout=0.05) as ser:
-            pass
-    except:
+    # Begin talking over com port
+    print('Connecting over serial port {}...'.format(args.port), flush=True)
 
+    # Set a timeout
+    global_timeout = 0.05 # tested as low as 0.03 on some machines - 50 ms works well, 30 ms works sometimes, this delay occurs between the USB-serial converter and when python can see it 
+    verboseprint('Using Serial timeout: ' + str(global_timeout))
+
+    # Now open the port for bootloading
+    try:
+        with serial.Serial(args.port, args.baud, timeout=global_timeout) as ser:
+
+            # DTR is driven low when serial port open. DTR has now pulled RST low causing board reset.
+            # If we do not set DTR high again, the Ambiq SBL will not activate, but the SparkFun bootloader will.
+
+            if(phase_set_baud(ser) != 0):
+                print('Failed baud set phase')
+                exit()
+
+            print('Connected!')
+            print('Bootloading...')
+
+            # Wait for incoming BL_COMMAND_ANNOUNCE
+            i = 0
+            response = ''
+            while len(response) == 0:
+                i = i + 1
+                if(i == 30):
+                    print("No announcement from Artemis bootloader")
+                    exit()
+
+                response = ser.read()
+
+                if(len(response) > 0):
+                    if(ord(response) == BL_COMMAND_ANNOUNCE):
+                        # Respond with 'AOK'
+                        # values = bytearray([6])
+                        ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
+
+                        verboseprint("Bootload response received")
+                        break
+                    else:
+                        verboseprint("Unkown response: " + str(ord(response)))
+                        response = ''
+
+            # Wait for incoming char indicating bootloader version
+            i = 0
+            response = ''
+            while len(response) == 0:
+                i = i + 1
+                if(i == 10):
+                    print("No version from Artemis bootloader")
+                    exit()
+
+                response = ser.read()
+
+            verboseprint("Bootloader version: " + str(ord(response)))
+
+            # Read the binary file from the command line.
+            with open(args.binfile, mode='rb') as binfile:
+                application = binfile.read()
+            # Gather the important binary metadata.
+            totalLen = len(application)
+
+            verboseprint("Length to send: " + str(totalLen))
+
+            start = 0
+            end = start + 512*4
+
+            # Loop until we have sent the entire file
+            while 1:
+
+                # Calc CRC for this chunk
+                bytes_to_send = end - start
+                words_to_send = bytes_to_send / 4
+                myCRC32 = 0
+                i = 0
+                while i < words_to_send:
+                    partialStart = int(start + (i * (bytes_to_send/words_to_send)))
+                    partialEnd = int(
+                        end - ((words_to_send - 1 - i) * (bytes_to_send/words_to_send)))
+
+                    myCRC32 = myCRC32 + \
+                        int.from_bytes(
+                            application[partialStart:partialEnd], 'little')
+
+                    i = i + 1
+
+                myCRC32 = myCRC32 % 4294967296  # Trim any larger than 32-bit values
+
+                # Tell the target we are ready with new data
+                ser.write(BL_COMMAND_COMPUTER_READY.to_bytes(1, byteorder='big'))
+
+                # Wait for incoming BL_COMMAND_NEXT_FRAME indicating the sending of next frame
+                i = 0
+                response = ''
+                while len(response) == 0:
+                    i = i + 1
+                    if(i == 10):
+                        print("Bootloader did not request next frame")
+                        exit()
+
+                    response = ser.read()
+
+                if ord(response) == BL_COMMAND_NEXT_FRAME:
+                    verboseprint("Sending next frame: " +
+                                str(end - start) + " bytes")
+
+                    if(start == totalLen):
+                        # We're done!
+                        print("Upload complete")
+
+                        # Send size of this frame - special command
+                        ser.write(BL_COMMAND_ALL_DONE.to_bytes(2, byteorder='big'))
+
+                        exit()
+
+                    # Send size of this frame
+                    bytes_to_send = end - start
+                    ser.write(bytes_to_send.to_bytes(2, byteorder='big'))
+
+                    # Send start address of this frame
+                    ser.write(start.to_bytes(4, byteorder='big'))
+
+                    # Send our CRC
+                    ser.write(myCRC32.to_bytes(4, byteorder='big'))
+
+                    # Send page of data
+                    ser.write(application[start:end])
+
+                    # Move the pointers foward
+                    start = end
+                    end = end + 512*4
+
+                    if end > totalLen:
+                        end = totalLen
+                else:
+                    print("Unknown BL response")
+                    exit()
+
+        exit()
+
+    except:
         # Show a list of com ports and recommend one
         devices = list_ports.comports()
 
@@ -179,146 +316,6 @@ def main():
                 print(dev.description)
 
         exit()
-
-    # Begin talking over com port
-    print('Connecting over serial port {}...'.format(args.port), flush=True)
-
-    # # compute an acceptable timeout for the given baud rate
-    # global_timeout = 10*(25)/args.baud
-    global_timeout = 0.05
-    verboseprint('Using Serial timeout: ' + str(global_timeout))
-
-    # Now open the port for bootloading
-    with serial.Serial(args.port, args.baud, timeout=global_timeout) as ser:
-
-        # DTR is driven low when serial port open. DTR has now pulled RST low causing board reset.
-        # If we do not set DTR high again, the Ambiq SBL will not activate, but the SparkFun bootloader will.
-
-        if(phase_set_baud(ser) != 0):
-            exit()
-
-        print('Connected!')
-        print('Bootloading...')
-
-        # Wait for incoming BL_COMMAND_ANNOUNCE
-        i = 0
-        response = ''
-        while len(response) == 0:
-            i = i + 1
-            if(i == 30):
-                print("No announcement from Artemis bootloader")
-                exit()
-
-            response = ser.read()
-
-            if(len(response) > 0):
-                if(ord(response) == BL_COMMAND_ANNOUNCE):
-                    # Respond with 'AOK'
-                    # values = bytearray([6])
-                    ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
-
-                    verboseprint("Bootload response received")
-                    break
-                else:
-                    verboseprint("Unkown response: " + str(ord(response)))
-                    response = ''
-
-        # Wait for incoming char indicating bootloader version
-        i = 0
-        response = ''
-        while len(response) == 0:
-            i = i + 1
-            if(i == 10):
-                print("No version from Artemis bootloader")
-                exit()
-
-            response = ser.read()
-
-        verboseprint("Bootloader version: " + str(ord(response)))
-
-        # Read the binary file from the command line.
-        with open(args.binfile, mode='rb') as binfile:
-            application = binfile.read()
-        # Gather the important binary metadata.
-        totalLen = len(application)
-
-        verboseprint("Length to send: " + str(totalLen))
-
-        start = 0
-        end = start + 512*4
-
-        # Loop until we have sent the entire file
-        while 1:
-
-            # Calc CRC for this chunk
-            bytes_to_send = end - start
-            words_to_send = bytes_to_send / 4
-            myCRC32 = 0
-            i = 0
-            while i < words_to_send:
-                partialStart = int(start + (i * (bytes_to_send/words_to_send)))
-                partialEnd = int(
-                    end - ((words_to_send - 1 - i) * (bytes_to_send/words_to_send)))
-
-                myCRC32 = myCRC32 + \
-                    int.from_bytes(
-                        application[partialStart:partialEnd], 'little')
-
-                i = i + 1
-
-            myCRC32 = myCRC32 % 4294967296  # Trim any larger than 32-bit values
-
-            # Tell the target we are ready with new data
-            ser.write(BL_COMMAND_COMPUTER_READY.to_bytes(1, byteorder='big'))
-
-            # Wait for incoming BL_COMMAND_NEXT_FRAME indicating the sending of next frame
-            i = 0
-            response = ''
-            while len(response) == 0:
-                i = i + 1
-                if(i == 10):
-                    print("Bootloader did not request next frame")
-                    exit()
-
-                response = ser.read()
-
-            if ord(response) == BL_COMMAND_NEXT_FRAME:
-                verboseprint("Sending next frame: " +
-                             str(end - start) + " bytes")
-
-                if(start == totalLen):
-                    # We're done!
-                    print("Upload complete")
-
-                    # Send size of this frame - special command
-                    ser.write(BL_COMMAND_ALL_DONE.to_bytes(2, byteorder='big'))
-
-                    exit()
-
-                # Send size of this frame
-                bytes_to_send = end - start
-                ser.write(bytes_to_send.to_bytes(2, byteorder='big'))
-
-                # Send start address of this frame
-                ser.write(start.to_bytes(4, byteorder='big'))
-
-                # Send our CRC
-                ser.write(myCRC32.to_bytes(4, byteorder='big'))
-
-                # Send page of data
-                ser.write(application[start:end])
-
-                # Move the pointers foward
-                start = end
-                end = end + 512*4
-
-                if end > totalLen:
-                    end = totalLen
-            else:
-                print("Unknown BL response")
-                exit()
-
-    exit()
 
 
 # ******************************************************************************
