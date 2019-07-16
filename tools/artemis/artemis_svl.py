@@ -11,28 +11,133 @@ import serial
 import serial.tools.list_ports as list_ports
 import sys
 import time
+import re
 
 from sys import exit
 
-# Bootloader command constants
+# ******************************************************************************
+#
+# Define Commands
+#
+# ******************************************************************************
 BL_COMMAND_ANNOUNCE = 127
 BL_COMMAND_AOK = 6
 BL_COMMAND_BAD_CRC = 7
 BL_COMMAND_NEXT_FRAME = 8
 BL_COMMAND_ALL_DONE = 9
 BL_COMMAND_COMPUTER_READY = 10
+BL_COMMAND_SET_BAUD = 0x01
+
+# ******************************************************************************
+#
+# Return byte arrays for given commands
+#
+# ******************************************************************************
+def svl2_cmd_set_baud(baud):
+    cmd_bytes = BL_COMMAND_SET_BAUD.to_bytes(1, byteorder = 'big')
+    baud_bytes = baud.to_bytes(4, byteorder = 'big')
+    return (cmd_bytes + baud_bytes)
+
+def svl2_cmd_host_rdy(start, size, crc32, total_size):
+    cmd_bytes = SVL2_CMD_HOST_RDY.to_bytes(1, byteorder = 'big')
+    start_bytes = start.to_bytes(4, byteorder = 'big')
+    size_bytes = size.to_bytes(4, byteorder = 'big')
+    crc32_bytes = crc32.to_bytes(4, byteorder = 'big')
+    total_size_bytes = total_size.to_bytes(4, byteorder = 'big')
+    return (cmd_bytes + start_bytes + size_bytes + crc32_bytes + total_size_bytes)
+
+# ******************************************************************************
+#
+# Send commands in the specified format
+#
+# ******************************************************************************
+def send_package(byter, ser):
+    num = len(byter)
+    num_bytes = num.to_bytes(2, byteorder = 'big')
+    ser.write(num_bytes + byter)
+    # ser.write()
+
+# ******************************************************************************
+#
+# Wait for matching command using current port timeout settings
+#
+# ******************************************************************************
+def wait_for_package(byter, ser):
+    retval = {'status':-1, 'data':''}                   # Create return dictionary
+    data = ser.read_until(byter, len(byter) + 2 + 1)    # Wait for incoming data or timeout (+2 accounts for length bytes, +1 accounts for Apollo3 Serial.begin() blip)  
+    reres = re.search(byter,data)                       # Use RE to search for the desired sequence (necessary on Mac/Linux b/c of handling of the startup blip)
+    if(reres):
+        retval['status'] = 0                # indicate success
+        retval['data'] = reres.group(0)     # return the found data
+
+    return retval
+
+# ******************************************************************************
+#
+# Get a single byte command
+#
+# ******************************************************************************
+def wait_for_command(ser):
+    data = ser.read(size = 3)    # Wait for incoming data or timeout    
+    data = data[2:]
+    return data
+
+
+
+
+# ******************************************************************************
+#
+# Agree on a baud rate for the target
+#
+# ******************************************************************************
+def phase_set_baud(ser):
+    verboseprint("Starting Communications at " + str(args.baud) + " baud")
+
+    baud_set_tries = args.tries
+    baud_set_timeout = global_timeout                             # Timeout should be no shorter than (10*len(baud_set_command)/args.baud)
+    baud_set_command = svl2_cmd_set_baud(args.baud)
+
+    for tri in range(baud_set_tries):
+        send_package(baud_set_command, ser)                                 # Send the baud set command
+        baud_set_start = time.time()                                        # Mark the start
+        ret = wait_for_package(baud_set_command, ser)                       # Try to get the confirmation
+        result = ret['data']
+        if(result == baud_set_command):                                     # If there is a match then the target is at the right baud rate
+            break
+        
+        while((time.time() - baud_set_start) < baud_set_timeout):           # Wait for timeout in case target is transmitting slowly
+            time.sleep(0.0005)                                              # Mismatch cases:
+                                                                            #   Target baud is low, host baud is high:
+                                                                            #       Target begins sending, then host reads 'len(baud_set_command)' bytes (incorrectly) and returns. While loop gives target time to finish transmitting
+                                                                            #   Target baud is high, host baud is low: 
+                                                                            #       Target begins sending, host reads past the end of target transmission, then ready to go again. While loop not needed, but does not hurt
+    
+    verboseprint('Try #' + str(tri) + '. Result: ' + str(result))
+    if(len(result) != len(baud_set_command)):
+        print("Baud Set: lengths did not match")
+        return 1
+    
+    if( result != baud_set_command ):
+        print("Baud Set: messages did not match")
+        return 1
+
+    verboseprint("Received confirmation from target!")
+    return 0
+
+
+
 
 # ******************************************************************************
 #
 # Main function
 #
 # ******************************************************************************
-
+global_timeout = 0
 
 def main():
 
     # Open a serial port, and communicate with Device
-    #
+    
     # Max flashing time depends on the amount of SRAM available.
     # For very large images, the flashing happens page by page.
     # However if the image can fit in the free SRAM, it could take a long time
@@ -43,7 +148,7 @@ def main():
 
     # Check to see if the com port is available
     try:
-        with serial.Serial(args.port, args.baud, timeout=1) as ser:
+        with serial.Serial(args.port, args.baud, timeout=0.05) as ser:
             pass
     except:
 
@@ -78,13 +183,22 @@ def main():
     # Begin talking over com port
     print('Connecting over serial port {}...'.format(args.port), flush=True)
 
-    # Initially we communicate at 9600
-    with serial.Serial(args.port, 9600, timeout=0.100) as ser:
+    # # compute an acceptable timeout for the given baud rate
+    # global_timeout = 10*(25)/args.baud
+    global_timeout = 0.05
+    verboseprint('Using Serial timeout: ' + str(global_timeout))
+
+    # Now open the port for bootloading
+    with serial.Serial(args.port, args.baud, timeout=global_timeout) as ser:
 
         # DTR is driven low when serial port open. DTR has now pulled RST low causing board reset.
         # If we do not set DTR high again, the Ambiq SBL will not activate, but the SparkFun bootloader will.
 
-        verboseprint("Waiting for command from bootloader")
+        if(phase_set_baud(ser) != 0):
+            exit()
+
+        print('Connected!')
+        print('Bootloading...')
 
         # Wait for incoming BL_COMMAND_ANNOUNCE
         i = 0
@@ -109,10 +223,6 @@ def main():
                     verboseprint("Unkown response: " + str(ord(response)))
                     response = ''
 
-        # Send upload baud rate
-        baud_in_bytes = args.baud.to_bytes(4, byteorder='big')
-        ser.write(baud_in_bytes)
-
         # Wait for incoming char indicating bootloader version
         i = 0
         response = ''
@@ -126,13 +236,6 @@ def main():
 
         verboseprint("Bootloader version: " + str(ord(response)))
 
-        ser.flush()
-        # Wait for all previous bytes to transmit before changing bauds
-        time.sleep(0.010)
-
-        # Go to new baud rate
-        ser.baudrate = args.baud
-
         # Read the binary file from the command line.
         with open(args.binfile, mode='rb') as binfile:
             application = binfile.read()
@@ -141,7 +244,6 @@ def main():
 
         verboseprint("Length to send: " + str(totalLen))
 
-        frame_address = 0
         start = 0
         end = start + 512*4
 
@@ -175,7 +277,7 @@ def main():
             while len(response) == 0:
                 i = i + 1
                 if(i == 10):
-                    print("No announcement from Artemis bootloader")
+                    print("Bootloader did not request next frame")
                     exit()
 
                 response = ser.read()
@@ -239,6 +341,9 @@ if __name__ == '__main__':
 
     parser.add_argument("-v", "--verbose", default=0, help="Enable verbose output",
                         action="store_true")
+
+    parser.add_argument("-t", "--tries", default=20, help="How many baud rate negotiation messages to send before failing",
+                         type=int)
 
     if len(sys.argv) < 2:
         print("No port selected. Detected Serial Ports:")
