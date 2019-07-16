@@ -151,7 +151,7 @@ def main():
     print('Connecting over serial port {}...'.format(args.port), flush=True)
 
     # Set a timeout
-    global_timeout = 0.05 # tested as low as 0.03 on some machines - 50 ms works well, 30 ms works sometimes, this delay occurs between the USB-serial converter and when python can see it 
+    global_timeout = float(args.globaltimeout) # tested as low as 0.03 on some machines - 50 ms works well, 30 ms works sometimes, this delay occurs between the USB-serial converter and when python can see it 
     verboseprint('Using Serial timeout: ' + str(global_timeout))
 
     # Now open the port for bootloading
@@ -341,6 +341,8 @@ if __name__ == '__main__':
 
     parser.add_argument("-t", "--tries", default=20, help="How many baud rate negotiation messages to send before failing",
                          type=int)
+
+    parser.add_argument("-g", "--globaltimeout", default=0.05, help="Timeout between baud rate negotiation messages, in seconds (default 0.05)")
 
     if len(sys.argv) < 2:
         print("No port selected. Detected Serial Ports:")
