@@ -46,7 +46,6 @@ Current focus is to begin building support for the essential Arduino libraries i
       * ditigal functions (read / write)
       * analogRead
       * analogWrite
-    * Under Construction:
       * interrupts
   * Timing
     * Working:
