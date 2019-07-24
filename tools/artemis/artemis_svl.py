@@ -39,6 +39,7 @@ import serial.tools.list_ports as list_ports
 import sys
 import time
 import math
+from sys import exit
 
 # ***********************************************************************************
 #
