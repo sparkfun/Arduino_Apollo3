@@ -160,11 +160,11 @@ def phase_setup(ser):
 
     baud_detect_byte = b'U'
 
-    print('\nphase:\tsetup')
+    verboseprint('\nphase:\tsetup')
     
                                             # Handle the serial startup blip
     ser.reset_input_buffer()
-    print('\tcleared startup blip')         
+    verboseprint('\tcleared startup blip')         
 
     ser.write(baud_detect_byte)             # send the baud detection character
 
@@ -173,7 +173,7 @@ def phase_setup(ser):
         return 1
     
     print('\tGot SVL Bootloader Version: '+str(int.from_bytes(packet['data'],'big')))
-    print('\tSending \'enter bootloader\' command')
+    verboseprint('\tSending \'enter bootloader\' command')
 
     send_packet(ser, SVL_CMD_BL, b'')
 
@@ -234,9 +234,6 @@ def phase_bootload(ser):
                 bl_done = True
 
         print('\n\tUpload complete')
-
-        exit()
-        
 
 
 
