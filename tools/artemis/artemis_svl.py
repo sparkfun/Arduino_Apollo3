@@ -234,8 +234,8 @@ def phase_bootload(ser):
                 send_packet(ser, SVL_CMD_DONE, b'')
                 bl_done = True
 
-        verboseprint('\n')
-        print('\tUpload complete')
+        verboseprint('\n\t')
+        print('Upload complete')
 
 
 
