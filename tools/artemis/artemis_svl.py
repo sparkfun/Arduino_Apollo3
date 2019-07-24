@@ -172,7 +172,8 @@ def phase_setup(ser):
     if(packet['timeout'] or packet['crc']):
         return 1
     
-    print('\tGot SVL Bootloader Version: '+str(int.from_bytes(packet['data'],'big')))
+    verboseprint('\tGot SVL Bootloader Version: ' +
+                 str(int.from_bytes(packet['data'], 'big')))
     verboseprint('\tSending \'enter bootloader\' command')
 
     send_packet(ser, SVL_CMD_BL, b'')
@@ -193,7 +194,7 @@ def phase_bootload(ser):
 
     frame_size = 512*4
 
-    print('\nphase:\tbootload')
+    verboseprint('\nphase:\tbootload')
 
     with open(args.binfile, mode='rb') as binfile:
         application = binfile.read()
@@ -233,7 +234,7 @@ def phase_bootload(ser):
                 send_packet(ser, SVL_CMD_DONE, b'')
                 bl_done = True
 
-        print('\n\tUpload complete')
+        print('Upload complete')
 
 
 
