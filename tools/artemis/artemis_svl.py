@@ -172,7 +172,8 @@ def phase_setup(ser):
     if(packet['timeout'] or packet['crc']):
         return 1
     
-    print('\tGot SVL Bootloader Version: '+str(int.from_bytes(packet['data'],'big')))
+    verboseprint('\tGot SVL Bootloader Version: ' +
+                 str(int.from_bytes(packet['data'], 'big')))
     verboseprint('\tSending \'enter bootloader\' command')
 
     send_packet(ser, SVL_CMD_BL, b'')
@@ -235,6 +236,7 @@ def phase_bootload(ser):
 
         verboseprint('\n')
         print('\tUpload complete')
+
 
 
 
