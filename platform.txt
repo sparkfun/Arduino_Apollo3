@@ -85,7 +85,7 @@ compiler.flags.common_cpp_c=-mcpu={build.mcu} -mthumb -mfloat-abi=hard -fdata-se
 compiler.flags.cpp={compiler.flags.common_cpp_c_S} {compiler.flags.common_cpp_c} {compiler.extra_flags.cpp} -ffunction-sections  {compiler.warning_flags} -std=gnu++11 -fno-threadsafe-statics -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions
 compiler.flags.c={compiler.flags.common_cpp_c_S} {compiler.flags.common_cpp_c} {compiler.extra_flags.c} --function-sections -mfpu=fpv4-sp-d16 -std=gnu11 -Wall 
 compiler.flags.S={compiler.flags.common_cpp_c_S} {compiler.extra_flags.S} -x assembler-with-cpp
-compiler.flags.ld={compiler.extra_flags.ld} "-L{ap3core.ambiq_sdk.path}/CMSIS/ARM/Lib/ARM" -larm_cortexM4l_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
+compiler.flags.ld={compiler.extra_flags.ld} "-L{ap3core.ambiq_sdk.path}/CMSIS/ARM/Lib/ARM" -larm_cortexM4lf_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
 compiler.flags.ar=rcs {compiler.extra_flags.ar}
 compiler.flags.axf2bin={compiler.extra_flags.axf2bin} -O binary
 
