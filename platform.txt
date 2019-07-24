@@ -157,8 +157,8 @@ tools.ambiq_bin2board.erase.pattern=
 
 # Upload tool pattern
 tools.ambiq_bin2board.upload.pattern={pgm} {args}
-tools.ambiq_bin2board.bootloader.pattern={pgm} --bin "{runtime.platform.path}/bootloaders/artemis/Artemis_SVL_V2.ino.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/bootloaders/artemis/Artemis_SVL_V2" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
-tools.ambiq_bin2board.erase.pattern={pgm} --bin "{runtime.platform.path}/bootloaders/artemis/Artemis_Bare_Minimum.ino.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/bootloaders/artemis/Artemis_Bare_Minimum" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
+tools.ambiq_bin2board.bootloader.pattern={pgm} --bin "{runtime.platform.path}/bootloaders/artemis/artemis_svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/bootloaders/artemis/artemis_svl" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
+tools.ambiq_bin2board.erase.pattern={pgm} --bin "{runtime.platform.path}/bootloaders/artemis/artemis_svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/bootloaders/artemis/artemis_svl" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
 
 ##### The following tool settings are for the SparkFun variable bootloader (Artemis SVL) (Saturn Five Loader)
 
