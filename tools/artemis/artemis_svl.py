@@ -193,7 +193,7 @@ def phase_bootload(ser):
 
     frame_size = 512*4
 
-    print('\nphase:\tbootload')
+    verboseprint('\nphase:\tbootload')
 
     with open(args.binfile, mode='rb') as binfile:
         application = binfile.read()
@@ -202,7 +202,7 @@ def phase_bootload(ser):
         total_frames = math.ceil(total_len/frame_size)
         curr_frame = 0
 
-        verboseprint('\tLength to send: ' + str(total_len) + ' bytes, ' + str(total_frames) + ' frames')
+        verboseprint('\thave ' + str(total_len) + ' bytes to send in ' + str(total_frames) + ' frames')
 
         bl_done = False
         while(not bl_done):
@@ -233,7 +233,8 @@ def phase_bootload(ser):
                 send_packet(ser, SVL_CMD_DONE, b'')
                 bl_done = True
 
-        print('\n\tUpload complete')
+        verboseprint('\n')
+        print('\tUpload complete')
 
 
 
