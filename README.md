@@ -12,8 +12,6 @@
 
 ## Installation
 
-The structure of this repo is such that it will most closely resemble the structure required when it is time to add it to the Arduino boards manager. Until then you'll have to use the manual installation process.
-
 * [Using Arduino IDE Boards Manager](https://github.com/sparkfun/Arduino_Boards) (Reccomended)
     * Follow the instructions at the [SparkFun Arduino Boards Repo](https://github.com/sparkfun/Arduino_Boards)
     * Open 'Boards Manager' and select 'SparkFun Apollo3 Boards,' install the latest version.
