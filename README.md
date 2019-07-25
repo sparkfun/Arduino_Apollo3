@@ -20,20 +20,6 @@ The structure of this repo is such that it will most closely resemble the struct
     * JSON boards manager link for convenience: https://raw.githubusercontent.com/sparkfun/Arduino_Boards/master/IDE_Board_Manager/package_sparkfun_index.json
 
 
-* [Manually Install in Arduino Sketchbook]()
-    * **First** Install the Arduino SAMD Boards through the Arduino Board Manager. This is required for the ARM Cortex-M toolchain.
-    * Open your Arduno sketchbook folder, listed in Arduino's preferences pane (it is where your libraries folder lives)
-    * If there is no ```hardware``` folder create it
-    * Inside the ```hardware``` folder create ```SparkFun```
-    * Choose to clone with Git or download the .zip of this repo
-        * Cloning
-            * Clone this repo into ```SparkFun``` and give it the name ```apollo3```
-        * .ZIP
-            * Download the .ZIP of this repository
-            * Within ```SparkFun``` create the ```apollo3``` directory
-            * Unzip the contents of the .ZIP into the ```apollo3``` directory
-    * Restart Arduino IDE for good measure
-
 
 ## Development Status
 
