@@ -1,19 +1,18 @@
 Name:
 =====
- hello_world_uart
+ artemis_svl
 
 
 Description:
 ============
- A simple "Hello World" example using the UART peripheral.
-
-
-Purpose:
-========
-This example prints a "Hello World" message with some device info
-over UART at 115200 baud. To see the output of this program, run AMFlash,
-and configure the console for UART. The example sleeps after it is done
-printing.
+ Variable baud rate bootloader for Apollo3/Artemis
+ 
+ 
+ Usage:
+ =====
+ This source code is provided mostly for reference. The easiest way to upload the SVL is by using the Arduino "burn bootloader" tool and selecting "Ambiq Secure Bootloader" as the "Programmer" option.
+ 
+ If you want to make changes you can compile and upload the artemis_svl using the AmbiqSuite SDK.
 
 
 ******************************************************************************
