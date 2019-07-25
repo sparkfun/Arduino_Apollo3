@@ -5,6 +5,10 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.4 - Jul 25 2019
+===================
+- Implement Artemis SVL v3
+
 1.0.3 - Jul 16 2019
 ===================
 - Fix platform discrepancies in upload tools (SVL)
