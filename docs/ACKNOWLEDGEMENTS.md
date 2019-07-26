@@ -9,5 +9,6 @@ Thank you to everyone who has contributed!
 Contributors
 ============
 * Jim Lindblom
+* Kenny Hora
 * Owen Lyke
 * Nathan Seidle
