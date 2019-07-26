@@ -305,6 +305,8 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir)
     uint32_t ui32GPCfgClearMask;
     uint32_t ui32GPCfgShft;
 
+    ui32GPCfgShft       = ((ui32Pin & 0x7) << 2);
+
     ui32GPCfgAddr = AM_REGADDR(GPIO, CFGA) + ((ui32Pin >> 1) & ~0x3);
 
     ui32GPCfgClearMask = ~((uint32_t)0xF << ui32GPCfgShft);
