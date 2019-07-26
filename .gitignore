@@ -7,3 +7,4 @@
 # Mac
 *.DS_Store
 
+*OTA_blob.bin*
