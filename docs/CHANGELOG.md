@@ -5,6 +5,12 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.5 - Jul 30 2019
+===================
+- Minor updates to bootloaders
+    - SVL: added some exits and improved verbose/quiet formatting
+    - ASB (SBL): reduced impact of UART hammering with 'reset_input_buffer'
+
 1.0.4 - Jul 25 2019
 ===================
 - Implement Artemis SVL v3
