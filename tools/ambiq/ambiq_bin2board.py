@@ -426,6 +426,8 @@ def upload(args, verboseprint):
             #Give bootloader a chance to run and check bootload pin before communication begins. But must initiate com before bootloader timeout of 250ms.
             time.sleep(0.100) #100ms works well
 
+            ser.reset_input_buffer()    # reset the input bufer to discard any UART traffic that the device may have generated
+
             connect_device(ser, args, verboseprint)
 
             if(loadSuccess == True):
