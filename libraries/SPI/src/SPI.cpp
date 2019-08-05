@@ -214,14 +214,11 @@ void SPIClass::setDataMode(uint8_t mode)
   initialize();
 }
 
-// void SPIClass::setClockDivider(uint8_t div)
-// {
-//   // if (div < SPI_MIN_CLOCK_DIVIDER) {
-//   //   _p_sercom->setBaudrateSPI(SPI_MIN_CLOCK_DIVIDER);
-//   // } else {
-//   //   _p_sercom->setBaudrateSPI(div);
-//   // }
-// }
+void SPIClass::setClockDivider(uint8_t div)
+{
+  _config.ui32ClockFreq = F_CPU / div;
+  initialize();
+}
 
 byte SPIClass::transfer(uint8_t data)
 {

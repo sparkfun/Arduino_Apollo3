@@ -104,7 +104,7 @@ class SPIClass : public IOMaster {
 
   void setBitOrder(BitOrder order);
   void setDataMode(uint8_t uc_mode);
-  // void setClockDivider(uint8_t uc_div);
+  void setClockDivider(uint8_t uc_div);
 
 private:
   void config(SPISettings settings);
