@@ -172,7 +172,7 @@ def phase_setup(ser):
     if(packet['timeout'] or packet['crc']):
         return 1
     
-    verboseprint('\tGot SVL Bootloader Version: ' +
+    twopartprint('\t','Got SVL Bootloader Version: ' +
                  str(int.from_bytes(packet['data'], 'big')))
     verboseprint('\tSending \'enter bootloader\' command')
 
@@ -194,6 +194,9 @@ def phase_bootload(ser):
 
     frame_size = 512*4
 
+    resend_max = 64
+    resend_count = 0
+
     verboseprint('\nphase:\tbootload')
 
     with open(args.binfile, mode='rb') as binfile:
@@ -206,23 +209,31 @@ def phase_bootload(ser):
         verboseprint('\thave ' + str(total_len) + ' bytes to send in ' + str(total_frames) + ' frames')
 
         bl_done = False
-        while(not bl_done):
+        bl_failed = False
+        while((not bl_done) and (not bl_failed)):
                 
             packet = wait_for_packet(ser)               # wait for indication by Artemis
             if(packet['timeout'] or packet['crc']):
                 print('\n\terror receiving packet')
                 print(packet)
                 print('\n')
-                return 1
+                bl_failed = True
+                bl_done = True
 
             if( packet['cmd'] == SVL_CMD_NEXT ):
                 # verboseprint('\tgot frame request')
                 curr_frame += 1
+                resend_count = 0
             elif( packet['cmd'] == SVL_CMD_RETRY ):
                 verboseprint('\t\tretrying...')
+                resend_count += 1
+                if( resend_count >= resend_max ):
+                    bl_failed = True
+                    bl_done = True
             else:
                 print('unknown error')
-                return 1
+                bl_failed = True
+                bl_done = True
 
             if( curr_frame <= total_frames ):
                 frame_data = application[((curr_frame-1)*frame_size):((curr_frame-1+1)*frame_size)]
@@ -234,8 +245,12 @@ def phase_bootload(ser):
                 send_packet(ser, SVL_CMD_DONE, b'')
                 bl_done = True
 
-        verboseprint('\n\t')
-        print('Upload complete')
+        if( bl_failed == False ):
+            twopartprint('\n\t', 'Upload complete')
+        else:
+            twopartprint('\n\t', 'Upload failed')
+
+        return bl_failed
 
 
 
@@ -281,16 +296,23 @@ def phase_serial_port_help():
 # ***********************************************************************************
 def main():
     try:
-        with serial.Serial(args.port, args.baud, timeout=args.timeout) as ser:
+        num_tries = 3
 
-            t_su = 0.15             # startup time for Artemis bootloader   (experimentally determined - 0.095 sec min delay)
+        print('\n\nArtemis SVL Bootloader')
 
-            print('\n\nArtemis SVL Bootloader')
+        for _ in range(num_tries):
 
-            time.sleep(t_su)        # Allow Artemis to come out of reset
-            phase_setup(ser)        # Perform baud rate negotiation
+            with serial.Serial(args.port, args.baud, timeout=args.timeout) as ser:
 
-            phase_bootload(ser)     # Bootload
+                t_su = 0.15             # startup time for Artemis bootloader   (experimentally determined - 0.095 sec min delay)
+
+                time.sleep(t_su)        # Allow Artemis to come out of reset
+                phase_setup(ser)        # Perform baud rate negotiation
+
+                bl_failed = phase_bootload(ser)     # Bootload
+
+            if( bl_failed == False ):
+                break
 
     except:
         phase_serial_port_help()
@@ -340,5 +362,11 @@ if __name__ == '__main__':
             print()
     else:
         verboseprint = lambda *a: None      # do-nothing function
+
+    def twopartprint(verbosestr, printstr):
+        if args.verbose:
+            print(verbosestr, end = '')
+
+        print(printstr)
 
     main()
