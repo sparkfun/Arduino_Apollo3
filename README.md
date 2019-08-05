@@ -62,6 +62,7 @@ The goal of this Arduino Core is to provide excellent Apollo3 support in a clear
 
 ## Repo Contents
 
+* bootloaders: source code and binary images of the SparkFun Variable Loader (SVL)
 * cores : source code and headers common to all Apollo3 Arduino boards
 * docs : 
     * CONTRIBUTING.md
