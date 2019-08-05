@@ -5,6 +5,12 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.6 - Aug 5 2019
+===================
+- Added default SD support with Arduino SD library
+- Fixed non-return errors in SPI library
+- Added full duplex capability to 'transfer(uint8_t)'
+
 1.0.5 - Jul 30 2019
 ===================
 - Minor updates to bootloaders
