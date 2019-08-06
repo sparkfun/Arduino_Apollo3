@@ -415,11 +415,13 @@ void ap3_pwm_wait_for_pulse(uint32_t timer, uint32_t segment, uint32_t output, u
 
         // Get the compare value
         cmpr0 = ((uint32_t)(*(pui32CompareReg)) & 0x0000FFFF);
-        
-        // Wait for the timer value to be less than the compare value so that it is safe to change
-        ctimer_val = am_hal_ctimer_read( timer, segment);
-        while( (ctimer_val + 0) > cmpr0 ){
+
+        if( cmpr0 ){ // Only wait when cmpr0 is greater than 0 to avoid an infinite while loop
+            // Wait for the timer value to be less than the compare value so that it is safe to change
             ctimer_val = am_hal_ctimer_read( timer, segment);
+            while( (ctimer_val + 0) >= cmpr0 ){
+                ctimer_val = am_hal_ctimer_read( timer, segment);
+            }
         }
     }
 }
@@ -526,13 +528,16 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
     }
 
     // Test for AM_HAL_CTIMER_OUTPUT_FORCE0 or AM_HAL_CTIMER_OUTPUT_FORCE1
+    bool set_periods = true;
     if ((th == 0) || (fw == 0))
     {
         output = AM_HAL_CTIMER_OUTPUT_FORCE0;
+        set_periods = false;                    // disable setting periods when going into a forced mode
     }
     else if (th == fw)
     {
         output = AM_HAL_CTIMER_OUTPUT_FORCE1;
+        set_periods = false;                    // disable setting periods when going into a forced mode
     }
 
     // Wait until after high pulse to change the state (avoids inversion)
@@ -551,31 +556,33 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
                                 // (AM_HAL_CTIMER_FN_PWM_REPEAT | AP3_ANALOG_CLK | AM_HAL_CTIMER_INT_ENABLE) );
                                 (AM_HAL_CTIMER_FN_PWM_REPEAT | clk));
 
-    // If this pad uses secondary output:
-    if (output == AM_HAL_CTIMER_OUTPUT_SECONDARY)
-    {
-        // Need to explicitly enable compare registers 2/3
-        uint32_t *pui32ConfigReg = NULL;
-        pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, AUX0);
-        uint32_t ui32WriteVal = AM_REGVAL(pui32ConfigReg);
-        uint32_t ui32ConfigVal = (1 << CTIMER_AUX0_TMRA0EN23_Pos); // using CTIMER_AUX0_TMRA0EN23_Pos because for now this number is common to all CTimer instances
-        if (segment == AM_HAL_CTIMER_TIMERB)
+    if(set_periods){
+        // If this pad uses secondary output:
+        if (output == AM_HAL_CTIMER_OUTPUT_SECONDARY)
         {
-            ui32ConfigVal = ((ui32ConfigVal & 0xFFFF) << 16);
+            // Need to explicitly enable compare registers 2/3
+            uint32_t *pui32ConfigReg = NULL;
+            pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, AUX0);
+            uint32_t ui32WriteVal = AM_REGVAL(pui32ConfigReg);
+            uint32_t ui32ConfigVal = (1 << CTIMER_AUX0_TMRA0EN23_Pos); // using CTIMER_AUX0_TMRA0EN23_Pos because for now this number is common to all CTimer instances
+            if (segment == AM_HAL_CTIMER_TIMERB)
+            {
+                ui32ConfigVal = ((ui32ConfigVal & 0xFFFF) << 16);
+            }
+            ui32WriteVal = (ui32WriteVal & ~(segment)) | ui32ConfigVal;
+            AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
+
+            // then set the duty cycle with the 'aux' function
+            am_hal_ctimer_aux_period_set(timer, segment, fw, th);
         }
-        ui32WriteVal = (ui32WriteVal & ~(segment)) | ui32ConfigVal;
-        AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
+        else
+        {
+            // Otherwise simply set the primary duty cycle
+            am_hal_ctimer_period_set(timer, segment, fw, th);
+        }
 
-        // then set the duty cycle with the 'aux' function
-        am_hal_ctimer_aux_period_set(timer, segment, fw, th);
+        am_hal_ctimer_start(timer, segment); // Start the timer only when there are periods to compare to
     }
-    else
-    {
-        // Otherwise simply set the primary duty cycle
-        am_hal_ctimer_period_set(timer, segment, fw, th);
-    }
-
-    am_hal_ctimer_start(timer, segment);
 
     return AP3_OK;
 }
@@ -594,17 +601,17 @@ ap3_err_t analogWriteResolution(uint8_t res)
 ap3_err_t analogWrite(uint8_t pin, uint32_t val)
 {
     // Determine the high time based on input value and the current resolution setting
-    uint32_t fw = 0xFFFF; // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
-    if (val == ((0x01 << _analogWriteBits) - 1))
+    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ;        // Use an Ambiq HAL provided value to select which clock
+    uint32_t fw = 0xFFFF;                           // Choose the frame width in clock periods (32767 -> ~ 180 Hz)
+    if (val >= ((0x01 << _analogWriteBits) - 1))
     {
         val = fw; // Enable FORCE1
     }
     else
     {
-        val <<= (16 - _analogWriteBits); // Shift over the value to fill available resolution
+        val <<= (16 - _analogWriteBits);            // Shift over the value to fill available resolution
     }
-    uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ; // Use an Ambiq HAL provided value to select which clock
-
+    
     return ap3_pwm_output(pin, val, fw, clk);
 }
 
