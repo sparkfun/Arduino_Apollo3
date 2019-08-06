@@ -23,25 +23,25 @@
 
 The basic necesseties are in-place. This means that you can compile and upload code to your Apollo3 board. Development can be done with the whole range of Hardware Abstraction Layer functions provided in the AmbiqSuite Software Development Kit (based on Release2.1.0). 
 
-Current focus is to begin building support for the essential Arduino libraries including:
-  * Serial: Fully implemented (will fix bugs and tweak performance over time)
-  * GPIO
-    * Working:
-      * ditigal functions (read / write)
-      * analogRead
-      * analogWrite
-      * interrupts
-  * Timing
-    * Working:
-      * delay
-      * delayMicroseconds
-      * millis
-      * micros
-      * seconds (extension)
+**Main Arduino Features**
+  * Serial: ✅
+  * GPIO: ✅
+  * Analog / Servo Output: ✅
+  * Analog Input: ✅
+  * Timing / Delays: ✅
   * Wire
-    * Working: 90% use case, master I2C interface. 
+    * Master: ✅
+    * Slave: ❌
   * SPI
-    * Working: transfers with SPISettings.
+    * Master: ✅
+    * Slave: ❌
+
+**Apollo3 Specialty Peripherals**
+  * PDM Microphones / I2S: 🤔
+  * BLE: 🤔
+  * Multi-bit SPI: 🤔
+  * I2C/SPI Slave: 🤔
+  
 
 
 
@@ -62,6 +62,7 @@ The goal of this Arduino Core is to provide excellent Apollo3 support in a clear
 
 ## Repo Contents
 
+* bootloaders: source code and binary images of the SparkFun Variable Loader (SVL)
 * cores : source code and headers common to all Apollo3 Arduino boards
 * docs : 
     * CONTRIBUTING.md
