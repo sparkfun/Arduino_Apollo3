@@ -19,62 +19,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#ifndef _AP3_VARIANT_H_
+#define _AP3_VARIANT_H_
 
-#include "variant.h"
+#include "Arduino.h"
 
-// Apollo3 pads 30 and 46 are not exposed by Artemis module
-const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    4,
-    AP3_GPIO_PAD_UNUSED,
-    6,
-    7,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    AP3_GPIO_PAD_UNUSED,
-    31,
-    32,
-    33,
-    34,
-    35,
-    AP3_GPIO_PAD_UNUSED,
-    37,
-    AP3_GPIO_PAD_UNUSED,
-    39,
-    40,
-    AP3_GPIO_PAD_UNUSED,
-    42,
-    43,
-    44,
-    45,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    48,
-    49,
-};
+#define AP3_VARIANT_NUM_PINS (50)
 
-// Uart Definitions
-Uart Serial(0, 49, 48);// declares a Uart object called Serial using instance 0 of Apollo3 UART peripherals with RX on pin 49 and TX on pin 48 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
+// Pin map declaration
+extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
+
+// Uart declarations
+class Uart; // Forward declaration of Uart
+extern Uart Serial;
+
+// Wire defines
+#define WIRE_INTERFACES_COUNT 3
+
+#define WireQwiic Wire // Giving Wire an alias of "WireQwiic" in case people want to use it
+#define AP3_Wire_IOM 4 // Secify that Wire uses IOMaster instance 4
+
+#define WireAccel Wire1
+#define AP3_Wire1_IOM 3
+
+#define WireCamera Wire2
+#define AP3_Wire2_IOM 1
+
+// SPI Defines
+#define SPI_INTERFACES_COUNT 0 //Edge V2 doesn't have any fully-exposed SPI ports
+
+#define LED_BUILTIN 19
+#define LED_GREEN 17
+#define LED_BLUE 18
+#define LED_RED 19
+#define LED_YELLOW 37
+
+#define MIC_DATA 29
+#define MIC_CLOCK 12
+
+#endif // _AP3_VARIANT_H_
