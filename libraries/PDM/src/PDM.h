@@ -19,8 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _AP3_PDM_H_
-#define _AP3_PDM_H_
+#ifndef _PDM_H_
+#define _PDM_H_
 
 #include "Arduino.h"
 
@@ -89,6 +89,21 @@ public:
     bool begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock);
     bool available(void); //Goes true once an interrupt has occured
 
+    bool setClockSpeed(am_hal_pdm_clkspd_e clockSpeed);
+    am_hal_pdm_clkspd_e getClockSpeed();
+    bool setClockDivider(am_hal_pdm_mclkdiv_e clockSpeed);
+    am_hal_pdm_mclkdiv_e getClockDivider();
+    bool setLeftGain(am_hal_pdm_gain_e gain);
+    am_hal_pdm_gain_e getLeftGain();
+    bool setRightGain(am_hal_pdm_gain_e gain);
+    am_hal_pdm_gain_e getRightGain();
+    bool setGain(am_hal_pdm_gain_e gain);
+    bool setChannel(am_hal_pdm_chset_e channel);
+    am_hal_pdm_chset_e getChannel();
+    bool setDecimationRate(uint32_t deciRate);
+    uint32_t getDecimationRate();
+
+    bool updateConfig(am_hal_pdm_config_t newConfiguration);
     //void begin(void);
     // void begin(unsigned long baudrate, uint16_t config);
     // void begin(unsigned long baudrate, am_hal_uart_config_t config);
@@ -124,4 +139,4 @@ public: //temporary
     volatile bool _PDMdataReady = false;
 };
 
-#endif //_AP3_PDM_H_
+#endif //_PDM_H_
