@@ -75,4 +75,7 @@ extern Uart Serial1;
 #define TX1 1
 #define RX1 0
 
+#define MIC_DATA 30
+#define MIC_CLOCK 31
+
 #endif // _AP3_VARIANT_H_

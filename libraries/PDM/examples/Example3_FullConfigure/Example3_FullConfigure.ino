@@ -7,9 +7,11 @@
   that you can access all settings in one step.
 */
 
-//Global variables needed for this sketch
+//Global variables needed for PDM library
 #define pdmDataBufferSize 4096 //Default is array of 4096 * 32bit
 uint32_t pdmDataBuffer[pdmDataBufferSize];
+
+//Global variables needed for the FFT in this sketch
 float g_fPDMTimeDomain[pdmDataBufferSize * 2];
 float g_fPDMFrequencyDomain[pdmDataBufferSize * 2];
 float g_fPDMMagnitudes[pdmDataBufferSize * 2];
@@ -51,8 +53,8 @@ void setup()
   Serial.begin(9600);
   Serial.println("SparkFun PDM Example");
 
-  // Turn on the PDM, set it up for our chosen recording settings
-  if (myPDM.begin(22, 23) == false) //Data, clock - These are the pin names from variant file, not pad names
+  // Turn on the PDM with default settings
+  if (myPDM.begin() == false) //Use Data, clock defines from variant file
   {
     Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
     while (1);

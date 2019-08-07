@@ -85,7 +85,7 @@ const am_hal_pdm_config_t ap3_pdm_config_default = {
 class AP3_PDM
 {
 public:
-    bool begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock);
+    bool begin(ap3_gpio_pin_t pinPDMData = MIC_DATA, ap3_gpio_pin_t pinPDMClock = MIC_CLOCK);
     bool available(void); //Goes true once an interrupt has occured
 
     bool setClockSpeed(am_hal_pdm_clkspd_e clockSpeed);

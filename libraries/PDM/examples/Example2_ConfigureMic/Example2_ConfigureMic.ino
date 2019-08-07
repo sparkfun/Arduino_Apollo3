@@ -5,9 +5,11 @@
   This example shows how to modify the various PDM interface settings.
 */
 
-//Global variables needed for this sketch
+//Global variables needed for PDM library
 #define pdmDataBufferSize 4096 //Default is array of 4096 * 32bit
 uint32_t pdmDataBuffer[pdmDataBufferSize];
+
+//Global variables needed for the FFT in this sketch
 float g_fPDMTimeDomain[pdmDataBufferSize * 2];
 float g_fPDMFrequencyDomain[pdmDataBufferSize * 2];
 float g_fPDMMagnitudes[pdmDataBufferSize * 2];
@@ -29,19 +31,25 @@ void setup()
   Serial.begin(9600);
   Serial.println("SparkFun PDM Example");
 
-  // Turn on the PDM, set it up for our chosen recording settings.
-  if (myPDM.begin(22, 23) == false) //Data, clock - These are the pin names from variant file, not pad names
+  // The variant files for Artemis carrier boards have Mic data and clock pins defined
+  // but these pins can be passed to the the .begin function
+  //if (myPDM.begin() == false) //Use Data, clock defines from variant file
+  if (myPDM.begin(22, 23) == false) //Data, clock on Artemis Nano - These are the pin names from variant file, not pad names
   {
     Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
     while (1);
   }
   Serial.println("PDM Initialized");
 
-  //For more settings see the 
+  //Note: The following settings will modifying the settings from default
+  //and therefore the loudest freq will be 1/2 of what is really happening
+  //For more AM_HAL_... defines see the am_hal_pdm.h file in the core (/mcu/apollo3/hal/)
   myPDM.setClockSpeed(AM_HAL_PDM_CLK_3MHZ);
   myPDM.setClockDivider(AM_HAL_PDM_MCLKDIV_1);
   myPDM.setGain(AM_HAL_PDM_GAIN_P210DB);
   myPDM.setChannel(AM_HAL_PDM_CHANNEL_STEREO);
+
+  //The equivalent getGain(), getClockSpeed(), etc are available
 
   printPDMConfig();
     

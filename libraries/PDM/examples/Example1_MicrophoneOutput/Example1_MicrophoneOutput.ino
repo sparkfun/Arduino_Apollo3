@@ -2,13 +2,15 @@
   Created: July 24, 2019
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
-  This example demonstrates how to use the PDM microphone on Artemis boards.
+  This example demonstrates how to use the pulse density microphone (PDM) on Artemis boards.
   This library and example are heavily based on the Apollo3 pdm_fft example.
 */
 
-//Global variables needed for this sketch
+//Global variables needed for PDM library
 #define pdmDataBufferSize 4096 //Default is array of 4096 * 32bit
 uint32_t pdmDataBuffer[pdmDataBufferSize];
+
+//Global variables needed for the FFT in this sketch
 float g_fPDMTimeDomain[pdmDataBufferSize * 2];
 float g_fPDMFrequencyDomain[pdmDataBufferSize * 2];
 float g_fPDMMagnitudes[pdmDataBufferSize * 2];
@@ -30,18 +32,12 @@ void setup()
   Serial.begin(9600);
   Serial.println("SparkFun PDM Example");
 
-  // Turn on the PDM, set it up for our chosen recording settings
-  if (myPDM.begin(22, 23) == false) //Data, clock - These are the pin names from variant file, not pad names
+  if (myPDM.begin() == false) // Turn on PDM with default settings
   {
     Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
     while (1);
   }
   Serial.println("PDM Initialized");
-
-  //myPDM.setClockSpeed(AM_HAL_PDM_CLK_3MHZ);
-  //myPDM.setClockDivider(AM_HAL_PDM_MCLKDIV_1);
-  //myPDM.setGain(AM_HAL_PDM_GAIN_P210DB);
-  //myPDM.setChannel(AM_HAL_PDM_CHANNEL_STEREO);
 
   printPDMConfig();
     
