@@ -30,7 +30,6 @@ bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
     _pinPDMData = pinPDMData;
     _pinPDMClock = pinPDMClock;
 
-    //begin(baudrate, (uint16_t)SERIAL_8N1);
     if (_begin() != AP3_OK)
     {
         return (false);

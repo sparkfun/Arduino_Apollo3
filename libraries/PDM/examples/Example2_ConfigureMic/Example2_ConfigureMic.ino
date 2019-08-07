@@ -2,8 +2,7 @@
   Created: July 24, 2019
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
-  This example demonstrates how to use the PDM microphone on Artemis boards.
-  This library and example are heavily based on the Apollo3 pdm_fft example.
+  This example shows how to modify the various PDM interface settings.
 */
 
 //Global variables needed for this sketch
@@ -39,10 +38,11 @@ void setup()
   }
   Serial.println("PDM Initialized");
 
-  //myPDM.setClockSpeed(AM_HAL_PDM_CLK_3MHZ);
-  //myPDM.setClockDivider(AM_HAL_PDM_MCLKDIV_1);
-  //myPDM.setGain(AM_HAL_PDM_GAIN_P210DB);
-  //myPDM.setChannel(AM_HAL_PDM_CHANNEL_STEREO);
+  //For more settings see the 
+  myPDM.setClockSpeed(AM_HAL_PDM_CLK_3MHZ);
+  myPDM.setClockDivider(AM_HAL_PDM_MCLKDIV_1);
+  myPDM.setGain(AM_HAL_PDM_GAIN_P210DB);
+  myPDM.setChannel(AM_HAL_PDM_CHANNEL_STEREO);
 
   printPDMConfig();
     

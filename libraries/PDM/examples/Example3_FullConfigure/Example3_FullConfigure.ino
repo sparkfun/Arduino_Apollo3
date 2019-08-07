@@ -1,9 +1,10 @@
-/* Author: Nathan Seidle
+/* 
+  Author: Nathan Seidle
   Created: July 24, 2019
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
-  This example demonstrates how to use the PDM microphone on Artemis boards.
-  This library and example are heavily based on the Apollo3 pdm_fft example.
+  This example shows how to configure PDM using the pdm config struct so 
+  that you can access all settings in one step.
 */
 
 //Global variables needed for this sketch
@@ -25,6 +26,26 @@ AP3_PDM myPDM; //Create instance of PDM class
 #define ARM_MATH_CM4
 #include <arm_math.h>
 
+const am_hal_pdm_config_t newConfig = {
+    //Basic PDM setup pulled from SDK PDM example
+    .eClkDivider = AM_HAL_PDM_MCLKDIV_1,
+    .eLeftGain = AM_HAL_PDM_GAIN_0DB,
+    .eRightGain = AM_HAL_PDM_GAIN_0DB,
+    .ui32DecimationRate = 64,
+    .bHighPassEnable = 0,
+    .ui32HighPassCutoff = 0xB,
+    .ePDMClkSpeed = AM_HAL_PDM_CLK_6MHZ,
+    .bInvertI2SBCLK = 0,
+    .ePDMClkSource = AM_HAL_PDM_INTERNAL_CLK,
+    .bPDMSampleDelay = 0,
+    .bDataPacking = 1,
+    .ePCMChannels = AM_HAL_PDM_CHANNEL_RIGHT,
+    .ui32GainChangeDelay = 1,
+    .bI2SEnable = 0,
+    .bSoftMute = 0,
+    .bLRSwap = 0,
+};
+
 void setup()
 {
   Serial.begin(9600);
@@ -39,11 +60,8 @@ void setup()
   }
   Serial.println("PDM Initialized");
 
-  //myPDM.setClockSpeed(AM_HAL_PDM_CLK_3MHZ);
-  //myPDM.setClockDivider(AM_HAL_PDM_MCLKDIV_1);
-  //myPDM.setGain(AM_HAL_PDM_GAIN_P210DB);
-  //myPDM.setChannel(AM_HAL_PDM_CHANNEL_STEREO);
-
+  myPDM.updateConfig(newConfig); //Send config struct
+  
   printPDMConfig();
     
   myPDM.getData(pdmDataBuffer, pdmDataBufferSize); //This clears the current PDM FIFO and starts DMA
