@@ -29,8 +29,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("SparkFun PDM Example");
 
-  // Turn on the PDM, set it up for our chosen recording settings, and start
-  // the first DMA transaction.
+  // Turn on the PDM, set it up for our chosen recording settings.
   if (myPDM.begin(22, 23) == false) //Data, clock - These are the pin names from variant file, not pad names
   {
     Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
