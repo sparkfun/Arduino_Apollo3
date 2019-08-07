@@ -104,6 +104,9 @@ public:
     uint32_t getDecimationRate();
 
     bool updateConfig(am_hal_pdm_config_t newConfiguration);
+
+    void getData(uint32_t *PDMDataBuffer, uint32_t bufferSize);
+
     //void begin(void);
     // void begin(unsigned long baudrate, uint16_t config);
     // void begin(unsigned long baudrate, am_hal_uart_config_t config);

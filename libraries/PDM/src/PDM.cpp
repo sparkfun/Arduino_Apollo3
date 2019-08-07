@@ -250,12 +250,11 @@ invalid_args:
 }
 
 //*****************************************************************************
-    //
-    // Start a transaction to get some number of bytes from the PDM interface.
-    //
-    //*****************************************************************************
-    void
-    AP3_PDM::getData(uint32_t *PDMDataBuffer, uint32_t bufferSize)
+//
+// Start a transaction to get some number of bytes from the PDM interface.
+//
+//*****************************************************************************
+void AP3_PDM::getData(uint32_t *PDMDataBuffer, uint32_t bufferSize)
 {
     //
     // Configure DMA and target address.
@@ -272,7 +271,7 @@ invalid_args:
     am_hal_pdm_fifo_flush(_PDMhandle);
     am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
 
-    myPDM._PDMdataReady = false;
+    _PDMdataReady = false;
 }
 
 inline void AP3_PDM::pdm_isr(void)
