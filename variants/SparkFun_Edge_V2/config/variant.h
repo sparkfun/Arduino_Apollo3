@@ -30,25 +30,31 @@ SOFTWARE.
 extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
 
 // Uart declarations
-class Uart;         // Forward declaration of Uart
+class Uart; // Forward declaration of Uart
 extern Uart Serial;
 
 // Wire defines
 #define WIRE_INTERFACES_COUNT 3
 
-#define WireQwiic Wire  // Giving Wire an alias of "WireQwiic" in case people want to use it
-#define AP3_Wire_IOM 4  // Secify that Wire uses IOMaster instance 4
+#define WireQwiic Wire // Giving Wire an alias of "WireQwiic" in case people want to use it
+#define AP3_Wire_IOM 4 // Secify that Wire uses IOMaster instance 4
 
 #define WireAccel Wire1
 #define AP3_Wire1_IOM 3
 
 #define WireCamera Wire2
-#define AP3_Wire1_IOM 2
+#define AP3_Wire2_IOM 1
 
 // SPI Defines
-#define SPI_INTERFACES_COUNT 0          //Edge V2 doesn't have any fully-exposed SPI ports
-
+#define SPI_INTERFACES_COUNT 0 //Edge V2 doesn't have any fully-exposed SPI ports
 
 #define LED_BUILTIN 19
+#define LED_GREEN 17
+#define LED_BLUE 18
+#define LED_RED 19
+#define LED_YELLOW 37
+
+#define MIC_DATA 29
+#define MIC_CLOCK 12
 
 #endif // _AP3_VARIANT_H_
