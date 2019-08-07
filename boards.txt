@@ -221,39 +221,39 @@ edge.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts
 
 ###############################################################
 
-edgeV2.name=SparkFun Edge V2
-edgeV2.build.variant=SparkFun_Edge_V2
-edgeV2.build.board=SFE_EDGE_V2
-edgeV2.upload.maximum_size=960000
-edgeV2.upload.sbl_baud=115200
-edgeV2.build.arch=APOLLO3
-edgeV2.build.mcu=cortex-m4
-edgeV2.build.f_cpu=48000000L
-edgeV2.build.core=arduino
-edgeV2.build.includes=-I{build.variant.path}/config
-edgeV2.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-edgeV2.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-edgeV2.build.defs=
-edgeV2.build.libs=
-edgeV2.menu.svl_baud.921600=921600
-edgeV2.menu.svl_baud.460800=460800
-edgeV2.menu.svl_baud.230400=230400
-edgeV2.menu.svl_baud.115200=115200
-edgeV2.menu.svl_baud.57600=57600
-edgeV2.menu.loader.sparkfun_svl=SparkFun Variable Loader (Recommended)
-edgeV2.menu.loader.ambiq_sbl=Ambiq Secure Bootloader (Advanced)
+edge2.name=SparkFun Edge2
+edge2.build.variant=SparkFun_Edge2
+edge2.build.board=SFE_EDGE2
+edge2.upload.maximum_size=960000
+edge2.upload.sbl_baud=115200
+edge2.build.arch=APOLLO3
+edge2.build.mcu=cortex-m4
+edge2.build.f_cpu=48000000L
+edge2.build.core=arduino
+edge2.build.includes=-I{build.variant.path}/config
+edge2.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+edge2.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+edge2.build.defs=
+edge2.build.libs=
+edge2.menu.svl_baud.921600=921600
+edge2.menu.svl_baud.460800=460800
+edge2.menu.svl_baud.230400=230400
+edge2.menu.svl_baud.115200=115200
+edge2.menu.svl_baud.57600=57600
+edge2.menu.loader.sparkfun_svl=SparkFun Variable Loader (Recommended)
+edge2.menu.loader.ambiq_sbl=Ambiq Secure Bootloader (Advanced)
 
-edgeV2.menu.svl_baud.57600.upload.svl_baud=57600
-edgeV2.menu.svl_baud.115200.upload.svl_baud=115200
-edgeV2.menu.svl_baud.230400.upload.svl_baud=230400
-edgeV2.menu.svl_baud.460800.upload.svl_baud=460800
-edgeV2.menu.svl_baud.921600.upload.svl_baud=921600
+edge2.menu.svl_baud.57600.upload.svl_baud=57600
+edge2.menu.svl_baud.115200.upload.svl_baud=115200
+edge2.menu.svl_baud.230400.upload.svl_baud=230400
+edge2.menu.svl_baud.460800.upload.svl_baud=460800
+edge2.menu.svl_baud.921600.upload.svl_baud=921600
 
-edgeV2.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
-edgeV2.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
+edge2.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
+edge2.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
 
-edgeV2.menu.loader.sparkfun_svl.upload.tool=artemis_svl
-edgeV2.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
+edge2.menu.loader.sparkfun_svl.upload.tool=artemis_svl
+edge2.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
 
 ###############################################################
 
