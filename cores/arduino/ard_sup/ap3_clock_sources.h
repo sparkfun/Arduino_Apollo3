@@ -26,5 +26,8 @@ SOFTWARE.
 
 bool enableBurstMode();
 bool disableBurstMode();
+uint32_t getCpuFreqMHz();
+
+uint32_t cpuFreq = 48000000; //At POR core is 48MHz
 
 #endif //_AP3_GPIO_H_

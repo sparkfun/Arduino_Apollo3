@@ -17,6 +17,7 @@ bool enableBurstMode(void)
     {
         return (false);
     }
+    cpuFreq = 96000000;
     return (true);
 }
 
@@ -36,5 +37,12 @@ bool disableBurstMode(void)
     {
         return (false);
     }
+    cpuFreq = 48000000;
     return (true);
+}
+
+//Returns the current core speed
+uint32_t getCpuFreqMHz(void)
+{
+    return(cpuFreq);
 }
