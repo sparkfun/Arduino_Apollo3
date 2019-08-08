@@ -62,7 +62,7 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     27,
     28,
     29,
-    AP3_GPIO_PAD_UNUSED, //The one pad not broken out of the Apollo3 on the Artemis
+    AP3_GPIO_PAD_UNUSED, //One of just two pads not broken out of the Apollo3 on the Artemis
     31,
     32,
     33,
@@ -78,7 +78,7 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     43,
     44,
     45,
-    46,
+    AP3_GPIO_PAD_UNUSED, //One of just two pads not broken out of the Apollo3 on the Artemis
     47,
     48,
     49,
