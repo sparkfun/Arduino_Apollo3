@@ -70,7 +70,7 @@ void setup()
 
 void loop()
 {
-  am_hal_interrupt_master_disable();
+  noInterrupts();
 
   if (myPDM.available())
   {
@@ -85,7 +85,7 @@ void loop()
   // Go to Deep Sleep until the PDM ISR or other ISR wakes us.
   am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
 
-  am_hal_interrupt_master_enable();
+  interrupts();
 }
 
 //*****************************************************************************
