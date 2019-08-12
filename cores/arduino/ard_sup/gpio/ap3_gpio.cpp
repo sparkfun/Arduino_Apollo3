@@ -133,6 +133,10 @@ extern "C" void am_gpio_isr(void)
     uint64_t gpio_int_mask = 0x00;
     am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
 
+    if (gpio_int_mask & softwareserial_pin_mask)
+    {
+    }
+
     for (uint8_t indi = 0; indi < gpio_num_isr; indi++)
     {
         if (gpio_isr_entries[indi].callback != NULL)
@@ -305,7 +309,7 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir)
     uint32_t ui32GPCfgClearMask;
     uint32_t ui32GPCfgShft;
 
-    ui32GPCfgShft       = ((ui32Pin & 0x7) << 2);
+    ui32GPCfgShft = ((ui32Pin & 0x7) << 2);
 
     ui32GPCfgAddr = AM_REGADDR(GPIO, CFGA) + ((ui32Pin >> 1) & ~0x3);
 
