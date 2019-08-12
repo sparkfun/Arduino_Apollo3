@@ -64,6 +64,8 @@ extern "C"
 #define AM_PRINTF_BUFSIZE              256
 #endif
 
+extern char g_prfbuf[AM_PRINTF_BUFSIZE];
+
 typedef void (*am_util_stdio_print_char_t)(char *pcStr);
 
 //*****************************************************************************
