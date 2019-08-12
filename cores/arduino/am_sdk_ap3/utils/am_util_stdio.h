@@ -40,7 +40,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_UTIL_STDIO_H
@@ -63,6 +63,7 @@ extern "C"
 #ifndef AM_PRINTF_BUFSIZE
 #define AM_PRINTF_BUFSIZE              256
 #endif
+
 extern char g_prfbuf[AM_PRINTF_BUFSIZE];
 
 typedef void (*am_util_stdio_print_char_t)(char *pcStr);

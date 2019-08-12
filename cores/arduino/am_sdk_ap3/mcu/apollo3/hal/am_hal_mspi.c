@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -163,6 +163,7 @@ typedef struct
     uint32_t    regCQCFG;
     uint32_t    regCQADDR;
     uint32_t    regCQPAUSE;
+    uint32_t    regCQFLAGS;
     uint32_t    regCQCURIDX;
     uint32_t    regCQENDIDX;
     uint32_t    regINTEN;
@@ -1903,7 +1904,7 @@ uint32_t am_hal_mspi_control(void *pHandle,
             // Unblock the whole batch of commands in this block
             MSPIn(ui32Module)->CQSETCLEAR = AM_HAL_MSPI_SC_UNPAUSE_BLOCK;
             pMSPIState->block = 0;
-            if (!pMSPIState->ui32NumHPPendingEntries)
+            if (pMSPIState->ui32NumHPPendingEntries)
             {
                 // Now it is okay to let go of the block of HiPrio transactions
                 ui32Status = sched_hiprio(pMSPIState, pMSPIState->ui32NumHPPendingEntries);
@@ -2916,7 +2917,6 @@ uint32_t am_hal_mspi_power_control(void *pHandle,
                 MSPIn(pMSPIState->ui32Module)->PADOUTEN   = pMSPIState->registerState.regPADOUTEN;
                 MSPIn(pMSPIState->ui32Module)->FLASH      = pMSPIState->registerState.regFLASH;
                 MSPIn(pMSPIState->ui32Module)->SCRAMBLING = pMSPIState->registerState.regSCRAMBLING;
-                MSPIn(pMSPIState->ui32Module)->CQCFG      = pMSPIState->registerState.regCQCFG;
                 MSPIn(pMSPIState->ui32Module)->CQADDR     = pMSPIState->registerState.regCQADDR;
                 MSPIn(pMSPIState->ui32Module)->CQPAUSE    = pMSPIState->registerState.regCQPAUSE;
                 MSPIn(pMSPIState->ui32Module)->CQCURIDX   = pMSPIState->registerState.regCQCURIDX;
@@ -2926,6 +2926,15 @@ uint32_t am_hal_mspi_power_control(void *pHandle,
                 // TODO: May be we can just set these values, as they are constants anyways?
                 MSPIn(pMSPIState->ui32Module)->DMABCOUNT  = pMSPIState->registerState.regDMABCOUNT;
                 MSPIn(pMSPIState->ui32Module)->DMATHRESH  = pMSPIState->registerState.regDMATHRESH;
+
+                // CQFGLAGS are Read-Only and hence can not be directly restored.
+                // We can try to restore the SWFlags here. Hardware flags depend on external conditions
+                // and hence can not be restored (assuming the external conditions remain the same, it should be set automatically.
+                MSPIn(pMSPIState->ui32Module)->CQSETCLEAR = AM_HAL_MSPI_SC_SET(pMSPIState->registerState.regCQFLAGS & 0xFF);
+                //
+                // Set the CQCFG last
+                //
+                MSPIn(pMSPIState->ui32Module)->CQCFG      = pMSPIState->registerState.regCQCFG;
 
                 pMSPIState->registerState.bValid = false;
             }
@@ -2946,6 +2955,7 @@ uint32_t am_hal_mspi_power_control(void *pHandle,
                 pMSPIState->registerState.regSCRAMBLING = MSPIn(pMSPIState->ui32Module)->SCRAMBLING;
                 pMSPIState->registerState.regCQADDR     = MSPIn(pMSPIState->ui32Module)->CQADDR;
                 pMSPIState->registerState.regCQPAUSE    = MSPIn(pMSPIState->ui32Module)->CQPAUSE;
+                pMSPIState->registerState.regCQFLAGS    = MSPIn(pMSPIState->ui32Module)->CQFLAGS;
                 pMSPIState->registerState.regCQCURIDX   = MSPIn(pMSPIState->ui32Module)->CQCURIDX;
                 pMSPIState->registerState.regCQENDIDX   = MSPIn(pMSPIState->ui32Module)->CQENDIDX;
                 pMSPIState->registerState.regINTEN      = MSPIn(pMSPIState->ui32Module)->INTEN;
@@ -2954,9 +2964,6 @@ uint32_t am_hal_mspi_power_control(void *pHandle,
                 pMSPIState->registerState.regDMABCOUNT  = MSPIn(pMSPIState->ui32Module)->DMABCOUNT;
                 pMSPIState->registerState.regDMATHRESH  = MSPIn(pMSPIState->ui32Module)->DMATHRESH;
 
-                //
-                // Set the CQCFG last
-                //
                 pMSPIState->registerState.regCQCFG      = MSPIn(pMSPIState->ui32Module)->CQCFG;
                 pMSPIState->registerState.bValid        = true;
             }

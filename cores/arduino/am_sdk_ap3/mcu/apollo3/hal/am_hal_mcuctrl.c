@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -72,6 +72,8 @@ g_am_hal_mcuctrl_flash_size[AM_HAL_MCUCTRL_CHIPPN_FLASH_SIZE_N] =
     512 * 1024,             /* 0x5 0x00080000  512 KB */
       1 * 1024 * 1024,      /* 0x6 0x00100000    1 MB */
       2 * 1024 * 1024,      /* 0x7 0x00200000    2 MB */
+      3 * 1024 * 1024 / 2,  /* 0x8 0x00600000  1.5 MB */
+    0, 0, 0, 0, 0, 0, 0
 };
 
 const uint32_t
@@ -85,6 +87,8 @@ g_am_hal_mcuctrl_sram_size[AM_HAL_MCUCTRL_CHIPPN_SRAM_SIZE_N] =
     512 * 1024,             /* 0x5 0x00080000  512 KB */
       1 * 1024 * 1024,      /* 0x6 0x00100000    1 MB */
     384 * 1024,             /* 0x7 0x00200000  384 KB */
+    768 * 1024,             /* 0x8 0x000C0000  768 KB */
+    0, 0, 0, 0, 0, 0, 0
 };
 
 // ****************************************************************************
@@ -151,10 +155,10 @@ device_info_get(am_hal_mcuctrl_device_t *psDevice)
     // Now, let's look at the JEDEC info.
     // The full partnumber is 12 bits total, but is scattered across 2 registers.
     // Bits [11:8] are 0xE.
-    // Bits [7:4] are 0xE for Apollo, 0xD for Apollo2.
-    // Bits [3:0] are defined differently for Apollo and Apollo2.
+    // Bits [7:4] are 0xE for Apollo, 0xD for Apollo2, 0xC for Apollo3.
+    // Bits [3:0] are defined differently for Apollo and Apollo2/Apollo3.
     //   For Apollo, the low nibble is 0x0.
-    //   For Apollo2, the low nibble indicates flash and SRAM size.
+    //   For Apollo2/Apollo3, the low nibble indicates flash and SRAM size.
     //
     psDevice->ui32JedecPN  = JEDEC->PID0_b.PNL8 << 0;
     psDevice->ui32JedecPN |= JEDEC->PID1_b.PNH4 << 8;
@@ -226,6 +230,8 @@ mcuctrl_fault_status(am_hal_mcuctrl_fault_t *psFault)
 uint32_t
 am_hal_mcuctrl_control(am_hal_mcuctrl_control_e eControl, void *pArgs)
 {
+    uint32_t ui32Tbl;
+
     switch ( eControl )
     {
         case AM_HAL_MCUCTRL_CONTROL_FAULT_CAPTURE_ENABLE:
@@ -254,11 +260,11 @@ am_hal_mcuctrl_control(am_hal_mcuctrl_control_e eControl, void *pArgs)
                   MCUCTRL_XTALCTRL_XTALSWE_Msk);
 
             MCUCTRL->XTALCTRL |=
-                (uint32_t)MCUCTRL_XTALCTRL_PDNBCMPRXTAL_PWRDNCOMP   |
-                (uint32_t)MCUCTRL_XTALCTRL_PDNBCOREXTAL_PWRDNCORE   |
-                (uint32_t)MCUCTRL_XTALCTRL_BYPCMPRXTAL_BYPCOMP      |
-                (uint32_t)MCUCTRL_XTALCTRL_FDBKDSBLXTAL_DIS         |
-                (uint32_t)MCUCTRL_XTALCTRL_XTALSWE_OVERRIDE_EN;
+                _VAL2FLD(MCUCTRL_XTALCTRL_PDNBCMPRXTAL, MCUCTRL_XTALCTRL_PDNBCMPRXTAL_PWRDNCOMP)    |
+                _VAL2FLD(MCUCTRL_XTALCTRL_PDNBCOREXTAL, MCUCTRL_XTALCTRL_PDNBCOREXTAL_PWRDNCORE)    |
+                _VAL2FLD(MCUCTRL_XTALCTRL_BYPCMPRXTAL,  MCUCTRL_XTALCTRL_BYPCMPRXTAL_BYPCOMP)       |
+                _VAL2FLD(MCUCTRL_XTALCTRL_FDBKDSBLXTAL, MCUCTRL_XTALCTRL_FDBKDSBLXTAL_DIS)          |
+                _VAL2FLD(MCUCTRL_XTALCTRL_XTALSWE,      MCUCTRL_XTALCTRL_XTALSWE_OVERRIDE_EN);
             break;
 
         case AM_HAL_MCUCTRL_CONTROL_EXTCLK32K_DISABLE:
@@ -274,11 +280,11 @@ am_hal_mcuctrl_control(am_hal_mcuctrl_control_e eControl, void *pArgs)
                   MCUCTRL_XTALCTRL_XTALSWE_Msk);
 
             MCUCTRL->XTALCTRL |=
-                (uint32_t)MCUCTRL_XTALCTRL_PDNBCMPRXTAL_PWRUPCOMP   |
-                (uint32_t)MCUCTRL_XTALCTRL_PDNBCOREXTAL_PWRUPCORE   |
-                (uint32_t)MCUCTRL_XTALCTRL_BYPCMPRXTAL_USECOMP      |
-                (uint32_t)MCUCTRL_XTALCTRL_FDBKDSBLXTAL_EN          |
-                (uint32_t)MCUCTRL_XTALCTRL_XTALSWE_OVERRIDE_DIS;
+                _VAL2FLD(MCUCTRL_XTALCTRL_PDNBCMPRXTAL, MCUCTRL_XTALCTRL_PDNBCMPRXTAL_PWRUPCOMP)    |
+                _VAL2FLD(MCUCTRL_XTALCTRL_PDNBCOREXTAL, MCUCTRL_XTALCTRL_PDNBCOREXTAL_PWRUPCORE)    |
+                _VAL2FLD(MCUCTRL_XTALCTRL_BYPCMPRXTAL,  MCUCTRL_XTALCTRL_BYPCMPRXTAL_USECOMP)       |
+                _VAL2FLD(MCUCTRL_XTALCTRL_FDBKDSBLXTAL, MCUCTRL_XTALCTRL_FDBKDSBLXTAL_EN)           |
+                _VAL2FLD(MCUCTRL_XTALCTRL_XTALSWE,      MCUCTRL_XTALCTRL_XTALSWE_OVERRIDE_DIS);
             break;
 
         case AM_HAL_MCUCTRL_CONTROL_SRAM_PREFETCH:
@@ -302,73 +308,130 @@ am_hal_mcuctrl_control(am_hal_mcuctrl_control_e eControl, void *pArgs)
                     return AM_HAL_STATUS_INVALID_ARG;
                 }
 
+
                 //
-                // Check that we're not trying to set CACHE prefetch without
-                // the corresponding prefetch.
+                // Given the rule that NOxxx overrides xxx, and keeping in mind
+                // that the cache settings cannot be set unless the regular
+                // prefetch is also being set or is already set, the following
+                // truth table results.
+
+                // Note - this same TT also applies to data settings.
+                // nc=no change.
+                //          I  IC  NI  NIC:  I   IC
+                // 0x0:     0  0   0   0  :  nc  nc
+                // 0x1:     0  0   0   1  :  nc  0
+                // 0x2:     0  0   1   0  :  0   0
+                // 0x3:     0  0   1   1  :  0   0
+                // 0x4:     0  1   0   0  :  INVALID
+                // 0x5:     0  1   0   1  :  nc  nc
+                // 0x6:     0  1   1   0  :  INVALID
+                // 0x7:     0  1   1   1  :  0   0
+                // 0x8:     1  0   0   0  :  1   0
+                // 0x9:     1  0   0   1  :  1   0
+                // 0xA:     1  0   1   0  :  0   0
+                // 0xB:     1  0   1   1  :  0   0
+                // 0xC:     1  1   0   0  :  1   1
+                // 0xD:     1  1   0   1  :  1   0
+                // 0xE:     1  1   1   0  :  INVALID
+                // 0xF:     1  1   1   1  :  0   0
+                //
+
+                ui32Tbl = 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_INSTR)        ? (1 << 3) : 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_INSTRCACHE)   ? (1 << 2) : 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_INSTR)      ? (1 << 1) : 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_INSTRCACHE) ? (1 << 0) : 0;
+
+                //
+                // Now augment the table entries with current register settings.
                 //
                 ui32SRAMreg = MCUCTRL->SRAMMODE;
 
-                if ( (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_INSTRCACHE)  &&
-                     !(ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_INSTR) )
-                {
-                    //
-                    // This is an error unless the PREFETCH_INSTR bit is already
-                    // set in the register.
-                    //
-                    if ( !(ui32SRAMreg & MCUCTRL_SRAMMODE_IPREFETCH_Msk) )
-                    {
-                        return AM_HAL_STATUS_INVALID_OPERATION;
-                    }
-                }
+                ui32Tbl |= ui32SRAMreg & MCUCTRL_SRAMMODE_IPREFETCH_Msk       ? (1 << 3) : 0;
+                ui32Tbl |= ui32SRAMreg & MCUCTRL_SRAMMODE_IPREFETCH_CACHE_Msk ? (1 << 2) : 0;
 
-                if ( (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_DATACACHE)  &&
-                     !(ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_DATA) )
+                ui32SetMsk = ui32ClrMsk = 0;
+                switch ( ui32Tbl )
                 {
-                    //
-                    // This is an error unless the PREFETCH_DATA bit is already
-                    // set in the register.
-                    //
-                    if ( !(ui32SRAMreg & MCUCTRL_SRAMMODE_DPREFETCH_Msk) )
-                    {
+                    case 0x0:
+                    case 0x5:
+                        break;
+                    case 0x1:
+                        ui32ClrMsk = MCUCTRL_SRAMMODE_IPREFETCH_CACHE_Msk;
+                        break;
+                    case 0x2:
+                    case 0x3:
+                    case 0x7:
+                    case 0xA:
+                    case 0xB:
+                    case 0xF:
+                        ui32ClrMsk = MCUCTRL_SRAMMODE_IPREFETCH_Msk | MCUCTRL_SRAMMODE_IPREFETCH_CACHE_Msk;
+                        break;
+                    case 0x4:
+                    case 0x6:
+                    case 0xE:
                         return AM_HAL_STATUS_INVALID_OPERATION;
-                    }
-                }
-
-                //
-                // Check that we're not trying to disable a prefetch while having
-                // the corresponding CACHE prefetch enabled.
-                //
-                if ( ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_DATA )
-                {
-                    //
-                    // Make sure the DATA CACHE PREFETCH is also disabled.
-                    //
-                    if ( ( (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_DATACACHE) &&
-                          !(ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_DATACACHE) )  ||
-                         (ui32SRAMreg & MCUCTRL_SRAMMODE_DPREFETCH_CACHE_Msk) )
-                    {
-                        return AM_HAL_STATUS_INVALID_OPERATION;
-                    }
-                }
-
-                if ( ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_INSTR )
-                {
-                    //
-                    // Make sure the INSTR CACHE PREFETCH is also disabled.
-                    //
-                    if ( ( (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_INSTRCACHE) &&
-                          !(ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_INSTRCACHE) )  ||
-                         (ui32SRAMreg & MCUCTRL_SRAMMODE_IPREFETCH_CACHE_Msk) )
-                    {
-                        return AM_HAL_STATUS_INVALID_OPERATION;
-                    }
-                }
+                    case 0x8:
+                    case 0x9:
+                    case 0xD:
+                        ui32SetMsk = MCUCTRL_SRAMMODE_IPREFETCH_Msk;
+                        ui32ClrMsk = MCUCTRL_SRAMMODE_IPREFETCH_CACHE_Msk;
+                        break;
+                    case 0xC:
+                        ui32SetMsk = MCUCTRL_SRAMMODE_IPREFETCH_Msk | MCUCTRL_SRAMMODE_IPREFETCH_CACHE_Msk;
+                        break;
+                    default:
+                        return AM_HAL_STATUS_INVALID_ARG;
+                } // switch()
 
                 //
-                // Looks like we're good to go.
+                // Now, repeat with data settings.
                 //
-                ui32SetMsk = (ui32SramPrefetch >> 0)                   & 0x0000FFFF;
-                ui32ClrMsk = (ui32SramPrefetch >> SRAM_NOPREFETCH_Pos) & 0x0000FFFF;
+                ui32Tbl = 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_DATA)        ? (1 << 3) : 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_PREFETCH_DATACACHE)   ? (1 << 2) : 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_DATA)      ? (1 << 1) : 0;
+                ui32Tbl |= (ui32SramPrefetch & AM_HAL_MCUCTRL_SRAM_NOPREFETCH_DATACACHE) ? (1 << 0) : 0;
+
+                //
+                // Now augment the table entries with current register settings.
+                //
+                ui32Tbl |= ui32SRAMreg & MCUCTRL_SRAMMODE_DPREFETCH_Msk       ? (1 << 3) : 0;
+                ui32Tbl |= ui32SRAMreg & MCUCTRL_SRAMMODE_DPREFETCH_CACHE_Msk ? (1 << 2) : 0;
+
+                switch ( ui32Tbl )
+                {
+                    case 0x0:
+                    case 0x5:
+                        break;
+                    case 0x1:
+                        ui32ClrMsk = MCUCTRL_SRAMMODE_DPREFETCH_CACHE_Msk;
+                        break;
+                    case 0x2:
+                    case 0x3:
+                    case 0x7:
+                    case 0xA:
+                    case 0xB:
+                    case 0xF:
+                        ui32ClrMsk = MCUCTRL_SRAMMODE_DPREFETCH_Msk | MCUCTRL_SRAMMODE_DPREFETCH_CACHE_Msk;
+                        break;
+                    case 0x4:
+                    case 0x6:
+                    case 0xE:
+                        return AM_HAL_STATUS_INVALID_OPERATION;
+                    case 0x8:
+                    case 0x9:
+                    case 0xD:
+                        ui32SetMsk = MCUCTRL_SRAMMODE_DPREFETCH_Msk;
+                        ui32ClrMsk = MCUCTRL_SRAMMODE_DPREFETCH_CACHE_Msk;
+                        break;
+                    case 0xC:
+                        ui32SetMsk = MCUCTRL_SRAMMODE_DPREFETCH_Msk | MCUCTRL_SRAMMODE_DPREFETCH_CACHE_Msk;
+                        break;
+                    default:
+                        return AM_HAL_STATUS_INVALID_ARG;
+                } // switch()
+
 
                 //
                 // Arrange the register update such that clrmsk will have precedence
@@ -380,7 +443,7 @@ am_hal_mcuctrl_control(am_hal_mcuctrl_control_e eControl, void *pArgs)
                 ui32SRAMreg &= ~ui32ClrMsk;
                 MCUCTRL->SRAMMODE = ui32SRAMreg;
                 AM_CRITICAL_END
-            }
+            } // case AM_HAL_MCUCTRL_CONTROL_SRAM_PREFETCH
             break;
 
         default:
