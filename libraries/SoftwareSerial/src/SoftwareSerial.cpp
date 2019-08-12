@@ -113,9 +113,11 @@ void SoftwareSerial::begin(uint32_t baudRate)
 void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 {
   pinMode(_txPin, OUTPUT);
-  pinMode(_rxPin, INPUT_PULLUP);
+  digitalWrite(_txPin, _invertLogic ? LOW : HIGH);
 
-  am_hal_gpio_output_set(_txPad);
+  pinMode(_rxPin, INPUT);
+  if (_invertLogic == false)
+    pinMode(_rxPin, INPUT_PULLUP); //Enable external pullup if using normal logic
 
   // Enable C/T H=7
   am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREH);
