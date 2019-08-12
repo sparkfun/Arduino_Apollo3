@@ -133,10 +133,6 @@ extern "C" void am_gpio_isr(void)
     uint64_t gpio_int_mask = 0x00;
     am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
 
-    if (gpio_int_mask & softwareserial_pin_mask)
-    {
-    }
-
     for (uint8_t indi = 0; indi < gpio_num_isr; indi++)
     {
         if (gpio_isr_entries[indi].callback != NULL)

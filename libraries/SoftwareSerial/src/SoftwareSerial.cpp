@@ -35,14 +35,66 @@
 #include "SoftwareSerial.h"
 #include "Arduino.h"
 
+// Global Table of SoftwareSerial Pointers
+SoftwareSerial* gpSoftwareSerialObjs[AP3_GPIO_MAX_PADS];
+uint8_t gSoftwareSerialNumObjs = 0;
+
+
+// Software Serial ISR (To attach to pin change interrupts)
+void _software_serial_isr( void ){
+  uint64_t gpio_int_mask = 0x00;
+  am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
+  SoftwareSerial* obj = NULL;
+  for(uint8_t indi = 0; indi < gSoftwareSerialNumObjs; indi++){
+    obj = gpSoftwareSerialObjs[indi];
+    if(obj == NULL){
+      break; // there should not be any null pointers in the global object table
+    }
+    if(obj->_rxPadBitMask & gpio_int_mask){
+      obj->rxBit();
+    }
+  }
+}
+
+
 //Constructor
 SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin)
 {
+  if( gSoftwareSerialNumObjs >= AP3_GPIO_MAX_PADS ){
+    return; // Error -- no instances left to create
+  }
+
   _rxPin = rxPin;
   _txPin = txPin;
 
   _txPad = ap3_gpio_pin2pad(_txPin);
   _rxPad = ap3_gpio_pin2pad(_rxPin);
+
+  _rxPadBitMask = ( 0x01 << _rxPad );
+
+  // Add to the global array
+  _indexNumber = gSoftwareSerialNumObjs;
+  gpSoftwareSerialObjs[_indexNumber] = this;
+  gSoftwareSerialNumObjs++;
+}
+
+// Destructor
+SoftwareSerial::~SoftwareSerial()
+{
+  if( gSoftwareSerialNumObjs < 1 ){
+    return; // error -- no instances left to destroy
+  }
+
+  // Remove from global pointer list by filtering others down:
+  uint8_t index = _indexNumber;
+  do{
+    gpSoftwareSerialObjs[index] = NULL;
+    if( index < (gSoftwareSerialNumObjs-1) ){
+      gpSoftwareSerialObjs[index] = gpSoftwareSerialObjs[index+1];
+    }
+    index++;
+  }while( index < gSoftwareSerialNumObjs );
+  gSoftwareSerialNumObjs--;
 }
 
 void SoftwareSerial::begin(uint32_t baudRate)
@@ -81,8 +133,7 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
   //Clear compare interrupt
   am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
-  attachInterrupt(digitalPinToInterrupt(_rxPin), rxBit, CHANGE);
-  //attachInterruptArg(digitalPinToInterrupt(_rxPin), rxBit, (void *)this, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(_rxPin), _software_serial_isr, CHANGE);
 }
 
 ap3_err_t SoftwareSerial::softwareserialSetConfig(HardwareSerial_Config_e SSconfig)

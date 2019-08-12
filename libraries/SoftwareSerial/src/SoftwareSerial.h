@@ -44,6 +44,7 @@ class SoftwareSerial
 {
 public:
   SoftwareSerial(uint8_t rxPin, uint8_t txPin);
+  ~SoftwareSerial();
 
   void begin(uint32_t baudRate);
   void begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig);
@@ -51,6 +52,8 @@ public:
   ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
 
   void rxBit(void);
+
+  uint64_t _rxPadBitMask;   // The AM HAL style pad bit mask associated with the RX pad
 
 private:
   void startRXListening(void);
@@ -69,6 +72,8 @@ private:
 
   uint8_t _rxPin;
   uint8_t _txPin;
+
+  uint8_t _indexNumber;   // The index number at which the pointer to this instance is stored in the global object table.
 
   ap3_gpio_pad_t _txPad;
   ap3_gpio_pad_t _rxPad;
