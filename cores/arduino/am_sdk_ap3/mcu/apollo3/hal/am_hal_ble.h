@@ -44,7 +44,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -722,15 +722,6 @@ extern uint32_t am_hal_ble_trim_set(void *pHandle, uint32_t ui32BleCoreAddress,
 extern uint32_t am_hal_ble_default_trim_set(void *pHandle);
 
 uint32_t am_hal_ble_default_trim_set_ramcode(void *pHandle);
-
-//*****************************************************************************
-//
-// Set the 32M crystal frequency
-// based on the tested values at customer side.
-// set trim value smaller in case of negative frequency offset
-//
-//*****************************************************************************
-extern uint32_t am_hal_ble_crystal_trim_set(void *pHandle, uint32_t ui32TrimValue);
 
 //*****************************************************************************
 //

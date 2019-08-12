@@ -44,7 +44,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -70,7 +70,7 @@ am_hal_ble_state_t g_sBLEState[AM_REG_BLEIF_NUM_MODULES];
 #define BLEIF_INTSTAT_BLECSSTATN_Msk    BLEIF_INTSTAT_B2MSHUTDN_Msk
 #define BLEIF_INTSTAT_BLECIRQN_Msk      BLEIF_INTSTAT_B2MACTIVE_Msk
 
-#define SKIP_FALLING_EDGES 1
+#define SKIP_FALLING_EDGES 0
 
 //*****************************************************************************
 //
@@ -697,55 +697,34 @@ am_hal_ble_boot(void *pHandle)
     {
         // The B0 silicon patching method is slightly different from A1. B0 silicon
         // does not require the Copy Patch method introduced for A1 silicon.
-        if (APOLLO3_B0)
-        {
-            //apply the BLE trim value
-            ui32Status = am_hal_ble_default_trim_set_ramcode(pHandle);
-            if (ui32Status != AM_HAL_STATUS_SUCCESS)
-            {
-                return ui32Status;
-            }
-
-            // Apply the NVDS patch.
-            ui32Status = am_hal_ble_default_patch_apply(pHandle);
-            if (ui32Status != AM_HAL_STATUS_SUCCESS)
-            {
-                return ui32Status;
-            }
-
-            // Complete the patching step
-            ui32Status = am_hal_ble_patch_complete(pHandle);
-            if (ui32Status != AM_HAL_STATUS_SUCCESS)
-            {
-                return ui32Status;
-            }
-
-        }
-        else if (APOLLO3_A0 || APOLLO3_A1)
+        if (APOLLO3_A0 || APOLLO3_A1)
         {
             ui32Status = am_hal_ble_default_copy_patch_apply(pHandle);
             if (ui32Status != AM_HAL_STATUS_SUCCESS)
             {
                 return ui32Status;
             }
+        }
 
-            ui32Status = am_hal_ble_default_trim_set_ramcode(pHandle);
-            if (ui32Status != AM_HAL_STATUS_SUCCESS)
-            {
-                return ui32Status;
-            }
+        //apply the BLE trim value
+        ui32Status = am_hal_ble_default_trim_set_ramcode(pHandle);
+        if (ui32Status != AM_HAL_STATUS_SUCCESS)
+        {
+            return ui32Status;
+        }
 
-            ui32Status = am_hal_ble_default_patch_apply(pHandle);
-            if (ui32Status != AM_HAL_STATUS_SUCCESS)
-            {
-                return ui32Status;
-            }
+        // Apply the NVDS patch.
+        ui32Status = am_hal_ble_default_patch_apply(pHandle);
+        if (ui32Status != AM_HAL_STATUS_SUCCESS)
+        {
+            return ui32Status;
+        }
 
-            ui32Status = am_hal_ble_patch_complete(pHandle);
-            if (ui32Status != AM_HAL_STATUS_SUCCESS)
-            {
-                return ui32Status;
-            }
+        // Complete the patching step
+        ui32Status = am_hal_ble_patch_complete(pHandle);
+        if (ui32Status != AM_HAL_STATUS_SUCCESS)
+        {
+            return ui32Status;
         }
     }
 

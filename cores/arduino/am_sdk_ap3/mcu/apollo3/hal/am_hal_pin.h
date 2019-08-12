@@ -44,7 +44,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision 2.2.0-hotfix-2.2.1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
