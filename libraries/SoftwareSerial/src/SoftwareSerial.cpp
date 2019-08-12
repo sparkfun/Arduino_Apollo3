@@ -39,6 +39,8 @@
 SoftwareSerial *gpSoftwareSerialObjs[AP3_GPIO_MAX_PADS];
 uint8_t gSoftwareSerialNumObjs = 0;
 
+SoftwareSerial *ap3_serial_handle = 0;
+
 // Software Serial ISR (To attach to pin change interrupts)
 void _software_serial_isr(void)
 {
@@ -142,6 +144,9 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 
   //Clear compare interrupt
   am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
+
+  // Register the class into the local list
+  ap3_serial_handle = this;
 
   attachInterrupt(digitalPinToInterrupt(_rxPin), _software_serial_isr, CHANGE);
 }
@@ -436,7 +441,7 @@ extern "C" void am_stimer_cmpr7_isr(void)
   {
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
-    //this->endOfByte();
+    ap3_serial_handle->endOfByte();
   }
 
 #ifdef DEBUG
