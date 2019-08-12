@@ -36,31 +36,34 @@
 #include "Arduino.h"
 
 // Global Table of SoftwareSerial Pointers
-SoftwareSerial* gpSoftwareSerialObjs[AP3_GPIO_MAX_PADS];
+SoftwareSerial *gpSoftwareSerialObjs[AP3_GPIO_MAX_PADS];
 uint8_t gSoftwareSerialNumObjs = 0;
 
-
 // Software Serial ISR (To attach to pin change interrupts)
-void _software_serial_isr( void ){
+void _software_serial_isr(void)
+{
   uint64_t gpio_int_mask = 0x00;
   am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
-  SoftwareSerial* obj = NULL;
-  for(uint8_t indi = 0; indi < gSoftwareSerialNumObjs; indi++){
+  SoftwareSerial *obj = NULL;
+  for (uint8_t indi = 0; indi < gSoftwareSerialNumObjs; indi++)
+  {
     obj = gpSoftwareSerialObjs[indi];
-    if(obj == NULL){
+    if (obj == NULL)
+    {
       break; // there should not be any null pointers in the global object table
     }
-    if(obj->_rxPadBitMask & gpio_int_mask){
+    if (obj->_rxPadBitMask & gpio_int_mask)
+    {
       obj->rxBit();
     }
   }
 }
 
-
 //Constructor
-SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin)
+SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic)
 {
-  if( gSoftwareSerialNumObjs >= AP3_GPIO_MAX_PADS ){
+  if (gSoftwareSerialNumObjs >= AP3_GPIO_MAX_PADS)
+  {
     return; // Error -- no instances left to create
   }
 
@@ -70,7 +73,9 @@ SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin)
   _txPad = ap3_gpio_pin2pad(_txPin);
   _rxPad = ap3_gpio_pin2pad(_rxPin);
 
-  _rxPadBitMask = ( 0x01 << _rxPad );
+  _invertLogic = invertLogic;
+
+  _rxPadBitMask = (0x01 << _rxPad);
 
   // Add to the global array
   _indexNumber = gSoftwareSerialNumObjs;
@@ -81,19 +86,22 @@ SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin)
 // Destructor
 SoftwareSerial::~SoftwareSerial()
 {
-  if( gSoftwareSerialNumObjs < 1 ){
+  if (gSoftwareSerialNumObjs < 1)
+  {
     return; // error -- no instances left to destroy
   }
 
   // Remove from global pointer list by filtering others down:
   uint8_t index = _indexNumber;
-  do{
+  do
+  {
     gpSoftwareSerialObjs[index] = NULL;
-    if( index < (gSoftwareSerialNumObjs-1) ){
-      gpSoftwareSerialObjs[index] = gpSoftwareSerialObjs[index+1];
+    if (index < (gSoftwareSerialNumObjs - 1))
+    {
+      gpSoftwareSerialObjs[index] = gpSoftwareSerialObjs[index + 1];
     }
     index++;
-  }while( index < gSoftwareSerialNumObjs );
+  } while (index < gSoftwareSerialNumObjs);
   gSoftwareSerialNumObjs--;
 }
 
@@ -342,6 +350,91 @@ void SoftwareSerial::rxBit(void)
     bitCounter += numberOfBits;
     bitType = !bitType;    //Next bit will be inverse of this bit
     lastBitTime = bitTime; //Remember this bit time as the starting time for the next PCI
+  }
+
+#ifdef DEBUG
+  am_hal_gpio_output_clear(triggerPad);
+#endif
+}
+
+void SoftwareSerial::endOfByte()
+{
+  //Finish out bytes that are less than 8 bits
+#ifdef DEBUG
+  Serial.printf("bitCounter: %d\n", bitCounter);
+  Serial.printf("incoming: 0x%02X\n", incomingByte);
+#endif
+  bitCounter--; //Remove start bit from count
+
+  //Edge case where we need to do an additional byte shift because we had data bits followed by a parity bit of same value
+  if (_parity)
+  {
+    bitCounter = bitCounter - _parityBits; //Remove parity bit from count
+    if (bitType == true)
+      bitCounter++;
+  }
+
+#ifdef DEBUG
+  Serial.printf("bitCounter: %d\n", bitCounter);
+#endif
+
+  while (bitCounter < 8)
+  {
+    incomingByte >>= 1;
+    if (bitType == true)
+      if (bitCounter < _dataBits)
+      {
+#ifdef DEBUG
+        Serial.println("Add bit");
+#endif
+        incomingByte |= 0x80;
+      }
+    bitCounter++;
+  }
+
+  //TODO - Check parity bit if parity is enabled
+
+  if (_invertLogic)
+    incomingByte = ~incomingByte;
+
+  //See if we are going to overflow buffer
+  uint8_t nextSpot = (rxBufferHead + 1) % AP3_SS_BUFFER_SIZE;
+  if (nextSpot != rxBufferTail)
+  {
+    //Add this byte to the buffer
+    rxBuffer[nextSpot] = incomingByte;
+    rxBufferHead = nextSpot;
+  }
+  else
+  {
+#ifdef DEBUG
+    am_hal_gpio_output_set(triggerPad);
+    am_hal_gpio_output_clear(triggerPad);
+#endif
+    _rxBufferOverflow = true;
+  }
+
+  lastBitTime = 0; //Reset for next byte
+
+  rxInUse = false;
+
+  // Disable the timer interrupt in the NVIC.
+  NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
+}
+
+//Called at the completion of bytes
+extern "C" void am_stimer_cmpr7_isr(void)
+{
+#ifdef DEBUG
+  am_hal_gpio_output_set(triggerPad);
+#endif
+
+  uint32_t ui32Status = am_hal_stimer_int_status_get(false);
+  if (ui32Status & AM_HAL_STIMER_INT_COMPAREH)
+  {
+    am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
+
+    //this->endOfByte();
   }
 
 #ifdef DEBUG

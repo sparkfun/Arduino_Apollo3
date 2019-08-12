@@ -43,7 +43,7 @@
 class SoftwareSerial
 {
 public:
-  SoftwareSerial(uint8_t rxPin, uint8_t txPin);
+  SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic = false);
   ~SoftwareSerial();
 
   void begin(uint32_t baudRate);
@@ -52,8 +52,9 @@ public:
   ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
 
   void rxBit(void);
+  void endOfByte(void);
 
-  uint64_t _rxPadBitMask;   // The AM HAL style pad bit mask associated with the RX pad
+  uint64_t _rxPadBitMask; // The AM HAL style pad bit mask associated with the RX pad
 
 private:
   void startRXListening(void);
@@ -67,13 +68,12 @@ private:
   volatile uint8_t rxBuffer[AP3_SS_BUFFER_SIZE];
   volatile uint8_t rxBufferHead = 0;
   uint8_t rxBufferTail = 0;
-  volatile bool rxInUse = false;
   volatile uint8_t incomingByte = 0;
 
   uint8_t _rxPin;
   uint8_t _txPin;
 
-  uint8_t _indexNumber;   // The index number at which the pointer to this instance is stored in the global object table.
+  uint8_t _indexNumber; // The index number at which the pointer to this instance is stored in the global object table.
 
   ap3_gpio_pad_t _txPad;
   ap3_gpio_pad_t _rxPad;
@@ -81,16 +81,19 @@ private:
   uint8_t _dataBits = 0; //5, 6, 7, or 8
   uint8_t _parity = 0;   //Type of parity (0, 1, 2)
   uint8_t _stopBits = 0;
+  uint8_t _parityBits = 0; //Number of parity bits (0 or 1)
+  bool _invertLogic;
 
   //For RX
-  uint8_t _parityBits = 0; //Number of parity bits (0 or 1)
   uint16_t sysTicksPerBit = 0;
   uint32_t sysTicksPerByte = 0;
   uint16_t sysTicksPartialBit = 0;
   volatile uint8_t numberOfBits[10];
-  volatile uint8_t bitCounter;
   volatile uint32_t lastBitTime = 0;
+  volatile uint8_t bitCounter;
   volatile bool bitType = false;
+  volatile bool rxInUse = false;
+  bool _rxBufferOverflow = false;
 
   //For TX
   uint8_t _parityForByte = 0; //Calculated per byte
