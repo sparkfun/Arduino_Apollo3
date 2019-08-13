@@ -30,6 +30,16 @@ SOFTWARE.
 #define AP3_PDM_NUM_DATA_PADS 6
 #define AP3_PDM_NUM_CLOCK_PADS 6
 
+#ifndef MIC_DATA
+#warning "Mic DATA pin not defined in variant. Using default."
+#define MIC_DATA 36
+#endif
+
+#ifndef MIC_CLOCK
+#warning "Mic CLOCK pin not defined in variant. Using default."
+#define MIC_CLOCK 37
+#endif
+
 typedef struct _ap3_pdm_pad_map_elem_t
 {
     ap3_gpio_pad_t pad;

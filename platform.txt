@@ -74,11 +74,12 @@ compiler.cmd.axf=arm-none-eabi-gcc
 compiler.cmd.axf2bin=arm-none-eabi-objcopy
 compiler.cmd.size=arm-none-eabi-size
 
-compiler.warning_flags=-w
-compiler.warning_flags.none=-w
+compiler.warning_flags=
+compiler.warning_flags.none=
 compiler.warning_flags.default=
 compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
+
 
 compiler.flags.common_cpp_c_S={build.extra_flags} -c -g -MMD
 compiler.flags.common_cpp_c=-mcpu={build.mcu} -mthumb -mfloat-abi=hard -fdata-sections -Os
