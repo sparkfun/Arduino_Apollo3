@@ -51,7 +51,10 @@ public:
 
   ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
   int available();
-  uint8_t read();
+  int read();
+  int peek();
+  bool overflow();
+
 
   void rxBit(void);
   void endOfByte(void);

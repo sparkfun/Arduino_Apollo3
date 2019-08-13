@@ -42,7 +42,7 @@ uint8_t gSoftwareSerialNumObjs = 0;
 SoftwareSerial *ap3_serial_handle = 0;
 
 //Uncomment to enable debug pulses and Serial.prints
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define SS_DEBUG_PIN 8
@@ -168,13 +168,35 @@ int SoftwareSerial::available()
   return (rxBufferHead + AP3_SS_BUFFER_SIZE - rxBufferTail) % AP3_SS_BUFFER_SIZE;
 }
 
-uint8_t SoftwareSerial::read()
+int SoftwareSerial::read()
 {
   if (available() == 0) return (-1);
 
   rxBufferTail++;
   rxBufferTail %= AP3_SS_BUFFER_SIZE;
   return (rxBuffer[rxBufferTail]);
+}
+
+int SoftwareSerial::peek()
+{
+  if (available() == 0) return (-1);
+
+  uint8_t tempTail = rxBufferTail + 1;
+  tempTail %= AP3_SS_BUFFER_SIZE;
+  return (rxBuffer[tempTail]);
+}
+
+//Returns true if overflow flag is set
+//Clears flag when called
+bool SoftwareSerial::overflow()
+{
+  if (_rxBufferOverflow)
+  {
+    _rxBufferOverflow = false;
+    return (true);
+  }
+  return (false);
+
 }
 
 ap3_err_t SoftwareSerial::softwareserialSetConfig(HardwareSerial_Config_e SSconfig)
