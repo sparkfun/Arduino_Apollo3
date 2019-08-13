@@ -110,6 +110,9 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 
   // Attach argument interrupt with 'this' as argument
   attachInterruptArg(digitalPinToInterrupt(_rxPin), _software_serial_isr, (void*)this, CHANGE);
+
+  // temporary:
+  ap3_serial_handle = this; // right now this is needed for the cmpr7 isr.
 }
 
 int SoftwareSerial::available()
