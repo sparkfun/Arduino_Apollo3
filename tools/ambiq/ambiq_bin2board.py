@@ -375,6 +375,7 @@ def upload(args, verboseprint):
     # Assuming worst case ~100 ms/page of flashing time, and allowing for the
     # image to be close to occupying full SRAM (256K) which is 128 pages.
 
+    connection_timeout = 5
 
     print('Connecting over serial port {}...'.format(args.port), flush=True)
 
