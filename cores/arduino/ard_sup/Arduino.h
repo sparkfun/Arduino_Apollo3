@@ -83,6 +83,4 @@ extern "C"
 
 #include "variant.h"
 
-#include "ap3_post_variant.h"
-
 #endif // _ARDUINO_H_
