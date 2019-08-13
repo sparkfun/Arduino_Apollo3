@@ -46,6 +46,10 @@ public:
   SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic = false);
   ~SoftwareSerial();
 
+  void listen();
+  void stopListening();
+  bool isListening();
+
   void begin(uint32_t baudRate);
   void begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig);
   void end(void);
@@ -55,7 +59,6 @@ public:
   int read();
   int peek();
   bool overflow();
-
 
   void rxBit(void);
   void endOfByte(void);

@@ -35,19 +35,19 @@
 #include "SoftwareSerial.h"
 #include "Arduino.h"
 
-SoftwareSerial *ap3_serial_handle = 0;
+SoftwareSerial *ap3_active_softwareserial_handle = 0;
 
 //Uncomment to enable debug pulses and Serial.prints
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
-#define SS_DEBUG_PIN 8
+#define SS_DEBUG_PIN 9
 ap3_gpio_pad_t debugPad = ap3_gpio_pin2pad(SS_DEBUG_PIN);
 #endif
 
-inline void _software_serial_isr(void* arg)
+inline void _software_serial_isr(void *arg)
 {
-  SoftwareSerial* handle = (SoftwareSerial*)arg;
+  SoftwareSerial *handle = (SoftwareSerial *)arg;
   handle->rxBit();
 }
 
@@ -74,6 +74,34 @@ void SoftwareSerial::begin(uint32_t baudRate)
   begin(baudRate, SERIAL_8N1);
 }
 
+void SoftwareSerial::listen()
+{
+  if (ap3_active_softwareserial_handle != NULL)
+    ap3_active_softwareserial_handle->stopListening(); //temp
+
+  //change handle to point to new PCI
+  ap3_active_softwareserial_handle = this;
+
+  lastBitTime = 0; //Reset for next byte
+
+  attachInterruptArg(digitalPinToInterrupt(_rxPin), _software_serial_isr, (void *)this, CHANGE);
+}
+
+void SoftwareSerial::stopListening()
+{
+  // Disable the timer interrupt in the NVIC.
+  NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
+
+  detachInterrupt(_rxPin);
+
+  ap3_active_softwareserial_handle == NULL;
+}
+
+bool SoftwareSerial::isListening()
+{
+  return (this == ap3_active_softwareserial_handle);
+}
+
 void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 {
   pinMode(_txPin, OUTPUT);
@@ -82,6 +110,10 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
   pinMode(_rxPin, INPUT);
   if (_invertLogic == false)
     pinMode(_rxPin, INPUT_PULLUP); //Enable external pullup if using normal logic
+
+#ifdef DEBUG
+  pinMode(SS_DEBUG_PIN, OUTPUT);
+#endif
 
   // Enable C/T H=7
   am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREH);
@@ -107,14 +139,12 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
   //Clear compare interrupt
   am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
-  // Attach argument interrupt with 'this' as argument
-  attachInterruptArg(digitalPinToInterrupt(_rxPin), _software_serial_isr, (void*)this, CHANGE);
-
-  // temporary:
-  ap3_serial_handle = this; // right now this is needed for the cmpr7 isr.
+  //Begin PCI
+  listen();
 }
 
-void SoftwareSerial::end(void){
+void SoftwareSerial::end(void)
+{
   detachInterrupt(_rxPin);
   // todo: anything else?
 }
@@ -126,7 +156,8 @@ int SoftwareSerial::available()
 
 int SoftwareSerial::read()
 {
-  if (available() == 0) return (-1);
+  if (available() == 0)
+    return (-1);
 
   rxBufferTail++;
   rxBufferTail %= AP3_SS_BUFFER_SIZE;
@@ -135,7 +166,8 @@ int SoftwareSerial::read()
 
 int SoftwareSerial::peek()
 {
-  if (available() == 0) return (-1);
+  if (available() == 0)
+    return (-1);
 
   uint8_t tempTail = rxBufferTail + 1;
   tempTail %= AP3_SS_BUFFER_SIZE;
@@ -152,7 +184,6 @@ bool SoftwareSerial::overflow()
     return (true);
   }
   return (false);
-
 }
 
 ap3_err_t SoftwareSerial::softwareserialSetConfig(HardwareSerial_Config_e SSconfig)
@@ -445,7 +476,7 @@ extern "C" void am_stimer_cmpr7_isr(void)
   {
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
-    ap3_serial_handle->endOfByte();
+    ap3_active_softwareserial_handle->endOfByte();
   }
 
 #ifdef DEBUG
