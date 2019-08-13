@@ -35,10 +35,6 @@
 #include "SoftwareSerial.h"
 #include "Arduino.h"
 
-// Global Table of SoftwareSerial Pointers
-SoftwareSerial *gpSoftwareSerialObjs[AP3_GPIO_MAX_PADS];
-uint8_t gSoftwareSerialNumObjs = 0;
-
 SoftwareSerial *ap3_serial_handle = 0;
 
 //Uncomment to enable debug pulses and Serial.prints
@@ -49,38 +45,15 @@ SoftwareSerial *ap3_serial_handle = 0;
 ap3_gpio_pad_t debugPad = ap3_gpio_pin2pad(SS_DEBUG_PIN);
 #endif
 
-// Software Serial ISR (To attach to pin change interrupts)
-/*void _software_serial_isr(void)
+inline void _software_serial_isr(void* arg)
 {
-  uint64_t gpio_int_mask = 0x00;
-  am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
-  SoftwareSerial *obj = NULL;
-  for (uint8_t indi = 0; indi < gSoftwareSerialNumObjs; indi++)
-  {
-    obj = gpSoftwareSerialObjs[indi];
-    if (obj == NULL)
-    {
-      break; // there should not be any null pointers in the global object table
-    }
-    if (obj->_rxPadBitMask & gpio_int_mask)
-    {
-      obj->rxBit();
-    }
-  }
-}*/
-inline void _software_serial_isr(void)
-{
-  ap3_serial_handle->rxBit();
+  SoftwareSerial* handle = (SoftwareSerial*)arg;
+  handle->rxBit();
 }
 
 //Constructor
 SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic)
 {
-  if (gSoftwareSerialNumObjs >= AP3_GPIO_MAX_PADS)
-  {
-    return; // Error -- no instances left to create
-  }
-
   _rxPin = rxPin;
   _txPin = txPin;
 
@@ -88,35 +61,13 @@ SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic)
   _rxPad = ap3_gpio_pin2pad(_rxPin);
 
   _invertLogic = invertLogic;
-
-  _rxPadBitMask = (0x01 << _rxPad);
-
-  // Add to the global array
-  _indexNumber = gSoftwareSerialNumObjs;
-  gpSoftwareSerialObjs[_indexNumber] = this;
-  gSoftwareSerialNumObjs++;
 }
 
 // Destructor
 SoftwareSerial::~SoftwareSerial()
 {
-  if (gSoftwareSerialNumObjs < 1)
-  {
-    return; // error -- no instances left to destroy
-  }
-
-  // Remove from global pointer list by filtering others down:
-  uint8_t index = _indexNumber;
-  do
-  {
-    gpSoftwareSerialObjs[index] = NULL;
-    if (index < (gSoftwareSerialNumObjs - 1))
-    {
-      gpSoftwareSerialObjs[index] = gpSoftwareSerialObjs[index + 1];
-    }
-    index++;
-  } while (index < gSoftwareSerialNumObjs);
-  gSoftwareSerialNumObjs--;
+  // Todo: call an "end" function that will detach the interrupt before removing the object
+  // (otherwise rx interrupts will try to access an invalid object)
 }
 
 void SoftwareSerial::begin(uint32_t baudRate)
@@ -157,10 +108,8 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
   //Clear compare interrupt
   am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
-  // Register the class into the local list
-  ap3_serial_handle = this;
-
-  attachInterrupt(digitalPinToInterrupt(_rxPin), _software_serial_isr, CHANGE);
+  // Attach argument interrupt with 'this' as argument
+  attachInterruptArg(digitalPinToInterrupt(_rxPin), _software_serial_isr, (void*)this, CHANGE);
 }
 
 int SoftwareSerial::available()

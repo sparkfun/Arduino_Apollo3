@@ -59,8 +59,6 @@ public:
   void rxBit(void);
   void endOfByte(void);
 
-  uint64_t _rxPadBitMask;     // The AM HAL style pad bit mask associated with the RX pad
-
 private:
   void startRXListening(void);
 
