@@ -38,7 +38,7 @@
 SoftwareSerial *ap3_active_softwareserial_handle = 0;
 
 //Uncomment to enable debug pulses and Serial.prints
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define SS_DEBUG_PIN 9
@@ -77,13 +77,14 @@ void SoftwareSerial::begin(uint32_t baudRate)
 void SoftwareSerial::listen()
 {
   if (ap3_active_softwareserial_handle != NULL)
-    ap3_active_softwareserial_handle->stopListening(); //temp
+    ap3_active_softwareserial_handle->stopListening(); //Gracefully shut down previous instance
 
-  //change handle to point to new PCI
+  //Point to new instance's cmpr7 ISR
   ap3_active_softwareserial_handle = this;
 
   lastBitTime = 0; //Reset for next byte
 
+  //Attach this instance RX pin to PCI
   attachInterruptArg(digitalPinToInterrupt(_rxPin), _software_serial_isr, (void *)this, CHANGE);
 }
 
