@@ -380,7 +380,7 @@ def upload(args, verboseprint):
 
     #Check to see if the com port is available
     try: 
-        with serial.Serial(args.port, args.baud, timeout=1) as ser:
+        with serial.Serial(args.port, args.baud, timeout=connection_timeout) as ser:
             pass
     except:
 
@@ -414,7 +414,7 @@ def upload(args, verboseprint):
     while loadTries < 3: 
         loadSuccess = False
 
-        with serial.Serial(args.port, args.baud, timeout=0.5) as ser:
+        with serial.Serial(args.port, args.baud, timeout=connection_timeout) as ser:
             #DTR is driven low when serial port open. DTR has now pulled RST low.
 
             time.sleep(0.005) #3ms and 10ms work well. Not 50, and not 0.
