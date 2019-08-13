@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_UART_H
@@ -133,7 +133,7 @@ am_hal_uart_transfer_t;
 
 //*****************************************************************************
 //
-// Maximum baudrate supported is 921600 for Apollo3-A1 and 1.5Mbaud for 
+// Maximum baudrate supported is 921600 for Apollo3-A1 and 1.5Mbaud for
 // Apollo3-B0.
 //
 //*****************************************************************************

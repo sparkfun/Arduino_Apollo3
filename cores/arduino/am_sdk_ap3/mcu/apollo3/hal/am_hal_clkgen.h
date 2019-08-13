@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_CLKGEN_H
@@ -119,7 +119,7 @@ typedef enum
     AM_HAL_CLKGEN_CLKOUT_XTAL_0_015 = 0x16,     // XTAL / 2097152 = 0.015625 Hz
     AM_HAL_CLKGEN_CLKOUT_XTAL_32768,            // XTAL
     AM_HAL_CLKGEN_CLKOUT_CG_100,                // ClkGen 100Hz
-    AM_HAL_CLKGEN_CLKOUT_LFRC_512,              // LFRC / 2     = 512 Hz
+    AM_HAL_CLKGEN_CLKOUT_LFRC_512 = 0x23,       // LFRC / 2     = 512 Hz
     AM_HAL_CLKGEN_CLKOUT_LFRC_32,               // LFRC / 32    =  32 Hz
     AM_HAL_CLKGEN_CLKOUT_LFRC_2,                // LFRC / 512   =   2 Hz
     AM_HAL_CLKGEN_CLKOUT_LFRC_0_03,             // LFRC / 32768 = 0.03125 Hz
@@ -133,7 +133,7 @@ typedef enum
     AM_HAL_CLKGEN_CLKOUT_ULFRC_0_25,            // ULFRC / 4096 = 0.25 Hz (uncal LFRC)
     AM_HAL_CLKGEN_CLKOUT_ULFRC_0_0009,          // ULFRC / 1M   = 0.000976 Hz (uncal LFRC)
     //
-    AM_HAL_CLKGEN_CLKOUT_LFRC_0_0004,           // LFRC / 2M    = 0.00048828125 Hz
+    AM_HAL_CLKGEN_CLKOUT_LFRC_0_0004 = 0x31,    // LFRC / 2M    = 0.00048828125 Hz
     // Following are Not Autoenabled ("NE")
     AM_HAL_CLKGEN_CLKOUT_XTALNE_32768 = 0x35,   // XTALNE / 1   = 32768 Hz
     AM_HAL_CLKGEN_CLKOUT_XTALNE_2048,           // XTALNE / 16  =  2048 Hz

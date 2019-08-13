@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_GLOBAL_H
@@ -74,11 +74,11 @@ extern "C"
 //*****************************************************************************
 #ifndef AM_HAL_VERSION_MAJ
 //
-// Set current HAL version to 2.0.1
+// Set current HAL version to 2.2.0
 //
 #define AM_HAL_VERSION_MAJ      2
-#define AM_HAL_VERSION_MIN      0
-#define AM_HAL_VERSION_REV      1
+#define AM_HAL_VERSION_MIN      2
+#define AM_HAL_VERSION_REV      0
 #endif // AM_HAL_VERSION_MAJ
 
 //*****************************************************************************

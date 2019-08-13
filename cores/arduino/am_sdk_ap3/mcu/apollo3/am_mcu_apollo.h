@@ -48,7 +48,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_MCU_APOLLO_H
@@ -106,31 +106,9 @@
 
 #include "regs/am_reg_macros.h"
 
-#include "regs/am_reg_adc.h"
-#include "regs/am_reg_apbdma.h"
-#include "regs/am_reg_bleif.h"
-#include "regs/am_reg_cachectrl.h"
-#include "regs/am_reg_clkgen.h"
-#include "regs/am_reg_ctimer.h"
-#include "regs/am_reg_gpio.h"
-#include "regs/am_reg_iom.h"
-#include "regs/am_reg_ioslave.h"
-#include "regs/am_reg_itm.h"
+#include "regs/am_reg.h"
+#include "regs/am_reg_m4.h"
 #include "regs/am_reg_jedec.h"
-#include "regs/am_reg_mcuctrl.h"
-#include "regs/am_reg_mspi.h"
-#include "regs/am_reg_nvic.h"
-#include "regs/am_reg_pdm.h"
-#include "regs/am_reg_pwrctrl.h"
-#include "regs/am_reg_rstgen.h"
-#include "regs/am_reg_rtc.h"
-#include "regs/am_reg_security.h"
-#include "regs/am_reg_sysctrl.h"
-#include "regs/am_reg_systick.h"
-#include "regs/am_reg_tpiu.h"
-#include "regs/am_reg_uart.h"
-#include "regs/am_reg_vcomp.h"
-#include "regs/am_reg_wdt.h"
 
 //*****************************************************************************
 //
@@ -164,6 +142,7 @@
 #include "hal/am_hal_queue.h"
 #include "hal/am_hal_reset.h"
 #include "hal/am_hal_rtc.h"
+#include "hal/am_hal_scard.h"
 #include "hal/am_hal_secure_ota.h"
 #include "hal/am_hal_stimer.h"
 #include "hal/am_hal_security.h"

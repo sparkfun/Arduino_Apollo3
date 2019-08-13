@@ -17,6 +17,6 @@ void setup() {
 
 void loop()
 {
-  Serial.printf("Sec: %d, millis: %d, micros: %d, systicks: 0x%08X, sysoverflows: 0x%08X\n", seconds(), millis(), micros(), systicks(), sysoverflows());
+  Serial.printf("Sec: %d, millis: %d, micros: %d, systicks: 0x%08X, sysoverflows: 0x%08X\n", secs(), millis(), micros(), systicks(), sysoverflows());
   delay(1111); //Arbitrary delay
 }

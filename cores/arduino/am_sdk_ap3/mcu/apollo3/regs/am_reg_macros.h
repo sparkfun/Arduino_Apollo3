@@ -41,7 +41,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -74,10 +74,10 @@ extern "C"
 // Use AM_REGADDRn() for multi-module peripherals (e.g. IOM, UART).
 //
 //*****************************************************************************
-#define AM_REGADDR(periph,reg)  ( periph##_BASE + offsetof(periph##_Type,reg) )
+#define AM_REGADDR(periph, reg) ( periph##_BASE + offsetof(periph##_Type, reg) )
 
-#define AM_REGADDRn(periph,n,reg)   ( periph##0_BASE                    +   \
-                                      offsetof(periph##0_Type,reg)      +   \
+#define AM_REGADDRn(periph, n, reg) ( periph##0_BASE                    +   \
+                                      offsetof(periph##0_Type, reg)     +   \
                                       (n * (periph##1_BASE - periph##0_BASE)) )
 
 //*****************************************************************************
