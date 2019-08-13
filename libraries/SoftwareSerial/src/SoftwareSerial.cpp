@@ -66,8 +66,7 @@ SoftwareSerial::SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic)
 // Destructor
 SoftwareSerial::~SoftwareSerial()
 {
-  // Todo: call an "end" function that will detach the interrupt before removing the object
-  // (otherwise rx interrupts will try to access an invalid object)
+  end(); // End detaches the interrupt which removes the reference to this object that is stored in the GPIO core
 }
 
 void SoftwareSerial::begin(uint32_t baudRate)
@@ -113,6 +112,11 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 
   // temporary:
   ap3_serial_handle = this; // right now this is needed for the cmpr7 isr.
+}
+
+void SoftwareSerial::end(void){
+  detachInterrupt(_rxPin);
+  // todo: anything else?
 }
 
 int SoftwareSerial::available()

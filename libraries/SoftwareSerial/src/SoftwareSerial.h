@@ -48,6 +48,7 @@ public:
 
   void begin(uint32_t baudRate);
   void begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig);
+  void end(void);
 
   ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
   int available();
