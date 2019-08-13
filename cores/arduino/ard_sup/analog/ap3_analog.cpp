@@ -351,6 +351,8 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
         //Serial.println("Error - configuring ADC Slot 0 failed.\n");
         return AP3_ERR;
     }
+
+    return AP3_OK;
 }
 
 
