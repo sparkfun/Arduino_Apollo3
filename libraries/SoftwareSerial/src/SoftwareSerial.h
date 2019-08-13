@@ -50,11 +50,13 @@ public:
   void begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig);
 
   ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
+  int available();
+  uint8_t read();
 
   void rxBit(void);
   void endOfByte(void);
 
-  uint64_t _rxPadBitMask; // The AM HAL style pad bit mask associated with the RX pad
+  uint64_t _rxPadBitMask;     // The AM HAL style pad bit mask associated with the RX pad
 
 private:
   void startRXListening(void);

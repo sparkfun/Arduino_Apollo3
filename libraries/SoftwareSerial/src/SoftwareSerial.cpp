@@ -41,8 +41,16 @@ uint8_t gSoftwareSerialNumObjs = 0;
 
 SoftwareSerial *ap3_serial_handle = 0;
 
+//Uncomment to enable debug pulses and Serial.prints
+#define DEBUG
+
+#ifdef DEBUG
+#define SS_DEBUG_PIN 8
+ap3_gpio_pad_t debugPad = ap3_gpio_pin2pad(SS_DEBUG_PIN);
+#endif
+
 // Software Serial ISR (To attach to pin change interrupts)
-void _software_serial_isr(void)
+/*void _software_serial_isr(void)
 {
   uint64_t gpio_int_mask = 0x00;
   am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
@@ -59,6 +67,10 @@ void _software_serial_isr(void)
       obj->rxBit();
     }
   }
+}*/
+inline void _software_serial_isr(void)
+{
+  ap3_serial_handle->rxBit();
 }
 
 //Constructor
@@ -149,6 +161,20 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
   ap3_serial_handle = this;
 
   attachInterrupt(digitalPinToInterrupt(_rxPin), _software_serial_isr, CHANGE);
+}
+
+int SoftwareSerial::available()
+{
+  return (rxBufferHead + AP3_SS_BUFFER_SIZE - rxBufferTail) % AP3_SS_BUFFER_SIZE;
+}
+
+uint8_t SoftwareSerial::read()
+{
+  if (available() == 0) return (-1);
+
+  rxBufferTail++;
+  rxBufferTail %= AP3_SS_BUFFER_SIZE;
+  return (rxBuffer[rxBufferTail]);
 }
 
 ap3_err_t SoftwareSerial::softwareserialSetConfig(HardwareSerial_Config_e SSconfig)
@@ -294,7 +320,7 @@ void SoftwareSerial::rxBit(void)
   uint32_t bitTime = CTIMER->STTMR; //Capture current system time
 
 #ifdef DEBUG
-  am_hal_gpio_output_set(triggerPad);
+  am_hal_gpio_output_set(debugPad);
 #endif
 
   if (lastBitTime == 0)
@@ -360,7 +386,7 @@ void SoftwareSerial::rxBit(void)
   }
 
 #ifdef DEBUG
-  am_hal_gpio_output_clear(triggerPad);
+  am_hal_gpio_output_clear(debugPad);
 #endif
 }
 
@@ -415,8 +441,8 @@ void SoftwareSerial::endOfByte()
   else
   {
 #ifdef DEBUG
-    am_hal_gpio_output_set(triggerPad);
-    am_hal_gpio_output_clear(triggerPad);
+    am_hal_gpio_output_set(debugPad);
+    am_hal_gpio_output_clear(debugPad);
 #endif
     _rxBufferOverflow = true;
   }
@@ -433,7 +459,7 @@ void SoftwareSerial::endOfByte()
 extern "C" void am_stimer_cmpr7_isr(void)
 {
 #ifdef DEBUG
-  am_hal_gpio_output_set(triggerPad);
+  am_hal_gpio_output_set(debugPad);
 #endif
 
   uint32_t ui32Status = am_hal_stimer_int_status_get(false);
@@ -445,6 +471,6 @@ extern "C" void am_stimer_cmpr7_isr(void)
   }
 
 #ifdef DEBUG
-  am_hal_gpio_output_clear(triggerPad);
+  am_hal_gpio_output_clear(debugPad);
 #endif
 }
