@@ -61,7 +61,15 @@ public:
   bool overflow();
 
   void rxBit(void);
-  void endOfByte(void);
+  void rxEndOfByte(void);
+
+  void write(uint8_t toSend);
+  void beginTX();
+  void calcParityBit();
+  void txHandler(void);
+
+  volatile bool rxInUse = false;
+  volatile bool txInUse = false;
 
 private:
   void startRXListening(void);
@@ -69,7 +77,6 @@ private:
   uint8_t txBuffer[AP3_SS_BUFFER_SIZE];
   uint16_t txBufferHead = 0;
   volatile uint16_t txBufferTail = 0;
-  volatile bool txInUse = false;
   volatile uint8_t outgoingByte = 0;
 
   volatile uint8_t rxBuffer[AP3_SS_BUFFER_SIZE];
@@ -92,18 +99,20 @@ private:
   bool _invertLogic;
 
   //For RX
-  uint16_t sysTicksPerBit = 0;
-  uint32_t sysTicksPerByte = 0;
-  uint16_t sysTicksPartialBit = 0;
+  uint16_t rxSysTicksPerBit = 0;
+  uint32_t rxSysTicksPerByte = 0;
+  uint16_t rxSysTicksPartialBit = 0;
   volatile uint8_t numberOfBits[10];
   volatile uint32_t lastBitTime = 0;
   volatile uint8_t bitCounter;
   volatile bool bitType = false;
-  volatile bool rxInUse = false;
   bool _rxBufferOverflow = false;
 
   //For TX
+  uint16_t txSysTicksPerBit = 0;
+  uint16_t txSysTicksPerStopBit = 0;
   uint8_t _parityForByte = 0; //Calculated per byte
+  bool _txBufferOverflow = false;
 };
 
 #endif

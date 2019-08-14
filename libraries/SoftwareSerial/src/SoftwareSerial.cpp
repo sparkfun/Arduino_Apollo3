@@ -38,7 +38,7 @@
 SoftwareSerial *ap3_active_softwareserial_handle = 0;
 
 //Uncomment to enable debug pulses and Serial.prints
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define SS_DEBUG_PIN 9
@@ -105,14 +105,15 @@ bool SoftwareSerial::isListening()
 
 void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 {
-  pinMode(_txPin, OUTPUT);
   digitalWrite(_txPin, _invertLogic ? LOW : HIGH);
+  pinMode(_txPin, OUTPUT);
 
   pinMode(_rxPin, INPUT);
   if (_invertLogic == false)
     pinMode(_rxPin, INPUT_PULLUP); //Enable external pullup if using normal logic
 
 #ifdef DEBUG
+  am_hal_gpio_output_clear(debugPad);
   pinMode(SS_DEBUG_PIN, OUTPUT);
 #endif
 
@@ -126,13 +127,18 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
   //Set variables data bits, stop bits and parity based on config
   softwareserialSetConfig(SSconfig);
 
-  sysTicksPerBit = (TIMER_FREQ / baudRate) * 0.98; //Short the number of sysTicks a small amount because we are doing a mod operation
+  rxSysTicksPerBit = (TIMER_FREQ / baudRate) * 0.98; //Shorten the number of sysTicks a small amount because we are doing a mod operation
+  txSysTicksPerBit = (TIMER_FREQ / baudRate) - 6;    //Shorten the txSysTicksPerBit by the number of ticks needed to run the txHandler ISR
 
-  sysTicksPerByte = (TIMER_FREQ / baudRate) * (_dataBits + _parityBits + _stopBits);
+  rxSysTicksPerByte = (TIMER_FREQ / baudRate) * (_dataBits + _parityBits + _stopBits);
 
   //During RX, if leftover systicks is more than a fraction of a bit, we will call it a bit
   //This is needed during 115200 when cmpr ISR extends into the start bit of the following byte
-  sysTicksPartialBit = sysTicksPerBit / 4;
+  rxSysTicksPartialBit = rxSysTicksPerBit / 4;
+
+  txSysTicksPerStopBit = txSysTicksPerBit * _stopBits;
+
+  Serial.printf("sysTicksPerBit: %d\n", txSysTicksPerBit);
 
   //Clear pin change interrupt
   am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(_rxPad));
@@ -179,12 +185,97 @@ int SoftwareSerial::peek()
 //Clears flag when called
 bool SoftwareSerial::overflow()
 {
-  if (_rxBufferOverflow)
+  if (_rxBufferOverflow || _txBufferOverflow)
   {
     _rxBufferOverflow = false;
+    _txBufferOverflow = false;
     return (true);
   }
   return (false);
+}
+
+void SoftwareSerial::write(uint8_t toSend)
+{
+  //See if we are going to overflow buffer
+  uint8_t nextSpot = (txBufferHead + 1) % AP3_SS_BUFFER_SIZE;
+  if (nextSpot != txBufferTail)
+  {
+    //Add this byte into the circular buffer
+    txBuffer[nextSpot] = toSend;
+    txBufferHead = nextSpot;
+  }
+  else
+  {
+    _txBufferOverflow = true;
+  }
+
+  //See if hardware is available
+  if (txInUse == false)
+  {
+    txInUse = true;
+
+    //Start sending this byte immediately
+    txBufferTail = (txBufferTail + 1) % AP3_SS_BUFFER_SIZE;
+    outgoingByte = txBuffer[txBufferTail];
+
+    //Calc parity
+    calcParityBit();
+
+    beginTX();
+  }
+}
+
+//Starts the transmission of the next available byte from the buffer
+void SoftwareSerial::beginTX()
+{
+  bitCounter = 0;
+
+  am_hal_gpio_output_set(debugPad);
+
+  //Initiate start bit
+  if (_invertLogic == false)
+  {
+    am_hal_gpio_output_clear(_txPad); //Normal logic, low is start bit
+  }
+  else
+  {
+    am_hal_gpio_output_set(_txPad);
+  }
+
+  //Setup ISR to trigger when we are in middle of start bit
+  //am_hal_stimer_compare_delta_set(7, txSsysTicksPerBit);
+  AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = txSysTicksPerBit; //Direct reg write to decrease execution time
+
+  // Enable the timer interrupt in the NVIC.
+  NVIC_EnableIRQ(STIMER_CMPR7_IRQn);
+
+  am_hal_gpio_output_clear(debugPad);
+}
+
+//Assumes the global variables have been set: _parity, _dataBits, outgoingByte
+//Sets global variable _parityBit
+void SoftwareSerial::calcParityBit()
+{
+  if (_parity == 0)
+    return; //No parity
+
+  uint8_t ones = 0;
+  for (uint8_t x = 0; x < _dataBits; x++)
+  {
+    if (outgoingByte & (0x01 << x))
+    {
+      ones++;
+    }
+  }
+
+  if (_parity == 1) //Odd
+  {
+    _parityForByte = !(ones % 2);
+  }
+  else //Even
+  {
+    _parityForByte = (ones % 2);
+  }
 }
 
 ap3_err_t SoftwareSerial::softwareserialSetConfig(HardwareSerial_Config_e SSconfig)
@@ -338,10 +429,11 @@ void SoftwareSerial::rxBit(void)
     bitCounter = 0;
     lastBitTime = bitTime;
     bitType = false;
+    rxInUse = true; //Indicate we are now in process of receiving a byte
 
     //Setup cmpr7 interrupt to handle overall timeout
-    //am_hal_stimer_compare_delta_set(7, sysTicksPerByte);
-    AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = sysTicksPerByte; //Direct reg write to decrease execution time
+    //am_hal_stimer_compare_delta_set(7, rxSysTicksPerByte);
+    AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = rxSysTicksPerByte; //Direct reg write to decrease execution time
 
     // Enable the timer interrupt in the NVIC.
     NVIC_EnableIRQ(STIMER_CMPR7_IRQn);
@@ -349,9 +441,7 @@ void SoftwareSerial::rxBit(void)
   else
   {
     //Calculate the number of bits that have occured since last PCI
-    //Then add those bits of the current bitType (either 1 or 0) to
-    //the byte
-    uint8_t numberOfBits = (bitTime - lastBitTime) / sysTicksPerBit;
+    uint8_t numberOfBits = (bitTime - lastBitTime) / rxSysTicksPerBit;
 
     if (bitCounter == 0)
     {
@@ -359,8 +449,8 @@ void SoftwareSerial::rxBit(void)
       //For very high bauds (115200) the final interrupt spills over into the
       //start bit of the next byte. This catches the partial systicks and correctly
       //identifies the start bit as such.
-      uint16_t partialBits = (bitTime - lastBitTime) % sysTicksPerBit;
-      if (partialBits > sysTicksPartialBit)
+      uint16_t partialBits = (bitTime - lastBitTime) % rxSysTicksPerBit;
+      if (partialBits > rxSysTicksPartialBit)
       {
 #ifdef DEBUG
         Serial.println("Partial!");
@@ -384,7 +474,7 @@ void SoftwareSerial::rxBit(void)
       }
     }
 
-    for (uint8_t y = 0; y < numberOfBits; y++) //Number of bits in this chunk of time
+    for (uint8_t y = 0; y < numberOfBits; y++) //Add bits of the current bitType (either 1 or 0) to our byte
     {
       incomingByte >>= 1;
       if (bitType == true)
@@ -400,7 +490,7 @@ void SoftwareSerial::rxBit(void)
 #endif
 }
 
-void SoftwareSerial::endOfByte()
+void SoftwareSerial::rxEndOfByte()
 {
   //Finish out bytes that are less than 8 bits
 #ifdef DEBUG
@@ -459,10 +549,103 @@ void SoftwareSerial::endOfByte()
 
   lastBitTime = 0; //Reset for next byte
 
-  rxInUse = false;
+  rxInUse = false; //Release so that we can TX if needed
 
   // Disable the timer interrupt in the NVIC.
   NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
+}
+
+//Called from cmprX ISR
+//Sends out a bit with each cmprX ISR trigger
+void SoftwareSerial::txHandler()
+{
+  if (bitCounter < _dataBits) //Data bits 0 to 7
+  {
+    AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = txSysTicksPerBit; //Direct reg write to decrease execution time
+    if (outgoingByte & 0x01)
+    {
+      am_hal_gpio_output_set(_txPad);
+    }
+    else
+    {
+      am_hal_gpio_output_clear(_txPad);
+    }
+    outgoingByte >>= 1;
+    bitCounter++;
+  }
+  else if (bitCounter == _dataBits) //Send parity bit or stop bit(s)
+  {
+    if (_parity)
+    {
+      //Send parity bit
+      AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = txSysTicksPerBit; //Direct reg write to decrease execution time
+      if (_parityForByte)
+      {
+        am_hal_gpio_output_set(_txPad);
+      }
+      else
+      {
+        am_hal_gpio_output_clear(_txPad);
+      }
+    }
+    else
+    {
+      //Send stop bit
+      AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = txSysTicksPerStopBit; //Direct reg write to decrease execution time
+      am_hal_gpio_output_set(_txPad);
+    }
+    bitCounter++;
+  }
+  else if (bitCounter == (_dataBits + 1)) //Send stop bit or begin next byte
+  {
+    if (_parity)
+    {
+      //Send stop bit
+      AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = txSysTicksPerStopBit; //Direct reg write to decrease execution time
+      am_hal_gpio_output_set(_txPad);
+      bitCounter++;
+    }
+    else
+    {
+      //Start next byte
+      if (txBufferTail == txBufferHead)
+      {
+        // Disable the timer interrupt in the NVIC.
+        NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
+
+        //All done!
+        txInUse = false;
+      }
+      else
+      {
+        //Send next byte in buffer
+        txBufferTail = (txBufferTail + 1) % AP3_SS_BUFFER_SIZE;
+        outgoingByte = txBuffer[txBufferTail];
+        calcParityBit();
+        beginTX();
+      }
+    }
+  }
+  else if (bitCounter == (_dataBits + 2)) //Begin next byte
+  {
+    //Start next byte
+    if (txBufferTail == txBufferHead)
+    {
+      // Disable the timer interrupt in the NVIC.
+      NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
+
+      //All done!
+      txInUse = false;
+    }
+    else
+    {
+      //Send next byte in buffer
+      txBufferTail = (txBufferTail + 1) % AP3_SS_BUFFER_SIZE;
+      outgoingByte = txBuffer[txBufferTail];
+      calcParityBit();
+      beginTX();
+    }
+  }
 }
 
 //Called at the completion of bytes
@@ -477,7 +660,14 @@ extern "C" void am_stimer_cmpr7_isr(void)
   {
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
-    ap3_active_softwareserial_handle->endOfByte();
+    if (ap3_active_softwareserial_handle->rxInUse == true)
+    {
+      ap3_active_softwareserial_handle->rxEndOfByte();
+    }
+    else if (ap3_active_softwareserial_handle->txInUse == true)
+    {
+      ap3_active_softwareserial_handle->txHandler();
+    }
   }
 
 #ifdef DEBUG
