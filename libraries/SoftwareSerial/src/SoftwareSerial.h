@@ -40,7 +40,7 @@
 
 #define TIMER_FREQ 3000000L
 
-class SoftwareSerial
+class SoftwareSerial : public Print
 {
 public:
   SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic = false);
@@ -63,7 +63,11 @@ public:
   void rxBit(void);
   void rxEndOfByte(void);
 
-  void write(uint8_t toSend);
+  virtual size_t write(uint8_t toSend);
+
+  virtual size_t write(const uint8_t *buffer, size_t size);
+  virtual size_t write(const char *str);
+
   void beginTX();
   void calcParityBit();
   void txHandler(void);

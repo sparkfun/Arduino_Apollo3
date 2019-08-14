@@ -138,8 +138,6 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 
   txSysTicksPerStopBit = txSysTicksPerBit * _stopBits;
 
-  Serial.printf("sysTicksPerBit: %d\n", txSysTicksPerBit);
-
   //Clear pin change interrupt
   am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(_rxPad));
 
@@ -194,7 +192,8 @@ bool SoftwareSerial::overflow()
   return (false);
 }
 
-void SoftwareSerial::write(uint8_t toSend)
+//Required for print
+size_t SoftwareSerial::write(uint8_t toSend)
 {
   //See if we are going to overflow buffer
   uint8_t nextSpot = (txBufferHead + 1) % AP3_SS_BUFFER_SIZE;
@@ -223,6 +222,22 @@ void SoftwareSerial::write(uint8_t toSend)
 
     beginTX();
   }
+}
+
+size_t SoftwareSerial::write(const uint8_t *buffer, size_t size)
+{
+  for (uint16_t x = 0; x < size; x++)
+  {
+    write(buffer[x]);
+  }
+  return (size);
+}
+
+size_t SoftwareSerial::write(const char *str)
+{
+  if (str == NULL)
+    return 0;
+  return write((const uint8_t *)str, strlen(str));
 }
 
 //Starts the transmission of the next available byte from the buffer
