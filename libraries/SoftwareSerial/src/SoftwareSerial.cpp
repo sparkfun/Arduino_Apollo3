@@ -38,7 +38,7 @@
 SoftwareSerial *ap3_active_softwareserial_handle = 0;
 
 //Uncomment to enable debug pulses and Serial.prints
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define SS_DEBUG_PIN 9
@@ -83,6 +83,12 @@ void SoftwareSerial::listen()
   ap3_active_softwareserial_handle = this;
 
   lastBitTime = 0; //Reset for next byte
+
+  //Clear pin change interrupt
+  am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(_rxPad));
+
+  //Clear compare interrupt
+  am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
 
   //Attach this instance RX pin to PCI
   attachInterruptArg(digitalPinToInterrupt(_rxPin), _software_serial_isr, (void *)this, CHANGE);
@@ -138,12 +144,6 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 
   txSysTicksPerStopBit = txSysTicksPerBit * _stopBits;
 
-  //Clear pin change interrupt
-  am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(_rxPad));
-
-  //Clear compare interrupt
-  am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
-
   //Begin PCI
   listen();
 }
@@ -195,6 +195,14 @@ bool SoftwareSerial::overflow()
 //Required for print
 size_t SoftwareSerial::write(uint8_t toSend)
 {
+  //As soon as user wants to send something, turn off RX interrupts
+  if (txInUse == false)
+  {
+    detachInterrupt(_rxPin);
+
+    rxInUse = false;
+  }
+
   //See if we are going to overflow buffer
   uint8_t nextSpot = (txBufferHead + 1) % AP3_SS_BUFFER_SIZE;
   if (nextSpot != txBufferTail)
@@ -222,6 +230,7 @@ size_t SoftwareSerial::write(uint8_t toSend)
 
     beginTX();
   }
+  return (1);
 }
 
 size_t SoftwareSerial::write(const uint8_t *buffer, size_t size)
@@ -245,8 +254,6 @@ void SoftwareSerial::beginTX()
 {
   bitCounter = 0;
 
-  am_hal_gpio_output_set(debugPad);
-
   //Initiate start bit
   if (_invertLogic == false)
   {
@@ -257,14 +264,15 @@ void SoftwareSerial::beginTX()
     am_hal_gpio_output_set(_txPad);
   }
 
+  //Clear compare interrupt
+  am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREH);
+
   //Setup ISR to trigger when we are in middle of start bit
   //am_hal_stimer_compare_delta_set(7, txSsysTicksPerBit);
   AM_REGVAL(AM_REG_STIMER_COMPARE(0, 7)) = txSysTicksPerBit; //Direct reg write to decrease execution time
 
   // Enable the timer interrupt in the NVIC.
   NVIC_EnableIRQ(STIMER_CMPR7_IRQn);
-
-  am_hal_gpio_output_clear(debugPad);
 }
 
 //Assumes the global variables have been set: _parity, _dataBits, outgoingByte
@@ -468,7 +476,7 @@ void SoftwareSerial::rxBit(void)
       if (partialBits > rxSysTicksPartialBit)
       {
 #ifdef DEBUG
-        Serial.println("Partial!");
+//        Serial.println("Partial!");
 #endif
         numberOfBits++;
       }
@@ -483,7 +491,7 @@ void SoftwareSerial::rxBit(void)
       if (numberOfBits + bitCounter > _dataBits + _parityBits)
       {
 #ifdef DEBUG
-        Serial.println("Exclude");
+//        Serial.println("Exclude");
 #endif
         numberOfBits--; //Exclude parity bit from byte shift
       }
@@ -509,8 +517,8 @@ void SoftwareSerial::rxEndOfByte()
 {
   //Finish out bytes that are less than 8 bits
 #ifdef DEBUG
-  Serial.printf("bitCounter: %d\n", bitCounter);
-  Serial.printf("incoming: 0x%02X\n", incomingByte);
+//  Serial.printf("bitCounter: %d\n", bitCounter);
+//  Serial.printf("incoming: 0x%02X\n", incomingByte);
 #endif
   bitCounter--; //Remove start bit from count
 
@@ -523,7 +531,7 @@ void SoftwareSerial::rxEndOfByte()
   }
 
 #ifdef DEBUG
-  Serial.printf("bitCounter: %d\n", bitCounter);
+//  Serial.printf("bitCounter: %d\n", bitCounter);
 #endif
 
   while (bitCounter < 8)
@@ -533,7 +541,7 @@ void SoftwareSerial::rxEndOfByte()
       if (bitCounter < _dataBits)
       {
 #ifdef DEBUG
-        Serial.println("Add bit");
+//        Serial.println("Add bit");
 #endif
         incomingByte |= 0x80;
       }
@@ -630,6 +638,9 @@ void SoftwareSerial::txHandler()
 
         //All done!
         txInUse = false;
+
+        //Reattach PCI so we can hear rx bits coming in
+        listen();
       }
       else
       {
@@ -651,6 +662,9 @@ void SoftwareSerial::txHandler()
 
       //All done!
       txInUse = false;
+
+      //Reattach PCI so we can hear rx bits coming in
+      listen();
     }
     else
     {
