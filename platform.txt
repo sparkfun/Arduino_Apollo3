@@ -131,7 +131,7 @@ recipe.output.save_file={build.project_name}.{build.preferred_export_format}
 
 ##### The following tool settings are for the Ambiq SBL
 
-# Host-specific definitions for upload tool (using Ambiq's Secure Bootloader SBL)
+# Host-specific definitions for upload tool (using the Ambiq Secure Bootloader ASB)
     # Linux
 tools.ambiq_bin2board.pgm={runtime.platform.path}/tools/ambiq/linux/ambiq_bin2board
 tools.ambiq_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
