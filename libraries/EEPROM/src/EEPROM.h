@@ -47,16 +47,16 @@
 //user code space from 0xC000 to 0xFE000.
 //The SparkFun Apollo3 linker script has been modified to limit user code space to less than 0xFE000
 
-#define FLASH_EEPROM_START 0xFE000
+#define AP3_FLASH_EEPROM_START 0xFE000
 
-#if FLASH_EEPROM_START % 8192
+#if AP3_FLASH_EEPROM_START % 8192
 Error : EEPROM start address must be divisble by 8192
 #endif
 
 //By limiting EEPROM size to 1024, we reduce the amount of SRAM required and
 //time needed to mask in individual bytes and words into flash. It can be increased
 //to 8096 if needed
-#define FLASH_EEPROM_SIZE 1024
+#define AP3_FLASH_EEPROM_SIZE 1024
 
         //class TwoWire : public Stream, public IOMaster{}
 
@@ -126,6 +126,7 @@ public:
 
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+  uint16_t length();
   void erase(); //Erase entire EEPROM
 
 private:
