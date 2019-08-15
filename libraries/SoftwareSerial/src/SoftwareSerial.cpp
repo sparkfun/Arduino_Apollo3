@@ -15,10 +15,17 @@
   SoftwareSerial support for the Artemis
   Any pin can be used for software serial receive or transmit 
   at 300 to 115200bps and anywhere inbetween.
-  Limitations:
-    Uses Timer/Compare module H. This will remove PWM capabilities
+  Limitations (similar to Arduino core SoftwareSerial):
+    * RX on one pin at a time.
+    * No TX and RX at the same time.
+    * TX gets priority. So if Artemis is receiving a string of characters
+    and you do a Serial.print() the print will begin immediately and any additional
+    RX characters will be lost. 
+    * Uses Timer/Compare module H (aka 7). This will remove PWM capabilities
     on some pins.
-    Parity is supported but not checked during RX.
+    * Parity is supported during TX but not checked during RX.
+    * Enabling multiple ports causes 115200 RX to fail (because there is additional instance switching overhead)
+
     
   Development environment specifics:
   Arduino IDE 1.8.x
@@ -76,6 +83,9 @@ void SoftwareSerial::begin(uint32_t baudRate)
 
 void SoftwareSerial::listen()
 {
+  // Disable the timer interrupt in the NVIC.
+  NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
+
   if (ap3_active_softwareserial_handle != NULL)
     ap3_active_softwareserial_handle->stopListening(); //Gracefully shut down previous instance
 
@@ -177,6 +187,14 @@ int SoftwareSerial::peek()
   uint8_t tempTail = rxBufferTail + 1;
   tempTail %= AP3_SS_BUFFER_SIZE;
   return (rxBuffer[tempTail]);
+}
+
+//Wait for TX buffer to get sent
+void SoftwareSerial::flush()
+{
+  while (txInUse)
+  {
+  }
 }
 
 //Returns true if overflow flag is set

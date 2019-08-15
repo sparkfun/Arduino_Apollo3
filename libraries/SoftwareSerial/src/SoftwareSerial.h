@@ -58,6 +58,7 @@ public:
   int available();
   int read();
   int peek();
+  void flush();
   bool overflow();
 
   void rxBit(void);
