@@ -18,29 +18,34 @@ The edge-based interrupts will clear the flag automatically.
 static uint32_t count = 0;
 bool interruptsEnabled = false;
 
-void setup() {
+void setup()
+{
   // put your setup code here, to run once:
 
   Serial.begin(9600);
   Serial.println("Interrupt testing");
 
   pinMode(INT_PIN, INPUT_PULLUP);
-  
-  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, RISING);
-//  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, FALLING);
-//  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, LOW);
-//  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, HIGH);
 
-//  // attaching a different interrupt to the same pin overwrites the existing ISR
-//  attachInterruptArg(digitalPinToInterrupt(INT_PIN), myISRArg, &count, RISING);
+  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, RISING);
+  //  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, FALLING);
+  //  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, LOW);
+  //  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, HIGH);
+  //  attachInterrupt(digitalPinToInterrupt(INT_PIN), myISR, CHANGE);
+
+  //  // attaching a different interrupt to the same pin overwrites the existing ISR
+  //  attachInterruptArg(digitalPinToInterrupt(INT_PIN), myISRArg, &count, RISING);
 
   interruptsEnabled = true;
 }
 
-void loop() {
+void loop()
+{
   count++;
-  if( count > 5 ){
-    if(interruptsEnabled){
+  if (count > 5)
+  {
+    if (interruptsEnabled)
+    {
       detachInterrupt(digitalPinToInterrupt(INT_PIN));
       interruptsEnabled = false;
     }
@@ -48,11 +53,13 @@ void loop() {
   delay(1000);
 }
 
-void myISR( void ){
+void myISR(void)
+{
   Serial.println("Hi i am an ISR!");
 }
 
-void myISRArg( void* arg ){
-  uint32_t* local_count = (uint32_t*)arg;
-  Serial.printf("The time is %d seconds\n", *(local_count) );
+void myISRArg(void *arg)
+{
+  uint32_t *local_count = (uint32_t *)arg;
+  Serial.printf("The time is %d seconds\n", *(local_count));
 }
