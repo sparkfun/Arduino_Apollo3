@@ -269,18 +269,29 @@ void ap3_EEPROM::writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
   //Zero out this word(s)
   uint8_t byteOffset = (flashLocation % 4);
   uint16_t wordLocation = (flashLocation - FLASH_EEPROM_START) / 4;
+
+  //Mask in the new data into the array
   if (byteOffset == 0)
   {
-    //Easy - reset this word to 1s
-    tempContents[wordLocation] = 0xFFFFFFFF;
+    //Easy - update this word with new word
+    tempContents[wordLocation] = dataToWrite;
   }
   else
   {
-    //Reset the upper bytes of the first word to 1s
-    tempContents[wordLocation] |= 0xFFFFFFFF << (byteOffset * 8);
+    //Clear the upper bytes of the first word to 0s
+    tempContents[wordLocation] &= ~(0xFFFFFFFF << (byteOffset * 8));
 
-    //Reset the lower bytes of the second word to 1s
-    tempContents[wordLocation + 1] |= 0xFFFFFFFF >> ((4 - byteOffset) * 8);
+    //Clear the lower bytes of the second word to 0s
+    tempContents[wordLocation + 1] &= ~(0xFFFFFFFF >> ((4 - byteOffset) * 8));
+
+    //OR in upper bytes of this word with new data
+    uint32_t dataToWriteFirstWord = dataToWrite << (byteOffset * 8);
+
+    //OR in the lower bytes of the following word with new data
+    uint32_t dataToWriteSecondWord = dataToWrite >> ((4 - byteOffset) * 8);
+
+    tempContents[wordLocation] |= dataToWriteFirstWord;
+    tempContents[wordLocation + 1] |= dataToWriteSecondWord;
   }
 
   //Then we write the contents of the array back
@@ -288,32 +299,6 @@ void ap3_EEPROM::writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
                             tempContents,
                             (uint32_t *)FLASH_EEPROM_START,
                             FLASH_EEPROM_SIZE);
-
-  if (byteOffset == 0)
-  {
-    //Easy - update this word with new word
-    am_hal_flash_reprogram_ui32(AM_HAL_FLASH_PROGRAM_KEY,
-                                dataToWrite,
-                                (uint32_t *)flashLocation);
-  }
-  else
-  {
-    //Update the upper bytes of this word with new data
-    uint32_t dataToWriteFirstWord = dataToWrite << (byteOffset * 8);
-    dataToWriteFirstWord |= 0xFFFFFFFF >> ((4 - byteOffset) * 8);
-
-    //Update the lower bytes of the following word with new data
-    uint32_t dataToWriteSecondWord = dataToWrite >> ((4 - byteOffset) * 8);
-    dataToWriteSecondWord |= 0xFFFFFFFF << (byteOffset * 8);
-
-    am_hal_flash_reprogram_ui32(AM_HAL_FLASH_PROGRAM_KEY,
-                                dataToWriteFirstWord,
-                                (uint32_t *)(flashLocation - byteOffset));
-
-    am_hal_flash_reprogram_ui32(AM_HAL_FLASH_PROGRAM_KEY,
-                                dataToWriteSecondWord,
-                                (uint32_t *)(flashLocation + (4 - byteOffset)));
-  }
 }
 
 ap3_EEPROM EEPROM;
