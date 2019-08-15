@@ -19,7 +19,7 @@
     and you do a Serial.print() the print will begin immediately and any additional
     RX characters will be lost. 
     * Uses Timer/Compare module H (aka 7). This will remove PWM capabilities
-    on some pins.
+    on pad 11.
     * Parity is supported during TX but not checked during RX.
     * Enabling multiple ports causes 115200 RX to fail (because there is additional instance switching overhead)
 
