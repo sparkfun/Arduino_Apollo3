@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -85,7 +85,6 @@ dec_to_bcd(uint8_t ui8DecimalByte)
 //!
 //! Valid values for ui32OSC are:
 //!
-//!     AM_HAL_RTC_OSC_LFRC
 //!     AM_HAL_RTC_OSC_XT
 //!
 //! @return None
@@ -99,16 +98,7 @@ dec_to_bcd(uint8_t ui8DecimalByte)
 void
 am_hal_rtc_osc_select(uint32_t ui32OSC)
 {
-    //
-    // Set LFRC if flag is set.
-    // Otherwise configure for LFRC.
-    //
-    if ( ui32OSC == AM_HAL_RTC_OSC_LFRC )
-    {
-        // Set bit to 1 for LFRC
-        CLKGEN->OCTRL |= CLKGEN_OCTRL_OSEL_Msk;
-    }
-    else
+    if ( ui32OSC == AM_HAL_RTC_OSC_XT )
     {
         // Clear bit to 0 for XTAL
         CLKGEN->OCTRL &= ~CLKGEN_OCTRL_OSEL_Msk;

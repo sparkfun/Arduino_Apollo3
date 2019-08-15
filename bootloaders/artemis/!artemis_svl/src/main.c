@@ -296,6 +296,33 @@ void setup( void ){
 }
 
 
+// //*****************************************************************************
+// //
+// // Un-set-up
+// //
+// //*****************************************************************************
+// void unsetup( void ){
+//     // Set the clock frequency.
+//     am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_SYSCLK_MAX, 0);
+
+//     // Set the default cache configuration
+//     am_hal_cachectrl_config(&am_hal_cachectrl_defaults);
+//     am_hal_cachectrl_enable();
+
+//     // Configure the stimer
+//     am_hal_stimer_int_enable(AM_HAL_STIMER_INT_OVERFLOW);
+//     NVIC_EnableIRQ(STIMER_IRQn);
+//     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
+//     am_hal_stimer_config(AM_HAL_STIMER_HFRC_3MHZ);
+
+// #ifdef DEBUG
+//     start_uart_debug();
+// #endif
+
+//     // Enable interrupts.
+//     am_hal_interrupt_master_enable();
+// }
+
 
 // ****************************************
 // 
@@ -594,6 +621,8 @@ void app_start( void ){
 // #endif // APP_PRINT_PRETTY
 // #endif // DEBUG_PRINT_APP
 // #endif // DEBUG
+
+    // unsetup(); // todo:
 
     void* entryPoint = (void *)(*((uint32_t*)(USERCODE_OFFSET + 4)));
     debug_printf("\nJump to App at 0x%08X\n\n", (uint32_t)entryPoint);

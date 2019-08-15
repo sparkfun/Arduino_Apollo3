@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -404,7 +404,7 @@ build_txn_cmdlist(am_hal_iom_state_t       *pIOMState,
 
     // CMDRPT register has been repurposed for DCX
     pCQEntry->ui32DCXAddr = (uint32_t)&IOMn(ui32Module)->DCX;
-    pCQEntry->ui32DCXVal = pIOMState->dcx[psTransaction->uPeerInfo.ui32SpiChipSelect];
+    pCQEntry->ui32DCXVal = (pIOMState->eInterfaceMode == AM_HAL_IOM_SPI_MODE)  ? pIOMState->dcx[psTransaction->uPeerInfo.ui32SpiChipSelect] : 0;
     //
     // Command to start the transfer.
     //
@@ -2019,7 +2019,6 @@ am_hal_iom_power_ctrl(void *pHandle,
                 IOMn(pIOMState->ui32Module)->CLKCFG     = pIOMState->registerState.regCLKCFG;
                 IOMn(pIOMState->ui32Module)->SUBMODCTRL = pIOMState->registerState.regSUBMODCTRL;
                 IOMn(pIOMState->ui32Module)->CQADDR     = pIOMState->registerState.regCQADDR;
-                IOMn(pIOMState->ui32Module)->CQFLAGS    = pIOMState->registerState.regCQFLAGS;
                 IOMn(pIOMState->ui32Module)->CQPAUSEEN  = pIOMState->registerState.regCQPAUSEEN;
                 IOMn(pIOMState->ui32Module)->CQCURIDX   = pIOMState->registerState.regCQCURIDX;
                 IOMn(pIOMState->ui32Module)->CQENDIDX   = pIOMState->registerState.regCQENDIDX;
@@ -2028,6 +2027,10 @@ am_hal_iom_power_ctrl(void *pHandle,
                 IOMn(pIOMState->ui32Module)->INTEN      = pIOMState->registerState.regINTEN;
                 IOMn(pIOMState->ui32Module)->DMATRIGEN  = pIOMState->registerState.regDMATRIGEN;
 
+                // CQFGLAGS are Read-Only and hence can not be directly restored.
+                // We can try to restore the SWFlags here. Hardware flags depend on external conditions
+                // and hence can not be restored (assuming the external conditions remain the same, it should be set automatically.
+                IOMn(pIOMState->ui32Module)->CQSETCLEAR = AM_HAL_IOM_SC_SET(pIOMState->registerState.regCQFLAGS & 0xFF);
                 //
                 // Set CQCFG last - can not set the enable yet
                 //
@@ -2402,7 +2405,7 @@ am_hal_iom_blocking_transfer(void *pHandle,
     IOMn(ui32Module)->DEVCFG = psTransaction->uPeerInfo.ui32I2CDevAddr;
     // CMDRPT register has been repurposed for DCX
     // Set the DCX
-    IOMn(ui32Module)->DCX = pIOMState->dcx[psTransaction->uPeerInfo.ui32SpiChipSelect];
+    IOMn(ui32Module)->DCX = (pIOMState->eInterfaceMode == AM_HAL_IOM_SPI_MODE)  ? pIOMState->dcx[psTransaction->uPeerInfo.ui32SpiChipSelect] : 0;
     //
     // Build the CMD value
     //
@@ -3406,7 +3409,7 @@ uint32_t am_hal_iom_control(void *pHandle, am_hal_iom_request_e eReq, void *pArg
             // Unblock the whole batch of commands in this block
             IOMn(pIOMState->ui32Module)->CQSETCLEAR = AM_HAL_IOM_SC_UNPAUSE_BLOCK;
             pIOMState->block = 0;
-            if (!pIOMState->ui32NumHPPendingEntries)
+            if (pIOMState->ui32NumHPPendingEntries)
             {
                 // Now it is okay to let go of the block of HiPrio transactions
                 status = sched_hiprio(pIOMState, pIOMState->ui32NumHPPendingEntries);

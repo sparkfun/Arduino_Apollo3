@@ -1,0 +1,34 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+PDM	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+available	KEYWORD2
+setClockSpeed	KEYWORD2
+getClockSpeed	KEYWORD2
+setClockDivider	KEYWORD2
+getClockDivider	KEYWORD2
+setLeftGain	KEYWORD2
+getLeftGain	KEYWORD2
+setRightGain	KEYWORD2
+getRightGain	KEYWORD2
+setGain	KEYWORD2
+setChannel	KEYWORD2
+getChannel	KEYWORD2
+setDecimationRate	KEYWORD2
+getDecimationRate	KEYWORD2
+updateConfig	KEYWORD2
+getData	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
