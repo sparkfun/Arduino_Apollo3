@@ -3,10 +3,7 @@
 
   SparkFun sells these at its website: www.sparkfun.com
   Do you like this library? Help support open source hardware. Buy a board!
-  https://www.sparkfun.com/products/15332
-  https://www.sparkfun.com/products/15376
-  https://www.sparkfun.com/products/15411
-  https://www.sparkfun.com/products/15412
+  https://www.sparkfun.com/artemis
 
   Written by Nathan Seidle @ SparkFun Electronics, August 12th, 2019
 
@@ -26,7 +23,6 @@
     * Parity is supported during TX but not checked during RX.
     * Enabling multiple ports causes 115200 RX to fail (because there is additional instance switching overhead)
 
-    
   Development environment specifics:
   Arduino IDE 1.8.x
 

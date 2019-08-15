@@ -3,11 +3,8 @@
 
   SparkFun sells these at its website: www.sparkfun.com
   Do you like this library? Help support open source hardware. Buy a board!
-  https://www.sparkfun.com/products/15332
-  https://www.sparkfun.com/products/15376
-  https://www.sparkfun.com/products/15411
-  https://www.sparkfun.com/products/15412
-
+  https://www.sparkfun.com/artemis
+  
   Written by Nathan Seidle @ SparkFun Electronics, August 12th, 2019
 
   https://github.com/sparkfun/SparkFun_Apollo3
@@ -15,11 +12,17 @@
   SoftwareSerial support for the Artemis
   Any pin can be used for software serial receive or transmit 
   at 300 to 115200bps and anywhere inbetween.
-  Limitations:
-    Uses Timer/Compare module H. This will remove PWM capabilities
+  Limitations (similar to Arduino core SoftwareSerial):
+    * RX on one pin at a time.
+    * No TX and RX at the same time.
+    * TX gets priority. So if Artemis is receiving a string of characters
+    and you do a Serial.print() the print will begin immediately and any additional
+    RX characters will be lost. 
+    * Uses Timer/Compare module H (aka 7). This will remove PWM capabilities
     on some pins.
-    Parity is supported but not checked during RX.
-    
+    * Parity is supported during TX but not checked during RX.
+    * Enabling multiple ports causes 115200 RX to fail (because there is additional instance switching overhead)
+ 
   Development environment specifics:
   Arduino IDE 1.8.x
 
@@ -54,30 +57,28 @@ public:
   void begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig);
   void end(void);
 
-  ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
   int available();
   int read();
   int peek();
   void flush();
   bool overflow();
 
-  void rxBit(void);
-  void rxEndOfByte(void);
-
   virtual size_t write(uint8_t toSend);
-
   virtual size_t write(const uint8_t *buffer, size_t size);
   virtual size_t write(const char *str);
 
-  void beginTX();
-  void calcParityBit();
   void txHandler(void);
+
+  void rxBit(void);
+  void rxEndOfByte(void);
 
   volatile bool rxInUse = false;
   volatile bool txInUse = false;
 
 private:
+  ap3_err_t softwareserialSetConfig(HardwareSerial_Config_e SSconfig);
   void startRXListening(void);
+  void beginTX();
 
   uint8_t txBuffer[AP3_SS_BUFFER_SIZE];
   uint16_t txBufferHead = 0;
@@ -91,8 +92,6 @@ private:
 
   uint8_t _rxPin;
   uint8_t _txPin;
-
-  uint8_t _indexNumber; // The index number at which the pointer to this instance is stored in the global object table.
 
   ap3_gpio_pad_t _txPad;
   ap3_gpio_pad_t _rxPad;
@@ -114,6 +113,7 @@ private:
   bool _rxBufferOverflow = false;
 
   //For TX
+  void calcParityBit();
   uint16_t txSysTicksPerBit = 0;
   uint16_t txSysTicksPerStopBit = 0;
   uint8_t _parityForByte = 0; //Calculated per byte
