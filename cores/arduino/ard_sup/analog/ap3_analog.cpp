@@ -129,7 +129,17 @@ uint16_t analogRead(uint8_t pinNumber)
     am_hal_adc_sample_t Sample;
     uint32_t ui32NumSamples = 1;
 
-    uint8_t padNumber = ap3_gpio_pin2pad(pinNumber);
+    uint8_t padNumber;
+
+    if (pinNumber >= ADC_DIFF0 && pinNumber <= ADC_INTERNAL_VSS)
+    {
+        //Special handling of internal ADC channels
+        padNumber = pinNumber;
+    }
+    else
+    {
+        padNumber = ap3_gpio_pin2pad(pinNumber);
+    }
 
     //Look up configuration status based on pad number
     uint8_t indi;
@@ -292,18 +302,7 @@ ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber)
 
     uint8_t funcsel = 0;
     am_hal_gpio_pincfg_t pincfg = INPUT;
-
-    //Handle special ADC channels
-    if (pinNumber >= ADC_DIFF0 && pinNumber <= ADC_INTERNAL_VSS)
-    {
-        //Don't use the pin to pad lookup from the variant file
-        retval = ap3_analog_pad_funcsel(pinNumber, &funcsel);
-    }
-    else
-    {
-        //Normal pin lookup
-        retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
-    }
+    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
 
     if (retval != AP3_OK)
     {

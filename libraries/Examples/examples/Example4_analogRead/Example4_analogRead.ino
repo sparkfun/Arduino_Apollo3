@@ -13,7 +13,7 @@
 
   Feel like supporting open source hardware?
   Buy a board from SparkFun!
-  SparkFun Edge: https://www.sparkfun.com/products/15170
+  SparkFun Edge: https://www.sparkfun.com/artemis
 
   Hardware Connections:
   Upload code
@@ -30,7 +30,7 @@ void setup()
 
   pinMode(LED, OUTPUT);
 
-  //analogReadResolution(14); //Set resolution to 14 bit
+  analogReadResolution(14); //Set resolution to 14 bit
   //analogReadResolution(16); //Set resolution to 16 bit - will pad ADC output with two zeros
 }
 
@@ -38,29 +38,29 @@ void loop()
 {
   digitalWrite(LED, LOW);
 
-  int myValue1 = analogRead(A1); //Automatically sets pin to analog input
-  Serial.print("A1: ");
+  int myValue1 = analogRead(A3); //Automatically sets pin to analog input
+  Serial.print("A3: ");
   Serial.print(myValue1);
 
-  int internalTemp = analogRead(ADC_TEMP); //Read internal temp sensor. 3.8mV/C, +/-3C
-  Serial.print("\tinternalTemp: ");
-  Serial.print(internalTemp);
-
-  int vss = analogRead(ADC_VSS); //Read internal VSS
-  Serial.print("\tvss: ");
-  Serial.print(vss);
-
   //TODO enable battload
-  int div3 = analogRead(ADC_DIV3); //Read VCC across a 1/3 resistor divider
+  int div3 = analogRead(ADC_INTERNAL_VCC_DIV3); //Read VCC across a 1/3 resistor divider
   Serial.print("\tVCC/3: ");
   Serial.print(div3);
 
-  float vcc = (float)div3 * 6 / 1024.0; //Convert 1/3 VCC to VCC
+  float vcc = (float)div3 * 6 / 16384.0; //Convert 1/3 VCC to VCC
   Serial.print(" VCC: ");
   Serial.print(vcc, 2);
   Serial.print("V");
 
-  //pinMode(A4, OUTPUT); //Reset analog function to false.
+  int internalTempVoltage = analogRead(ADC_INTERNAL_TEMP); //Read internal temp sensor. 3.8mV/C, +/-3C
+  double internalTemp = internalTempVoltage * vcc / 16384.0; //Convert internal temp reading to voltage
+  internalTemp /= 0.0038; //Convert voltage to degrees C
+  Serial.print("\tinternalTemp: ");
+  Serial.print(internalTemp, 2);
+
+  int vss = analogRead(ADC_INTERNAL_VSS); //Read internal VSS (should be 0)
+  Serial.print("\tvss: ");
+  Serial.print(vss);
 
   Serial.println();
 
