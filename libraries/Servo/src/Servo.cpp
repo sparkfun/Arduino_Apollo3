@@ -34,7 +34,7 @@ Servo::Servo()
 void Servo::attach(uint8_t pinNumber)
 {
 	_servoPinNumber = pinNumber;
-	_servoPadNumber = ap3_gpio_pin2pad(pinNumber);
+	pinMode(_servoPinNumber, OUTPUT);
 }
 
 void Servo::write(uint8_t servoPosition)
@@ -43,9 +43,9 @@ void Servo::write(uint8_t servoPosition)
 	if (_servoPosition > 180)
 		_servoPosition = 180; //Bounds check
 
-	uint16_t newServoPosition = map(servoPosition, 0, 180, 0, 1023);
+	uint16_t newServoPosition = map(servoPosition, 0, 181, 0, ((uint16_t)0x01 << getServoResolution()));
 
-	servoWrite(_servoPadNumber, newServoPosition); // This and the above write should both produce 1.5 ms wide pulses, though using different resolutions
+	servoWrite(_servoPinNumber, newServoPosition); // This and the above write should both produce 1.5 ms wide pulses, though using different resolutions
 }
 
 // void Servo::writeMicroseconds(uint8_t servoPosition)
@@ -55,9 +55,9 @@ void Servo::write(uint8_t servoPosition)
 
 void Servo::detach(void)
 {
-	_servoPinNumber = NULL;
-	_servoPadNumber = NULL;
 	pinMode(_servoPinNumber, INPUT); //Will stop PWM output
+
+	_servoPinNumber = 0;
 }
 
 uint8_t Servo::read(void)

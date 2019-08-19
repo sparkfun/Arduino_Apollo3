@@ -38,8 +38,7 @@ public:
   bool attached(uint8_t pinNumber);
 
 private:
-  uint8_t _servoPadNumber = NULL;
-  uint8_t _servoPinNumber = NULL;
+  uint8_t _servoPinNumber = 0;
   uint8_t _servoPosition;
 };
 
