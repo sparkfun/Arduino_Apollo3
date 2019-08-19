@@ -28,7 +28,6 @@ SOFTWARE.
 //Constructor
 Servo::Servo()
 {
-
 }
 
 void Servo::attach(uint8_t pinNumber, uint16_t minMicros, uint16_t maxMicros)
@@ -51,15 +50,22 @@ void Servo::write(uint8_t servoPosition)
 		_servoPosition = 180; //Bounds check
 
 	uint16_t newServoPosition = map(servoPosition, 0, 181, 0, ((uint16_t)0x01 << getServoResolution()));
-
 	servoWrite(_servoPinNumber, newServoPosition, _minMicros, _maxMicros);
 }
 
 void Servo::writeMicroseconds(uint16_t microSecs)
 {
-	//Convert microseconds to PWM value
-	uint16_t newServoPosition = microSecs;
-	servoWrite(_servoPinNumber, newServoPosition, _minMicros, _maxMicros);
+	uint16_t extendedMin = _minMicros;
+	uint16_t extendedMax = _maxMicros;
+
+	if (microSecs > _maxMicros)
+		extendedMax = microSecs;
+	if (microSecs < _minMicros)
+		extendedMin = microSecs;
+
+	//Map microseconds to PWM value
+	uint16_t newServoPosition = map(microSecs, extendedMin, extendedMax + 1, 0, ((uint16_t)0x01 << getServoResolution()));
+	servoWrite(_servoPinNumber, newServoPosition, extendedMin, extendedMax);
 }
 
 void Servo::detach(void)

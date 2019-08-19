@@ -17,6 +17,8 @@ read	KEYWORD2
 
 writeMicroseconds	KEYWORD2
 attached	KEYWORD2
+servoWriteResolution	KEYWORD2
+getServoResolution	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
