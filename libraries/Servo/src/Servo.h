@@ -31,16 +31,19 @@ class Servo
 {
 public:
   Servo();
+  void attach(uint8_t pinNumber, uint16_t minMicros, uint16_t maxMicros);
   void attach(uint8_t pinNumber);
   void write(uint8_t servoPosition);
+  void writeMicroseconds(uint16_t microSecs);
   void detach(void);
   uint8_t read(void);
   bool attached(uint8_t pinNumber);
 
 private:
-  uint8_t _servoPadNumber = NULL;
-  uint8_t _servoPinNumber = NULL;
+  uint8_t _servoPinNumber = 0;
   uint8_t _servoPosition;
+  uint16_t _minMicros;
+  uint16_t _maxMicros;
 };
 
 #endif // _AP3_SERVO_H_

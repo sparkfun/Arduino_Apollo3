@@ -43,12 +43,18 @@ ap3_err_t ap3_change_channel(ap3_gpio_pad_t padNumber);
 
 bool power_adc_disable();
 uint16_t analogRead(uint8_t pinNumber);
-void analogReadResolution(uint8_t bits);
+ap3_err_t analogReadResolution(uint8_t bits);
 
 ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk);
 ap3_err_t analogWriteResolution(uint8_t res);
 ap3_err_t analogWrite(uint8_t pin, uint32_t val);
 ap3_err_t servoWriteResolution(uint8_t res);
+uint8_t getServoResolution();
 ap3_err_t servoWrite(uint8_t pin, uint32_t val);
+ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t maxMicros);
+
+ap3_err_t tone(uint8_t pin, uint32_t freq);
+ap3_err_t tone(uint8_t pin, uint32_t freq, uint32_t duration);
+ap3_err_t noTone(uint8_t pin);
 
 #endif // _AP3_ANALOG_H_

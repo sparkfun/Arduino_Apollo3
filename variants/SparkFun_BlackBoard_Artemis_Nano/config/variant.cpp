@@ -25,35 +25,30 @@ SOFTWARE.
 const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     //~ = PWM, A = ADC
     //Apollo Pad, //Silkscreen indicator
-    13,                //A0 - ~I2SBCLK/RX1
-    33,                //A1 - ~SWO/32kHz
-    11,                //A2 - ~PDMDATA
-    29,                //A3 - ~PDMDATA
-    18,                //4 - ~CMPIN1/SCCIO
-    31,                //A5 - ~SCCCLK
-    43,                //6 - ~SDA3/MISO3/RX1
-    42,                //7 - SCL3/SCK3/TX1
-    38,                //8 - MOSI3/RX1
-    39,                //9 - ~SCL4/SCK4/TX1
-    40,                //10 - SDA4/MISO4/RX1
-    5,                 //11 - ~SCL0/SCK0
-    7,                 //12 - ~MOSI0/CLKOUT
-    6,                 //13 - ~SDA0/MISO0/I2SDAT
-    35,                //A14 - ~TX1/I2SDAT/PDMCLK
-    32,                //A15 - ~SCCIO
-    12,                //A16 - ~PDMCLK/TX1
-    32,                //17 - ~SDA2/MISO3/RX1
-    12,                //18 - ~SCL2/SCK2
-    19,                //19 - ~Not exposed, Status LED
-    48,                //20 - Not exposed, TX0
-    49,                //21 - Not exposed, RX0
-    36,                //22 - Not exposed, PDMDATA of Mic
-    37,                //23 - Not exposed, PDMCLK of Mic
-    AP3_ADC_DIFF0_PAD, //24 - Not a real pad, ADC_DIFF0
-    AP3_ADC_DIFF1_PAD, //25 - Not a real pad, ADC_DIFF1
-    AP3_ADC_TEMP_PAD,  //26 - Not a real pad, ADC_TEMP
-    AP3_ADC_DIV3_PAD,  //27 - Not a real pad, ADC_DIV3
-    AP3_ADC_VSS_PAD,   //28 - Not a real pad, ADC_VSS
+    13, //A0 - ~I2SBCLK/RX1
+    33, //A1 - ~SWO/32kHz
+    11, //A2 - ~PDMDATA
+    29, //A3 - ~PDMDATA
+    18, //4 - ~CMPIN1/SCCIO
+    31, //A5 - ~SCCCLK
+    43, //6 - ~SDA3/MISO3/RX1
+    42, //7 - SCL3/SCK3/TX1
+    38, //8 - MOSI3/RX1
+    39, //9 - ~SCL4/SCK4/TX1
+    40, //10 - SDA4/MISO4/RX1
+    5,  //11 - ~SCL0/SCK0
+    7,  //12 - ~MOSI0/CLKOUT
+    6,  //13 - ~SDA0/MISO0/I2SDAT
+    35, //A14 - ~TX1/I2SDAT/PDMCLK
+    32, //A15 - ~SCCIO
+    12, //A16 - ~PDMCLK/TX1
+    32, //17 - ~SDA2/MISO3/RX1
+    12, //18 - ~SCL2/SCK2
+    19, //19 - ~Not exposed, Status LED
+    48, //20 - Not exposed, TX0
+    49, //21 - Not exposed, RX0
+    36, //22 - Not exposed, PDMDATA of Mic
+    37, //23 - Not exposed, PDMCLK of Mic
 };
 
 // Uart Definitions

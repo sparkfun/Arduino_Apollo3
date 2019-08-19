@@ -214,18 +214,17 @@ void SPIClass::setDataMode(uint8_t mode)
   initialize();
 }
 
-// void SPIClass::setClockDivider(uint8_t div)
-// {
-//   // if (div < SPI_MIN_CLOCK_DIVIDER) {
-//   //   _p_sercom->setBaudrateSPI(SPI_MIN_CLOCK_DIVIDER);
-//   // } else {
-//   //   _p_sercom->setBaudrateSPI(div);
-//   // }
-// }
+void SPIClass::setClockDivider(uint8_t div)
+{
+  _config.ui32ClockFreq = F_CPU / div;
+  initialize();
+}
 
 byte SPIClass::transfer(uint8_t data)
 {
-  _transfer(&data, NULL, 1);
+  uint8_t rxval = 0x00;
+  _transfer(&data, &rxval, 1);
+  return rxval;
 }
 
 uint16_t SPIClass::transfer16(uint16_t data)
@@ -289,7 +288,7 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
   // Determine direction
   if ((buf_out != NULL) && (buf_in != NULL))
   {
-    iomTransfer.eDirection = AM_HAL_IOM_TX; // AM_HAL_IOM_FULLDUPLEX - Note: Ambiq SDK says that FULLDUPLEX is not yet supported // todo:
+    iomTransfer.eDirection = AM_HAL_IOM_FULLDUPLEX;
   }
   else if (buf_out != NULL)
   {
@@ -300,12 +299,18 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
     iomTransfer.eDirection = AM_HAL_IOM_RX;
   }
 
-  uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
-  if (retVal32 != 0)
-  {
-    // Serial.printf("got an error on _transfer: %d\n", retVal32);
-    return /*retVal32*/;
+  uint32_t retVal32 = 0;
+  if( iomTransfer.eDirection == AM_HAL_IOM_FULLDUPLEX ){
+    retVal32 = am_hal_iom_spi_blocking_fullduplex(_handle, &iomTransfer);
+  }else{
+    retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
   }
+   
+  // if (retVal32 != 0)
+  // {
+  //   Serial.printf("got an error on _transfer: %d\n", retVal32);
+  //   return retVal32;
+  // }
 }
 
 void SPIClass::attachInterrupt()

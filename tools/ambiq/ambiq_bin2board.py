@@ -375,12 +375,13 @@ def upload(args, verboseprint):
     # Assuming worst case ~100 ms/page of flashing time, and allowing for the
     # image to be close to occupying full SRAM (256K) which is 128 pages.
 
+    connection_timeout = 5
 
     print('Connecting over serial port {}...'.format(args.port), flush=True)
 
     #Check to see if the com port is available
     try: 
-        with serial.Serial(args.port, args.baud, timeout=1) as ser:
+        with serial.Serial(args.port, args.baud, timeout=connection_timeout) as ser:
             pass
     except:
 
@@ -414,7 +415,7 @@ def upload(args, verboseprint):
     while loadTries < 3: 
         loadSuccess = False
 
-        with serial.Serial(args.port, args.baud, timeout=0.5) as ser:
+        with serial.Serial(args.port, args.baud, timeout=connection_timeout) as ser:
             #DTR is driven low when serial port open. DTR has now pulled RST low.
 
             time.sleep(0.005) #3ms and 10ms work well. Not 50, and not 0.
@@ -425,6 +426,8 @@ def upload(args, verboseprint):
 
             #Give bootloader a chance to run and check bootload pin before communication begins. But must initiate com before bootloader timeout of 250ms.
             time.sleep(0.100) #100ms works well
+
+            ser.reset_input_buffer()    # reset the input bufer to discard any UART traffic that the device may have generated
 
             connect_device(ser, args, verboseprint)
 

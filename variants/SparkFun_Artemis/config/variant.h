@@ -163,4 +163,9 @@ extern Uart Serial;
 // Many Arduino cores provide a built-in LED for quick verification, like in the Blink sketch
 #define LED_BUILTIN 13
 
+// Artemis has a variety of PDM capable pins. These defines can be modified, even excluded
+// and declared during myPDM.begin(pdm_data, pdm_clock)
+#define MIC_DATA 36
+#define MIC_CLOCK 37
+
 #endif // _AP3_VARIANT_H_

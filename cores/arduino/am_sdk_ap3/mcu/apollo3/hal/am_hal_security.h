@@ -45,15 +45,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
 #ifndef AM_HAL_SECURITY_H
 #define AM_HAL_SECURITY_H
 
+//
 // Location of SBL install address for this device
-#define AM_HAL_SBL_ADDRESS                  0
+//
+// Important Note:
+//  Some caution should be observed when using AM_HAL_SBL_ADDRESS as an address.
+//   GCC considers use of this address to be a NULL pointer.  When compiled with
+//   high optimization (-O3) and used to read the location with, for example,
+//   code such as *((volatile uint32_t *)(AM_HAL_SBL_ADDRESS)), GCC will insert
+//   an instruction it calls "UDF" (undefined), op-code 0xDEFF, which will cause
+//   a fault on execution to trap the "invalid" null-ptr usage.
+//  This does not appear to be an issue with IAR and Keil ARM5.
+//  It is likely an issue with Keil ARM6.
+//
+#define AM_HAL_SBL_ADDRESS                  0x00000000
+
+
 
 typedef struct
 {

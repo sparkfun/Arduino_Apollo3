@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -98,10 +98,9 @@ am_hal_cachectrl_config(const am_hal_cachectrl_config_t *psConfig)
             (CACHECTRL_CACHECFG_DCACHE_ENABLE_Msk   |
              CACHECTRL_CACHECFG_ICACHE_ENABLE_Msk));
 
-
     return AM_HAL_STATUS_SUCCESS;
 
-} // am_hal_cachectrl_enable()
+} // am_hal_cachectrl_config()
 
 //*****************************************************************************
 //
@@ -111,6 +110,9 @@ am_hal_cachectrl_config(const am_hal_cachectrl_config_t *psConfig)
 uint32_t
 am_hal_cachectrl_enable(void)
 {
+    //
+    // Enable the cache
+    //
     CACHECTRL->CACHECFG |= _VAL2FLD(CACHECTRL_CACHECFG_ENABLE, 1);
 
     return AM_HAL_STATUS_SUCCESS;
@@ -141,13 +143,102 @@ am_hal_cachectrl_disable(void)
 
 //*****************************************************************************
 //
+//  Control helper functions.
+//
+//*****************************************************************************
+static bool
+set_LPMMODE(uint32_t ui32value)
+{
+    uint32_t ui32Val;
+    uint32_t *pui32RegAddr;
+
+    if ( ui32value > (CACHECTRL_FLASHCFG_LPMMODE_Msk >> CACHECTRL_FLASHCFG_LPMMODE_Pos) )
+    {
+        return false;
+    }
+
+    //
+    // Compute register address (assumes each reg is 1 word offset).
+    //
+    pui32RegAddr = (uint32_t*)&CACHECTRL->FLASHCFG;
+
+    AM_CRITICAL_BEGIN
+    ui32Val = am_hal_flash_load_ui32(pui32RegAddr);
+    ui32Val &= ~(CACHECTRL_FLASHCFG_LPMMODE_Msk                 |
+                 CACHECTRL_FLASHCFG_LPM_RD_WAIT_Msk);
+    ui32Val |= _VAL2FLD(CACHECTRL_FLASHCFG_LPMMODE, ui32value)    |
+               _VAL2FLD(CACHECTRL_FLASHCFG_LPM_RD_WAIT, 0x7);
+    am_hal_flash_store_ui32(pui32RegAddr, ui32Val);
+    AM_CRITICAL_END
+
+    return true;
+} // set_LPMMODE()
+
+static bool
+set_SEDELAY(uint32_t ui32value)
+{
+    uint32_t ui32Val;
+    uint32_t *pui32RegAddr;
+
+    if ( ui32value > (CACHECTRL_FLASHCFG_SEDELAY_Msk >> CACHECTRL_FLASHCFG_SEDELAY_Pos) )
+    {
+        return false;
+    }
+
+    //
+    // Compute register address (assumes each reg is 1 word offset).
+    //
+    pui32RegAddr = (uint32_t*)&CACHECTRL->FLASHCFG;
+
+    AM_CRITICAL_BEGIN
+    ui32Val = am_hal_flash_load_ui32(pui32RegAddr);
+    ui32Val &= ~(CACHECTRL_FLASHCFG_SEDELAY_Msk                 |
+                 CACHECTRL_FLASHCFG_LPM_RD_WAIT_Msk);
+    ui32Val |= _VAL2FLD(CACHECTRL_FLASHCFG_SEDELAY, ui32value)    |
+               _VAL2FLD(CACHECTRL_FLASHCFG_LPM_RD_WAIT, 0x7);
+    am_hal_flash_store_ui32(pui32RegAddr, ui32Val);
+    AM_CRITICAL_END
+
+    return true;
+} // set_SEDELAY()
+
+static bool
+set_RDWAIT(uint32_t ui32value)
+{
+    uint32_t ui32Val;
+    uint32_t *pui32RegAddr;
+
+    if ( ui32value > (CACHECTRL_FLASHCFG_RD_WAIT_Msk >> CACHECTRL_FLASHCFG_RD_WAIT_Pos) )
+    {
+        return false;
+    }
+
+    //
+    // Compute register address (assumes each reg is 1 word offset).
+    //
+    pui32RegAddr = (uint32_t*)&CACHECTRL->FLASHCFG;
+
+    AM_CRITICAL_BEGIN
+    ui32Val = am_hal_flash_load_ui32(pui32RegAddr);
+    ui32Val &= ~(CACHECTRL_FLASHCFG_RD_WAIT_Msk                 |
+                 CACHECTRL_FLASHCFG_LPM_RD_WAIT_Msk);
+    ui32Val |= _VAL2FLD(CACHECTRL_FLASHCFG_RD_WAIT, ui32value)  |
+               _VAL2FLD(CACHECTRL_FLASHCFG_LPM_RD_WAIT, 0x7);
+    am_hal_flash_store_ui32(pui32RegAddr, ui32Val);
+    AM_CRITICAL_END
+
+    return true;
+} // set_RDWAIT()
+
+//*****************************************************************************
+//
 //  Select the cache configuration type.
 //
 //*****************************************************************************
 uint32_t
 am_hal_cachectrl_control(am_hal_cachectrl_control_e eControl, void *pArgs)
 {
-    uint32_t ui32Val;
+    uint32_t ui32Arg;
     uint32_t ui32SetMask = 0;
 
     switch ( eControl )
@@ -200,23 +291,78 @@ am_hal_cachectrl_control(am_hal_cachectrl_control_e eControl, void *pArgs)
             CACHECTRL->CACHECFG &= ~CACHECTRL_CACHECFG_ENABLE_MONITOR_Msk;
             AM_CRITICAL_END
             break;
+        case AM_HAL_CACHECTRL_CONTROL_LPMMODE_RESET:
+            //
+            // Safely set the reset values for LPMMODE, SEDELAY, and RDWAIT.
+            //
+            if ( !set_LPMMODE(AM_HAL_CACHECTRL_FLASHCFG_LPMMODE_NEVER)      ||
+                 !set_SEDELAY(0x7)                                          ||
+                 !set_RDWAIT(0x3) )
+            {
+                return AM_HAL_STATUS_FAIL;
+            }
+            break;
+        case AM_HAL_CACHECTRL_CONTROL_LPMMODE_RECOMMENDED:
+            //
+            // Safely set the as recommended values (from the datasheet)
+            // for LPMMODE, SEDELAY, and RDWAIT.
+            //
+            if ( !set_LPMMODE(AM_HAL_CACHECTRL_FLASHCFG_LPMMODE_STANDBY)    ||
+                 !set_SEDELAY(0x5)                                          ||
+                 !set_RDWAIT(0x1) )
+            {
+                return AM_HAL_STATUS_FAIL;
+            }
+            break;
+        case AM_HAL_CACHECTRL_CONTROL_LPMMODE_AGGRESSIVE:
+            //
+            // Safely set aggressive values for LPMMODE, SEDELAY, and RDWAIT.
+            // (For now select recommended values.)
+            //
+            if ( !set_LPMMODE(AM_HAL_CACHECTRL_FLASHCFG_LPMMODE_STANDBY)    ||
+                 !set_SEDELAY(0x6)                                          ||
+                 !set_RDWAIT(0x1) )
+            {
+                return AM_HAL_STATUS_FAIL;
+            }
+            break;
         case AM_HAL_CACHECTRL_CONTROL_LPMMODE_SET:
             //
-            // Safely set LPMMODE.
-            // The new mode is passed by reference via pArgs.  That is, pArgs is
-            // assumed to be a pointer to a uint32_t of the new LPMMODE value.
+            // Safely set LPMMODE, SEDELAY, or RDWAIT.
+            // The new value is passed by reference via pArgs.  That is, pArgs is
+            //  assumed to be a pointer to a uint32_t of the new value.
             //
-            if ( !pArgs  ||
-                 (*((uint32_t*)pArgs) > CACHECTRL_FLASHCFG_LPMMODE_ALWAYS) )
+            if ( !pArgs )
             {
                 return AM_HAL_STATUS_INVALID_ARG;
             }
-            AM_CRITICAL_BEGIN
-            ui32Val = am_hal_flash_load_ui32((uint32_t*)&CACHECTRL->FLASHCFG);
-            ui32Val &= ~CACHECTRL_FLASHCFG_LPMMODE_Msk;
-            ui32Val |= _VAL2FLD(CACHECTRL_FLASHCFG_LPMMODE, *((uint32_t*)pArgs));
-            am_hal_flash_store_ui32((uint32_t*)&CACHECTRL->FLASHCFG, ui32Val);
-            AM_CRITICAL_END
+            ui32Arg = *(uint32_t*)pArgs;
+            if ( !set_LPMMODE(ui32Arg) )
+            {
+                return AM_HAL_STATUS_FAIL;
+            }
+            break;
+        case AM_HAL_CACHECTRL_CONTROL_SEDELAY_SET:
+            if ( !pArgs )
+            {
+                return AM_HAL_STATUS_INVALID_ARG;
+            }
+            ui32Arg = *(uint32_t*)pArgs;
+            if ( !set_SEDELAY(ui32Arg) )
+            {
+                return AM_HAL_STATUS_FAIL;
+            }
+            break;
+        case AM_HAL_CACHECTRL_CONTROL_RDWAIT_SET:
+            if ( !pArgs )
+            {
+                return AM_HAL_STATUS_INVALID_ARG;
+            }
+            ui32Arg = *(uint32_t*)pArgs;
+            if ( !set_RDWAIT(ui32Arg) )
+            {
+                return AM_HAL_STATUS_FAIL;
+            }
             break;
         case AM_HAL_CACHECTRL_CONTROL_NC_CFG:
         {

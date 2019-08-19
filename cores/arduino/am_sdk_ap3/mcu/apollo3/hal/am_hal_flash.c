@@ -56,7 +56,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -69,33 +69,33 @@
 //
 const g_am_hal_flash_t g_am_hal_flash =
 {
-         ((int  (*)(uint32_t, uint32_t)) 0x0800004d),                                  // flash_mass_erase
-         ((int  (*)(uint32_t, uint32_t, uint32_t))  0x08000051),                       // flash_page_erase
-         ((int  (*)(uint32_t, uint32_t *, uint32_t *, uint32_t))  0x08000055),         // flash_program_main
-         ((int  (*)(uint32_t, uint32_t, uint32_t *, uint32_t, uint32_t))  0x08000059), // flash_program_info_area
-         ((int  (*)(uint32_t, uint32_t)) 0x0800006d),                                  // flash_mass_erase_nb
-         ((int  (*)(uint32_t, uint32_t, uint32_t)) 0x08000071),                        // flash_page_erase_nb
-         ((int  (*)( uint32_t, uint32_t))  0x08000095),                                // flash_page_erase2_nb
-         ((bool (*)(void)) 0x0800007d),                                                // flash_nb_operation_complete
-         ((uint32_t (*)(uint32_t *)) 0x08000075),                                      // flash_util_read_word
-         ((void (*)( uint32_t *, uint32_t)) 0x08000079),                               // flash_util_write_word
-         ((void (*)(uint32_t ))            0x0800009D),                                // bootrom_delay_cycles
-         ((int  (*)( uint32_t, uint32_t))  0x08000081),                                // flash_info_erase
-         ((int  (*)( uint32_t, uint32_t))  0x08000089),                                // flash_info_plus_main_erase
-         ((int  (*)(uint32_t))             0x08000091),                                // flash_info_plus_main_erase_both
-         ((int  (*)( uint32_t ))           0x08000099),                                // flash_recovery
-         ((void (*)(void))  0x0800005d),                                               // flash_program_main_from_sram
-         ((void (*)(void))  0x08000061),                                               // flash_program_info_area_from_sram
-         ((void (*)(void))  0x08000065),                                               // flash_erase_main_pages_from_sram
-         ((void (*)(void))  0x08000069),                                               // flash_mass_erase_from_sram
-         ((void (*)(void))                 0x08000085),                                // flash_info_erase_from_sram
-         ((void (*)(void))                 0x0800008D),                                // flash_info_plus_main_erase_from_sram
-         ((void (*)(void))                 0x080000A1),                                // flash_nb_operation_complete_from_sram
-         ((void (*)(void))                 0x080000A5),                                // flash_page_erase2_nb_from_sram
-         ((void (*)(void))                 0x080000A9)                                 // flash_recovery_from_sram
+         ((int  (*)(uint32_t, uint32_t))                                0x0800004d),    // flash_mass_erase
+         ((int  (*)(uint32_t, uint32_t, uint32_t))                      0x08000051),    // flash_page_erase
+         ((int  (*)(uint32_t, uint32_t *, uint32_t *, uint32_t))        0x08000055),    // flash_program_main
+         ((int  (*)(uint32_t, uint32_t, uint32_t *, uint32_t, uint32_t))0x08000059),    // flash_program_info_area
+         ((int  (*)(uint32_t, uint32_t))                                0x0800006d),    // flash_mass_erase_nb
+         ((int  (*)(uint32_t, uint32_t, uint32_t))                      0x08000071),    // flash_page_erase_nb
+         ((int  (*)( uint32_t, uint32_t))                               0x08000095),    // flash_page_erase2_nb
+         ((bool (*)(void))                                              0x0800007d),    // flash_nb_operation_complete
+         ((uint32_t (*)(uint32_t *))                                    0x08000075),    // flash_util_read_word
+         ((void (*)( uint32_t *, uint32_t))                             0x08000079),    // flash_util_write_word
+         ((void (*)(uint32_t ))                                         0x0800009D),    // bootrom_delay_cycles
+         ((int  (*)( uint32_t, uint32_t))                               0x08000081),    // flash_info_erase
+         ((int  (*)( uint32_t, uint32_t))                               0x08000089),    // flash_info_plus_main_erase
+         ((int  (*)(uint32_t))                                          0x08000091),    // flash_info_plus_main_erase_both
+         ((int  (*)( uint32_t ))                                        0x08000099),    // flash_recovery
+         ((void (*)(void))                                              0x0800005d),    // flash_program_main_from_sram
+         ((void (*)(void))                                              0x08000061),    // flash_program_info_area_from_sram
+         ((void (*)(void))                                              0x08000065),    // flash_erase_main_pages_from_sram
+         ((void (*)(void))                                              0x08000069),    // flash_mass_erase_from_sram
+         ((void (*)(void))                                              0x08000085),    // flash_info_erase_from_sram
+         ((void (*)(void))                                              0x0800008D),    // flash_info_plus_main_erase_from_sram
+         ((void (*)(void))                                              0x080000A1),    // flash_nb_operation_complete_from_sram
+         ((void (*)(void))                                              0x080000A5),    // flash_page_erase2_nb_from_sram
+         ((void (*)(void))                                              0x080000A9)     // flash_recovery_from_sram
 };
 
-const uint32_t ui32SramMaxAddr = 0x10060000;
+const uint32_t ui32SramMaxAddr = (AM_HAL_FLASH_SRAM_LARGEST_VALID_ADDR + 1);
 //*****************************************************************************
 //
 //! @brief This function performs a mass erase on a flash instance.
@@ -184,36 +184,48 @@ am_hal_flash_program_main(uint32_t ui32ProgramKey, uint32_t *pui32Src,
 {
     uint32_t ui32MaxSrcAddr = (uint32_t)pui32Src + (ui32NumWords << 2);
 
-    // workround, the last word of SRAM cannot be the source
+    //
+    // Workaround, the last word of SRAM cannot be the source
     // of programming by BootRom, check to see if it is the last
-    if (ui32MaxSrcAddr == ui32SramMaxAddr)
+    //
+    if ( ui32MaxSrcAddr == ui32SramMaxAddr )
     {
         uint32_t ui32Temp;
         int iRetVal;
 
+        //
         // program the other words using the boot-rom function
-        if (ui32NumWords > 1)
+        //
+        if ( ui32NumWords > 1 )
         {
             iRetVal = g_am_hal_flash.flash_program_main(
                         ui32ProgramKey,
                         pui32Src,
                         pui32Dst,
                         ui32NumWords - 1);
+
+            //
             // return if anything wrong
-            if (iRetVal != 0)
+            //
+            if ( iRetVal != 0 )
             {
                 return iRetVal;
             }
         }
+
+        //
         // program the last word of the pSrc from a local
         // variable if it is the last word of SRAM
+        //
         ui32Temp = *(uint32_t *)(ui32MaxSrcAddr - 4);
+
         return g_am_hal_flash.flash_program_main(
                         ui32ProgramKey,
                         &ui32Temp,
                         pui32Dst + ui32NumWords - 1,
                         1);
     }
+
     return g_am_hal_flash.flash_program_main(ui32ProgramKey, pui32Src,
                                              pui32Dst, ui32NumWords);
 } // am_hal_flash_program_main()
@@ -246,52 +258,16 @@ am_hal_flash_clear_bits(uint32_t ui32ProgramKey, uint32_t *pui32Addr,
                         uint32_t ui32BitMask)
 {
     uint32_t ui32Val = ~ui32BitMask;
-    // CAUTION: We can reprogram a bit in flash to 0 only once...so make sure we do not re-clear bits
+
+    //
+    // CAUTION: We can reprogram a bit in flash to 0 only once...so make sure
+    //          that we do not re-clear bits
+    //
     ui32Val |= ~(*pui32Addr);
 
     return g_am_hal_flash.flash_program_main(ui32ProgramKey, &ui32Val,
                                              pui32Addr, 1);
 } // am_hal_flash_clear_bits()
-
-//*****************************************************************************
-//
-//! @brief This reprograms 1 word of the Main array on one flash instance.
-//!
-//! @param ui32ProgramKey - The programming key, AM_HAL_FLASH_PROGRAM_KEY.
-//! @param ui32Value - one word of data to program into the flash instance.
-//! @param pui32Dst - Pointer to the word aligned flash location where
-//! programming of the flash instance is to begin.
-//!
-//! This function will reprogram one word in main flash.
-//!
-//! @note Interrupts are active during execution of this function. Any interrupt
-//! taken could cause execution errors. Please see the IMPORTANT note under
-//! Detailed Description above for more details.
-//!
-//! @return 0 for success, non-zero for failure.
-//
-//*****************************************************************************
-int
-am_hal_flash_reprogram_ui32(uint32_t ui32ProgramKey,
-                            uint32_t ui32Data,
-                            uint32_t *pui32Dst)
-{
-    int iRC = 0;
-
-    if (ui32Data != *pui32Dst)
-    {
-        // bits already set to 0 should not be rewritten to 0
-        ui32Data |= ~(*pui32Dst);
-
-        iRC = g_am_hal_flash.flash_program_main(
-                ui32ProgramKey,
-                &ui32Data,       // source data
-                pui32Dst,        // destination
-                1 );             // number of words
-    }
-
-    return iRC;
-} // am_hal_flash_reprogram_ui32()
 
 //*****************************************************************************
 //
@@ -322,15 +298,19 @@ am_hal_flash_program_info(uint32_t ui32InfoKey, uint32_t ui32InfoInst,
 {
     uint32_t ui32MaxSrcAddr = (uint32_t)pui32Src + (ui32NumWords << 2);
 
+    //
     // workround, the last word of SRAM cannot be the source
     // of programming by BootRom, check to see if it is the last
-    if (ui32MaxSrcAddr == ui32SramMaxAddr)
+    //
+    if ( ui32MaxSrcAddr == ui32SramMaxAddr )
     {
         uint32_t ui32Temp;
         int iRetVal;
 
+        //
         // program the other words using the boot-rom function
-        if (ui32NumWords > 1)
+        //
+        if ( ui32NumWords > 1 )
         {
             iRetVal = g_am_hal_flash.flash_program_info_area(
                         ui32InfoKey,
@@ -338,14 +318,20 @@ am_hal_flash_program_info(uint32_t ui32InfoKey, uint32_t ui32InfoInst,
                         pui32Src,
                         ui32Offset,
                         ui32NumWords - 1);
+
+            //
             // return if anything wrong
-            if (iRetVal != 0)
+            //
+            if ( iRetVal != 0 )
             {
                 return iRetVal;
             }
         }
+
+        //
         // program the last word of the pSrc from a local
         // variable if it is the last word of SRAM
+        //
         ui32Temp = *(uint32_t *)(ui32MaxSrcAddr - 4);
         return g_am_hal_flash.flash_program_info_area(
                         ui32InfoKey,
@@ -354,51 +340,11 @@ am_hal_flash_program_info(uint32_t ui32InfoKey, uint32_t ui32InfoInst,
                         ui32Offset + ui32NumWords - 1,
                         1);
     }
+
     return g_am_hal_flash.flash_program_info_area(ui32InfoKey, ui32InfoInst, pui32Src,
                                                   ui32Offset, ui32NumWords);
 
 } // am_hal_flash_program_info()
-
-//*****************************************************************************
-//
-//! @brief This function reprograms one word in the customer INFO space.
-//!
-//! @param ui32InfoKey - The customer INFO space key.
-//! @param ui32InfoInst - The INFO space instance, 0 or 1.
-//! @param ui32Value - one word of data to program into the customer INFO.
-//! INFO space.
-//! @param ui32Offset - Word offset into customer INFO space (offset of 0 is
-//! the first word, 1 is second word, etc.).
-//!
-//! This function will program one word in the customer INFO space.
-//!
-//! @note Interrupts are active during execution of this function. Any interrupt
-//! taken could cause execution errors. Please see the IMPORTANT note under
-//! Detailed Description above for more details.
-//!
-//! @return 0 for success, non-zero for failure.
-//
-//*****************************************************************************
-int
-am_hal_flash_reprogram_info_ui32(uint32_t ui32InfoKey, uint32_t ui32InfoInst,
-                                 uint32_t ui32Data, uint32_t ui32Offset)
-{
-    int iRC = 0;
-    uint32_t *pui32Dst = (uint32_t *)(AM_HAL_FLASH_INFO_ADDR + ui32Offset);
-
-    if (ui32Data != *pui32Dst)
-    {
-        // bits already set to 0 should not be rewritten to 0
-        ui32Data |= ~(*pui32Dst);
-
-        iRC = g_am_hal_flash.flash_program_info_area(
-                ui32InfoKey, ui32InfoInst,
-                &ui32Data, ui32Offset, 1);
-    }
-
-    return iRC;
-
-} // am_hal_flash_reprogram_info_ui32()
 
 //*****************************************************************************
 //
@@ -550,7 +496,10 @@ am_hal_flash_delay(uint32_t ui32Iterations)
     if ( am_hal_burst_mode_status() == AM_HAL_BURST_MODE )
     {
         ui32Iterations <<= 1;
+
+        //
         // There's an additional shift to account for.
+        //
         ui32CycleCntAdj = ((13 * 2) + 16) / 3;
     }
     else
@@ -603,7 +552,7 @@ am_hal_flash_delay_status_change(uint32_t ui32usMaxDelay, uint32_t ui32Address,
             return AM_HAL_STATUS_SUCCESS;
         }
 
-        if (ui32usMaxDelay--)
+        if ( ui32usMaxDelay-- )
         {
             //
             // Call the BOOTROM cycle function to delay for about 1 microsecond.

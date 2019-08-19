@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_MSPI_H
@@ -302,11 +302,11 @@ extern "C"
 
   typedef enum
   {
-    AM_HAL_MSPI_XIPMIXED_NORMAL		= 0,
-    AM_HAL_MSPI_XIPMIXED_D2			= 1,	//1:1:2 timing for Instr:Addr:Data
-    AM_HAL_MSPI_XIPMIXED_AD2		= 3,	//1:2:2 timing for Instr:Addr:Data
-    AM_HAL_MSPI_XIPMIXED_D4			= 5,	//1:1:4 timing for Instr:Addr:Data
-    AM_HAL_MSPI_XIPMIXED_AD4		= 7		//1:4:4 timing for Instr:Addr:Data
+    AM_HAL_MSPI_XIPMIXED_NORMAL     = 0,
+    AM_HAL_MSPI_XIPMIXED_D2         = 1,    //1:1:2 timing for Instr:Addr:Data
+    AM_HAL_MSPI_XIPMIXED_AD2        = 3,    //1:2:2 timing for Instr:Addr:Data
+    AM_HAL_MSPI_XIPMIXED_D4         = 5,    //1:1:4 timing for Instr:Addr:Data
+    AM_HAL_MSPI_XIPMIXED_AD4        = 7     //1:4:4 timing for Instr:Addr:Data
   } am_hal_mspi_xipmixed_mode_e;
 
   //
@@ -346,7 +346,7 @@ extern "C"
     //! Clock frequency
     am_hal_mspi_clock_e         eClockFreq;
 
-	//! XIPMIXED configure
+    //! XIPMIXED configure
     am_hal_mspi_xipmixed_mode_e eXipMixedMode;
 
     //

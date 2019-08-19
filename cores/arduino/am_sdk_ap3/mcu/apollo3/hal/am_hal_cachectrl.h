@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 // ****************************************************************************
 #ifndef AM_HAL_CACHECTRL_H
@@ -125,7 +125,12 @@ typedef enum
     AM_HAL_CACHECTRL_CONTROL_FLASH1_SLEEP_DISABLE,
     AM_HAL_CACHECTRL_CONTROL_MONITOR_ENABLE,
     AM_HAL_CACHECTRL_CONTROL_MONITOR_DISABLE,
+    AM_HAL_CACHECTRL_CONTROL_LPMMODE_RESET,
+    AM_HAL_CACHECTRL_CONTROL_LPMMODE_RECOMMENDED,
+    AM_HAL_CACHECTRL_CONTROL_LPMMODE_AGGRESSIVE,
     AM_HAL_CACHECTRL_CONTROL_LPMMODE_SET,
+    AM_HAL_CACHECTRL_CONTROL_SEDELAY_SET,
+    AM_HAL_CACHECTRL_CONTROL_RDWAIT_SET,
     // Configure up to two non-cacheable regions
     AM_HAL_CACHECTRL_CONTROL_NC_CFG,
 } am_hal_cachectrl_control_e;
@@ -141,6 +146,16 @@ typedef enum
     AM_HAL_CACHECTRL_CONFIG_MODE_DATA,
     AM_HAL_CACHECTRL_CONFIG_MODE_INSTR_DATA
 } am_hal_cachectrl_config_mode_e;
+
+//
+// FLASHCFG LPMMODE.
+//
+typedef enum
+{
+    AM_HAL_CACHECTRL_FLASHCFG_LPMMODE_NEVER   = CACHECTRL_FLASHCFG_LPMMODE_NEVER,
+    AM_HAL_CACHECTRL_FLASHCFG_LPMMODE_STANDBY = CACHECTRL_FLASHCFG_LPMMODE_STANDBY,
+    AM_HAL_CACHECTRL_FLASHCFG_LPMMODE_ALWAYS  = CACHECTRL_FLASHCFG_LPMMODE_ALWAYS
+} am_hal_cachectrl_flashcfg_lppmode_e;
 
 // ****************************************************************************
 //

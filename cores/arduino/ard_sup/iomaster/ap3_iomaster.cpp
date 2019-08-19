@@ -51,6 +51,8 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config){
     if (retVal32 != AM_HAL_STATUS_SUCCESS){ return AP3_ERR; }
 
     // Configure the IOM pins. (Must be done by the inherited classes [this is just a reminder])
+
+    return AP3_OK;
 }
 
 ap3_err_t IOMaster::deinitialize( void ){

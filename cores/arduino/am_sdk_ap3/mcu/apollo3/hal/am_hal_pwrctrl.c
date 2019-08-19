@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -461,6 +461,23 @@ am_hal_pwrctrl_low_power_init(void)
     }
 
     //
+    // Software workaround for Errata ERR019.
+    //
+    if ((APOLLO3_A1) && (1 == PWRCTRL->SUPPLYSTATUS_b.SIMOBUCKON))
+    {
+      ui32Status = am_hal_pwrctrl_periph_enable(AM_HAL_PWRCTRL_PERIPH_PDM);
+      if (AM_HAL_STATUS_SUCCESS != ui32Status)
+      {
+        return ui32Status;
+      }
+    }
+
+    //
+    // Configure cache for low power and performance.
+    //
+    am_hal_cachectrl_control(AM_HAL_CACHECTRL_CONTROL_LPMMODE_RECOMMENDED, 0);
+
+    //
     // Check if the BLE is already enabled.
     //
     if ( PWRCTRL->DEVPWRSTATUS_b.BLEL == 0)
@@ -501,7 +518,7 @@ am_hal_pwrctrl_low_power_init(void)
         //
         if ( APOLLO3_A0 )
         {
-            // Disable SIMO Buck clkdiv because if ble is out of reset then the same bit divides the simobuck clk too agressively.
+            // Disable SIMO Buck clkdiv because if ble is out of reset then the same bit divides the simobuck clk too aggressively.
             MCUCTRL->SIMOBUCK4_b.SIMOBUCKCLKDIVSEL = 0x0;
             MCUCTRL->BLEBUCK2_b.BLEBUCKTONHITRIM   = 0xF;
             MCUCTRL->BLEBUCK2_b.BLEBUCKTONLOWTRIM  = 0xF;

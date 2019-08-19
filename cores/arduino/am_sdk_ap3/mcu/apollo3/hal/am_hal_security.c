@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #include <stdint.h>
@@ -58,6 +58,11 @@
 
 #define AM_HAL_SECURITY_LOCKSTAT_CUSTOMER       0x1
 #define AM_HAL_SECURITY_LOCKSTAT_RECOVERY       0x40000000
+
+// Global declaration
+// These are declared as ptr variables to avoid an issue with GCC reading from location 0x0.
+const volatile uint32_t *g_pFlash0 = (uint32_t*)(AM_HAL_SBL_ADDRESS + 0);
+const volatile uint32_t *g_pFlash4 = (uint32_t*)(AM_HAL_SBL_ADDRESS + 4);
 
 //*****************************************************************************
 //
@@ -182,8 +187,8 @@ uint32_t am_hal_security_get_info(am_hal_security_info_t *pSecInfo)
     if (bSbl)
     {
         // Check if we're running pre-SBLv2
-        flash0 = AM_REGVAL(AM_HAL_SBL_ADDRESS);
-        flash4 = AM_REGVAL(AM_HAL_SBL_ADDRESS + 4);
+        flash0 = *g_pFlash0;
+        flash4 = *g_pFlash4;
         // Check if SBL is installed
         if ((flash0 >> 24) != AM_IMAGE_MAGIC_SBL)
         {
