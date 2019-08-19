@@ -51,4 +51,8 @@ ap3_err_t analogWrite(uint8_t pin, uint32_t val);
 ap3_err_t servoWriteResolution(uint8_t res);
 ap3_err_t servoWrite(uint8_t pin, uint32_t val);
 
+ap3_err_t tone(uint8_t pin, uint32_t freq);
+ap3_err_t tone(uint8_t pin, uint32_t freq, uint32_t duration);
+ap3_err_t noTone(uint8_t pin);
+
 #endif // _AP3_ANALOG_H_

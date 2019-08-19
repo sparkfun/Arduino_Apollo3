@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "Arduino.h"
 
-#define AP3_VARIANT_NUM_PINS (55)
+#define AP3_VARIANT_NUM_PINS (50)
 
 // Pin map declaration
 extern const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS];
@@ -58,12 +58,18 @@ extern Uart Serial1;
 #define A33 33
 #define A35 35
 
-#define ADC_DIFF0 50 //Not legal pins. Used for pad lookup
-#define ADC_DIFF1 51
-#define ADC_TEMP 52
-#define ADC_DIV3 53
-#define ADC_VSS 54
-
 #define LED_BUILTIN 5
+
+// Pins with dedicated silk covering the pin number
+#define MOSI 7
+#define MISO 6
+#define SCK 5
+#define SCL 39
+#define SDA 40
+#define TX1 24
+#define RX1 25
+
+#define MIC_DATA 36
+#define MIC_CLOCK 37
 
 #endif // _AP3_VARIANT_H_

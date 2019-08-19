@@ -28,7 +28,7 @@ SOFTWARE.
 
 enum EXTRA_ADC_PADS
 {
-    AP3_ADC_DIFF0_PAD = 51, //More than physical pads on Apollo3
+    AP3_ADC_DIFF0_PAD = 100, //More than physical pads on Apollo3
     AP3_ADC_DIFF1_PAD,
     AP3_ADC_TEMP_PAD,
     AP3_ADC_DIV3_PAD,

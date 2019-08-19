@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -697,11 +697,12 @@ extern uint32_t am_hal_gpio_interrupt_service(uint64_t ui64Status);
 #define am_hal_gpio_fastgpio_disable(n) am_hal_gpio_output_tristate_disable(n)
 
 //
-// Macros for accessing Fast GPIO set and clear.
+// Macros for accessing Fast GPIO: set, clear, and read.
 // The 'n' parameter is the pin number.
 // Note - these macros are most efficient if 'n' is a constant value, and
 //        of course when compiled with -O3.
 //
+#define am_hal_gpio_fastgpio_read(n)    ((APBDMA->BBINPUT >> (n & 0x7)) & 0x1)
 #define am_hal_gpio_fastgpio_set(n)     (APBDMA->BBSETCLEAR = _VAL2FLD(APBDMA_BBSETCLEAR_SET,   (1 << (n & 0x7))))
 #define am_hal_gpio_fastgpio_clr(n)     (APBDMA->BBSETCLEAR = _VAL2FLD(APBDMA_BBSETCLEAR_CLEAR, (1 << (n & 0x7))))
 #define am_hal_gpio_fastgpio_setmsk(m)  (APBDMA->BBSETCLEAR = _VAL2FLD(APBDMA_BBSETCLEAR_SET, m))

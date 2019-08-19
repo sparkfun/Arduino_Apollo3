@@ -52,14 +52,14 @@ ap3_EEPROM::ap3_EEPROM()
 //affecting other bytes in this flash word
 void ap3_EEPROM::write(uint16_t eepromLocation, uint8_t dataToWrite)
 {
-  uint32_t flashLocation = FLASH_EEPROM_START + eepromLocation;
+  uint32_t flashLocation = AP3_FLASH_EEPROM_START + eepromLocation;
   writeWordToFlash(flashLocation, (uint32_t)dataToWrite | 0xFFFFFF00);
 }
 
 //Read a byte from a given location in "EEPROM"
 uint8_t ap3_EEPROM::read(uint16_t eepromLocation)
 {
-  uint32_t flashLocation = FLASH_EEPROM_START + eepromLocation;
+  uint32_t flashLocation = AP3_FLASH_EEPROM_START + eepromLocation;
   return (*(uint8_t *)flashLocation);
 }
 
@@ -70,31 +70,31 @@ uint8_t ap3_EEPROM::read(uint16_t eepromLocation)
 
 void ap3_EEPROM::get(uint16_t eepromLocation, uint8_t &dataToGet)
 {
-  dataToGet = *(uint8_t *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(uint8_t *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, uint16_t &dataToGet)
 {
-  dataToGet = *(uint16_t *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(uint16_t *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, int16_t &dataToGet)
 {
-  dataToGet = *(int16_t *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(int16_t *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, int &dataToGet)
 {
-  dataToGet = *(int *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(int *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, unsigned int &dataToGet)
 {
-  dataToGet = *(unsigned int *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(unsigned int *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, int32_t &dataToGet)
 {
-  dataToGet = *(int32_t *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(int32_t *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, uint32_t &dataToGet)
 {
-  dataToGet = *(uint32_t *)(FLASH_EEPROM_START + eepromLocation);
+  dataToGet = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation);
 }
 void ap3_EEPROM::get(uint16_t eepromLocation, float &dataToGet)
 {
@@ -102,7 +102,7 @@ void ap3_EEPROM::get(uint16_t eepromLocation, float &dataToGet)
     float f;
     uint32_t b;
   } temp;
-  temp.b = *(uint32_t *)(FLASH_EEPROM_START + eepromLocation);
+  temp.b = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation);
 
   dataToGet = temp.f;
 }
@@ -113,8 +113,8 @@ void ap3_EEPROM::get(uint16_t eepromLocation, double &dataToGet)
     double lf;
     uint32_t b[2];
   } temp;
-  temp.b[1] = *(uint32_t *)(FLASH_EEPROM_START + eepromLocation);           //LSB;
-  temp.b[0] = *(uint32_t *)(FLASH_EEPROM_START + eepromLocation + 4) << 32; //MSB;
+  temp.b[1] = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation);           //LSB;
+  temp.b[0] = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation + 4) << 32; //MSB;
   dataToGet = temp.lf;
 }
 
@@ -125,31 +125,31 @@ void ap3_EEPROM::get(uint16_t eepromLocation, double &dataToGet)
 
 void ap3_EEPROM::put(uint16_t eepromLocation, uint8_t dataToWrite)
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite | 0xFFFFFF00);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite | 0xFFFFFF00);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, uint16_t dataToWrite)
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite | 0xFFFF0000);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite | 0xFFFF0000);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, int16_t dataToWrite)
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite | 0xFFFF0000);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite | 0xFFFF0000);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, int dataToWrite) //ints are 32 bit on M4F
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, unsigned int dataToWrite) //ints are 32 bit on M4F
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, int32_t dataToWrite)
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (int32_t)dataToWrite);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (int32_t)dataToWrite);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, uint32_t dataToWrite)
 {
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)dataToWrite);
 }
 void ap3_EEPROM::put(uint16_t eepromLocation, float dataToWrite)
 {
@@ -159,7 +159,7 @@ void ap3_EEPROM::put(uint16_t eepromLocation, float dataToWrite)
   } temp;
   temp.f = dataToWrite;
 
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)temp.b);
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)temp.b);
 }
 
 void ap3_EEPROM::put(uint16_t eepromLocation, double dataToWrite) //64 bits
@@ -170,8 +170,8 @@ void ap3_EEPROM::put(uint16_t eepromLocation, double dataToWrite) //64 bits
   } temp;
   temp.lf = dataToWrite;
 
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation), (uint32_t)temp.b[1]);     //LSB
-  writeWordToFlash((FLASH_EEPROM_START + eepromLocation + 4), (uint32_t)temp.b[0]); //MSB
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation), (uint32_t)temp.b[1]);     //LSB
+  writeWordToFlash((AP3_FLASH_EEPROM_START + eepromLocation + 4), (uint32_t)temp.b[0]); //MSB
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -217,12 +217,17 @@ void ap3_EEPROM::update(uint16_t eepromLocation, double dataToWrite) //64 bits
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+uint16_t ap3_EEPROM::length()
+{
+  return (AP3_FLASH_EEPROM_SIZE);
+}
+
 //Erase 8k page encapsulating the EEPROM section
 void ap3_EEPROM::erase()
 {
   am_hal_flash_page_erase(AM_HAL_FLASH_PROGRAM_KEY,
-                          AM_HAL_FLASH_ADDR2INST(FLASH_EEPROM_START),
-                          AM_HAL_FLASH_ADDR2PAGE(FLASH_EEPROM_START));
+                          AM_HAL_FLASH_ADDR2INST(AP3_FLASH_EEPROM_START),
+                          AM_HAL_FLASH_ADDR2PAGE(AP3_FLASH_EEPROM_START));
 }
 
 //This is the main helper function
@@ -238,11 +243,11 @@ void ap3_EEPROM::erase()
 void ap3_EEPROM::writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
 {
   //Error check
-  if (flashLocation >= FLASH_EEPROM_START + FLASH_EEPROM_SIZE)
+  if (flashLocation >= AP3_FLASH_EEPROM_START + AP3_FLASH_EEPROM_SIZE)
   {
     return;
   }
-  if (flashLocation < FLASH_EEPROM_START)
+  if (flashLocation < AP3_FLASH_EEPROM_START)
   {
     return;
   }
@@ -254,11 +259,11 @@ void ap3_EEPROM::writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
   }
 
   //First we have to read the contents of current "EEPROM" to SRAM
-  uint32_t tempContents[FLASH_EEPROM_SIZE / 4];
+  uint32_t tempContents[AP3_FLASH_EEPROM_SIZE / 4];
   uint16_t spot = 0;
-  for (uint16_t x = 0; x < FLASH_EEPROM_SIZE; x += 4)
+  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x += 4)
   {
-    tempContents[spot++] = *(uint32_t *)(FLASH_EEPROM_START + x);
+    tempContents[spot++] = *(uint32_t *)(AP3_FLASH_EEPROM_START + x);
   }
 
   //Then we erase an 8K page
@@ -268,52 +273,37 @@ void ap3_EEPROM::writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
 
   //Zero out this word(s)
   uint8_t byteOffset = (flashLocation % 4);
-  uint16_t wordLocation = (flashLocation - FLASH_EEPROM_START) / 4;
+  uint16_t wordLocation = (flashLocation - AP3_FLASH_EEPROM_START) / 4;
+
+  //Mask in the new data into the array
   if (byteOffset == 0)
   {
-    //Easy - reset this word to 1s
-    tempContents[wordLocation] = 0xFFFFFFFF;
+    //Easy - update this word with new word
+    tempContents[wordLocation] = dataToWrite;
   }
   else
   {
-    //Reset the upper bytes of the first word to 1s
-    tempContents[wordLocation] |= 0xFFFFFFFF << (byteOffset * 8);
+    //Clear the upper bytes of the first word to 0s
+    tempContents[wordLocation] &= ~(0xFFFFFFFF << (byteOffset * 8));
 
-    //Reset the lower bytes of the second word to 1s
-    tempContents[wordLocation + 1] |= 0xFFFFFFFF >> ((4 - byteOffset) * 8);
+    //Clear the lower bytes of the second word to 0s
+    tempContents[wordLocation + 1] &= ~(0xFFFFFFFF >> ((4 - byteOffset) * 8));
+
+    //OR in upper bytes of this word with new data
+    uint32_t dataToWriteFirstWord = dataToWrite << (byteOffset * 8);
+
+    //OR in the lower bytes of the following word with new data
+    uint32_t dataToWriteSecondWord = dataToWrite >> ((4 - byteOffset) * 8);
+
+    tempContents[wordLocation] |= dataToWriteFirstWord;
+    tempContents[wordLocation + 1] |= dataToWriteSecondWord;
   }
 
   //Then we write the contents of the array back
   am_hal_flash_program_main(AM_HAL_FLASH_PROGRAM_KEY,
                             tempContents,
-                            (uint32_t *)FLASH_EEPROM_START,
-                            FLASH_EEPROM_SIZE);
-
-  if (byteOffset == 0)
-  {
-    //Easy - update this word with new word
-    am_hal_flash_reprogram_ui32(AM_HAL_FLASH_PROGRAM_KEY,
-                                dataToWrite,
-                                (uint32_t *)flashLocation);
-  }
-  else
-  {
-    //Update the upper bytes of this word with new data
-    uint32_t dataToWriteFirstWord = dataToWrite << (byteOffset * 8);
-    dataToWriteFirstWord |= 0xFFFFFFFF >> ((4 - byteOffset) * 8);
-
-    //Update the lower bytes of the following word with new data
-    uint32_t dataToWriteSecondWord = dataToWrite >> ((4 - byteOffset) * 8);
-    dataToWriteSecondWord |= 0xFFFFFFFF << (byteOffset * 8);
-
-    am_hal_flash_reprogram_ui32(AM_HAL_FLASH_PROGRAM_KEY,
-                                dataToWriteFirstWord,
-                                (uint32_t *)(flashLocation - byteOffset));
-
-    am_hal_flash_reprogram_ui32(AM_HAL_FLASH_PROGRAM_KEY,
-                                dataToWriteSecondWord,
-                                (uint32_t *)(flashLocation + (4 - byteOffset)));
-  }
+                            (uint32_t *)AP3_FLASH_EEPROM_START,
+                            AP3_FLASH_EEPROM_SIZE);
 }
 
 ap3_EEPROM EEPROM;

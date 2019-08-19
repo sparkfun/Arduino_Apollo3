@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_FLASH_H
@@ -71,15 +71,25 @@ extern "C"
 
 //*****************************************************************************
 //
+// Some helpful SRAM values and macros.
+//
+//*****************************************************************************
+#define AM_HAL_FLASH_SRAM_ADDR                  0x10000000
+#define AM_HAL_FLASH_SRAM_SIZE                  (384 * 1024)
+#define AM_HAL_FLASH_SRAM_LARGEST_VALID_ADDR    (AM_HAL_FLASH_SRAM_ADDR + AM_HAL_FLASH_SRAM_SIZE - 1)
+
+//*****************************************************************************
+//
 // Some helpful flash values and macros.
 //
 //*****************************************************************************
 #define AM_HAL_FLASH_ADDR                   0x00000000
+#define AM_HAL_FLASH_INSTANCE_SIZE          ( 512 * 1024 )
+#define AM_HAL_FLASH_NUM_INSTANCES          2
 #define AM_HAL_FLASH_PAGE_SIZE              ( 8 * 1024 )
 #define AM_HAL_FLASH_INFO_SIZE              AM_HAL_FLASH_PAGE_SIZE
-#define AM_HAL_FLASH_INSTANCE_SIZE          ( 512 * 1024 )
 #define AM_HAL_FLASH_INSTANCE_PAGES         ( AM_HAL_FLASH_INSTANCE_SIZE / AM_HAL_FLASH_PAGE_SIZE )
-#define AM_HAL_FLASH_TOTAL_SIZE             ( AM_HAL_FLASH_INSTANCE_SIZE * 2 )
+#define AM_HAL_FLASH_TOTAL_SIZE             ( AM_HAL_FLASH_INSTANCE_SIZE * AM_HAL_FLASH_NUM_INSTANCES )
 #define AM_HAL_FLASH_LARGEST_VALID_ADDR     ( AM_HAL_FLASH_ADDR + AM_HAL_FLASH_TOTAL_SIZE - 1 )
 
 //
@@ -90,7 +100,7 @@ extern "C"
 //
 // Convert an absolute flash address to a instance
 //
-#define AM_HAL_FLASH_ADDR2INST(addr)        ( ( addr >> 19 ) & 1 )
+#define AM_HAL_FLASH_ADDR2INST(addr)        ( ( addr >> 19 ) & (AM_HAL_FLASH_NUM_INSTANCES - 1) )
 
 //
 // Convert an absolute flash address to a page number relative to the instance
@@ -325,14 +335,6 @@ extern bool     am_hal_flash_write_protect_check(uint32_t *pui32StartAddress,
 extern int      am_hal_flash_clear_bits(uint32_t ui32ProgramKey,
                                         uint32_t *pui32Addr,
                                         uint32_t ui32BitMask);
-
-extern int      am_hal_flash_reprogram_ui32(uint32_t ui32ProgramKey,
-                                            uint32_t ui32Data,
-                                            uint32_t *pui32Dst);
-extern int      am_hal_flash_reprogram_info_ui32(uint32_t ui32InfoKey,
-                                                 uint32_t ui32InfoInst,
-                                                 uint32_t ui32Data,
-                                                 uint32_t ui32Offset);
 
 #ifdef __cplusplus
 }

@@ -40,7 +40,7 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ; POSSIBILITY OF SUCH DAMAGE.
 ;
-; This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+; This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 ;
 ;******************************************************************************
 
@@ -48,7 +48,7 @@
 ;
 ; <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ;************************************************************************
-Stack   EQU     0x00000400
+Stack   EQU     0x00001000
 
 ;******************************************************************************
 ;
@@ -146,7 +146,7 @@ __Vectors
         DCD     am_scard_isr                ; 17: SCARD
         DCD     am_adc_isr                  ; 18: ADC
         DCD     am_pdm0_isr                 ; 19: PDM
-        DCD     am_mspi0_isr                ; 20: MSPI
+        DCD     am_mspi0_isr                ; 20: MSPI0
         DCD     am_software0_isr            ; 21: SOFTWARE0
         DCD     am_stimer_isr               ; 22: SYSTEM TIMER
         DCD     am_stimer_cmpr0_isr         ; 23: SYSTEM TIMER COMPARE0
@@ -172,25 +172,28 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 ;
 ; The Patch table.
 ;
+; The patch table should pad the vector table size to a total of 64 entries
+; (16 core + 48 periph) such that code begins at offset 0x100.
+;
 ;******************************************************************************
         EXPORT  __Patchable
 __Patchable
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
-        DCD     0
+        DCD     0                           ; 32
+        DCD     0                           ; 33
+        DCD     0                           ; 34
+        DCD     0                           ; 35
+        DCD     0                           ; 36
+        DCD     0                           ; 37
+        DCD     0                           ; 38
+        DCD     0                           ; 39
+        DCD     0                           ; 40
+        DCD     0                           ; 41
+        DCD     0                           ; 42
+        DCD     0                           ; 43
+        DCD     0                           ; 44
+        DCD     0                           ; 45
+        DCD     0                           ; 46
+        DCD     0                           ; 47
 
 ;******************************************************************************
 ;
@@ -401,4 +404,5 @@ __user_initial_stackheap PROC
 ;
 ;******************************************************************************
                 END
+
 

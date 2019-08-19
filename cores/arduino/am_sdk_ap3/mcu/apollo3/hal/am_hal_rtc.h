@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_RTC_H
@@ -65,7 +65,6 @@ extern "C"
 //! @{
 //
 //*****************************************************************************
-#define AM_HAL_RTC_OSC_LFRC          0x1
 #define AM_HAL_RTC_OSC_XT            0x0
 //! @}
 

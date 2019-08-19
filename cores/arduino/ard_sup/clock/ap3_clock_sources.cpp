@@ -1,5 +1,7 @@
 #include "ap3_clock_sources.h"
 
+uint32_t cpuFreq = 48000000; //At POR core is 48MHz
+
 //Turns main processor from 48MHz to 96MHz
 //Returns false if burst mode failed to enable
 bool enableBurstMode(void)
@@ -17,6 +19,7 @@ bool enableBurstMode(void)
     {
         return (false);
     }
+    cpuFreq = 96000000;
     return (true);
 }
 
@@ -36,5 +39,12 @@ bool disableBurstMode(void)
     {
         return (false);
     }
+    cpuFreq = 48000000;
     return (true);
+}
+
+//Returns the current core speed
+uint32_t getCpuFreqMHz(void)
+{
+    return (cpuFreq);
 }

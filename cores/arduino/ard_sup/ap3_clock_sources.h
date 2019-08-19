@@ -26,5 +26,6 @@ SOFTWARE.
 
 bool enableBurstMode();
 bool disableBurstMode();
+uint32_t getCpuFreqMHz();
 
 #endif //_AP3_GPIO_H_

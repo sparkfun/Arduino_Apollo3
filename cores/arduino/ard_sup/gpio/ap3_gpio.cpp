@@ -1,14 +1,15 @@
 #include "ap3_gpio.h"
 #include "variant.h"
 
-typedef struct{
-    voidFuncPtrArgs callback;   // the callback function
-    void*           arg;        // argument
-    uint8_t         mode;       // Arduino interrupt mode
-    uint8_t         pad;        // which apollo3 pad 
-}ap3_gpio_isr_entry_t;
-ap3_gpio_isr_entry_t    gpio_isr_entries[AP3_GPIO_MAX_PADS] = {NULL};
-uint8_t                 gpio_num_isr = 0;
+typedef struct
+{
+    voidFuncPtrArgs callback; // the callback function
+    void *arg;                // argument
+    uint8_t mode;             // Arduino interrupt mode
+    uint8_t pad;              // which apollo3 pad
+} ap3_gpio_isr_entry_t;
+ap3_gpio_isr_entry_t gpio_isr_entries[AP3_GPIO_MAX_PADS] = {NULL};
+uint8_t gpio_num_isr = 0;
 
 //*****************************************************************************
 //  Local defines. Copied from am_hal_gpio.c
@@ -25,8 +26,6 @@ uint8_t                 gpio_num_isr = 0;
 #define GPIOCFG_FLD_INTD_S 3
 #define GPIOCFG_FLD_OUTCFG_S 1
 #define GPIOCFG_FLD_INCFG_S 0
-
-
 
 ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin)
 {
@@ -134,21 +133,32 @@ extern "C" void am_gpio_isr(void)
     uint64_t gpio_int_mask = 0x00;
     am_hal_gpio_interrupt_status_get(true, &gpio_int_mask);
 
-    for(uint8_t indi = 0; indi < gpio_num_isr; indi++){
-        if( gpio_isr_entries[indi].callback != NULL ){
-            if( gpio_int_mask & AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad) ){
+    for (uint8_t indi = 0; indi < gpio_num_isr; indi++)
+    {
+        if (gpio_isr_entries[indi].callback != NULL)
+        {
+            if (gpio_int_mask & AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad))
+            {
                 gpio_isr_entries[indi].callback(gpio_isr_entries[indi].arg);
             }
-            if( !((gpio_isr_entries[indi].mode == LOW) || (gpio_isr_entries[indi].mode == HIGH)) ){    // if not a HIGH or LOW interrupt then clear the flag
+            if (!((gpio_isr_entries[indi].mode == LOW) || (gpio_isr_entries[indi].mode == HIGH)))
+            { // if not a HIGH or LOW interrupt then clear the flag
                 am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad));
-            }else{                                                                                      // In the case of a HIGH or LOW mode interrupt we need to manually check for the end state
-                uint8_t val = digitalRead( gpio_isr_entries[indi].pad ); 
-                if( gpio_isr_entries[indi].mode == LOW ){
-                    if( val ){
+            }
+            else
+            { // In the case of a HIGH or LOW mode interrupt we need to manually check for the end state
+                uint8_t val = digitalRead(gpio_isr_entries[indi].pad);
+                if (gpio_isr_entries[indi].mode == LOW)
+                {
+                    if (val)
+                    {
                         am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad));
                     }
-                }else{
-                    if( !val ){
+                }
+                else
+                {
+                    if (!val)
+                    {
                         am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(gpio_isr_entries[indi].pad));
                     }
                 }
@@ -157,15 +167,21 @@ extern "C" void am_gpio_isr(void)
     }
 }
 
-void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void * arg, int mode)
+void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void *arg, int mode)
 {
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
-    if( pad == AP3_GPIO_PAD_UNUSED ){ return; }
+    if (pad == AP3_GPIO_PAD_UNUSED)
+    {
+        return;
+    }
 
-    if( gpio_num_isr < AP3_GPIO_MAX_PADS ){
+    if (gpio_num_isr < AP3_GPIO_MAX_PADS)
+    {
         uint8_t indi = 0;
-        for(indi = 0; indi < gpio_num_isr; indi++){
-            if(gpio_isr_entries[indi].pad == pad){
+        for (indi = 0; indi < gpio_num_isr; indi++)
+        {
+            if (gpio_isr_entries[indi].pad == pad)
+            {
                 break;
             }
         }
@@ -177,21 +193,27 @@ void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void * arg, i
 
         // enable interrupts for the pad in question (Arduino does this by default when attachInterrupt is called)
         uint8_t eIntDir = 0x00;
-        if(( mode == FALLING ) || ( mode == LOW )){
+        if ((mode == FALLING) || (mode == LOW))
+        {
             eIntDir = AM_HAL_GPIO_PIN_INTDIR_HI2LO;
-        }else if(( mode == RISING ) || ( mode == HIGH )){
-            eIntDir = AM_HAL_GPIO_PIN_INTDIR_LO2HI;
-        }else{
-            eIntDir = AM_HAL_GPIO_PIN_INTDIR_BOTH; 
         }
-        ap3_gpio_enable_interrupts( pad, eIntDir);
+        else if ((mode == RISING) || (mode == HIGH))
+        {
+            eIntDir = AM_HAL_GPIO_PIN_INTDIR_LO2HI;
+        }
+        else
+        {
+            eIntDir = AM_HAL_GPIO_PIN_INTDIR_BOTH;
+        }
+        ap3_gpio_enable_interrupts(pad, eIntDir);
 
-        // clear the flag and enable the interrupt in the NVIC 
+        // clear the flag and enable the interrupt in the NVIC
         am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(pad));
         am_hal_gpio_interrupt_enable(AM_HAL_GPIO_BIT(pad));
         NVIC_EnableIRQ(GPIO_IRQn);
 
-        if( indi == gpio_num_isr ){
+        if (indi == gpio_num_isr)
+        {
             gpio_num_isr++;
         }
     }
@@ -199,25 +221,31 @@ void attachInterruptArg(uint8_t pin, voidFuncPtrArgs callbackArgs, void * arg, i
 
 void attachInterrupt(uint8_t pin, voidFuncPtr callback, int mode)
 {
-    attachInterruptArg( pin, (voidFuncPtrArgs)callback, NULL, mode );
+    attachInterruptArg(pin, (voidFuncPtrArgs)callback, NULL, mode);
 }
 
 extern void detachInterrupt(uint8_t pin)
 {
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
-    if( pad == AP3_GPIO_PAD_UNUSED ){ return; }
+    if (pad == AP3_GPIO_PAD_UNUSED)
+    {
+        return;
+    }
 
     uint8_t indi = 0;
 
     // Look for an entry that matches the pad
-    for(indi = 0; indi < gpio_num_isr; indi++){
-        if(gpio_isr_entries[indi].pad == pad){
+    for (indi = 0; indi < gpio_num_isr; indi++)
+    {
+        if (gpio_isr_entries[indi].pad == pad)
+        {
             break;
         }
     }
 
     // return if it was not found (prevent changes to the isr entry list)
-    if( indi == gpio_num_isr ){
+    if (indi == gpio_num_isr)
+    {
         return;
     }
 
@@ -225,40 +253,23 @@ extern void detachInterrupt(uint8_t pin)
     am_hal_gpio_interrupt_disable(AM_HAL_GPIO_BIT(pad));
     am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(pad));
 
-    // disable interrupts for the given pad without blasting the configuration    
-    ap3_gpio_enable_interrupts( pad, AM_HAL_GPIO_PIN_INTDIR_NONE);
+    // disable interrupts for the given pad without blasting the configuration
+    ap3_gpio_enable_interrupts(pad, AM_HAL_GPIO_PIN_INTDIR_NONE);
 
     // Shift down the remaining interrupt entries
-    for(indi; indi < gpio_num_isr-1; indi++){
-        gpio_isr_entries[indi] = gpio_isr_entries[indi+1];
+    for (indi; indi < gpio_num_isr - 1; indi++)
+    {
+        gpio_isr_entries[indi] = gpio_isr_entries[indi + 1];
     }
-    
+
     // Clear out the last entry
     gpio_isr_entries[gpio_num_isr].pad = 0;
     gpio_isr_entries[gpio_num_isr].callback = NULL;
     gpio_isr_entries[gpio_num_isr].mode = LOW;
     gpio_isr_entries[gpio_num_isr].arg = NULL;
-
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir )
+uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir)
 {
     uint32_t ui32Padreg, ui32AltPadCfg, ui32GPCfg;
     uint32_t ui32Funcsel, ui32PowerSw;
@@ -276,7 +287,6 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir )
     //
     ui32GPCfg = ui32Padreg = ui32AltPadCfg = 0;
 
-
     //
     // Map the requested interrupt direction settings into the Apollo3
     //  GPIOCFG register field, which is a 4-bit field:
@@ -286,7 +296,6 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir )
     //
     ui32GPCfg |= (((eIntDir >> 0) & 0x1) << GPIOCFG_FLD_INTD_S) | (((eIntDir >> 1) & 0x1) << GPIOCFG_FLD_INCFG_S);
 
-
     //
     // At this point, the configuration variable, ui32GpioCfg
     // value is set (at bit position 0) and ready to write
@@ -295,6 +304,8 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir )
     uint32_t ui32GPCfgAddr;
     uint32_t ui32GPCfgClearMask;
     uint32_t ui32GPCfgShft;
+
+    ui32GPCfgShft = ((ui32Pin & 0x7) << 2);
 
     ui32GPCfgAddr = AM_REGADDR(GPIO, CFGA) + ((ui32Pin >> 1) & ~0x3);
 
@@ -327,3 +338,64 @@ uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir )
     return AM_HAL_STATUS_SUCCESS;
 
 } // am_hal_gpio_pinconfig()
+
+/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+   or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+   to 3 minutes in length, but must be called at least a few dozen microseconds
+   before the start of the pulse.
+
+   Original Arduino function could operate in noInterrupt() context. This
+   function cannot.
+*/
+unsigned long pulseIn(uint8_t pinNumber, uint8_t state, unsigned long timeout)
+{
+    return (pulseInLong(pinNumber, state, timeout));
+}
+
+/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+   or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+   to 3 minutes in length, but must be called at least a few dozen microseconds
+   before the start of the pulse.
+
+   ATTENTION: This function relies on micros() so cannot be used in noInterrupt() context
+*/
+unsigned long pulseInLong(uint8_t pinNumber, uint8_t state, unsigned long timeout)
+{
+    uint8_t padNumber = ap3_gpio_pin2pad(pinNumber);
+
+    if (timeout > 3 * 60 * 1000000L)
+        timeout = 3 * 60 * 1000000L; //Limit timeout to 3 minutes
+
+    //Enable fast GPIO for this pad
+    am_hal_gpio_fastgpio_disable(padNumber);
+    am_hal_gpio_fastgpio_clr(padNumber);
+    am_hal_gpio_fast_pinconfig((uint64_t)0x1 << padNumber, g_AM_HAL_GPIO_OUTPUT_WITH_READ, 0);
+
+    uint32_t startMicros = micros();
+
+    while (am_hal_gpio_fastgpio_read(padNumber) == state) //Wait for previous pulse to end
+    {
+        if (micros() - startMicros > timeout)
+            return (0); //Pulse did not end
+    }
+
+    while (am_hal_gpio_fastgpio_read(padNumber) != state) //Wait for pin to change state
+    {
+        if (micros() - startMicros > timeout)
+            return (0); //Pulse did not start
+    }
+
+    startMicros = micros(); //Restart time
+
+    while (am_hal_gpio_fastgpio_read(padNumber) == state) //Wait for pin to exit sought state
+    {
+        if (micros() - startMicros > timeout)
+            return (0); //Pulse did not end
+    }
+
+    uint32_t stopMicros = micros();
+
+    am_hal_gpio_fastgpio_disable(padNumber);
+
+    return (stopMicros - startMicros);
+}

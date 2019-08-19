@@ -33,7 +33,7 @@ extern "C"
 #ifdef OVERFLOW
 #define ARDUINO_REDEFINE_OVERFLOW OVERFLOW
 #undef OVERFLOW
-#warning "OVERFLOW is defined already... trying to save it, include Apollo3 headers, then restore it"
+// #warning "OVERFLOW is defined already... trying to save it, include Apollo3 headers, then restore it"
 #endif
 
 // Include Apollo headers
@@ -44,7 +44,7 @@ extern "C"
 #include <math.h> //Gets us pow()
 
 #ifdef ARDUINO_REDEFINE_OVERFLOW
-#warning "restoring OVERFLOW from value in ARDUINO_REDEFINE_OVERFLOW"
+// #warning "restoring OVERFLOW from value in ARDUINO_REDEFINE_OVERFLOW"
 #define OVERFLOW ARDUINO_REDEFINE_OVERFLOW
 #undef ARDUINO_REDEFINE_OVERFLOW
 #endif
@@ -77,6 +77,7 @@ extern "C"
 #include "ap3_uart.h"
 #include "ap3_analog.h"
 #include "ap3_clock_sources.h"
+#include "ap3_shift.h"
 #include "WMath.h"
 #include "WCharacter.h"
 

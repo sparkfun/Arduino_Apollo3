@@ -23,6 +23,20 @@
 #include <Arduino.h>
 #include "ap3_iomaster.h"
 
+// Give a warning if the variant did not define these symbols:
+#ifndef SS
+#warning "variant has no definition for pin number 'SS'"
+#endif  // SS
+#ifndef MOSI
+#warning "variant has no definition for pin number 'MOSI'"
+#endif  // MOSI
+#ifndef MISO
+#warning "variant has no definition for pin number 'MISO'"
+#endif  // MISO
+#ifndef CLK
+#warning "variant has no definition for pin number 'CLK'"
+#endif  // CLK
+
 // SPI_HAS_TRANSACTION means SPI has
 //   - beginTransaction()
 //   - endTransaction()
@@ -104,7 +118,7 @@ class SPIClass : public IOMaster {
 
   void setBitOrder(BitOrder order);
   void setDataMode(uint8_t uc_mode);
-  // void setClockDivider(uint8_t uc_div);
+  void setClockDivider(uint8_t uc_div);
 
 private:
   void config(SPISettings settings);

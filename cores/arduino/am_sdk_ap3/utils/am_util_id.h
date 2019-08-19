@@ -40,7 +40,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_UTIL_ID_H
@@ -111,9 +111,9 @@ am_util_id_t;
 //
 //*****************************************************************************
 #define AM_UTIL_ID_UNKNOWN      0
-#define AM_UTIL_ID_APOLLO       1
-#define AM_UTIL_ID_APOLLO2      2
-#define AM_UTIL_ID_APOLLO3      3
+#define AM_UTIL_ID_APOLLO       0x0001
+#define AM_UTIL_ID_APOLLO2      0x0002
+#define AM_UTIL_ID_APOLLO3      0x0003
 
 //*****************************************************************************
 //

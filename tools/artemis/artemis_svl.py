@@ -1,221 +1,322 @@
 #!/usr/bin/env python
-# UART wired update host for Corvette Bootloader
+# SparkFun Variable Loader
+# Variable baud rate bootloader for Artemis Apollo3 modules
 
-# This script was originally written by Ambiq
-# Modified April 2nd, 2019 by SparkFun to auto-bootloading
-# Compiled to executable using pyInstaller
-# pyinstaller --onefile artemis_svl.py
+# Immediately upon reset the Artemis module will search for the timing character
+#   to auto-detect the baud rate. If a valid baud rate is found the Artemis will 
+#   respond with the bootloader version packet
+# If the computer receives a well-formatted version number packet at the desired
+#   baud rate it will send a command to begin bootloading. The Artemis shall then 
+#   respond with the a command asking for the next frame. 
+# The host will then send a frame packet. If the CRC is OK the Artemis will write 
+#   that to memory and request the next frame. If the CRC fails the Artemis will
+#   discard that data and send a request to re-send the previous frame.
+# This cycle repeats until the Artemis receives a done command in place of the
+#   requested frame data command.
+# The initial baud rate determination must occur within some small timeout. Once 
+#   baud rate detection has completed all additional communication will have a 
+#   universal timeout value. Once the Artemis has begun requesting data it may no
+#   no longer exit the bootloader. If the host detects a timeout at any point it 
+#   will stop bootloading. 
+
+# Notes about PySerial timeout:
+# The timeout operates on whole functions - that is to say that a call to 
+#   ser.read(10) will return after ser.timeout, just as will ser.read(1) (assuming 
+#   that the necessary bytes were not found)
+# If there are no incoming bytes (on the line or in the buffer) then two calls to 
+#   ser.read(n) will time out after 2*ser.timeout
+# Incoming UART data is buffered behind the scenes, probably by the OS.
+
+# ***********************************************************************************
+#
+# Imports
+#
+# ***********************************************************************************
 
 import argparse
 import serial
 import serial.tools.list_ports as list_ports
 import sys
 import time
-
+import math
 from sys import exit
 
-# Bootloader command constants
-BL_COMMAND_ANNOUNCE = 127
-BL_COMMAND_AOK = 6
-BL_COMMAND_BAD_CRC = 7
-BL_COMMAND_NEXT_FRAME = 8
-BL_COMMAND_ALL_DONE = 9
-BL_COMMAND_COMPUTER_READY = 10
+# ***********************************************************************************
+#
+# Commands
+#
+# ***********************************************************************************
+SVL_CMD_VER     = 0x01  # version
+SVL_CMD_BL      = 0x02  # enter bootload mode
+SVL_CMD_NEXT    = 0x03  # request next chunk
+SVL_CMD_FRAME   = 0x04  # indicate app data frame
+SVL_CMD_RETRY   = 0x05  # request re-send frame
+SVL_CMD_DONE    = 0x06  # finished - all data sent
 
-# ******************************************************************************
+
+# ***********************************************************************************
+#
+# Compute CRC on a byte array
+#
+# ***********************************************************************************
+def get_crc16(data):
+    # To perform the division perform the following:
+
+    # Load the register with zero bits.
+    # Augment the message by appending W zero bits to the end of it.
+    # While (more message bits)
+    #     Begin
+    #     Shift the register left by one bit, reading the next bit of the
+    #         augmented message into register bit position 0.
+    #     If (a 1 bit popped out of the register during step 3)
+    #         Register = Register XOR Poly.
+    #     End
+    # The register now contains the remainder.
+    register    = 0x0000
+    poly        = 0x8005
+
+    data = bytearray(data)
+    data.extend(bytearray(2))
+    bits = 8*len(data)
+
+    def get_data_bit(bit):
+        byte = int(bit/8)
+        if(data[byte] & (0x80 >> (bit%8))):
+            return 1
+        return 0
+
+    for bit in range(bits):
+
+        c = 0
+        if(register & 0x8000):
+            c = 1
+
+        register <<= 1
+        register &= 0xFFFF
+
+        if(get_data_bit(bit)):
+            register |= 0x0001
+
+        if(c):
+            register = (register ^ poly)
+
+    return register
+
+
+
+# ***********************************************************************************
+#
+# Wait for a packet 
+#
+# ***********************************************************************************
+def wait_for_packet(ser):
+
+    packet = {'len':0, 'cmd':0, 'data':0, 'crc':1, 'timeout':1}
+
+    n = ser.read(2) # get the number of bytes
+    if(len(n) < 2):
+        return packet
+    
+    packet['len'] = int.from_bytes(n, byteorder='big', signed=False)    # 
+    payload = ser.read(packet['len'])
+
+    if(len(payload) != packet['len']):
+        return packet
+    
+    packet['timeout'] = 0                           # all bytes received, so timeout is not true
+    packet['cmd'] = payload[0]                      # cmd is the first byte of the payload
+    packet['data'] = payload[1:packet['len']-2]     # the data is the part of the payload that is not cmd or crc
+    packet['crc'] = get_crc16(payload)              # performing the crc on the whole payload should return 0
+
+    return packet
+
+# ***********************************************************************************
+#
+# Send a packet
+#
+# ***********************************************************************************
+def send_packet(ser, cmd, data):
+    data = bytearray(data)
+    num_bytes = 3 + len(data)
+    payload = bytearray(cmd.to_bytes(1,'big'))
+    payload.extend(data)
+    crc = get_crc16(payload)
+    payload.extend(bytearray(crc.to_bytes(2,'big')))
+
+    ser.write(num_bytes.to_bytes(2,'big'))
+    ser.write(bytes(payload))
+
+
+
+
+
+
+# ***********************************************************************************
+#
+# Setup: signal baud rate, get version, and command BL enter
+#
+# ***********************************************************************************
+def phase_setup(ser):
+
+    baud_detect_byte = b'U'
+
+    verboseprint('\nphase:\tsetup')
+    
+                                            # Handle the serial startup blip
+    ser.reset_input_buffer()
+    verboseprint('\tcleared startup blip')         
+
+    ser.write(baud_detect_byte)             # send the baud detection character
+
+    packet = wait_for_packet(ser)
+    if(packet['timeout'] or packet['crc']):
+        return 1
+    
+    twopartprint('\t','Got SVL Bootloader Version: ' +
+                 str(int.from_bytes(packet['data'], 'big')))
+    verboseprint('\tSending \'enter bootloader\' command')
+
+    send_packet(ser, SVL_CMD_BL, b'')
+
+    # Now enter the bootload phase
+
+    
+
+
+
+
+# ***********************************************************************************
+#
+# Bootloader phase (Artemis is locked in)
+#
+# ***********************************************************************************
+def phase_bootload(ser):
+
+    frame_size = 512*4
+
+    resend_max = 64
+    resend_count = 0
+
+    verboseprint('\nphase:\tbootload')
+
+    with open(args.binfile, mode='rb') as binfile:
+        application = binfile.read()
+        total_len = len(application)
+
+        total_frames = math.ceil(total_len/frame_size)
+        curr_frame = 0
+
+        verboseprint('\thave ' + str(total_len) + ' bytes to send in ' + str(total_frames) + ' frames')
+
+        bl_done = False
+        bl_failed = False
+        while((not bl_done) and (not bl_failed)):
+                
+            packet = wait_for_packet(ser)               # wait for indication by Artemis
+            if(packet['timeout'] or packet['crc']):
+                print('\n\terror receiving packet')
+                print(packet)
+                print('\n')
+                bl_failed = True
+                bl_done = True
+
+            if( packet['cmd'] == SVL_CMD_NEXT ):
+                # verboseprint('\tgot frame request')
+                curr_frame += 1
+                resend_count = 0
+            elif( packet['cmd'] == SVL_CMD_RETRY ):
+                verboseprint('\t\tretrying...')
+                resend_count += 1
+                if( resend_count >= resend_max ):
+                    bl_failed = True
+                    bl_done = True
+            else:
+                print('unknown error')
+                bl_failed = True
+                bl_done = True
+
+            if( curr_frame <= total_frames ):
+                frame_data = application[((curr_frame-1)*frame_size):((curr_frame-1+1)*frame_size)]
+                verboseprint('\tsending frame #'+str(curr_frame)+', length: '+str(len(frame_data)))
+
+                send_packet(ser, SVL_CMD_FRAME, frame_data)
+
+            else:
+                send_packet(ser, SVL_CMD_DONE, b'')
+                bl_done = True
+
+        if( bl_failed == False ):
+            twopartprint('\n\t', 'Upload complete')
+        else:
+            twopartprint('\n\t', 'Upload failed')
+
+        return bl_failed
+
+
+
+
+
+
+# ***********************************************************************************
+#
+# Help if serial port could not be opened
+#
+# ***********************************************************************************
+def phase_serial_port_help():
+    devices = list_ports.comports()
+
+    # First check to see if user has the given port open
+    for dev in devices:
+        if(dev.device.upper() == args.port.upper()):
+            print(dev.device + " is currently open. Please close any other terminal programs that may be using " +
+                    dev.device + " and try again.")
+            exit()
+
+    # otherwise, give user a list of possible com ports
+    print(args.port.upper() +
+            " not found but we detected the following serial ports:")
+    for dev in devices:
+        if 'CH340' in dev.description:
+            print(
+                dev.description + ": Likely an Arduino or derivative. Try " + dev.device + ".")
+        elif 'FTDI' in dev.description:
+            print(
+                dev.description + ": Likely an Arduino or derivative. Try " + dev.device + ".")
+        elif 'USB Serial Device' in dev.description:
+            print(
+                dev.description + ": Possibly an Arduino or derivative.")
+        else:
+            print(dev.description)
+
+
+# ***********************************************************************************
 #
 # Main function
 #
-# ******************************************************************************
-
-
+# ***********************************************************************************
 def main():
-
-    # Open a serial port, and communicate with Device
-    #
-    # Max flashing time depends on the amount of SRAM available.
-    # For very large images, the flashing happens page by page.
-    # However if the image can fit in the free SRAM, it could take a long time
-    # for the whole image to be flashed at the end.
-    # The largest image which can be stored depends on the max SRAM.
-    # Assuming worst case ~100 ms/page of flashing time, and allowing for the
-    # image to be close to occupying full SRAM (256K) which is 128 pages.
-
-    # Check to see if the com port is available
     try:
-        with serial.Serial(args.port, args.baud, timeout=1) as ser:
-            pass
+        num_tries = 3
+
+        print('\n\nArtemis SVL Bootloader')
+
+        for _ in range(num_tries):
+
+            with serial.Serial(args.port, args.baud, timeout=args.timeout) as ser:
+
+                t_su = 0.15             # startup time for Artemis bootloader   (experimentally determined - 0.095 sec min delay)
+
+                time.sleep(t_su)        # Allow Artemis to come out of reset
+                phase_setup(ser)        # Perform baud rate negotiation
+
+                bl_failed = phase_bootload(ser)     # Bootload
+
+            if( bl_failed == False ):
+                break
+
     except:
-
-        # Show a list of com ports and recommend one
-        devices = list_ports.comports()
-
-        # First check to see if user has the given port open
-        for dev in devices:
-            if(dev.device.upper() == args.port.upper()):
-                print(dev.device + " is currently open. Please close any other terminal programs that may be using " +
-                      dev.device + " and try again.")
-                exit()
-
-        # otherwise, give user a list of possible com ports
-        print(args.port.upper() +
-              " not found but we detected the following serial ports:")
-        for dev in devices:
-            if 'CH340' in dev.description:
-                print(
-                    dev.description + ": Likely an Arduino or derivative. Try " + dev.device + ".")
-            elif 'FTDI' in dev.description:
-                print(
-                    dev.description + ": Likely an Arduino or derivative. Try " + dev.device + ".")
-            elif 'USB Serial Device' in dev.description:
-                print(
-                    dev.description + ": Possibly an Arduino or derivative.")
-            else:
-                print(dev.description)
-
-        exit()
-
-    # Begin talking over com port
-    print('Connecting over serial port {}...'.format(args.port), flush=True)
-
-    # Initially we communicate at 9600
-    with serial.Serial(args.port, 9600, timeout=0.100) as ser:
-
-        # DTR is driven low when serial port open. DTR has now pulled RST low causing board reset.
-        # If we do not set DTR high again, the Ambiq SBL will not activate, but the SparkFun bootloader will.
-
-        verboseprint("Waiting for command from bootloader")
-
-        # Wait for incoming BL_COMMAND_ANNOUNCE
-        i = 0
-        response = ''
-        while len(response) == 0:
-            i = i + 1
-            if(i == 30):
-                print("No announcement from Artemis bootloader")
-                exit()
-
-            response = ser.read()
-
-            if(len(response) > 0):
-                if(ord(response) == BL_COMMAND_ANNOUNCE):
-                    # Respond with 'AOK'
-                    # values = bytearray([6])
-                    ser.write(BL_COMMAND_AOK.to_bytes(1, byteorder='big'))
-
-                    verboseprint("Bootload response received")
-                    break
-                else:
-                    verboseprint("Unkown response: " + str(ord(response)))
-                    response = ''
-
-        # Send upload baud rate
-        baud_in_bytes = args.baud.to_bytes(4, byteorder='big')
-        ser.write(baud_in_bytes)
-
-        # Wait for incoming char indicating bootloader version
-        i = 0
-        response = ''
-        while len(response) == 0:
-            i = i + 1
-            if(i == 10):
-                print("No version from Artemis bootloader")
-                exit()
-
-            response = ser.read()
-
-        verboseprint("Bootloader version: " + str(ord(response)))
-
-        ser.flush()
-        # Wait for all previous bytes to transmit before changing bauds
-        time.sleep(0.010)
-
-        # Go to new baud rate
-        ser.baudrate = args.baud
-
-        # Read the binary file from the command line.
-        with open(args.binfile, mode='rb') as binfile:
-            application = binfile.read()
-        # Gather the important binary metadata.
-        totalLen = len(application)
-
-        verboseprint("Length to send: " + str(totalLen))
-
-        frame_address = 0
-        start = 0
-        end = start + 512*4
-
-        # Loop until we have sent the entire file
-        while 1:
-
-            # Calc CRC for this chunk
-            bytes_to_send = end - start
-            words_to_send = bytes_to_send / 4
-            myCRC32 = 0
-            i = 0
-            while i < words_to_send:
-                partialStart = int(start + (i * (bytes_to_send/words_to_send)))
-                partialEnd = int(
-                    end - ((words_to_send - 1 - i) * (bytes_to_send/words_to_send)))
-
-                myCRC32 = myCRC32 + \
-                    int.from_bytes(
-                        application[partialStart:partialEnd], 'little')
-
-                i = i + 1
-
-            myCRC32 = myCRC32 % 4294967296  # Trim any larger than 32-bit values
-
-            # Tell the target we are ready with new data
-            ser.write(BL_COMMAND_COMPUTER_READY.to_bytes(1, byteorder='big'))
-
-            # Wait for incoming BL_COMMAND_NEXT_FRAME indicating the sending of next frame
-            i = 0
-            response = ''
-            while len(response) == 0:
-                i = i + 1
-                if(i == 10):
-                    print("No announcement from Artemis bootloader")
-                    exit()
-
-                response = ser.read()
-
-            if ord(response) == BL_COMMAND_NEXT_FRAME:
-                verboseprint("Sending next frame: " +
-                             str(end - start) + " bytes")
-
-                if(start == totalLen):
-                    # We're done!
-                    print("Upload complete")
-
-                    # Send size of this frame - special command
-                    ser.write(BL_COMMAND_ALL_DONE.to_bytes(2, byteorder='big'))
-
-                    exit()
-
-                # Send size of this frame
-                bytes_to_send = end - start
-                ser.write(bytes_to_send.to_bytes(2, byteorder='big'))
-
-                # Send start address of this frame
-                ser.write(start.to_bytes(4, byteorder='big'))
-
-                # Send our CRC
-                ser.write(myCRC32.to_bytes(4, byteorder='big'))
-
-                # Send page of data
-                ser.write(application[start:end])
-
-                # Move the pointers foward
-                start = end
-                end = end + 512*4
-
-                if end > totalLen:
-                    end = totalLen
-            else:
-                print("Unknown BL response")
-                exit()
-
+        phase_serial_port_help()
+    
     exit()
 
 
@@ -240,6 +341,9 @@ if __name__ == '__main__':
     parser.add_argument("-v", "--verbose", default=0, help="Enable verbose output",
                         action="store_true")
 
+    parser.add_argument("-t", "--timeout", default=0.50, help="Communication timeout in seconds (default 0.5)",
+                         type=float)
+
     if len(sys.argv) < 2:
         print("No port selected. Detected Serial Ports:")
         devices = list_ports.comports()
@@ -258,5 +362,11 @@ if __name__ == '__main__':
             print()
     else:
         verboseprint = lambda *a: None      # do-nothing function
+
+    def twopartprint(verbosestr, printstr):
+        if args.verbose:
+            print(verbosestr, end = '')
+
+        print(printstr)
 
     main()

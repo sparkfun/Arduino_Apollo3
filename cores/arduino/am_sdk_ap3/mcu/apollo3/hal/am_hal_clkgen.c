@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.1.0 of the AmbiqSuite Development Package.
+// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
 //
 // ****************************************************************************
 
@@ -108,6 +108,12 @@ am_hal_clkgen_control(am_hal_clkgen_control_e eControl, void *pArgs)
             break;
 
         case AM_HAL_CLKGEN_CONTROL_XTAL_STOP:
+            // TODO - Fixme.  What is Errata #?
+            // Software Workaround to guarantee proper function of HFADJ.
+            if (APOLLO3_B0)
+            {
+              MCUCTRL->XTALCTRL_b.XTALICOMPTRIM = 1;
+            }
             CLKGEN->OCTRL         |= _VAL2FLD(CLKGEN_OCTRL_STOPXT,
                                               CLKGEN_OCTRL_STOPXT_STOP);
             break;
@@ -123,6 +129,13 @@ am_hal_clkgen_control(am_hal_clkgen_control_e eControl, void *pArgs)
             break;
 
         case AM_HAL_CLKGEN_CONTROL_HFADJ_ENABLE:
+            // TODO - Fixme.  What is Errata #?
+            // Software Workaround to guarantee proper function of HFADJ.
+            if (APOLLO3_B0)
+            {
+              MCUCTRL->XTALCTRL_b.XTALICOMPTRIM = 3;
+              am_hal_flash_delay(FLASH_CYCLES_US(1000));
+            }
             if ( pArgs == 0 )
             {
                 ui32Regval =
