@@ -658,15 +658,28 @@ ap3_err_t servoWriteResolution(uint8_t res)
     return AP3_OK;
 }
 
+uint8_t getServoResolution()
+{
+    return(_servoWriteBits);
+}
+
 ap3_err_t servoWrite(uint8_t pin, uint32_t val)
+{
+    return(servoWrite(pin, val, 544, 2400)); //Call servoWrite with Arduino default min/max microseconds. See: https://www.arduino.cc/en/Reference/ServoAttach
+}
+
+ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t maxMicros)
 {
     // Determine the high time based on input value and the current resolution setting
     uint32_t fsv = (0x01 << _servoWriteBits); // full scale value for the current resolution setting
     val = val % fsv;                          // prevent excess
     uint32_t clk = AM_HAL_CTIMER_HFRC_3MHZ;   // Using 3 MHz to get fine-grained control up to 20 ms wide
     uint32_t fw = 60000;                      // 20 ms wide frame
-    uint32_t max = 6000;                      // max width of RC pwm pulse is 2 ms or 6000 counts
-    uint32_t min = 3000;                      // min width of RC pwm pulse is 1 ms or 3000 counts
+
+    //Convert microSeconds to PWM counts.
+    uint32_t min = minMicros * 3; 
+    uint32_t max = maxMicros * 3;
+    
     uint32_t th = (uint32_t)(((max - min) * val) / fsv) + min;
 
     return ap3_pwm_output(pin, th, fw, clk);
