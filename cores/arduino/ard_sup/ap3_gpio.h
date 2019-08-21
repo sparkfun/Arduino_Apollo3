@@ -45,7 +45,7 @@ extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_INPUT_PULLDOWN;
 #define AP3_GPIO_IS_VALID(pad) ((pad >= 0) && (pad < AP3_GPIO_MAX_PADS))
 
 extern ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin);
-#define AP3_GPIO_PAD_UNUSED (-1)
+#define AP3_GPIO_PAD_UNUSED (255)
 
 #define AP3_GPIO_DEFAULT_PINCFG AP3_GPIO_PINCFG_NULL
 
