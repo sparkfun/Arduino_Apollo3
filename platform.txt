@@ -39,6 +39,7 @@ compiler.extra_flags.axf2bin=
 ap3core.path={runtime.platform.path}/cores/{build.core}
 ap3variant.path={build.variant.path}
 ap3core.ambiq_sdk.path={ap3core.path}/am_sdk_ap3
+ap3core.exactle.path={ap3core.path}/am_sdk_ap3/third_party/exactle
 
 
 ## Core Includes
@@ -46,6 +47,29 @@ includes.extra=
 includes.ambiq_sdk="-I{ap3core.ambiq_sdk.path}/mcu/apollo3" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/hal" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/regs" "-I{ap3core.ambiq_sdk.path}/utils"
 includes.cmsis="-I{ap3core.ambiq_sdk.path}/CMSIS/AmbiqMicro/Include" "-I{ap3core.ambiq_sdk.path}/CMSIS/ARM/Include"
 includes.exactle=
+
+# "-I{ap3core.exactle.path}/apollo-host/projects/common"
+# "-I{ap3core.exactle.path}/projects/generic/stacklib/gcc/bin-cortex-m4"
+# "-I{ap3core.exactle.path}/sw/apps/app"
+# "-I{ap3core.exactle.path}/sw/apps/app/generic"
+# "-I{ap3core.exactle.path}/sw/apps/app/include"
+# "-I{ap3core.exactle.path}/sw/hci/ambiq"
+# "-I{ap3core.exactle.path}/sw/hci/ambiq/apollo3"
+# "-I{ap3core.exactle.path}/sw/hci/include"
+# "-I{ap3core.exactle.path}/sw/profiles" # there are a LOT of subfolders to this one
+# "-I{ap3core.exactle.path}/sw/sec/common"
+# "-I{ap3core.exactle.path}/sw/sec/include"
+# "-I{ap3core.exactle.path}/sw/services"
+# "-I{ap3core.exactle.path}/sw/stack/cfg"
+# "-I{ap3core.exactle.path}/sw/stack/hci"
+# "-I{ap3core.exactle.path}/sw/stack/include"
+# "-I{ap3core.exactle.path}/ws-core/include"
+# "-I{ap3core.exactle.path}/ws-core/projects/common/gcc"
+# "-I{ap3core.exactle.path}/ws-core/sw/util"
+# "-I{ap3core.exactle.path}/ws-core/sw/wsf/ambiq"
+# "-I{ap3core.exactle.path}/ws-core/sw/wsf/generic"
+# "-I{ap3core.exactle.path}/ws-core/sw/wsf/include"
+
 includes.core="-I{ap3core.path}/ard_sup" "-I{ap3core.path}/ard_sup/ard_supers" {includes}
 includes.variant="{build.includes}"
 
