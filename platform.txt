@@ -46,7 +46,7 @@ ap3core.exactle.path={ap3core.path}/am_sdk_ap3/third_party/exactle
 includes.extra=
 includes.ambiq_sdk="-I{ap3core.ambiq_sdk.path}/mcu/apollo3" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/hal" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/regs" "-I{ap3core.ambiq_sdk.path}/utils"
 includes.cmsis="-I{ap3core.ambiq_sdk.path}/CMSIS/AmbiqMicro/Include" "-I{ap3core.ambiq_sdk.path}/CMSIS/ARM/Include"
-includes.exactle="-I{ap3core.exactle.path}/sw/hci/ambiq"
+includes.exactle="-I{ap3core.exactle.path}/sw/hci/ambiq" "-I{ap3core.exactle.path}/ws-core/sw/wsf/ambiq"
 
 # "-I{ap3core.exactle.path}/apollo-host/projects/common"
 # "-I{ap3core.exactle.path}/projects/generic/stacklib/gcc/bin-cortex-m4"
@@ -66,7 +66,7 @@ includes.exactle="-I{ap3core.exactle.path}/sw/hci/ambiq"
 # "-I{ap3core.exactle.path}/ws-core/include"
 # "-I{ap3core.exactle.path}/ws-core/projects/common/gcc"
 # "-I{ap3core.exactle.path}/ws-core/sw/util"
-# "-I{ap3core.exactle.path}/ws-core/sw/wsf/ambiq"
+
 # "-I{ap3core.exactle.path}/ws-core/sw/wsf/generic"
 # "-I{ap3core.exactle.path}/ws-core/sw/wsf/include"
 

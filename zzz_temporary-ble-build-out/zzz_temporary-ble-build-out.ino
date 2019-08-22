@@ -1,3 +1,5 @@
+#include "wsf_types.h"
+#include "wsf_trace.h"
 #include "hci_drv_apollo.h"
 
 void setup() {
