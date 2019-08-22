@@ -1,3 +1,5 @@
+#include "hci_drv_apollo.h"
+
 void setup() {
   // put your setup code here, to run once:
 
