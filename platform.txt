@@ -45,6 +45,7 @@ ap3core.ambiq_sdk.path={ap3core.path}/am_sdk_ap3
 includes.extra=
 includes.ambiq_sdk="-I{ap3core.ambiq_sdk.path}/mcu/apollo3" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/hal" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/regs" "-I{ap3core.ambiq_sdk.path}/utils"
 includes.cmsis="-I{ap3core.ambiq_sdk.path}/CMSIS/AmbiqMicro/Include" "-I{ap3core.ambiq_sdk.path}/CMSIS/ARM/Include"
+includes.exactle=
 includes.core="-I{ap3core.path}/ard_sup" "-I{ap3core.path}/ard_sup/ard_supers" {includes}
 includes.variant="{build.includes}"
 
@@ -90,7 +91,7 @@ compiler.flags.ld={compiler.extra_flags.ld} "-L{ap3core.ambiq_sdk.path}/CMSIS/AR
 compiler.flags.ar=rcs {compiler.extra_flags.ar}
 compiler.flags.axf2bin={compiler.extra_flags.axf2bin} -O binary
 
-includes.all={includes.variant} {includes.core} {includes.ambiq_sdk} {includes.cmsis} {includes.extra}
+includes.all={includes.variant} {includes.core} {includes.ambiq_sdk} {includes.cmsis} {includes.exactle} {includes.extra}
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
 libs.all={archive_file_path} {libs.extra} {libs.ambiq_sdk} {libs.cmsis} {libs.core} {libs.variant} {libs.extra}
 
