@@ -52,24 +52,11 @@ includes.exactle="-I{ap3core.exactle.path}/sw/hci/ambiq" "-I{ap3core.exactle.pat
 
 # "-I{ap3core.exactle.path}/apollo-host/projects/common"
 # "-I{ap3core.exactle.path}/projects/generic/stacklib/gcc/bin-cortex-m4"
-
 # "-I{ap3core.exactle.path}/sw/apps/app/generic"
-
-
-
-
 # "-I{ap3core.exactle.path}/sw/profiles" # there are a LOT of subfolders to this one
 # "-I{ap3core.exactle.path}/sw/profiles"
 # "-I{ap3core.exactle.path}/sw/profiles"
-
-
-
-
-
-
 # "-I{ap3core.exactle.path}/ws-core/projects/common/gcc"
-
-
 # "-I{ap3core.exactle.path}/ws-core/sw/wsf/generic"
 
 
