@@ -13,7 +13,7 @@
 #include "l2c_api.h"
 #include "att_api.h"
 #include "smp_api.h"
-#include "app_api.h" // oops, i deleted this one... let's see if we can get by without it
+#include "app_api.h"
 #include "hci_core.h"
 #include "hci_drv.h"
 #include "hci_drv_apollo.h"
