@@ -82,6 +82,8 @@ libs.extra=
 libs.ambiq_sdk=
 libs.cmsis=
 libs.core=
+libs.exactle="{ap3core.exactle.path}/projects/generic/stacklib/gcc/bin-cortex-m4/libstacklib.a"
+libs.uecc="{ap3core.uecc.path}/gcc/bin/lib_uecc.a"
 libs.variant={build.libs}
 
 
@@ -120,7 +122,7 @@ compiler.flags.axf2bin={compiler.extra_flags.axf2bin} -O binary
 
 includes.all={includes.variant} {includes.core} {includes.ambiq_sdk} {includes.cmsis} {includes.uecc} {includes.exactle} {includes.extra}
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
-libs.all={archive_file_path} {libs.extra} {libs.ambiq_sdk} {libs.cmsis} {libs.core} {libs.variant} {libs.extra}
+libs.all={archive_file_path} {libs.extra} {libs.ambiq_sdk} {libs.cmsis} {libs.uecc} {libs.exactle} {libs.core} {libs.variant} {libs.extra}
 
 
 ## Arduino Patterns
