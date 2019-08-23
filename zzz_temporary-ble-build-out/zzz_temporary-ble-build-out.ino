@@ -170,7 +170,7 @@ void exactle_stack_init(void){
     handlerId = WsfOsSetNextHandler(NusHandler);
     NusHandlerInit(handlerId);
 
-    ButtonHandlerId = WsfOsSetNextHandler(button_handler);
+//    ButtonHandlerId = WsfOsSetNextHandler(button_handler);
 
     handlerId = WsfOsSetNextHandler(HciDrvHandler);
     HciDrvHandlerInit(handlerId);
