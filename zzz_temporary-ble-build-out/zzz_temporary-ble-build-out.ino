@@ -1,6 +1,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "wsf_types.h"
 #include "wsf_trace.h"
 #include "wsf_buf.h"
@@ -27,6 +32,9 @@
 
 #include "wsf_msg.h"
 
+#ifdef __cplusplus
+}
+#endif
 
 //*****************************************************************************
 //
