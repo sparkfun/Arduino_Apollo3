@@ -35,16 +35,29 @@ extern Uart Serial;
 extern Uart Serial1;
 
 // Wire defines
-#define WIRE_INTERFACES_COUNT 1
+#define WIRE_INTERFACES_COUNT 4
 
 #define WireQwiic Wire // Giving Wire an alias of "WireQwiic" in case people want to use it
 #define AP3_Wire_IOM 4 // Secify that Wire uses IOMaster instance 4
 
+#define AP3_Wire1_IOM 2
+#define AP3_Wire2_IOM 1
+#define AP3_Wire3_IOM 3
+
 // SPI Defines
-#define SPI_INTERFACES_COUNT 1
+#define SPI_INTERFACES_COUNT 4
 
 #define AP3_SPI_IOM 0                   // Specify that SPI uses IOMaster 0
 #define AP3_SPI_DUP ap3_spi_full_duplex // Specify that SPI is full-duplex (as opposed to ap3_spi_tx_only or ap3_spi_rx_only)
+
+#define AP3_SPI1_IOM 2
+#define AP3_SPI1_DUP ap3_spi_full_duplex
+
+#define AP3_SPI2_IOM 1
+#define AP3_SPI2_DUP ap3_spi_full_duplex
+
+#define AP3_SPI3_IOM 3
+#define AP3_SPI3_DUP ap3_spi_full_duplex
 
 // Mapping of analog pins to digital pins of variant
 #define A0 16
