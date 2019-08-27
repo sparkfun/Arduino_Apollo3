@@ -28,7 +28,7 @@ version=0.1.0
 
 ## Extra Flags (can be overridden in platform.local.txt)
 compiler.extra_flags.cpp=
-compiler.extra_flags.c=
+compiler.extra_flags.c=-Wno-unused-but-set-variable
 compiler.extra_flags.S=
 compiler.extra_flags.ld=
 compiler.extra_flags.ar=

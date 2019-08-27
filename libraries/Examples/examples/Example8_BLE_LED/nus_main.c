@@ -47,6 +47,11 @@
 #include "gap_api.h"
 #include "fmpl/fmpl_api.h"
 
+extern void debug_print(const char* f, const char* F, uint16_t L);
+extern void debug_printf(char* fmt, ...);
+extern void set_led_high( void );
+extern void set_led_low( void );
+
 /**************************************************************************************************
   Macros
 **************************************************************************************************/
