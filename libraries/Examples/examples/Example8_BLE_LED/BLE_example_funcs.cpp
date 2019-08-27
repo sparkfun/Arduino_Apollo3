@@ -1,5 +1,9 @@
 #include "BLE_example.h"
 
+extern "C" void set_adv_name( const char* str );
+void setAdvName(const char* str){
+    set_adv_name( str );
+}
 
 //*****************************************************************************
 //

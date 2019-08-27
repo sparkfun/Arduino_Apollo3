@@ -26,6 +26,7 @@
 
 
 #include <string.h>
+#include <stdbool.h>
 #include "wsf_types.h"
 #include "bstream.h"
 #include "wsf_msg.h"
@@ -156,27 +157,51 @@ static uint8_t localIrk[] =
   Advertising Data
 **************************************************************************************************/
 
+// /*! advertising data, discoverable mode */
+// static const uint8_t tagAdvDataDisc[] =
+// {
+//   /*! flags */
+//   2,                                      /*! length */
+//   DM_ADV_TYPE_FLAGS,                      /*! AD type */
+//   DM_FLAG_LE_LIMITED_DISC |               /*! flags */
+//   DM_FLAG_LE_BREDR_NOT_SUP,
+
+//   /*! tx power */
+//   2,                                      /*! length */
+//   DM_ADV_TYPE_TX_POWER,                   /*! AD type */
+//   0,                                      /*! tx power */
+
+//   /*! device name */
+//   4,                                      /*! length */
+//   DM_ADV_TYPE_LOCAL_NAME,                 /*! AD type */
+//   'T',
+//   'a',
+//   'g'
+// };
+
 /*! advertising data, discoverable mode */
-static const uint8_t tagAdvDataDisc[] =
-{
-  /*! flags */
-  2,                                      /*! length */
-  DM_ADV_TYPE_FLAGS,                      /*! AD type */
-  DM_FLAG_LE_LIMITED_DISC |               /*! flags */
-  DM_FLAG_LE_BREDR_NOT_SUP,
+#define MAX_ADV_DATA_LEN 31
+uint8_t tagAdvDataDisc[MAX_ADV_DATA_LEN] = {0};
 
-  /*! tx power */
-  2,                                      /*! length */
-  DM_ADV_TYPE_TX_POWER,                   /*! AD type */
-  0,                                      /*! tx power */
+void set_adv_name( const char* str ){
+  uint8_t indi = 0;
+  bool done = false;
+  do{
+    if( *(str+indi) == 0 ){
+      done = true;
+    }else{
+      tagAdvDataDisc[2+indi] = *(str+indi); // copies characters from str into the data 
+      indi++;
+      if(indi >= (MAX_ADV_DATA_LEN-2)){
+        done = true;
+      }
+    }
+  }while(!done);
+  tagAdvDataDisc[0] = 30;                     // sets the 'length' field (note: if the sum of 'length' fields does not match the size of the adv data array then there can be problems!)
+  tagAdvDataDisc[1] = DM_ADV_TYPE_LOCAL_NAME; // sets the 'type' field
 
-  /*! device name */
-  4,                                      /*! length */
-  DM_ADV_TYPE_LOCAL_NAME,                 /*! AD type */
-  'T',
-  'a',
-  'g'
-};
+  // debug_printf("adv data: %s\n", str);
+}
 
 /*! scan data */
 static const uint8_t tagScanData[] =

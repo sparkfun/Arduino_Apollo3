@@ -57,5 +57,6 @@ void set_next_wakeup(void);
 void button_handler(wsfEventMask_t event, wsfMsgHdr_t *pMsg);
 extern void AppUiBtnTest(uint8_t btn);
 
+void setAdvName(const char* str);
 
 #endif // _BLE_EXAMPLE_H_
