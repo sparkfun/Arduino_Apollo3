@@ -22,6 +22,8 @@
  *  to any use, copying or further distribution of this software.
  */
 /*************************************************************************************************/
+#define DEBUG
+
 
 #include <string.h>
 #include "wsf_types.h"
@@ -278,17 +280,24 @@ static const attsCccSet_t tagCccSet[TAG_NUM_CCC_IDX] =
 /*************************************************************************************************/
 static void tagAlert(uint8_t alert)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+    debug_printf("alert: 0x%02X\n", alert);
+  #endif
   /* perform alert according to setting of alert alert */
   if (alert == CH_ALERT_LVL_NONE)
   {
+    set_led_low();
     AppUiAction(APP_UI_ALERT_CANCEL);
   }
   else if (alert == CH_ALERT_LVL_MILD)
   {
+    set_led_high();
     AppUiAction(APP_UI_ALERT_LOW);
   }
   else if (alert == CH_ALERT_LVL_HIGH)
   {
+    set_led_high();
     AppUiAction(APP_UI_ALERT_HIGH);
   }
 }
@@ -308,6 +317,9 @@ static void tagSetup(dmEvt_t *pMsg);
 /*************************************************************************************************/
 static void tagDmCback(dmEvt_t *pDmEvt)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   dmEvt_t *pMsg;
   uint16_t  len;
 
@@ -341,6 +353,9 @@ static void tagDmCback(dmEvt_t *pDmEvt)
 /*************************************************************************************************/
 static void tagAttCback(attEvt_t *pEvt)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   attEvt_t *pMsg;
 
   if ((pMsg = WsfMsgAlloc(sizeof(attEvt_t) + pEvt->valueLen)) != NULL)
@@ -367,6 +382,9 @@ static void tagAttCback(attEvt_t *pEvt)
 /*************************************************************************************************/
 static void tagCccCback(attsCccEvt_t *pEvt)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   attsCccEvt_t  *pMsg;
   appDbHdl_t    dbHdl;
 
@@ -398,6 +416,9 @@ static uint8_t tagIasWriteCback(dmConnId_t connId, uint16_t handle, uint8_t oper
                                 uint16_t offset, uint16_t len, uint8_t *pValue,
                                 attsAttr_t *pAttr)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   ATT_TRACE_INFO3("tagIasWriteCback connId:%d handle:0x%04x op:0x%02x",
                   connId, handle, operation);
   ATT_TRACE_INFO2("                 offset:0x%04x len:0x%04x", offset, len);
@@ -420,6 +441,9 @@ static uint8_t tagIasWriteCback(dmConnId_t connId, uint16_t handle, uint8_t oper
 /*************************************************************************************************/
 static void tagOpen(dmEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   /* Update peer address info */
   tagCb.addrType = pMsg->connOpen.addrType;
   BdaCpy(tagCb.peerAddr, pMsg->connOpen.peerAddr);
@@ -438,6 +462,9 @@ static void tagOpen(dmEvt_t *pMsg)
 /*************************************************************************************************/
 static void tagClose(dmEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   uint8_t   *pVal;
   uint16_t  len;
 
@@ -473,6 +500,9 @@ static void tagClose(dmEvt_t *pMsg)
 /*************************************************************************************************/
 static void tagSecPairCmpl(dmEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   appConnCb_t *pCb;
   dmSecKey_t *pPeerKey;
 
@@ -506,6 +536,9 @@ static void tagSecPairCmpl(dmEvt_t *pMsg)
 /*************************************************************************************************/
 static void tagSetup(dmEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   /* set advertising and scan response data for discoverable mode */
   AppAdvSetData(APP_ADV_DATA_DISCOVERABLE, sizeof(tagAdvDataDisc), (uint8_t *) tagAdvDataDisc);
   AppAdvSetData(APP_SCAN_DATA_DISCOVERABLE, sizeof(tagScanData), (uint8_t *) tagScanData);
@@ -531,6 +564,9 @@ static void tagSetup(dmEvt_t *pMsg)
 /*************************************************************************************************/
 static void tagValueUpdate(attEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   if (pMsg->hdr.status == ATT_SUCCESS)
   {
     // todo: add debugging statement here to see what's happening!
@@ -564,6 +600,9 @@ static void tagValueUpdate(attEvt_t *pMsg)
 /*************************************************************************************************/
 static void tagDiscGapCmpl(dmConnId_t connId)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   appDbHdl_t dbHdl;
 
   /* if RPA Only attribute found on peer device */
@@ -588,6 +627,9 @@ static void tagDiscGapCmpl(dmConnId_t connId)
 /*************************************************************************************************/
 static void tagProcRssiTimer(dmEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   dmConnId_t  connId;
 
   /* if still connected */
@@ -614,6 +656,9 @@ static void tagProcRssiTimer(dmEvt_t *pMsg)
 /*************************************************************************************************/
 static void tagBtnCback(uint8_t btn)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   dmConnId_t  connId;
 
   /* button actions when connected */
@@ -763,6 +808,9 @@ static void tagBtnCback(uint8_t btn)
 /*************************************************************************************************/
 static void tagDiscCback(dmConnId_t connId, uint8_t status)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   switch(status)
   {
     case APP_DISC_INIT:
@@ -856,6 +904,10 @@ static void tagDiscCback(dmConnId_t connId, uint8_t status)
 /*************************************************************************************************/
 static void tagProcMsg(dmEvt_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+    debug_printf("pMsg->hdr.event: 0x%04X\n", (uint32_t)pMsg->hdr.event);
+  #endif
   uint8_t uiEvent = APP_UI_NONE;
 
   switch(pMsg->hdr.event)
@@ -987,6 +1039,9 @@ static void tagProcMsg(dmEvt_t *pMsg)
 /*************************************************************************************************/
 void NusHandlerInit(wsfHandlerId_t handlerId)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   APP_TRACE_INFO0("NusHandlerInit");
 
   /* store handler ID */
@@ -1030,6 +1085,9 @@ void NusHandlerInit(wsfHandlerId_t handlerId)
 /*************************************************************************************************/
 void NusHandler(wsfEventMask_t event, wsfMsgHdr_t *pMsg)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   if (pMsg != NULL)
   {
     APP_TRACE_INFO1("Tag got evt %d", pMsg->event);
@@ -1069,6 +1127,9 @@ void NusHandler(wsfEventMask_t event, wsfMsgHdr_t *pMsg)
 /*************************************************************************************************/
 void NusStart(void)
 {
+  #ifdef DEBUG
+    debug_print(__func__, __FILE__, __LINE__);
+  #endif
   /* Register for stack callbacks */
   DmRegister(tagDmCback);
   DmConnRegister(DM_CLIENT_ID_APP, tagDmCback);

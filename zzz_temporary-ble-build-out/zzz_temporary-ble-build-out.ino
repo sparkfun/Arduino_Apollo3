@@ -36,6 +36,45 @@ extern "C"
 }
 #endif
 
+#define DEBUG
+#define SERIAL_PORT Serial
+#define DEBUG_UART_BUF_LEN 256
+
+// ****************************************
+// 
+// Debug print functions
+// 
+// ****************************************
+extern "C" void debug_print(const char* f, const char* F, uint16_t L){
+  SERIAL_PORT.printf("fm: %s, file: %s, line: %d\n", f, F, L);
+}
+
+extern "C" void debug_printf(char* fmt, ...){
+#ifdef DEBUG
+    char    debug_buffer        [DEBUG_UART_BUF_LEN];
+    va_list args;
+    va_start (args, fmt);
+    vsnprintf(debug_buffer, DEBUG_UART_BUF_LEN, (const char*)fmt, args);
+    va_end (args);
+
+    SERIAL_PORT.print(debug_buffer);
+#endif //DEBUG  
+}
+
+
+// ****************************************
+// 
+// C-callable led functions
+// 
+// ****************************************
+extern void set_led_high( void ){
+  digitalWrite(LED_BUILTIN, HIGH);
+}
+
+extern void set_led_low( void ){
+  digitalWrite(LED_BUILTIN, LOW);
+}
+
 //*****************************************************************************
 //
 // Forward declarations.
@@ -405,6 +444,15 @@ extern "C" void am_ble_isr(void){
 void setup() {
   // put your setup code here, to run once:
 
+  #ifdef DEBUG
+    SERIAL_PORT.begin(115200);
+    delay(1000);
+    SERIAL_PORT.printf("Apollo3 Arduino BLE Example. Compiled: %s\n", __TIME__);
+  #endif
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  set_led_low();
+
   //
   // Boot the radio.
   //
@@ -422,6 +470,8 @@ void setup() {
 
   while (TRUE)
   {
+//      debug_print(__func__, __FILE__, __LINE__);
+      
       //
       // Calculate the elapsed time from our free-running timer, and update
       // the software timers in the WSF scheduler.

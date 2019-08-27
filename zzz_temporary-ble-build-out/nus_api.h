@@ -24,6 +24,11 @@
 
 #include "wsf_os.h"
 
+extern void debug_print(const char* f, const char* F, uint16_t L);
+extern void debug_printf(char* fmt, ...);
+extern void set_led_high( void );
+extern void set_led_low( void );
+
 #ifdef __cplusplus
 extern "C" {
 #endif
