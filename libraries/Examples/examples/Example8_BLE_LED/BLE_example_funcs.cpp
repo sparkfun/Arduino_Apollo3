@@ -1,91 +1,4 @@
-#include <stdint.h>
-#include <stdbool.h>
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include "wsf_types.h"
-#include "wsf_trace.h"
-#include "wsf_buf.h"
-
-#include "hci_handler.h"
-#include "dm_handler.h"
-#include "l2c_handler.h"
-#include "att_handler.h"
-#include "smp_handler.h"
-#include "l2c_api.h"
-#include "att_api.h"
-#include "smp_api.h"
-#include "app_api.h"
-#include "hci_core.h"
-#include "hci_drv.h"
-#include "hci_drv_apollo.h"
-#include "hci_drv_apollo3.h"
-
-#include "am_mcu_apollo.h"
-#include "am_util.h"
-
-#include "nus_api.h"
-#include "app_ui.h"
-
-#include "wsf_msg.h"
-
-#ifdef __cplusplus
-}
-#endif
-
-#define DEBUG
-#define SERIAL_PORT Serial
-#define DEBUG_UART_BUF_LEN 256
-
-// ****************************************
-// 
-// Debug print functions
-// 
-// ****************************************
-extern "C" void debug_print(const char* f, const char* F, uint16_t L){
-  SERIAL_PORT.printf("fm: %s, file: %s, line: %d\n", f, F, L);
-}
-
-extern "C" void debug_printf(char* fmt, ...){
-#ifdef DEBUG
-    char    debug_buffer        [DEBUG_UART_BUF_LEN];
-    va_list args;
-    va_start (args, fmt);
-    vsnprintf(debug_buffer, DEBUG_UART_BUF_LEN, (const char*)fmt, args);
-    va_end (args);
-
-    SERIAL_PORT.print(debug_buffer);
-#endif //DEBUG  
-}
-
-
-// ****************************************
-// 
-// C-callable led functions
-// 
-// ****************************************
-extern void set_led_high( void ){
-  digitalWrite(LED_BUILTIN, HIGH);
-}
-
-extern void set_led_low( void ){
-  digitalWrite(LED_BUILTIN, LOW);
-}
-
-//*****************************************************************************
-//
-// Forward declarations.
-//
-//*****************************************************************************
-void exactle_stack_init(void);
-void scheduler_timer_init(void);
-void update_scheduler_timers(void);
-void set_next_wakeup(void);
-void button_handler(wsfEventMask_t event, wsfMsgHdr_t *pMsg);
-extern void AppUiBtnTest(uint8_t btn);
+#include "BLE_example.h"
 
 
 //*****************************************************************************
@@ -150,6 +63,8 @@ static wsfBufPoolDesc_t g_psPoolDescriptors[WSF_BUF_POOLS] =
 //*****************************************************************************
 uint32_t g_ui32LastTime = 0;
 extern "C" void radio_timer_handler(void);
+
+
 
 //*****************************************************************************
 //
@@ -441,63 +356,40 @@ extern "C" void am_ble_isr(void){
 }
 
 
-void setup() {
-  // put your setup code here, to run once:
 
-  #ifdef DEBUG
-    SERIAL_PORT.begin(115200);
-    delay(1000);
-    SERIAL_PORT.printf("Apollo3 Arduino BLE Example. Compiled: %s\n", __TIME__);
-  #endif
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  set_led_low();
+// ****************************************
+// 
+// Debug print functions
+// 
+// ****************************************
+#define DEBUG_UART_BUF_LEN 256
 
-  //
-  // Boot the radio.
-  //
-  HciDrvRadioBoot(0);
-
-  //
-  // Initialize the main ExactLE stack.
-  //
-  exactle_stack_init();
-
-  //
-  // Start the "Nus" profile.
-  //
-  NusStart();
-
-  while (TRUE)
-  {
-//      debug_print(__func__, __FILE__, __LINE__);
-      
-      //
-      // Calculate the elapsed time from our free-running timer, and update
-      // the software timers in the WSF scheduler.
-      //
-      update_scheduler_timers();
-      wsfOsDispatcher();
-
-      //
-      // Enable an interrupt to wake us up next time we have a scheduled event.
-      //
-      set_next_wakeup();
-
-      am_hal_interrupt_master_disable();
-
-      //
-      // Check to see if the WSF routines are ready to go to sleep.
-      //
-      if ( wsfOsReadyToSleep() )
-      {
-          am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
-      }
-      am_hal_interrupt_master_enable();
-  }
+extern "C" void debug_print(const char* f, const char* F, uint16_t L){
+  SERIAL_PORT.printf("fm: %s, file: %s, line: %d\n", f, F, L);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+extern "C" void debug_printf(char* fmt, ...){
+#ifdef DEBUG
+    char    debug_buffer        [DEBUG_UART_BUF_LEN];
+    va_list args;
+    va_start (args, fmt);
+    vsnprintf(debug_buffer, DEBUG_UART_BUF_LEN, (const char*)fmt, args);
+    va_end (args);
 
+    SERIAL_PORT.print(debug_buffer);
+#endif //DEBUG  
+}
+
+// ****************************************
+// 
+// C-callable led functions
+// 
+// ****************************************
+extern void set_led_high( void ){
+  digitalWrite(LED_BUILTIN, HIGH);
+}
+
+extern void set_led_low( void ){
+  digitalWrite(LED_BUILTIN, LOW);
 }
