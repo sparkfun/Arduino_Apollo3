@@ -43,7 +43,7 @@ extern Uart Serial;
 #define AP3_Wire1_IOM 3
 
 #define WireCamera Wire2
-#define AP3_Wire1_IOM 2
+#define AP3_Wire2_IOM 2
 
 // SPI Defines
 #define SPI_INTERFACES_COUNT 1
