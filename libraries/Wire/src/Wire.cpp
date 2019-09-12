@@ -144,7 +144,7 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity)
 
 void TwoWire::beginTransmission(uint8_t address) {
 	// save address of target and clear buffer
-	_txAddress = address;
+	_transmissionAddress = address;
 	_txBuffer.clear();
 
 	_transmissionBegun = true;
@@ -161,7 +161,7 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 	_transmissionBegun = false ;
 
 	am_hal_iom_transfer_t iomTransfer = {0};
-	iomTransfer.uPeerInfo.ui32I2CDevAddr = _txAddress; 
+	iomTransfer.uPeerInfo.ui32I2CDevAddr = _transmissionAddress; 
     iomTransfer.ui32InstrLen = 0;           // Use only data phase
     iomTransfer.ui32Instr = 0;    			// 
     // iomTransfer.ui32NumBytes = ;         // 

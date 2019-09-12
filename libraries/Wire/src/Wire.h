@@ -73,7 +73,7 @@ class TwoWire : public Stream, public IOMaster {
     ap3_gpio_pin_t  _padSCL;
 
     bool _transmissionBegun;
-    uint8_t _txAddress;
+    uint8_t _transmissionAddress;
 
     
     RingBufferN<AP3_WIRE_RX_BUFFER_LEN> _rxBuffer;// RX Buffer    
