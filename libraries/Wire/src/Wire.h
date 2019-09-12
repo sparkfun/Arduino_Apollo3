@@ -47,7 +47,7 @@ class TwoWire : public Stream, public IOMaster {
     uint8_t endTransmission(bool stopBit);
     uint8_t endTransmission(void);
 
-    uint8_t requestFrom(uint8_t address, size_t quantity, bool stopBit);
+    uint8_t requestFrom(uint8_t address, size_t quantity, bool stopBit = true);
     uint8_t requestFrom(uint8_t address, size_t quantity);
 
     size_t write(uint8_t data);
@@ -77,7 +77,7 @@ class TwoWire : public Stream, public IOMaster {
 
     
     RingBufferN<AP3_WIRE_RX_BUFFER_LEN> _rxBuffer;// RX Buffer    
-    RingBufferN<AP3_WIRE_TX_BUFFER_LEN> _txBuffer;//TX buffer
+    RingBufferN<AP3_WIRE_TX_BUFFER_LEN> _txBuffer;// TX buffer
     uint8_t _linearBugger[AP3_WIRE_LINEAR_BUFFER_LEN]; // ToDo: choose a more efficient way to handle this
     uint8_t txAddress;
 

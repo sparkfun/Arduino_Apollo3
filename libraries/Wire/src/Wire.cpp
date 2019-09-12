@@ -108,7 +108,7 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 	_rxBuffer.clear();
 
 	am_hal_iom_transfer_t iomTransfer = {0};
-    iomTransfer.uPeerInfo.ui32I2CDevAddr = _txAddress; 
+    iomTransfer.uPeerInfo.ui32I2CDevAddr = address; 
     iomTransfer.ui32InstrLen = 0;           // 8-bit transfers
     iomTransfer.ui32Instr = 0;   // Offset;
     iomTransfer.ui32NumBytes = quantity;         // How many bytes to receive
