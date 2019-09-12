@@ -137,11 +137,6 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 	return byteRead;
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity)
-{
-	return requestFrom(address, quantity, true);
-}
-
 void TwoWire::beginTransmission(uint8_t address) {
 	// save address of target and clear buffer
 	_transmissionAddress = address;
@@ -203,11 +198,6 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 		default:
 			return 4; break; // other error
 	}
-}
-
-uint8_t TwoWire::endTransmission()
-{
-	return endTransmission(true);
 }
 
 size_t TwoWire::write(uint8_t ucData)
