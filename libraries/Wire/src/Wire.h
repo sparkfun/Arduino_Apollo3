@@ -43,11 +43,10 @@ class TwoWire : public Stream, public IOMaster {
     void end();
     void setClock(uint32_t);
 
-    void beginTransmission(uint8_t);
+    void beginTransmission(uint8_t address);
     uint8_t endTransmission(bool stopBit = true);
 
     uint8_t requestFrom(uint8_t address, size_t quantity, bool stopBit = true);
-    uint8_t requestFrom(uint8_t address, size_t quantity);
 
     size_t write(uint8_t data);
     size_t write(const uint8_t * data, size_t quantity);
