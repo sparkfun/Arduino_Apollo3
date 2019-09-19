@@ -5,6 +5,12 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.8
+===================
+- Wire library requestFrom address bug fix (previously required address to be set with 'beginTransmission')
+- Correct variant definition for Artemis module (Serial mis-definition)
+- Correct variant definition for Edge (Wire1 redefinition)
+
 1.0.7 - 
 ===================
 - Rectified error in Artemis variant pin map (pad 46 was listed as available when it is in fact not)

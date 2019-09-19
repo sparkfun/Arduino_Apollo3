@@ -108,7 +108,7 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 	_rxBuffer.clear();
 
 	am_hal_iom_transfer_t iomTransfer = {0};
-    iomTransfer.uPeerInfo.ui32I2CDevAddr = _txAddress; 
+    iomTransfer.uPeerInfo.ui32I2CDevAddr = address; 
     iomTransfer.ui32InstrLen = 0;           // 8-bit transfers
     iomTransfer.ui32Instr = 0;   // Offset;
     iomTransfer.ui32NumBytes = quantity;         // How many bytes to receive
@@ -137,14 +137,9 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 	return byteRead;
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity)
-{
-	return requestFrom(address, quantity, true);
-}
-
 void TwoWire::beginTransmission(uint8_t address) {
 	// save address of target and clear buffer
-	_txAddress = address;
+	_transmissionAddress = address;
 	_txBuffer.clear();
 
 	_transmissionBegun = true;
@@ -161,7 +156,7 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 	_transmissionBegun = false ;
 
 	am_hal_iom_transfer_t iomTransfer = {0};
-	iomTransfer.uPeerInfo.ui32I2CDevAddr = _txAddress; 
+	iomTransfer.uPeerInfo.ui32I2CDevAddr = _transmissionAddress; 
     iomTransfer.ui32InstrLen = 0;           // Use only data phase
     iomTransfer.ui32Instr = 0;    			// 
     // iomTransfer.ui32NumBytes = ;         // 
@@ -203,11 +198,6 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 		default:
 			return 4; break; // other error
 	}
-}
-
-uint8_t TwoWire::endTransmission()
-{
-	return endTransmission(true);
 }
 
 size_t TwoWire::write(uint8_t ucData)

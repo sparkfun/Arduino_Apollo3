@@ -64,45 +64,45 @@ artemis.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scri
 
 ###############################################################
 
-amap3blackboard.name=SparkFun BlackBoard Artemis
-amap3blackboard.build.variant=SparkFun_BlackBoard_Artemis
-amap3blackboard.build.board=AM_AP3_SFE_BB_ARTEMIS
-amap3blackboard.upload.maximum_size=960000
-amap3blackboard.upload.sbl_baud=115200
-amap3blackboard.build.arch=APOLLO3
-amap3blackboard.build.mcu=cortex-m4
-amap3blackboard.build.f_cpu=48000000L
-amap3blackboard.build.core=arduino
-amap3blackboard.build.includes=-I{build.variant.path}/config
-amap3blackboard.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
-amap3blackboard.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-amap3blackboard.build.preferred_export_format=axf
-amap3blackboard.build.defs=
-amap3blackboard.build.libs=
-amap3blackboard.menu.svl_baud.921600=921600
-amap3blackboard.menu.svl_baud.460800=460800
-amap3blackboard.menu.svl_baud.230400=230400
-amap3blackboard.menu.svl_baud.115200=115200
-amap3blackboard.menu.svl_baud.57600=57600
-amap3blackboard.menu.loader.sparkfun_svl=SparkFun Variable Loader (Recommended)
-amap3blackboard.menu.loader.ambiq_sbl=Ambiq Secure Bootloader (Advanced)
+amap3redboard.name=SparkFun RedBoard Artemis
+amap3redboard.build.variant=SparkFun_RedBoard_Artemis
+amap3redboard.build.board=AM_AP3_SFE_BB_ARTEMIS
+amap3redboard.upload.maximum_size=960000
+amap3redboard.upload.sbl_baud=115200
+amap3redboard.build.arch=APOLLO3
+amap3redboard.build.mcu=cortex-m4
+amap3redboard.build.f_cpu=48000000L
+amap3redboard.build.core=arduino
+amap3redboard.build.includes=-I{build.variant.path}/config
+amap3redboard.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3redboard.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3redboard.build.preferred_export_format=axf
+amap3redboard.build.defs=
+amap3redboard.build.libs=
+amap3redboard.menu.svl_baud.921600=921600
+amap3redboard.menu.svl_baud.460800=460800
+amap3redboard.menu.svl_baud.230400=230400
+amap3redboard.menu.svl_baud.115200=115200
+amap3redboard.menu.svl_baud.57600=57600
+amap3redboard.menu.loader.sparkfun_svl=SparkFun Variable Loader (Recommended)
+amap3redboard.menu.loader.ambiq_sbl=Ambiq Secure Bootloader (Advanced)
 
-amap3blackboard.menu.svl_baud.57600.upload.svl_baud=57600
-amap3blackboard.menu.svl_baud.115200.upload.svl_baud=115200
-amap3blackboard.menu.svl_baud.230400.upload.svl_baud=230400
-amap3blackboard.menu.svl_baud.460800.upload.svl_baud=460800
-amap3blackboard.menu.svl_baud.921600.upload.svl_baud=921600
+amap3redboard.menu.svl_baud.57600.upload.svl_baud=57600
+amap3redboard.menu.svl_baud.115200.upload.svl_baud=115200
+amap3redboard.menu.svl_baud.230400.upload.svl_baud=230400
+amap3redboard.menu.svl_baud.460800.upload.svl_baud=460800
+amap3redboard.menu.svl_baud.921600.upload.svl_baud=921600
 
-amap3blackboard.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
-amap3blackboard.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
+amap3redboard.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
+amap3redboard.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
 
-amap3blackboard.menu.loader.sparkfun_svl.upload.tool=artemis_svl
-amap3blackboard.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
+amap3redboard.menu.loader.sparkfun_svl.upload.tool=artemis_svl
+amap3redboard.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
 
 ###############################################################
 
-amap3nano.name=SparkFun BlackBoard Artemis Nano
-amap3nano.build.variant=SparkFun_BlackBoard_Artemis_Nano
+amap3nano.name=SparkFun RedBoard Artemis Nano
+amap3nano.build.variant=SparkFun_RedBoard_Artemis_Nano
 amap3nano.build.board=AM_AP3_SFE_BB_ARTEMIS_NANO
 amap3nano.upload.maximum_size=960000
 amap3nano.upload.sbl_baud=115200
@@ -138,8 +138,8 @@ amap3nano.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_sc
 
 ###############################################################
 
-amap3atp.name=SparkFun BlackBoard Artemis ATP
-amap3atp.build.variant=SparkFun_BlackBoard_Artemis_ATP
+amap3atp.name=SparkFun RedBoard Artemis ATP
+amap3atp.build.variant=SparkFun_RedBoard_Artemis_ATP
 amap3atp.build.board=AM_AP3_SFE_BB_ARTEMIS_ATP
 amap3atp.upload.maximum_size=960000
 amap3atp.upload.sbl_baud=115200
@@ -172,6 +172,43 @@ amap3atp.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_script
 
 amap3atp.menu.loader.sparkfun_svl.upload.tool=artemis_svl
 amap3atp.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
+
+###############################################################
+
+amap3thing.name=SparkFun Artemis Thing Plus
+amap3thing.build.variant=SparkFun_Artemis_Thing_Plus
+amap3thing.build.board=AM_AP3_SFE_THING_PLUS
+amap3thing.upload.maximum_size=960000
+amap3thing.upload.sbl_baud=115200
+amap3thing.build.arch=APOLLO3
+amap3thing.build.mcu=cortex-m4
+amap3thing.build.f_cpu=48000000L
+amap3thing.build.core=arduino
+amap3thing.build.includes=-I{build.variant.path}/config
+amap3thing.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+amap3thing.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3
+amap3thing.build.preferred_export_format=axf
+amap3thing.build.defs=
+amap3thing.build.libs=
+amap3thing.menu.svl_baud.921600=921600
+amap3thing.menu.svl_baud.460800=460800
+amap3thing.menu.svl_baud.230400=230400
+amap3thing.menu.svl_baud.115200=115200
+amap3thing.menu.svl_baud.57600=57600
+amap3thing.menu.loader.sparkfun_svl=SparkFun Variable Loader (Recommended)
+amap3thing.menu.loader.ambiq_sbl=Ambiq Secure Bootloader (Advanced)
+
+amap3thing.menu.svl_baud.57600.upload.svl_baud=57600
+amap3thing.menu.svl_baud.115200.upload.svl_baud=115200
+amap3thing.menu.svl_baud.230400.upload.svl_baud=230400
+amap3thing.menu.svl_baud.460800.upload.svl_baud=460800
+amap3thing.menu.svl_baud.921600.upload.svl_baud=921600
+
+amap3thing.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
+amap3thing.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
+
+amap3thing.menu.loader.sparkfun_svl.upload.tool=artemis_svl
+amap3thing.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
 
 ###############################################################
 
