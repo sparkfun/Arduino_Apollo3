@@ -226,6 +226,7 @@ edge.build.includes=-I{build.variant.path}/config
 edge.build.libs=
 edge.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 edge.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
+edge.build.preferred_export_format=axf
 
 edge.menu.sbl_baud.921600=921600 (Default)
 edge.menu.sbl_baud.115200=115200 (TensorFlow Conference Versions)
@@ -270,6 +271,7 @@ edge2.build.core=arduino
 edge2.build.includes=-I{build.variant.path}/config
 edge2.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
 edge2.build.ldscript={build.variant.path}/linker_scripts/gcc/flash_with_bootloader.ld
+edge2.build.preferred_export_format=axf
 edge2.build.defs=
 edge2.build.libs=
 edge2.menu.svl_baud.921600=921600
