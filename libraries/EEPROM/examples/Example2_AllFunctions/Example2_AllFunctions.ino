@@ -16,6 +16,11 @@
 
 #include <EEPROM.h>
 
+// Give a default if the variant does not define one.
+#ifndef A0
+#define A0 0
+#endif
+
 void setup()
 {
   Serial.begin(9600);
@@ -39,7 +44,7 @@ void setup()
   Serial.println("8 bit tests");
   byte myValue1 = 200;
   byte myValue2 = 23;
-  randomLocation = random(0, FLASH_EEPROM_SIZE);
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   startTime = millis();
   EEPROM.write(randomLocation, myValue1); //(location, data)
@@ -61,7 +66,7 @@ void setup()
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   uint16_t myValue3 = 3411;
   int16_t myValue4 = -366;
-  randomLocation = random(0, FLASH_EEPROM_SIZE);
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   EEPROM.put(randomLocation, myValue3);
   EEPROM.put(randomLocation + 2, myValue4);
@@ -82,7 +87,7 @@ void setup()
   Serial.printf("Size of int: %d\n", sizeof(int));
   int myValue5 = -245000;
   unsigned int myValue6 = 400123;
-  randomLocation = random(0, FLASH_EEPROM_SIZE);
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   EEPROM.put(randomLocation, myValue5);
   EEPROM.put(randomLocation + 4, myValue6);
@@ -99,7 +104,7 @@ void setup()
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   int32_t myValue7 = -341002;
   uint32_t myValue8 = 241544;
-  randomLocation = random(0, FLASH_EEPROM_SIZE);
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   EEPROM.update(randomLocation, myValue7);
   EEPROM.update(randomLocation + 4, myValue8);
@@ -117,7 +122,7 @@ void setup()
   Serial.printf("Size of float: %d\n", sizeof(float));
   float myValue9 = -7.35;
   float myValue10 = 5.22;
-  randomLocation = random(0, FLASH_EEPROM_SIZE);
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   EEPROM.update(randomLocation, myValue9);
   EEPROM.update(randomLocation + 4, myValue10);
@@ -138,7 +143,7 @@ void setup()
   Serial.printf("Size of double: %d\n", sizeof(double));
   double myValue11 = -290.3485723409857;
   double myValue12 = 384.95734987;
-  randomLocation = random(0, FLASH_EEPROM_SIZE);
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   EEPROM.update(randomLocation, myValue11);
   EEPROM.update(randomLocation + 8, myValue12);
@@ -157,7 +162,7 @@ void setup()
   {
     if (x % 32 == 0)
       Serial.println();
-    Serial.printf("0x%08X ", *(uint32_t *)(FLASH_EEPROM_START + x));
+    Serial.printf("0x%08X ", *(uint32_t *)(AP3_FLASH_EEPROM_START + x));
   }
   Serial.println();
 }
