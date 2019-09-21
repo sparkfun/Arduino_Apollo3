@@ -113,8 +113,8 @@ void ap3_EEPROM::get(uint16_t eepromLocation, double &dataToGet)
     double lf;
     uint32_t b[2];
   } temp;
-  temp.b[1] = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation);           //LSB;
-  temp.b[0] = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation + 4) << 32; //MSB;
+  temp.b[1] = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation);     //LSB;
+  temp.b[0] = *(uint32_t *)(AP3_FLASH_EEPROM_START + eepromLocation + 4); //MSB;
   dataToGet = temp.lf;
 }
 
