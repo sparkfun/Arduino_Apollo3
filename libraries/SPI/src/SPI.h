@@ -23,17 +23,6 @@
 #include <Arduino.h>
 #include "ap3_iomaster.h"
 
-// Give a warning if the variant did not define these symbols:
-#ifndef MOSI
-#warning "variant has no definition for pin number 'MOSI'"
-#endif // MOSI
-#ifndef MISO
-#warning "variant has no definition for pin number 'MISO'"
-#endif // MISO
-#ifndef SCK
-#warning "variant has no definition for pin number 'SCK'"
-#endif // SCK
-
 // SPI_HAS_TRANSACTION means SPI has
 //   - beginTransaction()
 //   - endTransaction()
