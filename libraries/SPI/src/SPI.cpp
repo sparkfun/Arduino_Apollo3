@@ -128,8 +128,9 @@ void SPIClass::end()
 static inline unsigned char __interruptsStatus(void) __attribute__((always_inline, unused));
 static inline unsigned char __interruptsStatus(void)
 {
-  // // See http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0497a/CHDBIBGJ.html
-  // return (__get_PRIMASK() ? 0 : 1);
+  // See http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0497a/CHDBIBGJ.html - Cortex-M0
+  // Equivalent Cortex-M3 http://infocenter.arm.com/help/topic/com.arm.doc.dui0552a/CHDBIBGJ.html
+  return (__get_PRIMASK() ? 0 : 1);
 }
 #endif
 
@@ -300,12 +301,15 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
   }
 
   uint32_t retVal32 = 0;
-  if( iomTransfer.eDirection == AM_HAL_IOM_FULLDUPLEX ){
+  if (iomTransfer.eDirection == AM_HAL_IOM_FULLDUPLEX)
+  {
     retVal32 = am_hal_iom_spi_blocking_fullduplex(_handle, &iomTransfer);
-  }else{
+  }
+  else
+  {
     retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
   }
-   
+
   // if (retVal32 != 0)
   // {
   //   Serial.printf("got an error on _transfer: %d\n", retVal32);

@@ -9,3 +9,7 @@
 
 # OTA Files
 *OTA_blob*
+
+*.elf
+*.axf
+/test-results
