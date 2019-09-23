@@ -53,6 +53,10 @@ SVL_CMD_FRAME   = 0x04  # indicate app data frame
 SVL_CMD_RETRY   = 0x05  # request re-send frame
 SVL_CMD_DONE    = 0x06  # finished - all data sent
 
+# Global variables
+
+barWidthInCharacters = 50 # Width of progress bar, ie [###### % complete
+
 
 # ***********************************************************************************
 #
@@ -205,6 +209,10 @@ def phase_bootload(ser):
 
         total_frames = math.ceil(total_len/frame_size)
         curr_frame = 0
+        progressChars = 0
+
+        if (not args.verbose):
+            print("[", end = '')
 
         verboseprint('\thave ' + str(total_len) + ' bytes to send in ' + str(total_frames) + ' frames')
 
@@ -237,7 +245,16 @@ def phase_bootload(ser):
 
             if( curr_frame <= total_frames ):
                 frame_data = application[((curr_frame-1)*frame_size):((curr_frame-1+1)*frame_size)]
-                verboseprint('\tsending frame #'+str(curr_frame)+', length: '+str(len(frame_data)))
+                if(args.verbose):
+                    verboseprint('\tsending frame #'+str(curr_frame)+', length: '+str(len(frame_data)))
+                else:
+                    percentComplete = curr_frame * 100 / total_frames
+                    percentCompleteInChars = math.ceil(percentComplete / 100 * barWidthInCharacters)
+                    while(progressChars < percentCompleteInChars):
+                        progressChars = progressChars + 1
+                        print('#', end='', flush=True)
+                    if (percentComplete == 100):
+                        print("]", end='')
 
                 send_packet(ser, SVL_CMD_FRAME, frame_data)
 
@@ -246,9 +263,9 @@ def phase_bootload(ser):
                 bl_done = True
 
         if( bl_failed == False ):
-            twopartprint('\n\t', 'Upload complete')
+            twopartprint('\n\t', ' Upload complete')
         else:
-            twopartprint('\n\t', 'Upload failed')
+            twopartprint('\n\t', ' Upload failed')
 
         return bl_failed
 
