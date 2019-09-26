@@ -55,11 +55,6 @@ extern Uart Serial1;
 #define A14 14
 #define A15 15
 #define A16 16
-#define ADC_DIFF0 32 //Not legal pins. Used for pad lookup
-#define ADC_DIFF1 33
-#define ADC_TEMP 34
-#define ADC_DIV3 35
-#define ADC_VSS 36
 
 #define LED_BUILTIN 19
 

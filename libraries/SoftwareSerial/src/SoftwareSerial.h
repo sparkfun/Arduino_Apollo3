@@ -38,12 +38,13 @@
 #ifndef _SoftwareSerial_H
 #define _SoftwareSerial_H
 #include "Arduino.h"
+#include <Stream.h>
 
 #define AP3_SS_BUFFER_SIZE 128 //Limit to 8 bits
 
 #define TIMER_FREQ 3000000L
 
-class SoftwareSerial : public Print
+class SoftwareSerial : public Stream
 {
 public:
   SoftwareSerial(uint8_t rxPin, uint8_t txPin, bool invertLogic = false);

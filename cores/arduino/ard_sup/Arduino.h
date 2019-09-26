@@ -41,6 +41,8 @@ extern "C"
 #include "am_util.h"
     // #include "am_bsp.h"
 
+#include "hooks.h"
+
 #include <math.h> //Gets us pow()
 
 #ifdef ARDUINO_REDEFINE_OVERFLOW
