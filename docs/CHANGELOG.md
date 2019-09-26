@@ -9,6 +9,8 @@ Each log entry will use the version number of the release that contains the chan
 ===================
 - fixed redefinition of ADC symbols in redboard_artemis_nano
 - added empty pins_arduino.h for compile-compatibility iwht older libraries
+- added standard IPAddress library
+- changed SoftwareSerial to inherit from Stream instead of Print
 
 1.0.8
 ===================
