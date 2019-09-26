@@ -8,6 +8,7 @@ Each log entry will use the version number of the release that contains the chan
 1.0.12
 ===================
 - fixed redefinition of ADC symbols in redboard_artemis_nano
+- added empty pins_arduino.h for compile-compatibility iwht older libraries
 
 1.0.8
 ===================
