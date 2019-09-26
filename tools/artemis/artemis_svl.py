@@ -39,6 +39,7 @@ import serial.tools.list_ports as list_ports
 import sys
 import time
 import math
+import os.path
 from sys import exit
 
 # ***********************************************************************************
@@ -316,6 +317,9 @@ def main():
         num_tries = 3
 
         print('\n\nArtemis SVL Bootloader')
+        if not os.path.exists(args.binfile):
+            print("Bin file {} does not exits.".format(args.binfile))
+            exit()
 
         for _ in range(num_tries):
 
