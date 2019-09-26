@@ -335,7 +335,7 @@ def main():
             if( bl_failed == False ):
                 break
 
-    except:
+    except serial.SerialException:
         phase_serial_port_help()
     
     exit()
