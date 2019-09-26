@@ -19,7 +19,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _PINS_ARDUINO_H_
-#define _PINS_ARDUINO_H_
 
-#endif // _PINS_ARDUINO_H_
+#include "hooks.h"
+
+/**
+ * Empty yield() hook.
+ *
+ * This function is intended to be used by library writers to build
+ * libraries or sketches that supports cooperative threads.
+ *
+ * Its defined as a weak symbol and it can be redefined to implement a
+ * real cooperative scheduler.
+ */
+static void __empty() {
+	// Empty
+}
+void yield(void) __attribute__ ((weak, alias("__empty")));
