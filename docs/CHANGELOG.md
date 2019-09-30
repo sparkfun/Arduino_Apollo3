@@ -5,6 +5,10 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.13
+===================
+- merged PR #61
+
 1.0.12
 ===================
 - fixed redefinition of ADC symbols in redboard_artemis_nano
