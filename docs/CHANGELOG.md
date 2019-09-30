@@ -7,7 +7,11 @@ Each log entry will use the version number of the release that contains the chan
 
 1.0.13
 ===================
-- merged PR #61
+- merged PR #61 to improve automated testing
+- added standard IPAddress files w/ PR #63
+- SoftwareSerial now inherits from Stream w/ PR #64
+- increased library compatibility w/ PR #66
+- improved error handling/reporting in the SparkFun Variable Loader w/ PR #67
 
 1.0.12
 ===================
