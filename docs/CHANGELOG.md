@@ -5,6 +5,15 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.15
+===================
+- merge PR #70 to allow Arduino CLI to use svl linker script by default
+- re-release to include BLE examples
+
+1.0.14
+===================
+- regeneration of svl binary
+
 1.0.13
 ===================
 - merged PR #61 to improve automated testing
