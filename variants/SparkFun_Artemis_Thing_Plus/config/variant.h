@@ -62,16 +62,17 @@ extern Uart Serial1;
 // SPI Pins
 #define MOSI 11
 #define MISO 12
-#define SCK  13
+#define SCK 13
+#define SS 10
 // Wire Pins
-#define SCL  15
-#define SDA  14
+#define SCL 15
+#define SDA 14
 // Wire1 Pins
 #define SCL1 17
 #define SDA1 16
 // Serial1 Pins
-#define TX1  1
-#define RX1  0
+#define TX1 1
+#define RX1 0
 // PDM Microphone Pins
 #define MIC_DATA 27
 #define MIC_CLOCK 28

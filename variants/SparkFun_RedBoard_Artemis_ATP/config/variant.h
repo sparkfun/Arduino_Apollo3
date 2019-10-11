@@ -64,6 +64,7 @@ extern Uart Serial1;
 #define MOSI 7
 #define MISO 6
 #define SCK 5
+#define SS 13
 #define SCL 39
 #define SDA 40
 #define TX1 24
