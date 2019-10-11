@@ -48,3 +48,5 @@
 #define bit(b) (1UL << (b))
 
 #define digitalPinToInterrupt(P) (P) // all apollo3 pads are interrupt capable
+
+#define SS 10 //Built in SD library requires an SS pin be defined. Pin # is arbitrary.
