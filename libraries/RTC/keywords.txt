@@ -16,6 +16,17 @@ getTime	KEYWORD2
 setTime	KEYWORD2
 setTimeToCompiler	KEYWORD2
 
+hour	KEYWORD2
+minute	KEYWORD2
+seconds	KEYWORD2
+hundredths	KEYWORD2
+
+month	KEYWORD2
+dayOfMonth	KEYWORD2
+year	KEYWORD2
+weekday	KEYWORD2
+textWeekday	KEYWORD2
+
 #######################################
 # Constants (LITERAL1)
 #######################################
