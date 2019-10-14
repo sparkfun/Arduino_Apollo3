@@ -25,7 +25,7 @@
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("EEPROM Examples");
 
   byte myValue1 = 200;
