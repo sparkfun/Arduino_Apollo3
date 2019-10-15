@@ -47,8 +47,7 @@
 //affecting other bytes in this flash word
 void write(uint16_t eepromLocation, uint8_t dataToWrite)
 {
-  uint32_t flashLocation = AP3_FLASH_EEPROM_START + eepromLocation;
-  writeWordToFlash(flashLocation, (uint32_t)dataToWrite | 0xFFFFFF00);
+  EEPROM.writeBlockToEEPROM(eepromLocation, &dataToWrite, 1);
 }
 
 //Read a byte from a given location in "EEPROM"
@@ -206,17 +205,7 @@ void EEPROMClass::writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dat
     spot++;
   }
 
-  // Serial.println("");
-  // Serial.print("EEPROM Contents:");
-  // for (uint16_t x = 0; x < 32; x++)
-  // {
-  //   if (x % 8 == 0)
-  //     Serial.println();
-  //   Serial.printf("0x%08X ", eepromContentWords[x]);
-  // }
-  // Serial.println();
-
-  // //Then we write the contents of the array back
+  //Then we write the contents of the array back
   am_hal_flash_program_main(AM_HAL_FLASH_PROGRAM_KEY,
                             flashContent,
                             (uint32_t *)AP3_FLASH_EEPROM_START,

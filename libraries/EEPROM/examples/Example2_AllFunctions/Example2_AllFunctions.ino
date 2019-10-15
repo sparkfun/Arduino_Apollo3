@@ -57,7 +57,7 @@ void setup()
   EEPROM.write(randomLocation, myValue1); //(location, data)
   endTime = millis();
 
-  Serial.printf("Write identical byte to same location (should be 0): %dms\n", endTime - startTime);
+  Serial.printf("Write identical byte to same location (should be ~1): %dms\n", endTime - startTime);
 
   byte response1 = EEPROM.read(randomLocation);
   byte response2 = EEPROM.read(randomLocation + 1);
