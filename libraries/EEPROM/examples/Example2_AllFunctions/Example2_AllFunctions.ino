@@ -149,30 +149,38 @@ void setup()
   Serial.printf("Size of double: %d\n", sizeof(double));
   double myValue11 = -290.3485723409857;
   double myValue12 = 384.95734987;
+  double myValue13 = 917.14159;
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
+  startTime = millis();
   EEPROM.put(randomLocation, myValue11);
+  endTime = millis();
+  Serial.printf("Time to record 64-bits: %dms\n", endTime - startTime);
+
   EEPROM.put(randomLocation + 8, myValue12);
+  EEPROM.put(EEPROM.length() - sizeof(myValue13), myValue13); //Test end of EEPROM space
 
   double response11;
   double response12;
+  double response13;
   EEPROM.get(randomLocation, response11);
   EEPROM.get(randomLocation + 8, response12);
+  EEPROM.get(EEPROM.length() - sizeof(myValue13), response13);
   Serial.printf("Location %d should be %lf: %lf\n", randomLocation, myValue11, response11);
   Serial.printf("Location %d should be %lf: %lf\n", randomLocation + 8, myValue12, response12);
+  Serial.printf("Edge of EEPROM %d should be %lf: %lf\n", EEPROM.length() - sizeof(myValue13), myValue13, response13);
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   Serial.println("");
   Serial.println("String test");
 
   //String write test
-  dont do string.Do char *array with phone #
-      //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-      String myString = "How are you today?";
+  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  char myString[19] = "How are you today?";
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
   EEPROM.put(randomLocation, myString);
 
-  String readMy;
+  char readMy[19];
   EEPROM.get(randomLocation, readMy);
   Serial.printf("Location %d string should read 'How are you today?': ", randomLocation);
   Serial.println(readMy);

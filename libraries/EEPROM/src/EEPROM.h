@@ -72,9 +72,6 @@ Error : EEPROM start address must be divisble by 8192
         uint8_t
         read(uint16_t eepromLocation);
 void write(uint16_t eepromLocation, uint8_t dataToWrite);
-void update(uint16_t eepromLocation, uint8_t dataToWrite);
-void erase(); //Erase entire EEPROM
-void writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite);
 
 struct EERef
 {
