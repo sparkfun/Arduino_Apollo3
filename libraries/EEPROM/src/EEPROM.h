@@ -64,10 +64,10 @@
 Error : EEPROM start address must be divisble by 8192
 #endif
 
-//By limiting EEPROM size to 1024, we reduce the amount of SRAM required and
+//By limiting EEPROM size to 1024 bytes, we reduce the amount of SRAM required and
 //time needed to mask in individual bytes and words into flash. It can be increased
 //to 8096 if needed
-#define AP3_FLASH_EEPROM_SIZE 1024
+#define AP3_FLASH_EEPROM_SIZE 1024 //In bytes
 
         uint8_t
         read(uint16_t eepromLocation);
@@ -167,11 +167,16 @@ struct EEPROMClass
   void write(int idx, uint8_t val) { (EERef(idx)) = val; }
   void update(int idx, uint8_t val) { EERef(idx).update(val); }
   void erase();
+  void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize);
 
   //STL and C++11 iteration capability.
-  EEPtr begin() { return 0x00; }
+  EEPtr
+  begin()
+  {
+    return 0x00;
+  }
   EEPtr end() { return length(); } //Standards requires this to be the item after the last valid entry. The returned pointer is invalid.
-  uint16_t length() { return AP3_FLASH_EEPROM_SIZE + 1; }
+  uint16_t length() { return AP3_FLASH_EEPROM_SIZE; }
 
   //Functionality to 'get' and 'put' objects to and from EEPROM.
   template <typename T>
@@ -185,18 +190,12 @@ struct EEPROMClass
   }
 
   template <typename T>
-  const T &put(int idx, const T &t)
+  const T &put(int idx, const T &t) //Address, data
   {
     const uint8_t *ptr = (const uint8_t *)&t;
 
-    //TODO - Write Artemis compatible function for block write
-    //#ifdef __arm__
-    //        eeprom_write_block(ptr, (void *)idx, sizeof(T));
-    //#else
-    EEPtr e = idx;
-    for (int count = sizeof(T); count; --count, ++e)
-      (*e).update(*ptr++);
-    //#endif
+    writeBlockToEEPROM(idx, ptr, sizeof(T)); //Address, data, sizeOfData
+
     return t;
   }
 };

@@ -53,6 +53,12 @@ void setup()
 
   Serial.printf("Write byte time: %dms\n", endTime - startTime);
 
+  startTime = millis();
+  EEPROM.write(randomLocation, myValue1); //(location, data)
+  endTime = millis();
+
+  Serial.printf("Write identical byte to same location (should be 0): %dms\n", endTime - startTime);
+
   byte response1 = EEPROM.read(randomLocation);
   byte response2 = EEPROM.read(randomLocation + 1);
   Serial.printf("Location %d should be %d: %d\n\r", randomLocation, myValue1, response1);
@@ -160,8 +166,9 @@ void setup()
   Serial.println("String test");
 
   //String write test
-  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  String myString = "How are you today?";
+  dont do string.Do char *array with phone #
+      //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+      String myString = "How are you today?";
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
   EEPROM.put(randomLocation, myString);
 

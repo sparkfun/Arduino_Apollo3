@@ -153,4 +153,72 @@ void writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite)
                             AP3_FLASH_EEPROM_SIZE);
 }
 
-//ap3_EEPROM EEPROM;
+void EEPROMClass::writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize)
+{
+  //Error check
+  if (eepromLocation + blockSize >= AP3_FLASH_EEPROM_SIZE)
+  {
+    blockSize = AP3_FLASH_EEPROM_SIZE - eepromLocation;
+  }
+
+  //First we have to read the contents of current "EEPROM" to SRAM, one byte at a time
+  uint8_t eepromContents[AP3_FLASH_EEPROM_SIZE];
+  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x++)
+  {
+    eepromContents[x] = *(uint8_t *)(AP3_FLASH_EEPROM_START + x);
+  }
+
+  //Write the caller's new data into the byte array
+  for (int x = 0; x < blockSize; x++)
+  {
+    eepromContents[eepromLocation + x] = dataToWrite[x];
+  }
+
+  //Only update flash with new data.
+  //Run a check here to see if the new data is the same as what's in flash. If it's the same, don't erase flash.
+  bool theSame = true;
+  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x++)
+  {
+    if (eepromContents[x] != *(uint8_t *)(AP3_FLASH_EEPROM_START + x))
+    {
+      theSame = false;
+      break;
+    }
+  }
+  if (theSame == true)
+    return;
+
+  //Then we erase an 8K page
+  am_hal_flash_page_erase(AM_HAL_FLASH_PROGRAM_KEY,
+                          AM_HAL_FLASH_ADDR2INST(AP3_FLASH_EEPROM_START + eepromLocation),
+                          AM_HAL_FLASH_ADDR2PAGE(AP3_FLASH_EEPROM_START + eepromLocation));
+
+  //Flash is written in 32bit words so we split the byte array into 4 byte chunks
+  uint32_t flashContent[AP3_FLASH_EEPROM_SIZE / 4];
+  uint16_t spot = 0;
+  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x += 4)
+  {
+    flashContent[spot] = (uint32_t)eepromContents[x + 3] << (8 * 3);
+    flashContent[spot] |= (uint32_t)eepromContents[x + 2] << (8 * 2);
+    flashContent[spot] |= (uint32_t)eepromContents[x + 1] << (8 * 1);
+    flashContent[spot] |= (uint32_t)eepromContents[x + 0] << (8 * 0);
+
+    spot++;
+  }
+
+  // Serial.println("");
+  // Serial.print("EEPROM Contents:");
+  // for (uint16_t x = 0; x < 32; x++)
+  // {
+  //   if (x % 8 == 0)
+  //     Serial.println();
+  //   Serial.printf("0x%08X ", eepromContentWords[x]);
+  // }
+  // Serial.println();
+
+  // //Then we write the contents of the array back
+  am_hal_flash_program_main(AM_HAL_FLASH_PROGRAM_KEY,
+                            flashContent,
+                            (uint32_t *)AP3_FLASH_EEPROM_START,
+                            AP3_FLASH_EEPROM_SIZE / 4);
+}
