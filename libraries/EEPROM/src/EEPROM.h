@@ -64,14 +64,14 @@
 Error : EEPROM start address must be divisble by 8192
 #endif
 
-//By limiting EEPROM size to 1024 bytes, we reduce the amount of SRAM required and
-//time needed to mask in individual bytes and words into flash. It can be increased
-//to 8096 if needed
-#define AP3_FLASH_EEPROM_SIZE 1024 //In bytes
+        //By limiting EEPROM size to 1024 bytes, we reduce the amount of SRAM required and
+        //time needed to read/write words into flash. It can be increased
+        //to 8096 if needed
+        const int AP3_FLASH_EEPROM_SIZE = 1024 * 2; //In bytes
 
-        uint8_t
-        read(uint16_t eepromLocation);
+uint8_t read(uint16_t eepromLocation);
 void write(uint16_t eepromLocation, uint8_t dataToWrite);
+void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize);
 
 struct EERef
 {
@@ -164,7 +164,6 @@ struct EEPROMClass
   void write(int idx, uint8_t val) { (EERef(idx)) = val; }
   void update(int idx, uint8_t val) { EERef(idx).update(val); }
   void erase();
-  void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize);
 
   //STL and C++11 iteration capability.
   EEPtr

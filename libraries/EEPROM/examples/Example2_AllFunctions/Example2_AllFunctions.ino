@@ -30,7 +30,7 @@ void setup()
 
   long startTime;
   long endTime;
-  uint16_t randomLocation;
+  int randomLocation;
 
   //Test erase time
   startTime = millis();

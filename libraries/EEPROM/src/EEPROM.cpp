@@ -43,7 +43,7 @@
 //Write a byte to a given "EEPROM" location
 void write(uint16_t eepromLocation, uint8_t dataToWrite)
 {
-  EEPROM.writeBlockToEEPROM(eepromLocation, &dataToWrite, 1);
+  writeBlockToEEPROM(eepromLocation, &dataToWrite, 1);
 }
 
 //Read a byte from a given location in "EEPROM"
@@ -65,7 +65,7 @@ void EEPROMClass::erase()
 //2) Record user data into SRAM. Check if new data is different from flash.
 //3) Erase flash page (8k)
 //4) Write SRAM back into flash
-void EEPROMClass::writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize)
+void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize)
 {
   //Error check
   if (eepromLocation + blockSize >= AP3_FLASH_EEPROM_SIZE)
