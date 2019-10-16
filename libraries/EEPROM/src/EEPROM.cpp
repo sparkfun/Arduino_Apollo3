@@ -23,7 +23,7 @@
   Page erase takes 15ms
   Writing a byte takes 19ms
   Writing a float across two words takes 19ms
-  Update (no write) takes 1ms
+  Update (no write) takes ~1ms
 
   Development environment specifics:
   Arduino IDE 1.8.x
@@ -62,9 +62,10 @@ void EEPROMClass::erase()
 }
 
 //1) Make copy of current flash contents into SRAM
-//2) Record user data into SRAM. Check if new data is different from flash.
-//3) Erase flash page (8k)
-//4) Write SRAM back into flash
+//2) Record user data into SRAM.
+//3) Check if new data is different from flash.
+//4) Erase flash page (8k)
+//5) Write SRAM back into flash
 void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize)
 {
   //Error check
@@ -73,8 +74,14 @@ void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uin
     blockSize = AP3_FLASH_EEPROM_SIZE - eepromLocation;
   }
 
-  //First we have to read the contents of current "EEPROM" to SRAM, one byte at a time
-  uint8_t eepromContents[AP3_FLASH_EEPROM_SIZE];
+  //Read the contents of current "EEPROM" to SRAM
+  //Flash is written in 32-bit words but user passes in array of bytes
+  //Create an array of 32-bit words but reference it a byte at a time
+  uint32_t flashContent[AP3_FLASH_EEPROM_SIZE / 4];
+
+  //We can't read 32bits at a time because the way flash is oriented (little endian)
+  //So we read a byte at a time
+  uint8_t *eepromContents = (uint8_t *)flashContent;
   for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x++)
   {
     eepromContents[x] = *(uint8_t *)(AP3_FLASH_EEPROM_START + x);
@@ -86,8 +93,8 @@ void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uin
     eepromContents[eepromLocation + x] = dataToWrite[x];
   }
 
-  //Only update flash with new data.
-  //Run a check here to see if the new data is the same as what's in flash. If it's the same, don't erase flash.
+  //Run a check here to see if the new data is the same as what's in flash. If it's the same,
+  //just return, don't erase flash.
   bool theSame = true;
   for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x++)
   {
@@ -104,19 +111,6 @@ void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uin
   am_hal_flash_page_erase(AM_HAL_FLASH_PROGRAM_KEY,
                           AM_HAL_FLASH_ADDR2INST(AP3_FLASH_EEPROM_START + eepromLocation),
                           AM_HAL_FLASH_ADDR2PAGE(AP3_FLASH_EEPROM_START + eepromLocation));
-
-  //Flash is written in 32-bit words so we split the byte array into 4 byte chunks
-  uint32_t flashContent[AP3_FLASH_EEPROM_SIZE / 4];
-  uint16_t spot = 0;
-  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x += 4)
-  {
-    flashContent[spot] = (uint32_t)eepromContents[x + 3] << (8 * 3);
-    flashContent[spot] |= (uint32_t)eepromContents[x + 2] << (8 * 2);
-    flashContent[spot] |= (uint32_t)eepromContents[x + 1] << (8 * 1);
-    flashContent[spot] |= (uint32_t)eepromContents[x + 0] << (8 * 0);
-
-    spot++;
-  }
 
   //Then we write the contents of the array back
   am_hal_flash_program_main(AM_HAL_FLASH_PROGRAM_KEY,

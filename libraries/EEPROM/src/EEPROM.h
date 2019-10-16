@@ -21,9 +21,9 @@
   at 0xFE000;
 
   Page erase takes 15ms
-  Writing a byte takes 30ms
-  Writing a float across two words takes 30ms
-  Update (no write) takes 1ms
+  Writing a byte takes 19ms
+  Writing a float across two words takes 19ms
+  Update (no write) takes ~1ms
 
   Development environment specifics:
   Arduino IDE 1.8.x
@@ -66,7 +66,9 @@ Error : EEPROM start address must be divisble by 8192
 
         //By limiting EEPROM size to 1024 bytes, we reduce the amount of SRAM required and
         //time needed to read/write words into flash. It can be increased
-        //to 8096 if needed
+        //to 2048 if needed
+        //1024 = 19ms update time
+        //2048 = 23ms update time
         const int AP3_FLASH_EEPROM_SIZE = 1024; //In bytes
 
 uint8_t read(uint16_t eepromLocation);
