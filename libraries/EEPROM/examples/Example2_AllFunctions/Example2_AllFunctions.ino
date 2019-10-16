@@ -150,6 +150,7 @@ void setup()
   double myValue11 = -290.3485723409857;
   double myValue12 = 384.95734987;
   double myValue13 = 917.14159;
+  double myValue14 = 254.8877;
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
   startTime = millis();
@@ -169,6 +170,11 @@ void setup()
   Serial.printf("Location %d should be %lf: %lf\n", randomLocation, myValue11, response11);
   Serial.printf("Location %d should be %lf: %lf\n", randomLocation + 8, myValue12, response12);
   Serial.printf("Edge of EEPROM %d should be %lf: %lf\n", EEPROM.length() - sizeof(myValue13), myValue13, response13);
+
+  double response14;
+  EEPROM.put(EEPROM.length() - sizeof(myValue14), myValue14); //Test the re-write of a spot
+  EEPROM.get(EEPROM.length() - sizeof(myValue14), response14);
+  Serial.printf("Rewrite of %d should be %lf: %lf\n", EEPROM.length() - sizeof(myValue14), myValue14, response14);
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   Serial.println("");
