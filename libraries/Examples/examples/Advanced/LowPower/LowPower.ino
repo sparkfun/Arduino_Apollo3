@@ -12,6 +12,9 @@
   How close can we get to 2.7uA in deep sleep?
   This example shows how decrease the Artemis current consumption to less than 3uA in deep sleep.
 
+  Note that Artemis modules with revision A0/A1 silicon will use ~30uA. Please see the
+  Ambiq errata for more information: https://www.ambiqmicro.com/static/mcu/files/Apollo3_Blue_Errata_List_v1_0_external_release.pdf
+
   To monitor the current to the Edge cut the MEAS jumper, solder in headers, and attach
   a DMM via IC hooks (https://www.sparkfun.com/products/506).
 
