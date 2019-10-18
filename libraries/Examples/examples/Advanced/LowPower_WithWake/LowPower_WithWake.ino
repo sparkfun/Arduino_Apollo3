@@ -4,17 +4,18 @@
   SparkFun Electronics
   Date: October 17th, 2019
   License: This code is public domain. Based on deepsleep_wake.c from Ambiq SDK v2.2.0.
-  A big thanks to robin_hodgson for pointing out the HFRC shutdown requirement.
+  A big thanks to robin_hodgson for pointing out the HFRC shutdown requirement and
+  turning off the SWD pins.
 
   SparkFun labored with love to create this code. Feel like supporting open source hardware?
   Buy a board from SparkFun! https://www.sparkfun.com/products/15376
 
   How close can we get to 2.7uA in deep sleep?
-  This example shows how decrease the Artemis current consumption to ~4.2uA in deep sleep
+  This example shows how decrease the Artemis current consumption to ~2.4uA in deep sleep
   with a wake up every 5 seconds to blink the LED. The RTC is used to trigger an interrupt
   every second.
 
-  Note that Artemis modules with revision A0/A1 silicon will use ~30uA. Please see the
+  Note that Artemis modules with revision A1 silicon will use ~30uA. Please see the
   Ambiq errata for more information: https://www.ambiqmicro.com/static/mcu/files/Apollo3_Blue_Errata_List_v1_0_external_release.pdf
 
   To monitor the current to the Edge cut the MEAS jumper, solder in headers, and attach
@@ -47,6 +48,16 @@ void setup()
 
     // Initialize for low power in the power control block
     am_hal_pwrctrl_low_power_init();
+
+    // Disabling the debugger GPIOs saves about 1.2 uA total:
+    am_hal_gpio_pinconfig(20 /* SWDCLK */, g_AM_HAL_GPIO_DISABLE);
+    am_hal_gpio_pinconfig(21 /* SWDIO */, g_AM_HAL_GPIO_DISABLE);
+
+    // These two GPIOs are critical: the TX/RX connections between the Artemis module and the CH340S on the Blackboard
+    // are prone to backfeeding each other. To stop this from happening, we must reconfigure those pins as GPIOs
+    // and then disable them completely:
+    am_hal_gpio_pinconfig(48 /* TXO-0 */, g_AM_HAL_GPIO_DISABLE);
+    am_hal_gpio_pinconfig(49 /* RXI-0 */, g_AM_HAL_GPIO_DISABLE);
 
     // The default Arduino environment runs the System Timer (STIMER) off the 48 MHZ HFRC clock source.
     // The HFRC appears to take over 60 uA when it is running, so this is a big source of extra
