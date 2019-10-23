@@ -24,7 +24,7 @@ SOFTWARE.
 
 // Apollo3 pads 30 and 46 are not exposed by Artemis module
 const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
-    AP3_GPIO_PAD_UNUSED,
+    0, //Mic VDD
     AP3_GPIO_PAD_UNUSED,
     AP3_GPIO_PAD_UNUSED,
     AP3_GPIO_PAD_UNUSED,
@@ -65,7 +65,7 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     AP3_GPIO_PAD_UNUSED,
     39, //Qwiic SCL
     40, //Qwiic SDA
-    AP3_GPIO_PAD_UNUSED,
+    41, //Accel VDD
     42, //Accel SCL
     43, //Accel SDA
     44, //GPIO 44

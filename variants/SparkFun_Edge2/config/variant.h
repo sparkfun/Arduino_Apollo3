@@ -57,4 +57,8 @@ extern Uart Serial;
 #define MIC_DATA 29
 #define MIC_CLOCK 12
 
+#define MIC_VDD 0
+#define ACCEL_VDD 41
+#define CAMERA_VDD 32
+
 #endif // _AP3_VARIANT_H_
