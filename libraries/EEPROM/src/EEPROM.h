@@ -8,8 +8,6 @@
   https://www.sparkfun.com/products/15411
   https://www.sparkfun.com/products/15412
 
-  Written by Nathan Seidle @ SparkFun Electronics, June 16th, 2019
-
   Pseudo-EEPROM on the Cortex-M4F
 
   https://github.com/sparkfun/SparkFun_Apollo3
@@ -23,20 +21,33 @@
   at 0xFE000;
 
   Page erase takes 15ms
-  Writing a byte takes 30ms
-  Writing a float across two words takes 30ms
-  Update (no write) takes 1ms
+  Writing a byte takes 19ms
+  Writing a float across two words takes 19ms
+  Update (no write) takes ~1ms
 
   Development environment specifics:
   Arduino IDE 1.8.x
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+  Original Copyright (c) 2006 David A. Mellis.  All right reserved.
+  New version by Christopher Andrews 2015.
+  This copy has minor modificatons for use with Teensy, by Paul Stoffregen
+  This copy has minor modificatons for use with Artemis, by Nathan Seidle
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+  EERef class.
+
+  This object references an EEPROM cell.
+  Its purpose is to mimic a typical byte of RAM, however its storage is the EEPROM.
+  This class has an overhead of two bytes, similar to storing a pointer to an EEPROM cell.
+
 */
 
 #ifndef _EEPROM_H
@@ -53,86 +64,139 @@
 Error : EEPROM start address must be divisble by 8192
 #endif
 
-//By limiting EEPROM size to 1024, we reduce the amount of SRAM required and
-//time needed to mask in individual bytes and words into flash. It can be increased
-//to 8096 if needed
-#define AP3_FLASH_EEPROM_SIZE 1024
+        //By limiting EEPROM size to 1024 bytes, we reduce the amount of SRAM required and
+        //time needed to read/write words into flash. It can be increased
+        //to 2048 if needed
+        //1024 = 19ms update time
+        //2048 = 23ms update time
+        const int AP3_FLASH_EEPROM_SIZE = 1024; //In bytes
 
-        //class TwoWire : public Stream, public IOMaster{}
+uint8_t read(uint16_t eepromLocation);
+void write(uint16_t eepromLocation, uint8_t dataToWrite);
+void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize);
 
-        class ap3_EEPROM
+struct EERef
 {
-public:
-  ap3_EEPROM();
+  EERef(const int index)
+      : index(index) {}
 
-  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  //Access/read members.
+  uint8_t operator*() const { return read(index); }
+  operator const uint8_t() const { return **this; }
 
-  //8 bit
-  uint8_t read(uint16_t eepromLocation);
-  void write(uint16_t eepromLocation, uint8_t dataToWrite);
-  void get(uint16_t eepromLocation, uint8_t &dataToGet);
+  //Assignment/write members.
+  EERef &operator=(const EERef &ref) { return *this = *ref; }
+  EERef &operator=(uint8_t in) { return write(index, in), *this; }
+  EERef &operator+=(uint8_t in) { return *this = **this + in; }
+  EERef &operator-=(uint8_t in) { return *this = **this - in; }
+  EERef &operator*=(uint8_t in) { return *this = **this * in; }
+  EERef &operator/=(uint8_t in) { return *this = **this / in; }
+  EERef &operator^=(uint8_t in) { return *this = **this ^ in; }
+  EERef &operator%=(uint8_t in) { return *this = **this % in; }
+  EERef &operator&=(uint8_t in) { return *this = **this & in; }
+  EERef &operator|=(uint8_t in) { return *this = **this | in; }
+  EERef &operator<<=(uint8_t in) { return *this = **this << in; }
+  EERef &operator>>=(uint8_t in) { return *this = **this >> in; }
 
-  //16 bit
-  void get(uint16_t eepromLocation, uint16_t &dataToGet);
-  void get(uint16_t eepromLocation, int16_t &dataToGet);
+  EERef &update(uint8_t in) { return in != *this ? *this = in : *this; }
 
-  //32 bit
-  void get(uint16_t eepromLocation, int &dataToGet);
-  void get(uint16_t eepromLocation, unsigned int &dataToGet);
-  void get(uint16_t eepromLocation, int32_t &dataToGet);
-  void get(uint16_t eepromLocation, uint32_t &dataToGet);
-  void get(uint16_t eepromLocation, float &dataToGet);
+  /** Prefix increment/decrement **/
+  EERef &operator++() { return *this += 1; }
+  EERef &operator--() { return *this -= 1; }
 
-  //64 bit
-  void get(uint16_t eepromLocation, double &dataToGet);
+  /** Postfix increment/decrement **/
+  uint8_t operator++(int)
+  {
+    uint8_t ret = **this;
+    return ++(*this), ret;
+  }
 
-  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  uint8_t operator--(int)
+  {
+    uint8_t ret = **this;
+    return --(*this), ret;
+  }
 
-  //8 bit
-  void put(uint16_t eepromLocation, uint8_t dataToWrite);
-
-  //16 bit
-  void put(uint16_t eepromLocation, uint16_t dataToWrite);
-  void put(uint16_t eepromLocation, int16_t dataToWrite);
-
-  // 32 bit
-  void put(uint16_t eepromLocation, int dataToWrite);
-  void put(uint16_t eepromLocation, unsigned int dataToWrite);
-  void put(uint16_t eepromLocation, int32_t dataToWrite);
-  void put(uint16_t eepromLocation, uint32_t dataToWrite);
-  void put(uint16_t eepromLocation, float dataToWrite);
-
-  //64 bit
-  void put(uint16_t eepromLocation, double dataToWrite);
-
-  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-  //8 bit
-  void update(uint16_t eepromLocation, uint8_t dataToWrite);
-
-  //16 bit
-  void update(uint16_t eepromLocation, uint16_t dataToWrite);
-  void update(uint16_t eepromLocation, int16_t dataToWrite);
-
-  // 32 bit
-  void update(uint16_t eepromLocation, int dataToWrite);
-  void update(uint16_t eepromLocation, unsigned int dataToWrite);
-  void update(uint16_t eepromLocation, int32_t dataToWrite);
-  void update(uint16_t eepromLocation, uint32_t dataToWrite);
-  void update(uint16_t eepromLocation, float dataToWrite);
-
-  //64 bit
-  void update(uint16_t eepromLocation, double dataToWrite);
-
-  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-  uint16_t length();
-  void erase(); //Erase entire EEPROM
-
-private:
-  void writeWordToFlash(uint32_t flashLocation, uint32_t dataToWrite);
+  int index; //Index of current EEPROM cell.
 };
 
-extern ap3_EEPROM EEPROM;
+/***
+    EEPtr class.
 
-#endif
+    This object is a bidirectional pointer to EEPROM cells represented by EERef objects.
+    Just like a normal pointer type, this can be dereferenced and repositioned using
+    increment/decrement operators.
+***/
+
+struct EEPtr
+{
+
+  EEPtr(const int index)
+      : index(index) {}
+
+  operator const int() const { return index; }
+  EEPtr &operator=(int in) { return index = in, *this; }
+
+  //Iterator functionality.
+  bool operator!=(const EEPtr &ptr) { return index != ptr.index; }
+  EERef operator*() { return index; }
+
+  /** Prefix & Postfix increment/decrement **/
+  EEPtr &operator++() { return ++index, *this; }
+  EEPtr &operator--() { return --index, *this; }
+  EEPtr operator++(int) { return index++; }
+  EEPtr operator--(int) { return index--; }
+
+  int index; //Index of current EEPROM cell.
+};
+
+/***
+    EEPROMClass class.
+
+    This object represents the entire EEPROM space.
+    It wraps the functionality of EEPtr and EERef into a basic interface.
+    This class is also 100% backwards compatible with earlier Arduino core releases.
+***/
+
+struct EEPROMClass
+{
+  //Basic user access methods.
+  EERef operator[](const int idx) { return idx; }
+  uint8_t read(int idx) { return EERef(idx); }
+  void write(int idx, uint8_t val) { (EERef(idx)) = val; }
+  void update(int idx, uint8_t val) { EERef(idx).update(val); }
+  void erase();
+
+  //STL and C++11 iteration capability.
+  EEPtr
+  begin()
+  {
+    return 0x00;
+  }
+  EEPtr end() { return length(); } //Standards requires this to be the item after the last valid entry. The returned pointer is invalid.
+  uint16_t length() { return AP3_FLASH_EEPROM_SIZE; }
+
+  //Functionality to 'get' and 'put' objects to and from EEPROM.
+  template <typename T>
+  T &get(int idx, T &t)
+  {
+    EEPtr e = idx;
+    uint8_t *ptr = (uint8_t *)&t;
+    for (int count = sizeof(T); count; --count, ++e)
+      *ptr++ = *e;
+    return t;
+  }
+
+  template <typename T>
+  const T &put(int idx, const T &t) //Address, data
+  {
+    const uint8_t *ptr = (const uint8_t *)&t;
+
+    writeBlockToEEPROM(idx, ptr, sizeof(T)); //Address, data, sizeOfData
+
+    return t;
+  }
+};
+
+static EEPROMClass EEPROM __attribute__((unused));
+#endif //_EEPROM_H
