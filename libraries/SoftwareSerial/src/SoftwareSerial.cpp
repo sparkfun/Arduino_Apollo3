@@ -122,7 +122,13 @@ void SoftwareSerial::begin(uint32_t baudRate, HardwareSerial_Config_e SSconfig)
 
   pinMode(_rxPin, INPUT);
   if (_invertLogic == false)
-    pinMode(_rxPin, INPUT_PULLUP); //Enable external pullup if using normal logic
+  {
+    //Enable external pullup if using normal logic
+    //On some GPIO the g_AM_HAL_GPIO_INPUT_PULLUP seems to be strong enough
+    //to cause problems translation buffers like the TXB0104. Limiting
+    //to 24k fixing issue.
+    pinMode(_rxPin, g_AM_HAL_GPIO_INPUT_PULLUP_24);
+  }
 
 #ifdef DEBUG
   am_hal_gpio_output_clear(debugPad);
