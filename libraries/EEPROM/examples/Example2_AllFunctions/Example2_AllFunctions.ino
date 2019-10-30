@@ -23,14 +23,14 @@
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("EEPROM Examples");
 
   randomSeed(analogRead(A0));
 
   long startTime;
   long endTime;
-  uint16_t randomLocation;
+  int randomLocation;
 
   //Test erase time
   startTime = millis();
@@ -52,6 +52,12 @@ void setup()
   EEPROM.put(randomLocation + 1, myValue2);
 
   Serial.printf("Write byte time: %dms\n", endTime - startTime);
+
+  startTime = millis();
+  EEPROM.write(randomLocation, myValue1); //(location, data)
+  endTime = millis();
+
+  Serial.printf("Write identical byte to same location (should be ~1): %dms\n", endTime - startTime);
 
   byte response1 = EEPROM.read(randomLocation);
   byte response2 = EEPROM.read(randomLocation + 1);
@@ -106,8 +112,8 @@ void setup()
   uint32_t myValue8 = 241544;
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
-  EEPROM.update(randomLocation, myValue7);
-  EEPROM.update(randomLocation + 4, myValue8);
+  EEPROM.put(randomLocation, myValue7);
+  EEPROM.put(randomLocation + 4, myValue8);
 
   int32_t response7;
   uint32_t response8;
@@ -124,8 +130,8 @@ void setup()
   float myValue10 = 5.22;
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
-  EEPROM.update(randomLocation, myValue9);
-  EEPROM.update(randomLocation + 4, myValue10);
+  EEPROM.put(randomLocation, myValue9);
+  EEPROM.put(randomLocation + 4, myValue10);
 
   float response9;
   float response10;
@@ -143,20 +149,50 @@ void setup()
   Serial.printf("Size of double: %d\n", sizeof(double));
   double myValue11 = -290.3485723409857;
   double myValue12 = 384.95734987;
+  double myValue13 = 917.14159;
+  double myValue14 = 254.8877;
   randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
 
-  EEPROM.update(randomLocation, myValue11);
-  EEPROM.update(randomLocation + 8, myValue12);
+  startTime = millis();
+  EEPROM.put(randomLocation, myValue11);
+  endTime = millis();
+  Serial.printf("Time to record 64-bits: %dms\n", endTime - startTime);
+
+  EEPROM.put(randomLocation + 8, myValue12);
+  EEPROM.put(EEPROM.length() - sizeof(myValue13), myValue13); //Test end of EEPROM space
 
   double response11;
   double response12;
+  double response13;
   EEPROM.get(randomLocation, response11);
   EEPROM.get(randomLocation + 8, response12);
+  EEPROM.get(EEPROM.length() - sizeof(myValue13), response13);
   Serial.printf("Location %d should be %lf: %lf\n", randomLocation, myValue11, response11);
   Serial.printf("Location %d should be %lf: %lf\n", randomLocation + 8, myValue12, response12);
+  Serial.printf("Edge of EEPROM %d should be %lf: %lf\n", EEPROM.length() - sizeof(myValue13), myValue13, response13);
+
+  double response14;
+  EEPROM.put(EEPROM.length() - sizeof(myValue14), myValue14); //Test the re-write of a spot
+  EEPROM.get(EEPROM.length() - sizeof(myValue14), response14);
+  Serial.printf("Rewrite of %d should be %lf: %lf\n", EEPROM.length() - sizeof(myValue14), myValue14, response14);
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-  Serial.println();
+  Serial.println("");
+  Serial.println("String test");
+
+  //String write test
+  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  char myString[19] = "How are you today?";
+  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  EEPROM.put(randomLocation, myString);
+
+  char readMy[19];
+  EEPROM.get(randomLocation, readMy);
+  Serial.printf("Location %d string should read 'How are you today?': ", randomLocation);
+  Serial.println(readMy);
+  //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+  Serial.println("");
   Serial.print("Flash Contents:");
   for (uint16_t x = 0; x < 8 * 4; x += 4)
   {
