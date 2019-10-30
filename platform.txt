@@ -41,10 +41,10 @@ ap3core.ambiq_sdk.path={ap3core.path}/am_sdk_ap3
 
 ## Core Includes
 includes.extra=
-includes.ambiq_sdk="-I{ap3core.ambiq_sdk.path}/mcu/apollo3" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/hal" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/regs" "-I{ap3core.ambiq_sdk.path}/utils"
+includes.ambiq_sdk="-I{ap3core.ambiq_sdk.path}/mcu/apollo3" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/hal" "-I{ap3core.ambiq_sdk.path}/mcu/apollo3/regs" "-I{ap3core.ambiq_sdk.path}/utils" "-I{ap3core.ambiq_sdk.path}/devices"
 includes.cmsis="-I{ap3core.ambiq_sdk.path}/CMSIS/AmbiqMicro/Include" "-I{ap3core.ambiq_sdk.path}/CMSIS/ARM/Include"
 includes.core="-I{ap3core.path}/ard_sup" "-I{ap3core.path}/ard_sup/ard_supers" {includes}
-includes.variant="{build.includes}"
+includes.variant={build.includes}
 
 
 ## Precompiled Libraries
