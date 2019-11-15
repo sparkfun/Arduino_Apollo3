@@ -594,6 +594,8 @@ void SoftwareSerial::rxEndOfByte()
 
   rxInUse = false; //Release so that we can TX if needed
 
+  am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(_rxPad)); //Clear any residual PCIs
+
   // Disable the timer interrupt in the NVIC.
   NVIC_DisableIRQ(STIMER_CMPR7_IRQn);
 }
