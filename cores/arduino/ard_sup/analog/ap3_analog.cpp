@@ -125,6 +125,12 @@ uint8_t _servoWriteBits = 8;  // 8-bit by default for writes
 
 uint16_t analogRead(uint8_t pinNumber)
 {
+    static bool ap3_adc_initialized = false;
+    if(!ap3_adc_initialized){
+        ap3_adc_setup();
+        ap3_adc_initialized = true;
+    }
+
     uint32_t ui32IntMask;
     am_hal_adc_sample_t Sample;
     uint32_t ui32NumSamples = 1;
