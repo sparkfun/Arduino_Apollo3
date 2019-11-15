@@ -122,6 +122,10 @@ void SPIClass::config(SPISettings settings)
 {
   memset((void *)&_config, 0x00, sizeof(am_hal_iom_config_t)); // Set the IOM configuration
   _config.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
+
+  if (settings.clockFreq > AM_HAL_IOM_MAX_FREQ)
+    settings.clockFreq = AM_HAL_IOM_MAX_FREQ;
+
   _config.ui32ClockFreq = settings.clockFreq;
   _config.eSpiMode = settings.dataMode;
   _order = settings.bitOrder;
