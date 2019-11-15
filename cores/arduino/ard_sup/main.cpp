@@ -21,7 +21,7 @@ extern "C" int main(void)
 
   ap3_variant_init();
 
-  ap3_adc_setup();
+  // ap3_adc_setup();
 
   setup();
   for (;;)
