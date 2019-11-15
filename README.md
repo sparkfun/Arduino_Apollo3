@@ -40,7 +40,7 @@ The basic necesseties are in-place. This means that you can compile and upload c
   * Software Serial: ✅
 
 **Apollo3 Specialty Peripherals**
-  * PDM Microphones / I2S: 🤔
+  * PDM Microphones / I2S: ✅
   * BLE: 🤔
   * Multi-bit SPI: 🤔
   * I2C/SPI Slave: 🤔
