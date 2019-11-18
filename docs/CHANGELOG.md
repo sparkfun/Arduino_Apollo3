@@ -5,37 +5,75 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
-1.0.15
+1.0.21 - In-progress
+====================
+- merge PR #89 to improve SPI performance
+
+1.0.20 - Nov 15 2019
+====================
+- updated bootloader executables
+
+1.0.18 - Nov 15 2019
+====================
+- merge #84
+- merge #88 Tensorflow Lite Micro library compatibility (changes how ADC is set up)
+
+1.0.17 - Oct 30 2019
 ===================
+- merge #75 EEPROM Improvements
+- merge #76 IC Revision Example
+- merge #77 Low Power example
+- merge #81 Clean SVL
+- merge #79 Pullup Resistor defaults
+- adds default access to BSP files for all variants
+
+1.0.16 - Oct 14 2019
+====================
+- merge #73
+- merge #72
+- revert to artemis_svl.exe from v1.0.12 as stop-gap fix for #74
+
+1.0.15 - Oct 10 2019
+====================
 - merge PR #70 to allow Arduino CLI to use svl linker script by default
 - re-release to include BLE examples
 
-1.0.14
+1.0.14 - Oct 4 2019
 ===================
 - regeneration of svl binary
 
-1.0.13
-===================
+1.0.13 - Sep 30 2019
+====================
 - merged PR #61 to improve automated testing
 - added standard IPAddress files w/ PR #63
 - SoftwareSerial now inherits from Stream w/ PR #64
 - increased library compatibility w/ PR #66
 - improved error handling/reporting in the SparkFun Variable Loader w/ PR #67
 
-1.0.12
-===================
+1.0.12 - Sep 26 2019
+====================
 - fixed redefinition of ADC symbols in redboard_artemis_nano
 - added empty pins_arduino.h for compile-compatibility iwht older libraries
 - added standard IPAddress library
 - changed SoftwareSerial to inherit from Stream instead of Print
 
-1.0.8
+1.0.10 - Sep 21 2019
+====================
+- rename board directories to RedBoard. Fix for variant.h not found error.
+
+1.0.9 - Sep 19 2019
+===================
+- adds Artemis Thing Plus board definitions
+- changes board definitions to 'Red' for LTS
+- once again based on the temporary core-ble branch that contains a BLE example (mistakenly omitted from v1.0.8)
+
+1.0.8 - Sep 12 2019
 ===================
 - Wire library requestFrom address bug fix (previously required address to be set with 'beginTransmission')
 - Correct variant definition for Artemis module (Serial mis-definition)
 - Correct variant definition for Edge (Wire1 redefinition)
 
-1.0.7 - 
+1.0.7 - Aug 27 2019
 ===================
 - Rectified error in Artemis variant pin map (pad 46 was listed as available when it is in fact not)
 - Fixed CPU hang on certain 'analogWrite' calls
