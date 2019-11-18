@@ -197,7 +197,9 @@ uint32_t AP3_PDM::getDecimationRate()
 //Send a given configuration struct to PDM
 bool AP3_PDM::updateConfig(am_hal_pdm_config_t newConfiguration)
 {
-    ap3_err_t retval = (ap3_err_t)am_hal_pdm_configure(_PDMhandle, &newConfiguration);
+    _PDMconfig = newConfiguration;
+    ap3_err_t retval = (ap3_err_t)am_hal_pdm_configure(_PDMhandle, &_PDMconfig);
+
     if (retval != AP3_OK)
     {
         return false;
