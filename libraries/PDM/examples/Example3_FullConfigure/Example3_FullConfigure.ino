@@ -22,7 +22,7 @@ uint32_t sampleFreq;
 #define PRINT_FFT_DATA 0
 
 #include <PDM.h> //Include PDM library included with the Aruino_Apollo3 core
-AP3_PDM myPDM; //Create instance of PDM class
+AP3_PDM myPDM;   //Create instance of PDM class
 
 //Math library needed for FFT
 #define ARM_MATH_CM4
@@ -50,42 +50,34 @@ const am_hal_pdm_config_t newConfig = {
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("SparkFun PDM Example");
 
   // Turn on the PDM with default settings
   if (myPDM.begin() == false) //Use Data, clock defines from variant file
   {
     Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
-    while (1);
+    while (1)
+      ;
   }
   Serial.println("PDM Initialized");
 
   myPDM.updateConfig(newConfig); //Send config struct
-  
+
   printPDMConfig();
-    
-  myPDM.getData(pdmDataBuffer, pdmDataBufferSize); //This clears the current PDM FIFO and starts DMA
 }
 
 void loop()
 {
-  noInterrupts();
-
   if (myPDM.available())
   {
-    printLoudest();
-
-    while (PRINT_PDM_DATA || PRINT_FFT_DATA);
-
-    // Start converting the next set of PCM samples.
     myPDM.getData(pdmDataBuffer, pdmDataBufferSize);
+
+    printLoudest();
   }
 
   // Go to Deep Sleep until the PDM ISR or other ISR wakes us.
   am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
-
-  interrupts();
 }
 
 //*****************************************************************************
@@ -97,7 +89,7 @@ void printLoudest(void)
 {
   float fMaxValue;
   uint32_t ui32MaxIndex;
-  int16_t *pi16PDMData = (int16_t *) pdmDataBuffer;
+  int16_t *pi16PDMData = (int16_t *)pdmDataBuffer;
   uint32_t ui32LoudestFrequency;
 
   //
@@ -170,27 +162,49 @@ void printPDMConfig(void)
   //
   switch (myPDM.getClockDivider())
   {
-    case AM_HAL_PDM_MCLKDIV_4: MClkDiv = 4; break;
-    case AM_HAL_PDM_MCLKDIV_3: MClkDiv = 3; break;
-    case AM_HAL_PDM_MCLKDIV_2: MClkDiv = 2; break;
-    case AM_HAL_PDM_MCLKDIV_1: MClkDiv = 1; break;
+  case AM_HAL_PDM_MCLKDIV_4:
+    MClkDiv = 4;
+    break;
+  case AM_HAL_PDM_MCLKDIV_3:
+    MClkDiv = 3;
+    break;
+  case AM_HAL_PDM_MCLKDIV_2:
+    MClkDiv = 2;
+    break;
+  case AM_HAL_PDM_MCLKDIV_1:
+    MClkDiv = 1;
+    break;
 
-    default:
-      MClkDiv = 0;
+  default:
+    MClkDiv = 0;
   }
 
   switch (myPDM.getClockSpeed())
   {
-    case AM_HAL_PDM_CLK_12MHZ:  PDMClk = 12000000; break;
-    case AM_HAL_PDM_CLK_6MHZ:   PDMClk =  6000000; break;
-    case AM_HAL_PDM_CLK_3MHZ:   PDMClk =  3000000; break;
-    case AM_HAL_PDM_CLK_1_5MHZ: PDMClk =  1500000; break;
-    case AM_HAL_PDM_CLK_750KHZ: PDMClk =   750000; break;
-    case AM_HAL_PDM_CLK_375KHZ: PDMClk =   375000; break;
-    case AM_HAL_PDM_CLK_187KHZ: PDMClk =   187000; break;
+  case AM_HAL_PDM_CLK_12MHZ:
+    PDMClk = 12000000;
+    break;
+  case AM_HAL_PDM_CLK_6MHZ:
+    PDMClk = 6000000;
+    break;
+  case AM_HAL_PDM_CLK_3MHZ:
+    PDMClk = 3000000;
+    break;
+  case AM_HAL_PDM_CLK_1_5MHZ:
+    PDMClk = 1500000;
+    break;
+  case AM_HAL_PDM_CLK_750KHZ:
+    PDMClk = 750000;
+    break;
+  case AM_HAL_PDM_CLK_375KHZ:
+    PDMClk = 375000;
+    break;
+  case AM_HAL_PDM_CLK_187KHZ:
+    PDMClk = 187000;
+    break;
 
-    default:
-      PDMClk = 0;
+  default:
+    PDMClk = 0;
   }
 
   //
@@ -199,7 +213,7 @@ void printPDMConfig(void)
   //
   sampleFreq = (PDMClk / (MClkDiv * 2 * myPDM.getDecimationRate()));
 
-  frequencyUnits = (float) sampleFreq / (float) pdmDataBufferSize;
+  frequencyUnits = (float)sampleFreq / (float)pdmDataBufferSize;
 
   Serial.printf("Settings:\n");
   Serial.printf("PDM Clock (Hz):         %12d\n", PDMClk);
