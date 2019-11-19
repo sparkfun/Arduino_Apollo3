@@ -114,7 +114,7 @@ public:
 
     bool updateConfig(am_hal_pdm_config_t newConfiguration);
 
-    void getData(uint32_t *PDMDataBuffer, uint32_t bufferSize);
+    void getData(uint32_t *externalBuffer, uint32_t bufferSize);
 
     void pdm_isr(void);
 

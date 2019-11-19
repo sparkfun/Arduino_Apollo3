@@ -22,6 +22,11 @@ SOFTWARE.
 #include "PDM.h"
 
 AP3_PDM *ap3_pdm_handle = 0;
+am_hal_pdm_transfer_t sTransfer;
+
+//Temp
+#define internalPDMDataBufferSize 4096 //Default is array of 4096 * 32bit
+uint32_t internalPDMDataBuffer[internalPDMDataBufferSize];
 
 bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 {
@@ -106,11 +111,21 @@ ap3_err_t AP3_PDM::_begin(void)
     // completion).
     //
     am_hal_pdm_interrupt_enable(_PDMhandle, (AM_HAL_PDM_INT_DERR | AM_HAL_PDM_INT_DCMP | AM_HAL_PDM_INT_UNDFL | AM_HAL_PDM_INT_OVF));
-    am_hal_interrupt_master_enable();
+    //am_hal_interrupt_master_enable();
     NVIC_EnableIRQ(PDM_IRQn);
 
     // Register the class into the local list
     ap3_pdm_handle = this;
+
+    // Configure DMA and set target address of internal buffer.
+    sTransfer.ui32TargetAddr = (uint32_t)internalPDMDataBuffer;
+    sTransfer.ui32TotalCount = internalPDMDataBufferSize * 2;
+
+    // Start the data transfer.
+    am_hal_pdm_enable(_PDMhandle);
+    am_util_delay_ms(100);
+    am_hal_pdm_fifo_flush(_PDMhandle);
+    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
 
     return retval;
 }
@@ -255,24 +270,21 @@ invalid_args:
 // Start a transaction to get some number of bytes from the PDM interface.
 //
 //*****************************************************************************
-void AP3_PDM::getData(uint32_t *PDMDataBuffer, uint32_t bufferSize)
+void AP3_PDM::getData(uint32_t *externalBuffer, uint32_t bufferSize)
 {
-    //
-    // Configure DMA and target address.
-    //
-    am_hal_pdm_transfer_t sTransfer;
-    sTransfer.ui32TargetAddr = (uint32_t)PDMDataBuffer;
-    sTransfer.ui32TotalCount = bufferSize * 2; //PDM_FFT_BYTES;
+    if (_PDMdataReady)
+    {
+        noInterrupts();
 
-    //
-    // Start the data transfer.
-    //
-    am_hal_pdm_enable(_PDMhandle);
-    am_util_delay_ms(100);
-    am_hal_pdm_fifo_flush(_PDMhandle);
-    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
-
+        //Move data from internal buffer to external caller
+        for (int x = 0; x < bufferSize; x++)
+            externalBuffer[x] = internalPDMDataBuffer[x]; //Not clear, PDMDataBuffer is bufferSize * 2, do we need just the one left byte vs one right byte?
+        interrupts();
+    }
     _PDMdataReady = false;
+
+    //Start next conversion
+    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
 }
 
 inline void AP3_PDM::pdm_isr(void)
@@ -295,8 +307,13 @@ inline void AP3_PDM::pdm_isr(void)
     //
     if (ui32Status & AM_HAL_PDM_INT_DCMP)
     {
-        am_hal_pdm_disable(_PDMhandle);
-        _PDMdataReady = true;
+        if (_PDMdataReady == true)
+            Serial.println("Buffer overrun!");
+        else
+        {
+            //New data has been loaded into internalPDMDataBuffer
+            _PDMdataReady = true;
+        }
     }
 }
 
