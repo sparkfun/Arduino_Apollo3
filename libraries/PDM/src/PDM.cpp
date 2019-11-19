@@ -24,7 +24,6 @@ SOFTWARE.
 AP3_PDM *ap3_pdm_handle = 0;
 am_hal_pdm_transfer_t sTransfer;
 
-//Temp
 #define internalPDMDataBufferSize 4096 //Default is array of 4096 * 32bit
 uint32_t internalPDMDataBuffer[internalPDMDataBufferSize];
 
@@ -215,6 +214,8 @@ bool AP3_PDM::updateConfig(am_hal_pdm_config_t newConfiguration)
     _PDMconfig = newConfiguration;
     ap3_err_t retval = (ap3_err_t)am_hal_pdm_configure(_PDMhandle, &_PDMconfig);
 
+    am_hal_pdm_enable(_PDMhandle); //Reenable after changes
+
     if (retval != AP3_OK)
     {
         return false;
@@ -267,18 +268,23 @@ invalid_args:
 
 //*****************************************************************************
 //
-// Start a transaction to get some number of bytes from the PDM interface.
+// Read PDM data from internal buffer
+// Returns number of bytes read.
 //
 //*****************************************************************************
-void AP3_PDM::getData(uint32_t *externalBuffer, uint32_t bufferSize)
+uint32_t AP3_PDM::getData(uint32_t *externalBuffer, uint32_t bufferSize)
 {
     if (_PDMdataReady)
     {
+        if (bufferSize > internalPDMDataBufferSize)
+            bufferSize = internalPDMDataBufferSize;
+
         noInterrupts();
 
         //Move data from internal buffer to external caller
         for (int x = 0; x < bufferSize; x++)
-            externalBuffer[x] = internalPDMDataBuffer[x]; //Not clear, PDMDataBuffer is bufferSize * 2, do we need just the one left byte vs one right byte?
+            externalBuffer[x] = internalPDMDataBuffer[x];
+
         interrupts();
     }
     _PDMdataReady = false;
@@ -297,23 +303,16 @@ inline void AP3_PDM::pdm_isr(void)
     am_hal_pdm_interrupt_status_get(_PDMhandle, &ui32Status, true);
     am_hal_pdm_interrupt_clear(_PDMhandle, ui32Status);
 
-    //
-    // Once our DMA transaction completes, we will disable the PDM and send a
-    // flag back down to the main routine. Disabling the PDM is only necessary
-    // because this example only implemented a single buffer for storing FFT
-    // data. More complex programs could use a system of multiple buffers to
-    // allow the CPU to run the FFT in one buffer while the DMA pulls PCM data
-    // into another buffer.
-    //
     if (ui32Status & AM_HAL_PDM_INT_DCMP)
     {
         if (_PDMdataReady == true)
-            Serial.println("Buffer overrun!");
-        else
         {
-            //New data has been loaded into internalPDMDataBuffer
-            _PDMdataReady = true;
+            //If flag has not previously been cleared, we're overrun
+            //Serial.println("Buffer overrun!");
         }
+
+        //New data has been loaded into internalPDMDataBuffer
+        _PDMdataReady = true;
     }
 }
 
