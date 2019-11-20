@@ -96,7 +96,8 @@ class AP3_PDM
 {
 public:
     bool begin(ap3_gpio_pin_t pinPDMData = MIC_DATA, ap3_gpio_pin_t pinPDMClock = MIC_CLOCK);
-    bool available(void); //Goes true once an interrupt has occured
+    bool available(void); //Goes true if circular buffer is not empty
+    bool isOverrun(void); //Goes true if head crosses tail
 
     bool setClockSpeed(am_hal_pdm_clkspd_e clockSpeed);
     am_hal_pdm_clkspd_e getClockSpeed();
@@ -126,7 +127,17 @@ private:
 
     ap3_err_t _begin(void);
 
-    volatile bool _PDMdataReady = false;
+    //volatile bool _PDMdataReady = false;
+
+    volatile bool _head = 0;
+    volatile bool _tail = 0;
+    volatile bool _overrun = false;
+
+    const int pdmDataBufferSize = 512;                   //Default is array of 4096 * 32bit
+    volatile uint32_t _pdmDataBuffer[pdmDataBufferSize]; //This has been filled previous to ISR being called
+
+    const int circularBufferSize = 4096;
+    volatile uint32_t _pdmCircularBuffer[circularBufferSize]; //This is filled by ISR and read by getData
 };
 
 #endif //_PDM_H_

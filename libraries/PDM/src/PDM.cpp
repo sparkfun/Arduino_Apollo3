@@ -24,9 +24,6 @@ SOFTWARE.
 AP3_PDM *ap3_pdm_handle = 0;
 am_hal_pdm_transfer_t sTransfer;
 
-#define internalPDMDataBufferSize 4096 //Default is array of 4096 * 32bit
-uint32_t internalPDMDataBuffer[internalPDMDataBufferSize];
-
 bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 {
     _PDMhandle = NULL;
@@ -43,7 +40,16 @@ bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 
 bool AP3_PDM::available(void)
 {
-    return (_PDMdataReady);
+    if (_head != _tail)
+        return (true);
+    return (false);
+}
+
+bool AP3_PDM::isOverrun(void)
+{
+    if (_overrun == true)
+        return (true);
+    return (false);
 }
 
 ap3_err_t AP3_PDM::_begin(void)
@@ -274,45 +280,45 @@ invalid_args:
 //*****************************************************************************
 uint32_t AP3_PDM::getData(uint32_t *externalBuffer, uint32_t bufferSize)
 {
-    if (_PDMdataReady)
-    {
-        if (bufferSize > internalPDMDataBufferSize)
-            bufferSize = internalPDMDataBufferSize;
+    if (bufferSize > circularBufferSize)
+        bufferSize = circularBufferSize;
 
-        noInterrupts();
+    noInterrupts();
 
-        //Move data from internal buffer to external caller
-        for (int x = 0; x < bufferSize; x++)
-            externalBuffer[x] = internalPDMDataBuffer[x];
+    //Move data from internal buffer to external caller
+    for (int x = 0; x < bufferSize; x++)
+        externalBuffer[x] = _pdmCircularBuffer[x];
 
-        interrupts();
-    }
-    _PDMdataReady = false;
-
-    //Start next conversion
-    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
+    interrupts();
+}
 }
 
 inline void AP3_PDM::pdm_isr(void)
 {
     uint32_t ui32Status;
 
-    //
     // Read the interrupt status.
-    //
     am_hal_pdm_interrupt_status_get(_PDMhandle, &ui32Status, true);
     am_hal_pdm_interrupt_clear(_PDMhandle, ui32Status);
 
     if (ui32Status & AM_HAL_PDM_INT_DCMP)
     {
-        if (_PDMdataReady == true)
+        //Move current DMA to circular buffer
+        for (int x = 0; x < pdmDataBufferSize; x++)
         {
-            //If flag has not previously been cleared, we're overrun
-            //Serial.println("Buffer overrun!");
+            _pdmCircularBuffer[head++] = _pdmDataBuffer[x];
+            if (_head++ == circularBufferSize)
+                _head = 0;
         }
 
-        //New data has been loaded into internalPDMDataBuffer
-        _PDMdataReady = true;
+        if (_head == _tail)
+        {
+            Serial.println("Buffer overrun!");
+            _overrun = true;
+        }
+
+        //Start next conversion
+        am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
     }
 }
 
