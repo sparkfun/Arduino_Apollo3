@@ -7,7 +7,7 @@
 
 //Global variables needed for PDM library
 #define pdmDataBufferSize 4096 //Default is array of 4096 * 32bit
-uint32_t pdmDataBuffer[pdmDataBufferSize];
+uint16_t pdmDataBuffer[pdmDataBufferSize];
 
 //Global variables needed for the FFT in this sketch
 float g_fPDMTimeDomain[pdmDataBufferSize * 2];

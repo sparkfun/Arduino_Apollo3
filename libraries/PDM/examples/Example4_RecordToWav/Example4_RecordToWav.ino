@@ -4,31 +4,22 @@
 
   This example demonstrates how to read audio data and output
   it to a WAV file. This sketch outputs raw serial; an accompanying
-  python script visualizes and converts the raw data to a WAV file.
-
-  Note: Wave files are 1024kbps which is higher than most audio players
-  can handle. Use VLC to play the output files.
+  python script visualizes and coverts the raw data to a WAV file.
 
   Note: Audio samples are generated fast enough that we need to output
   serial at 500kbps.
+
+  The PDM hardware is setup to take a sample every 64us (15.625kHz sample rate)
+  The PDM library uses DMA to transfer 4096 bytes every 262ms and stores the
+  data between two internal buffers. So check available() often and call getData
+  to prevent buffer overruns.
 */
 
-#include "am_bsp.h"
+#include <PDM.h> //Include PDM library included with the Aruino_Apollo3 core
+AP3_PDM myPDM;   //Create instance of PDM class with our buffer
 
-// ----------------
-// Global Variables
-// ----------------
-#define BUFFSIZE 512
-uint32_t PDMDataBuffer[BUFFSIZE];
-int16_t *pi16Buffer = (int16_t *)PDMDataBuffer;
-
-//Rather than a cicular buffer we record to one buffer while the other is printed to serial
-volatile int16_t outBuffer1[BUFFSIZE];
-volatile int16_t outBuffer2[BUFFSIZE];
-volatile int buff1New = false;
-volatile int buff2New = false;
-
-am_hal_pdm_transfer_t sTransfer;
+#define pdmDataSize 4096 //Library requires array be 4096
+uint16_t pdmData[pdmDataSize];
 
 // -----------------
 // PDM Configuration
@@ -53,104 +44,27 @@ am_hal_pdm_config_t newConfig = {
     .bLRSwap = 0,
 };
 
-// -----------------
-// PDM Configuration
-// -----------------
-void initPDM(void)
-{
-  // Initialize, power-up and configure PDM
-  am_hal_pdm_initialize(0, &PDMHandle);
-  am_hal_pdm_power_control(PDMHandle, AM_HAL_PDM_POWER_ON, false);
-  am_hal_pdm_configure(PDMHandle, &newConfig);
-  am_hal_pdm_enable(PDMHandle);
-
-  // Configure PDM pins
-  am_hal_gpio_pinconfig(AM_BSP_PDM_DATA, g_AM_BSP_PDM_DATA);
-  am_hal_gpio_pinconfig(AM_BSP_PDM_CLOCK, g_AM_BSP_PDM_CLOCK);
-
-  // Configure PDM interrupts - set to trigger on DMA completion
-  am_hal_pdm_interrupt_enable(PDMHandle, (AM_HAL_PDM_INT_DERR | AM_HAL_PDM_INT_DCMP | AM_HAL_PDM_INT_UNDFL | AM_HAL_PDM_INT_OVF));
-  // Configure DMA and target address.
-  sTransfer.ui32TargetAddr = (uint32_t)PDMDataBuffer;
-  sTransfer.ui32TotalCount = BUFFSIZE * 2;
-
-  // Start the data transfer.
-  am_hal_pdm_enable(PDMHandle);
-  am_util_delay_ms(100);
-
-  am_hal_pdm_fifo_flush(PDMHandle);
-  am_hal_pdm_dma_start(PDMHandle, &sTransfer);
-
-  // Enable PDM interrupt
-  NVIC_EnableIRQ(PDM_IRQn);
-}
-
-// -----------------------------
-// PDM Interrupt Service Routine
-// -----------------------------
-extern "C" void am_pdm_isr(void)
-{
-  uint32_t ui32Status;
-
-  // Read the interrupt status.
-  am_hal_pdm_interrupt_status_get(PDMHandle, &ui32Status, true);
-  am_hal_pdm_interrupt_clear(PDMHandle, ui32Status);
-
-  // Once DMA transaction completes, move to Queue & Start next conversion
-  if (ui32Status & AM_HAL_PDM_INT_DCMP)
-  {
-
-    //Store in the first available buffer
-    if (buff1New == false)
-    {
-      for (int i = 0; i < BUFFSIZE; i++)
-      {
-        outBuffer1[i] = pi16Buffer[i];
-      }
-      buff1New = true;
-    }
-    else if (buff2New == false)
-    {
-      for (int i = 0; i < BUFFSIZE; i++)
-      {
-        outBuffer2[i] = pi16Buffer[i];
-      }
-      buff2New = true;
-    }
-    else
-    {
-      //Used for debugging
-      Serial.println("\n\rOver flow!");
-    }
-
-    // Start next conversion
-    am_hal_pdm_dma_start(PDMHandle, &sTransfer);
-  }
-}
-
 void setup()
 {
   Serial.begin(500000);
   delay(10);
-  initPDM(); //Setup and begin PDM interrupts
+
+  if (myPDM.begin() == false) // Turn on PDM with default settings, start interrupts
+  {
+    Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
+    while (1)
+      ;
+  }
+  myPDM.updateConfig(newConfig); //Send config struct
 }
 
 void loop()
 {
-  processFrame();
-}
+  if (myPDM.available())
+  {
+    myPDM.getData(pdmData, pdmDataSize);
 
-void processFrame()
-{
-  //Print any new data to serial port
-  if (buff1New == true)
-  {
-    Serial.write((uint8_t *)outBuffer1, sizeof(outBuffer1));
-    buff1New = false;
-  }
-  if (buff2New == true)
-  {
-    Serial.write((uint8_t *)outBuffer2, sizeof(outBuffer2));
-    buff2New = false;
+    //Print data to serial port
+    Serial.write((uint8_t *)pdmData, sizeof(pdmData));
   }
 }
