@@ -7,5 +7,5 @@ This example demonstrates how to read audio data and output it to a WAV file. A 
 Gotchas:
 
 * You will need to modify the python script to match the COM port used on your computer. For Windows based machines find the 
-* You will need to use VLC to play the WAV clips. The bitrate is 1024kbps which is higher than most audio players can handle.
+* You may need to use VLC to play the WAV clips. The bitrate is 256kbps which is higher than some audio players can handle.
 * Audio samples are generated fast enough that we need to output serial at 500kbps.

@@ -22,7 +22,15 @@ SOFTWARE.
 #include "PDM.h"
 
 AP3_PDM *ap3_pdm_handle = 0;
-am_hal_pdm_transfer_t sTransfer;
+
+// AP3_PDM::AP3_PDM(uint16_t *userBuffer, uint32_t bufferSize)
+// {
+//     _userBuffer = userBuffer;
+//     _userBufferSize = bufferSize;
+
+//     _readHead = 0;
+//     _writeHead = 0;
+// }
 
 bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 {
@@ -40,7 +48,8 @@ bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 
 bool AP3_PDM::available(void)
 {
-    if (_head != _tail)
+    //   if (_readHead != _writeHead)
+    if (buff1New || buff2New)
         return (true);
     return (false);
 }
@@ -48,7 +57,10 @@ bool AP3_PDM::available(void)
 bool AP3_PDM::isOverrun(void)
 {
     if (_overrun == true)
+    {
+        _overrun = false;
         return (true);
+    }
     return (false);
 }
 
@@ -124,7 +136,7 @@ ap3_err_t AP3_PDM::_begin(void)
 
     // Configure DMA and set target address of internal buffer.
     sTransfer.ui32TargetAddr = (uint32_t)_pdmDataBuffer;
-    sTransfer.ui32TotalCount = pdmDataBufferSize * 2;
+    sTransfer.ui32TotalCount = _pdmBufferSize * 2;
 
     // Start the data transfer.
     am_hal_pdm_enable(_PDMhandle);
@@ -278,23 +290,36 @@ invalid_args:
 // Returns number of bytes read.
 //
 //*****************************************************************************
-uint32_t AP3_PDM::getData(uint32_t *externalBuffer, uint32_t bufferSize)
+uint32_t AP3_PDM::getData(uint16_t *externalBuffer, uint32_t externalBufferSize)
 {
-    if (bufferSize > circularBufferSize)
-        bufferSize = circularBufferSize;
+    if (externalBufferSize > _pdmBufferSize)
+        externalBufferSize = _pdmBufferSize;
 
-    noInterrupts();
-
-    //Move data from internal buffer to external caller
-    for (int x = 0; x < bufferSize; x++)
+    //Move data from internal buffers to external caller
+    if (buff1New == true)
     {
-        externalBuffer[x] = _pdmCircularBuffer[tail];
-        if (tail++ == circularBufferSize)
+        for (int x = 0; x < externalBufferSize; x++)
+        {
+            externalBuffer[x] = outBuffer1[x];
+        }
+        buff1New = false;
     }
+    else if (buff2New == true)
+    {
+        for (int x = 0; x < externalBufferSize; x++)
+        {
+            externalBuffer[x] = outBuffer2[x];
+        }
+        buff2New = false;
+    }
+    // for (int x = 0; x < externalBufferSize; x++)
+    // {
+    //     externalBuffer[x] = _userBuffer[_readHead];
+    //     _readHead++;                  //Advance the read head
+    //     _readHead %= _userBufferSize; //Wrap if necessary
+    // }
 
-    interrupts();
-
-    return (bufferSize)
+    return (externalBufferSize);
 }
 
 inline void AP3_PDM::pdm_isr(void)
@@ -307,18 +332,60 @@ inline void AP3_PDM::pdm_isr(void)
 
     if (ui32Status & AM_HAL_PDM_INT_DCMP)
     {
-        //Move current DMA to circular buffer
-        for (int x = 0; x < pdmDataBufferSize; x++)
-        {
-            _pdmCircularBuffer[head++] = _pdmDataBuffer[x];
-            if (_head++ == circularBufferSize)
-                _head = 0;
-        }
+        uint32_t tempReadAmt = _pdmBufferSize;
 
-        if (_head == _tail)
+        // if (_writeHead + _pdmBufferSize > _userBufferSize)
+        // {
+        //     //Goes past the end of our buffer, adjust the amout to read so we hit end of buffer
+        //     tempReadAmt = _userBufferSize - _writeHead; //16384 - 16000 = 384
+        // }
+
+        // int i;
+        // for (i = 0; i < tempReadAmt; i++)
+        // {
+        //     _userBuffer[_writeHead + i] = _pdmDataBuffer[i];
+        // }
+
+        // _writeHead += tempReadAmt;     //Advance the head
+        // _writeHead %= _userBufferSize; //Wrap the head
+
+        // if (tempReadAmt < _pdmBufferSize)
+        // {
+        //     //Finish the read where i had left off
+        //     for (; i < _pdmBufferSize; i++)
+        //     {
+        //         _userBuffer[i - tempReadAmt] = _pdmDataBuffer[i];
+        //     }
+
+        //     _writeHead += _pdmBufferSize - tempReadAmt;
+        // }
+        //Check for overflow
+        //if (_writeHead + pdmBufferSize
+
+        //Store in the first available buffer
+        if (buff1New == false)
         {
-            Serial.println("Buffer overrun!");
+            for (int i = 0; i < _pdmBufferSize; i++)
+            {
+                outBuffer1[i] = pi16Buffer[i];
+            }
+            buff1New = true;
+        }
+        else if (buff2New == false)
+        {
+            for (int i = 0; i < _pdmBufferSize; i++)
+            {
+                outBuffer2[i] = pi16Buffer[i];
+            }
+            buff2New = true;
+        }
+        else
+        {
             _overrun = true;
+            //Used for debugging
+            Serial.println("\n\rOver flow!");
+            while (1)
+                ;
         }
 
         //Start next conversion
