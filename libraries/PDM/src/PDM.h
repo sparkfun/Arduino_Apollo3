@@ -133,10 +133,10 @@ private:
     volatile bool _tail = 0;
     volatile bool _overrun = false;
 
-    const int pdmDataBufferSize = 512;                   //Default is array of 4096 * 32bit
+#define pdmDataBufferSize 512                            //Default is array of 4096 * 32bit
     volatile uint32_t _pdmDataBuffer[pdmDataBufferSize]; //This has been filled previous to ISR being called
 
-    const int circularBufferSize = 4096;
+#define circularBufferSize 4096
     volatile uint32_t _pdmCircularBuffer[circularBufferSize]; //This is filled by ISR and read by getData
 };
 

@@ -123,8 +123,8 @@ ap3_err_t AP3_PDM::_begin(void)
     ap3_pdm_handle = this;
 
     // Configure DMA and set target address of internal buffer.
-    sTransfer.ui32TargetAddr = (uint32_t)internalPDMDataBuffer;
-    sTransfer.ui32TotalCount = internalPDMDataBufferSize * 2;
+    sTransfer.ui32TargetAddr = (uint32_t)_pdmDataBuffer;
+    sTransfer.ui32TotalCount = pdmDataBufferSize * 2;
 
     // Start the data transfer.
     am_hal_pdm_enable(_PDMhandle);
@@ -287,10 +287,14 @@ uint32_t AP3_PDM::getData(uint32_t *externalBuffer, uint32_t bufferSize)
 
     //Move data from internal buffer to external caller
     for (int x = 0; x < bufferSize; x++)
-        externalBuffer[x] = _pdmCircularBuffer[x];
+    {
+        externalBuffer[x] = _pdmCircularBuffer[tail];
+        if (tail++ == circularBufferSize)
+    }
 
     interrupts();
-}
+
+    return (bufferSize)
 }
 
 inline void AP3_PDM::pdm_isr(void)
