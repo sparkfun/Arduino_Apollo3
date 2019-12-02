@@ -141,7 +141,6 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
                 .ui32Direction = AM_HAL_UART_WRITE,
                 .pui8Data = (uint8_t *)tempTX,
                 .ui32NumBytes = amtToSend,
-                //                .ui32TimeoutMs = 0, //Use non-blocking xfer
                 .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
                 .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
             };
