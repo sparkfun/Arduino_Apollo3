@@ -151,7 +151,12 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
 
     //Transfer any remaining bytes into ring buffer
     for (int x = 0; x < size; x++)
+    {
+        //If TX ring buffer is full, begin blocking
+        while (_tx_buffer.availableForStore() == 0)
+            delay(1);
         _tx_buffer.store_char(buffer[x]);
+    }
 
     return ui32BytesWritten; //Return number of bytes pushed to UART hardware
 }
