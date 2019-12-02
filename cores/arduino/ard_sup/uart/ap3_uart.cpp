@@ -117,6 +117,7 @@ size_t Uart::write(const uint8_t data)
 size_t Uart::write(const uint8_t *buffer, size_t size)
 {
     uint32_t ui32BytesWritten = 0;
+    uint32_t remaining = size;
 
     //FIFO on Apollo3 is 32 bytes
 
@@ -125,11 +126,11 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
     am_hal_uart_flags_get(_handle, &uartFlags);
     if (uartFlags & AM_HAL_UART_FR_TX_EMPTY)
     {
-        uint32_t amtToSend = size;
+        uint32_t amtToSend = remaining;
         if (amtToSend > AM_HAL_UART_FIFO_MAX)
             amtToSend = AM_HAL_UART_FIFO_MAX;
 
-        size -= amtToSend;
+        remaining -= amtToSend;
 
         //Transfer to local buffer
         uint8_t tempTX[AM_HAL_UART_FIFO_MAX];
@@ -148,7 +149,7 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
     }
 
     //Transfer any remaining bytes into ring buffer
-    for (int x = 0; x < size; x++)
+    for (int x = size - remaining; x < size; x++)
     {
         //If TX ring buffer is full, begin blocking
         while (_tx_buffer.availableForStore() == 0)
