@@ -15,24 +15,24 @@
 //
 // Copyright (c) 2019, Ambiq Micro
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright
 // notice, this list of conditions and the following disclaimer in the
 // documentation and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from this
 // software without specific prior written permission.
-// 
+//
 // Third party software included in this distribution is subject to the
 // additional license terms as defined in the /docs/licenses directory.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -58,11 +58,11 @@
 // UART magic number for handle verification.
 //
 //*****************************************************************************
-#define AM_HAL_MAGIC_UART               0xEA9E06
+#define AM_HAL_MAGIC_UART 0xEA9E06
 
-#define AM_HAL_UART_CHK_HANDLE(h)                                             \
-    ((h) &&                                                                   \
-     ((am_hal_handle_prefix_t *)(h))->s.bInit &&                              \
+#define AM_HAL_UART_CHK_HANDLE(h)                \
+    ((h) &&                                      \
+     ((am_hal_handle_prefix_t *)(h))->s.bInit && \
      (((am_hal_handle_prefix_t *)(h))->s.magic == AM_HAL_MAGIC_UART))
 
 //*****************************************************************************
@@ -70,10 +70,10 @@
 // Convenience macro for passing errors.
 //
 //*****************************************************************************
-#define RETURN_ON_ERROR(x)                                                    \
-    if ((x) != AM_HAL_STATUS_SUCCESS)                                         \
-    {                                                                         \
-        return (x);                                                           \
+#define RETURN_ON_ERROR(x)            \
+    if ((x) != AM_HAL_STATUS_SUCCESS) \
+    {                                 \
+        return (x);                   \
     };
 
 //*****************************************************************************
@@ -81,8 +81,8 @@
 // Baudrate to byte-time in microseconds with a little extra margin.
 //
 //*****************************************************************************
-#define ONE_BYTE_US(baudrate)       (12000000/(baudrate))
-#define ONE_BYTE_DELAY(handle)                                                \
+#define ONE_BYTE_US(baudrate) (12000000 / (baudrate))
+#define ONE_BYTE_DELAY(handle) \
     am_hal_flash_delay(FLASH_CYCLES_US(ONE_BYTE_US((handle)->ui32BaudRate)))
 
 //*****************************************************************************
@@ -100,8 +100,7 @@ typedef struct
     uint32_t regCR;
     uint32_t regIFLS;
     uint32_t regIER;
-}
-am_hal_uart_register_state_t;
+} am_hal_uart_register_state_t;
 
 //*****************************************************************************
 //
@@ -122,8 +121,7 @@ typedef struct
     am_hal_queue_t sRxQueue;
 
     uint32_t ui32BaudRate;
-}
-am_hal_uart_state_t;
+} am_hal_uart_state_t;
 
 //*****************************************************************************
 //
@@ -169,7 +167,7 @@ am_hal_uart_initialize(uint32_t ui32Module, void **ppHandle)
     //
     // Check that the request module is in range.
     //
-    if (ui32Module >= AM_REG_UART_NUM_MODULES )
+    if (ui32Module >= AM_REG_UART_NUM_MODULES)
     {
         return AM_HAL_STATUS_OUT_OF_RANGE;
     }
@@ -251,12 +249,11 @@ am_hal_uart_power_control(void *pHandle,
                           am_hal_sysctrl_power_state_e ePowerState,
                           bool bRetainState)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
-    am_hal_pwrctrl_periph_e eUARTPowerModule = ((am_hal_pwrctrl_periph_e)
-                                                (AM_HAL_PWRCTRL_PERIPH_UART0 +
-                                                 ui32Module));
+    am_hal_pwrctrl_periph_e eUARTPowerModule = ((am_hal_pwrctrl_periph_e)(AM_HAL_PWRCTRL_PERIPH_UART0 +
+                                                                          ui32Module));
 
     //
     // Check to make sure this is a valid handle.
@@ -271,79 +268,79 @@ am_hal_uart_power_control(void *pHandle,
     //
     switch (ePowerState)
     {
+    //
+    // Turn on the UART.
+    //
+    case AM_HAL_SYSCTRL_WAKE:
         //
-        // Turn on the UART.
+        // Make sure we don't try to restore an invalid state.
         //
-        case AM_HAL_SYSCTRL_WAKE:
-            //
-            // Make sure we don't try to restore an invalid state.
-            //
-            if (bRetainState && !pState->sRegState.bValid)
-            {
-                return AM_HAL_STATUS_INVALID_OPERATION;
-            }
-
-            //
-            // Enable power control.
-            //
-            am_hal_pwrctrl_periph_enable(eUARTPowerModule);
-
-            if (bRetainState)
-            {
-                //
-                // Restore UART registers
-                //
-                AM_CRITICAL_BEGIN
-
-                UARTn(ui32Module)->ILPR = pState->sRegState.regILPR;
-                UARTn(ui32Module)->IBRD = pState->sRegState.regIBRD;
-                UARTn(ui32Module)->FBRD = pState->sRegState.regFBRD;
-                UARTn(ui32Module)->LCRH = pState->sRegState.regLCRH;
-                UARTn(ui32Module)->CR   = pState->sRegState.regCR;
-                UARTn(ui32Module)->IFLS = pState->sRegState.regIFLS;
-                UARTn(ui32Module)->IER  = pState->sRegState.regIER;
-
-                pState->sRegState.bValid = false;
-
-                AM_CRITICAL_END
-            }
-            break;
+        if (bRetainState && !pState->sRegState.bValid)
+        {
+            return AM_HAL_STATUS_INVALID_OPERATION;
+        }
 
         //
-        // Turn off the UART.
+        // Enable power control.
         //
-        case AM_HAL_SYSCTRL_NORMALSLEEP:
-        case AM_HAL_SYSCTRL_DEEPSLEEP:
-            if (bRetainState)
-            {
-                AM_CRITICAL_BEGIN
+        am_hal_pwrctrl_periph_enable(eUARTPowerModule);
 
-                pState->sRegState.regILPR = UARTn(ui32Module)->ILPR;
-                pState->sRegState.regIBRD = UARTn(ui32Module)->IBRD;
-                pState->sRegState.regFBRD = UARTn(ui32Module)->FBRD;
-                pState->sRegState.regLCRH = UARTn(ui32Module)->LCRH;
-                pState->sRegState.regCR   = UARTn(ui32Module)->CR;
-                pState->sRegState.regIFLS = UARTn(ui32Module)->IFLS;
-                pState->sRegState.regIER  = UARTn(ui32Module)->IER;
-                pState->sRegState.bValid = true;
-
-                AM_CRITICAL_END
-            }
-
+        if (bRetainState)
+        {
             //
-            // Clear all interrupts before sleeping as having a pending UART
-            // interrupt burns power.
+            // Restore UART registers
             //
-            am_hal_uart_interrupt_clear(pState, 0xFFFFFFFF);
+            AM_CRITICAL_BEGIN
 
-            //
-            // Disable power control.
-            //
-            am_hal_pwrctrl_periph_disable(eUARTPowerModule);
-            break;
+            UARTn(ui32Module)->ILPR = pState->sRegState.regILPR;
+            UARTn(ui32Module)->IBRD = pState->sRegState.regIBRD;
+            UARTn(ui32Module)->FBRD = pState->sRegState.regFBRD;
+            UARTn(ui32Module)->LCRH = pState->sRegState.regLCRH;
+            UARTn(ui32Module)->CR = pState->sRegState.regCR;
+            UARTn(ui32Module)->IFLS = pState->sRegState.regIFLS;
+            UARTn(ui32Module)->IER = pState->sRegState.regIER;
 
-        default:
-            return AM_HAL_STATUS_INVALID_ARG;
+            pState->sRegState.bValid = false;
+
+            AM_CRITICAL_END
+        }
+        break;
+
+    //
+    // Turn off the UART.
+    //
+    case AM_HAL_SYSCTRL_NORMALSLEEP:
+    case AM_HAL_SYSCTRL_DEEPSLEEP:
+        if (bRetainState)
+        {
+            AM_CRITICAL_BEGIN
+
+            pState->sRegState.regILPR = UARTn(ui32Module)->ILPR;
+            pState->sRegState.regIBRD = UARTn(ui32Module)->IBRD;
+            pState->sRegState.regFBRD = UARTn(ui32Module)->FBRD;
+            pState->sRegState.regLCRH = UARTn(ui32Module)->LCRH;
+            pState->sRegState.regCR = UARTn(ui32Module)->CR;
+            pState->sRegState.regIFLS = UARTn(ui32Module)->IFLS;
+            pState->sRegState.regIER = UARTn(ui32Module)->IER;
+            pState->sRegState.bValid = true;
+
+            AM_CRITICAL_END
+        }
+
+        //
+        // Clear all interrupts before sleeping as having a pending UART
+        // interrupt burns power.
+        //
+        am_hal_uart_interrupt_clear(pState, 0xFFFFFFFF);
+
+        //
+        // Disable power control.
+        //
+        am_hal_pwrctrl_periph_disable(eUARTPowerModule);
+        break;
+
+    default:
+        return AM_HAL_STATUS_INVALID_ARG;
     }
 
     //
@@ -360,7 +357,7 @@ am_hal_uart_power_control(void *pHandle,
 uint32_t
 am_hal_uart_configure(void *pHandle, const am_hal_uart_config_t *psConfig)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     uint32_t ui32ErrorStatus;
@@ -404,7 +401,7 @@ am_hal_uart_configure(void *pHandle, const am_hal_uart_config_t *psConfig)
     // Set the baud rate.
     //
     ui32ErrorStatus = config_baudrate(ui32Module, psConfig->ui32BaudRate,
-                                          &(pState->ui32BaudRate));
+                                      &(pState->ui32BaudRate));
 
     RETURN_ON_ERROR(ui32ErrorStatus);
 
@@ -417,9 +414,9 @@ am_hal_uart_configure(void *pHandle, const am_hal_uart_config_t *psConfig)
 
     UARTn(ui32Module)->IFLS = psConfig->ui32FifoLevels;
 
-    UARTn(ui32Module)->LCRH = (psConfig->ui32DataBits   |
-                               psConfig->ui32Parity     |
-                               psConfig->ui32StopBits   |
+    UARTn(ui32Module)->LCRH = (psConfig->ui32DataBits |
+                               psConfig->ui32Parity |
+                               psConfig->ui32StopBits |
                                AM_HAL_UART_FIFO_ENABLE);
 
     //
@@ -454,7 +451,7 @@ static uint32_t
 buffer_configure(void *pHandle, uint8_t *pui8TxBuffer, uint32_t ui32TxBufferSize,
                  uint8_t *pui8RxBuffer, uint32_t ui32RxBufferSize)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32ErrorStatus;
 
     //
@@ -519,7 +516,7 @@ buffer_configure(void *pHandle, uint8_t *pui8TxBuffer, uint32_t ui32TxBufferSize
 // Set Baud Rate based on the UART clock frequency.
 //
 //*****************************************************************************
-#define BAUDCLK     (16) // Number of UART clocks needed per bit.
+#define BAUDCLK (16) // Number of UART clocks needed per bit.
 static uint32_t
 config_baudrate(uint32_t ui32Module, uint32_t ui32DesiredBaudrate, uint32_t *pui32ActualBaud)
 {
@@ -535,40 +532,40 @@ config_baudrate(uint32_t ui32Module, uint32_t ui32DesiredBaudrate, uint32_t *pui
     //
     if (APOLLO3_A1)
     {
-      if (ui32DesiredBaudrate > AM_HAL_UART_MAXIMUM_BAUDRATE_A1)
-      {
-        return AM_HAL_UART_STATUS_BAUDRATE_NOT_POSSIBLE;
-      }
+        if (ui32DesiredBaudrate > AM_HAL_UART_MAXIMUM_BAUDRATE_A1)
+        {
+            return AM_HAL_UART_STATUS_BAUDRATE_NOT_POSSIBLE;
+        }
     }
     if (APOLLO3_GE_B0)
     {
-      if (ui32DesiredBaudrate > AM_HAL_UART_MAXIMUM_BAUDRATE_B0)
-      {
-        return AM_HAL_UART_STATUS_BAUDRATE_NOT_POSSIBLE;
-      }
+        if (ui32DesiredBaudrate > AM_HAL_UART_MAXIMUM_BAUDRATE_B0)
+        {
+            return AM_HAL_UART_STATUS_BAUDRATE_NOT_POSSIBLE;
+        }
     }
 
-    switch ( UARTn(ui32Module)->CR_b.CLKSEL )
+    switch (UARTn(ui32Module)->CR_b.CLKSEL)
     {
-        case UART0_CR_CLKSEL_24MHZ:
-            ui32UartClkFreq = 24000000;
-            break;
+    case UART0_CR_CLKSEL_24MHZ:
+        ui32UartClkFreq = 24000000;
+        break;
 
-        case UART0_CR_CLKSEL_12MHZ:
-            ui32UartClkFreq = 12000000;
-            break;
+    case UART0_CR_CLKSEL_12MHZ:
+        ui32UartClkFreq = 12000000;
+        break;
 
-        case UART0_CR_CLKSEL_6MHZ:
-            ui32UartClkFreq = 6000000;
-            break;
+    case UART0_CR_CLKSEL_6MHZ:
+        ui32UartClkFreq = 6000000;
+        break;
 
-        case UART0_CR_CLKSEL_3MHZ:
-            ui32UartClkFreq = 3000000;
-            break;
+    case UART0_CR_CLKSEL_3MHZ:
+        ui32UartClkFreq = 3000000;
+        break;
 
-        default:
-            *pui32ActualBaud = 0;
-            return AM_HAL_UART_STATUS_CLOCK_NOT_CONFIGURED;
+    default:
+        *pui32ActualBaud = 0;
+        return AM_HAL_UART_STATUS_CLOCK_NOT_CONFIGURED;
     }
 
     //
@@ -617,7 +614,7 @@ uart_fifo_read(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
     uint32_t ui32ReadData;
     uint32_t ui32ErrorStatus = AM_HAL_STATUS_SUCCESS;
 
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     //
@@ -629,7 +626,7 @@ uart_fifo_read(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
         // If the fifo is empty, return with the number of bytes we read.
         // Otherwise, read the data into the provided buffer.
         //
-        if ( UARTn(ui32Module)->FR_b.RXFE )
+        if (UARTn(ui32Module)->FR_b.RXFE)
         {
             break;
         }
@@ -643,9 +640,9 @@ uart_fifo_read(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
             if (ui32ReadData & (_VAL2FLD(UART0_DR_OEDATA, UART0_DR_OEDATA_ERR) |
                                 _VAL2FLD(UART0_DR_BEDATA, UART0_DR_BEDATA_ERR) |
                                 _VAL2FLD(UART0_DR_PEDATA, UART0_DR_PEDATA_ERR) |
-                                _VAL2FLD(UART0_DR_FEDATA, UART0_DR_FEDATA_ERR)) )
+                                _VAL2FLD(UART0_DR_FEDATA, UART0_DR_FEDATA_ERR)))
             {
-                ui32ErrorStatus =  AM_HAL_UART_STATUS_BUS_ERROR;
+                ui32ErrorStatus = AM_HAL_UART_STATUS_BUS_ERROR;
                 break;
             }
             else
@@ -674,7 +671,7 @@ uart_fifo_write(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
 {
     uint32_t i = 0;
 
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     //
@@ -686,7 +683,7 @@ uart_fifo_write(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
         // If the TX FIFO is full, break out of the loop. We've sent everything
         // we can.
         //
-        if ( UARTn(ui32Module)->FR_b.TXFF )
+        if (UARTn(ui32Module)->FR_b.TXFF)
         {
             break;
         }
@@ -720,7 +717,7 @@ read_nonblocking(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
     uint32_t ui32BytesTransferred;
     uint32_t ui32ErrorStatus = AM_HAL_STATUS_SUCCESS;
 
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
 
     //
     // Check to make sure this is a valid handle.
@@ -757,8 +754,7 @@ read_nonblocking(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
 
         ui32BufferData = am_hal_queue_data_left(&pState->sRxQueue);
 
-        ui32BytesTransferred = (ui32NumBytes < ui32BufferData ?
-                                ui32NumBytes : ui32BufferData);
+        ui32BytesTransferred = (ui32NumBytes < ui32BufferData ? ui32NumBytes : ui32BufferData);
 
         am_hal_queue_item_get(&pState->sRxQueue, pui8Data, ui32BytesTransferred);
     }
@@ -796,7 +792,7 @@ write_nonblocking(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
     uint32_t ui32BufferSpace;
     uint32_t ui32BytesTransferred;
 
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
 
     //
     // Check to make sure this is a valid handle.
@@ -831,8 +827,7 @@ write_nonblocking(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
         //
         ui32BufferSpace = am_hal_queue_space_left(&pState->sTxQueue);
 
-        ui32BytesTransferred = (ui32NumBytes < ui32BufferSpace ?
-                                ui32NumBytes : ui32BufferSpace);
+        ui32BytesTransferred = (ui32NumBytes < ui32BufferSpace ? ui32NumBytes : ui32BufferSpace);
 
         am_hal_queue_item_add(&pState->sTxQueue, pui8Data, ui32BytesTransferred);
 
@@ -874,7 +869,7 @@ read_timeout(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
              uint32_t *pui32NumBytesRead, uint32_t ui32TimeoutMs)
 {
     uint32_t ui32Status, ui32BytesRead, ui32RemainingBytes,
-             ui32TimeSpent, i;
+        ui32TimeSpent, i;
 
     //
     // If we don't have a timeout, just pass this directly to the nonblocking
@@ -953,7 +948,7 @@ write_timeout(void *pHandle, uint8_t *pui8Data, uint32_t ui32NumBytes,
               uint32_t *pui32NumBytesWritten, uint32_t ui32TimeoutMs)
 {
     uint32_t ui32Status, ui32BytesWritten, ui32RemainingBytes,
-             ui32TimeSpent, i;
+        ui32TimeSpent, i;
 
     i = 0;
     ui32RemainingBytes = ui32NumBytes;
@@ -1060,7 +1055,7 @@ am_hal_uart_transfer(void *pHandle, const am_hal_uart_transfer_t *pTransfer)
 uint32_t
 am_hal_uart_tx_flush(void *pHandle)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     //
@@ -1077,7 +1072,7 @@ am_hal_uart_tx_flush(void *pHandle)
     //
     // Wait for the TX busy bit to go low.
     //
-    while ( UARTn(ui32Module)->FR_b.BUSY )
+    while (UARTn(ui32Module)->FR_b.BUSY)
     {
         ONE_BYTE_DELAY(pState);
     }
@@ -1093,7 +1088,7 @@ am_hal_uart_tx_flush(void *pHandle)
 uint32_t
 am_hal_uart_flags_get(void *pHandle, uint32_t *ui32Flags)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     //
@@ -1104,7 +1099,12 @@ am_hal_uart_flags_get(void *pHandle, uint32_t *ui32Flags)
         return AM_HAL_STATUS_INVALID_HANDLE;
     }
 
-    return UARTn(ui32Module)->FR;
+    //Correct code
+    *ui32Flags = (uint32_t)UARTn(ui32Module)->FR;
+    return AM_HAL_STATUS_SUCCESS;
+
+    //return UARTn(ui32Module)->FR; //Incorrect code?
+
 } // am_hal_uart_flags_get()
 
 //*****************************************************************************
@@ -1115,7 +1115,7 @@ am_hal_uart_flags_get(void *pHandle, uint32_t *ui32Flags)
 static uint32_t
 rx_queue_update(void *pHandle)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
 
     uint8_t pui8Data[AM_HAL_UART_FIFO_MAX];
     uint32_t ui32BytesTransferred;
@@ -1154,7 +1154,7 @@ rx_queue_update(void *pHandle)
 static uint32_t
 tx_queue_update(void *pHandle)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     uint8_t pui8Data;
@@ -1166,7 +1166,7 @@ tx_queue_update(void *pHandle)
     //
     // Loop as long as the TX fifo isn't full yet.
     //
-    while ( !UARTn(ui32Module)->FR_b.TXFF )
+    while (!UARTn(ui32Module)->FR_b.TXFF)
     {
         //
         // Attempt to grab an item from the queue, and add it to the fifo.
@@ -1203,7 +1203,7 @@ tx_queue_update(void *pHandle)
 uint32_t
 am_hal_uart_interrupt_service(void *pHandle, uint32_t ui32Status, uint32_t *pui32UartTxIdle)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
     uint32_t ui32ErrorStatus;
 
@@ -1250,13 +1250,13 @@ am_hal_uart_interrupt_service(void *pHandle, uint32_t ui32Status, uint32_t *pui3
     //
     if (pState->bEnableTxQueue)
     {
-        if ( am_hal_queue_empty(&(pState->sTxQueue) )   &&
-             ( UARTn(ui32Module)->FR_b.BUSY == false ) )
+        if (am_hal_queue_empty(&(pState->sTxQueue)) &&
+            (UARTn(ui32Module)->FR_b.BUSY == false))
         {
             *pui32UartTxIdle = true;
         }
     }
-    else if ( UARTn(ui32Module)->FR_b.BUSY == false )
+    else if (UARTn(ui32Module)->FR_b.BUSY == false)
     {
         *pui32UartTxIdle = true;
     }
@@ -1276,7 +1276,7 @@ am_hal_uart_interrupt_service(void *pHandle, uint32_t ui32Status, uint32_t *pui3
 uint32_t
 am_hal_uart_interrupt_enable(void *pHandle, uint32_t ui32IntMask)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     if (!AM_HAL_UART_CHK_HANDLE(pHandle))
@@ -1297,7 +1297,7 @@ am_hal_uart_interrupt_enable(void *pHandle, uint32_t ui32IntMask)
 uint32_t
 am_hal_uart_interrupt_disable(void *pHandle, uint32_t ui32IntMask)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     if (!AM_HAL_UART_CHK_HANDLE(pHandle))
@@ -1318,7 +1318,7 @@ am_hal_uart_interrupt_disable(void *pHandle, uint32_t ui32IntMask)
 uint32_t
 am_hal_uart_interrupt_clear(void *pHandle, uint32_t ui32IntMask)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     if (!AM_HAL_UART_CHK_HANDLE(pHandle))
@@ -1339,7 +1339,7 @@ am_hal_uart_interrupt_clear(void *pHandle, uint32_t ui32IntMask)
 uint32_t
 am_hal_uart_interrupt_status_get(void *pHandle, uint32_t *pui32Status, bool bEnabledOnly)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     if (!AM_HAL_UART_CHK_HANDLE(pHandle))
