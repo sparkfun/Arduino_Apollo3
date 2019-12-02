@@ -30,7 +30,7 @@ SOFTWARE.
 #include "RingBuffer.h"
 
 #ifndef AP3_UART_RINGBUFF_SIZE
-#define AP3_UART_RINGBUFF_SIZE 256
+#define AP3_UART_RINGBUFF_SIZE 256 * 8
 #endif
 
 typedef RingBufferN<AP3_UART_RINGBUFF_SIZE> AP3UartRingBuffer;
