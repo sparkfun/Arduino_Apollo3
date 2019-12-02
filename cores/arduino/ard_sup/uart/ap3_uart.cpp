@@ -90,8 +90,7 @@ int Uart::available()
 
 int Uart::availableForWrite()
 {
-    // return _tx_buffer.availableForStore();
-    return 127; // todo:
+    return _tx_buffer.availableForStore();
 }
 
 int Uart::peek()
