@@ -122,40 +122,38 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
     //FIFO on Apollo3 is 32 bytes
 
     //If TX UART is sitting idle, load it. This will start the ISR TX handler as well.
-    uint32_t uartFlags = 0;
+    uint32_t uartFlags;
     am_hal_uart_flags_get(_handle, &uartFlags);
-
-    // am_hal_uart_tx_flush(_handle);
     if (uartFlags & AM_HAL_UART_FR_TX_EMPTY)
-    //if (1)
     {
         uint32_t amtToSend = size;
         if (amtToSend > AM_HAL_UART_FIFO_MAX)
             amtToSend = AM_HAL_UART_FIFO_MAX;
 
+        size -= amtToSend;
+
         //Transfer to local buffer
         uint8_t tempTX[AM_HAL_UART_FIFO_MAX];
         for (int x = 0; x < amtToSend; x++)
-            tempTX[x] = _tx_buffer.read_char();
+            tempTX[x] = buffer[x];
 
         const am_hal_uart_transfer_t sUartWrite =
             {
                 .ui32Direction = AM_HAL_UART_WRITE,
-                .pui8Data = (uint8_t *)buffer,
-                .ui32NumBytes = size,
-                .ui32TimeoutMs = 0, //Use non-blocking xfer
+                .pui8Data = (uint8_t *)tempTX,
+                .ui32NumBytes = amtToSend,
+                //                .ui32TimeoutMs = 0, //Use non-blocking xfer
+                .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
                 .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
             };
         am_hal_uart_transfer(_handle, &sUartWrite);
     }
-    else
-    {
-        //UART is already sending bytes so load the ring buffer instead
-        for (int x = 0; x < size; x++)
-            _tx_buffer.store_char(buffer[x]);
-        ui32BytesWritten = size;
-    }
-    return ui32BytesWritten;
+
+    //Transfer any remaining bytes into ring buffer
+    for (int x = 0; x < size; x++)
+        _tx_buffer.store_char(buffer[x]);
+
+    return ui32BytesWritten; //Return number of bytes pushed to UART hardware
 }
 
 // Stop Bits
