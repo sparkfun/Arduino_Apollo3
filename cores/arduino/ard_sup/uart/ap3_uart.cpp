@@ -90,8 +90,7 @@ int Uart::available()
 
 int Uart::availableForWrite()
 {
-    // return _tx_buffer.availableForStore();
-    return 127; // todo:
+    return _tx_buffer.availableForStore();
 }
 
 int Uart::peek()
@@ -118,19 +117,47 @@ size_t Uart::write(const uint8_t data)
 size_t Uart::write(const uint8_t *buffer, size_t size)
 {
     uint32_t ui32BytesWritten = 0;
+    uint32_t remaining = size;
 
-    // todo: use a local buffer to guarantee lifespan of data (maybe txbuffer, but maybe not a ring buffer? b/c of efficiency + not breaking up transfers)
+    //FIFO on Apollo3 is 32 bytes
 
-    const am_hal_uart_transfer_t sUartWrite =
-        {
-            .ui32Direction = AM_HAL_UART_WRITE,
-            .pui8Data = (uint8_t *)buffer,
-            .ui32NumBytes = size,
-            .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
-            .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
-        };
-    am_hal_uart_transfer(_handle, &sUartWrite);
-    return ui32BytesWritten;
+    //If TX UART is sitting idle, load it. This will start the ISR TX handler as well.
+    uint32_t uartFlags;
+    am_hal_uart_flags_get(_handle, &uartFlags);
+    if (uartFlags & AM_HAL_UART_FR_TX_EMPTY)
+    {
+        uint32_t amtToSend = remaining;
+        if (amtToSend > AM_HAL_UART_FIFO_MAX)
+            amtToSend = AM_HAL_UART_FIFO_MAX;
+
+        remaining -= amtToSend;
+
+        //Transfer to local buffer
+        uint8_t tempTX[AM_HAL_UART_FIFO_MAX];
+        for (int x = 0; x < amtToSend; x++)
+            tempTX[x] = buffer[x];
+
+        const am_hal_uart_transfer_t sUartWrite =
+            {
+                .ui32Direction = AM_HAL_UART_WRITE,
+                .pui8Data = (uint8_t *)tempTX,
+                .ui32NumBytes = amtToSend,
+                .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
+                .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
+            };
+        am_hal_uart_transfer(_handle, &sUartWrite);
+    }
+
+    //Transfer any remaining bytes into ring buffer
+    for (int x = size - remaining; x < size; x++)
+    {
+        //If TX ring buffer is full, begin blocking
+        while (_tx_buffer.availableForStore() == 0)
+            delay(1);
+        _tx_buffer.store_char(buffer[x]);
+    }
+
+    return ui32BytesWritten; //Return number of bytes pushed to UART hardware
 }
 
 // Stop Bits
@@ -370,9 +397,9 @@ ap3_err_t Uart::_begin(void)
 
     UARTn(_instance)->LCRH_b.FEN = 0; // Disable that pesky FIFO
 
-    // Enable RX interrupts
+    // Enable TX and RX interrupts
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + _instance));
-    am_hal_uart_interrupt_enable(_handle, (AM_HAL_UART_INT_RX));
+    am_hal_uart_interrupt_enable(_handle, (AM_HAL_UART_INT_RX | AM_HAL_UART_INT_TX));
     am_hal_interrupt_master_enable();
 
     // Register the class into the local list
@@ -487,7 +514,7 @@ invalid_args:
 // Interrupt handler for the UART.
 //
 //*****************************************************************************
-inline void Uart::rx_isr(void)
+inline void Uart::uart_isr(void)
 {
 
     uint32_t ui32Status;
@@ -517,6 +544,34 @@ inline void Uart::rx_isr(void)
             _rx_buffer.store_char(rx_c);
         }
     }
+
+    if (ui32Status & AM_HAL_UART_INT_TX)
+    {
+        //If bytes are sitting in TX buffer, load them into UART buffer for transfer
+        if (_tx_buffer.available())
+        {
+            uint32_t ui32BytesWritten = 0;
+
+            uint32_t amtToSend = _tx_buffer.available();
+            if (amtToSend > AM_HAL_UART_FIFO_MAX)
+                amtToSend = AM_HAL_UART_FIFO_MAX;
+
+            //Transfer to local buffer
+            uint8_t tempTX[AM_HAL_UART_FIFO_MAX];
+            for (int x = 0; x < amtToSend; x++)
+                tempTX[x] = _tx_buffer.read_char();
+
+            const am_hal_uart_transfer_t sUartWrite =
+                {
+                    .ui32Direction = AM_HAL_UART_WRITE,
+                    .pui8Data = (uint8_t *)tempTX,
+                    .ui32NumBytes = (uint32_t)amtToSend,
+                    .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
+                    .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
+                };
+            am_hal_uart_transfer(_handle, &sUartWrite);
+        }
+    }
 }
 
 // Individual ISR implementations for the two UART peripherals on the Apollo3
@@ -524,7 +579,7 @@ extern "C" void am_uart_isr(void)
 {
     if (ap3_uart_handles[0] != NULL)
     {
-        ap3_uart_handles[0]->rx_isr();
+        ap3_uart_handles[0]->uart_isr();
     }
 }
 
@@ -532,6 +587,6 @@ extern "C" void am_uart1_isr(void)
 {
     if (ap3_uart_handles[1] != NULL)
     {
-        ap3_uart_handles[1]->rx_isr();
+        ap3_uart_handles[1]->uart_isr();
     }
 }

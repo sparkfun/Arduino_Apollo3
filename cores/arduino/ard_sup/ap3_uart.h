@@ -67,7 +67,7 @@ public:
 	uint32_t printf(const char *pcFmt, ...);
 	using Print::write; // pull in write(str) and write(buf, size) from Print
 
-	void rx_isr(void);
+	void uart_isr(void);
 
 	operator bool() { return true; } // todo: wait for a serial terminal to be open... probably depends on RTS or CTS...
 
@@ -86,26 +86,6 @@ public:							  //temporary
 
 	ap3_err_t set_config(HardwareSerial_Config_e HWSconfig);
 	ap3_err_t _begin(void); // call once all members + config structure are set up
-
-	// ap3_err_t initialize( void );
-
-	// SERCOM *sercom;
-	// RingBuffer rxBuffer;
-	// RingBuffer txBuffer;
-
-	// uint8_t uc_pinRX;
-	// uint8_t uc_pinTX;
-	// SercomRXPad uc_padRX;
-	// SercomUartTXPad uc_padTX;
-	// uint8_t uc_pinRTS;
-	// volatile uint32_t* pul_outsetRTS;
-	// volatile uint32_t* pul_outclrRTS;
-	// uint32_t ul_pinMaskRTS;
-	// uint8_t uc_pinCTS;
-
-	// SercomNumberStopBit extractNbStopBit(uint16_t config);
-	// SercomUartCharSize extractCharSize(uint16_t config);
-	// SercomParityMode extractParity(uint16_t config);
 };
 
 #endif // _AP3_UART_H_
