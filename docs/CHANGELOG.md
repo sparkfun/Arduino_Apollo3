@@ -5,9 +5,13 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
-1.0.21 - In-progress
+1.0.21
 ====================
-- merge PR #89 to improve SPI performance
+- Merge #89: Improvements to SPI library (overhead reduction, configuration checking)
+- Unify variants with [SparkFun AmbiqSuite BSPs](https://github.com/sparkfun/SparkFun_Apollo3_AmbiqSuite_BSPs) and make "am_bsp.h" available
+- Merge #93 Fixes RTC implementation (correct day of week calculation)
+- Merge #95 Makes UART operations non-blocking
+- Merge #91 Fixes bitrate in PDM and adds an interactive example for audio playback
 
 1.0.20 - Nov 15 2019
 ====================
