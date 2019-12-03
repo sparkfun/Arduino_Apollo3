@@ -67,7 +67,7 @@ public:
 	uint32_t printf(const char *pcFmt, ...);
 	using Print::write; // pull in write(str) and write(buf, size) from Print
 
-	void rx_isr(void);
+	void uart_isr(void);
 
 	operator bool() { return true; } // todo: wait for a serial terminal to be open... probably depends on RTS or CTS...
 

@@ -514,7 +514,7 @@ invalid_args:
 // Interrupt handler for the UART.
 //
 //*****************************************************************************
-inline void Uart::rx_isr(void)
+inline void Uart::uart_isr(void)
 {
 
     uint32_t ui32Status;
@@ -579,7 +579,7 @@ extern "C" void am_uart_isr(void)
 {
     if (ap3_uart_handles[0] != NULL)
     {
-        ap3_uart_handles[0]->rx_isr();
+        ap3_uart_handles[0]->uart_isr();
     }
 }
 
@@ -587,6 +587,6 @@ extern "C" void am_uart1_isr(void)
 {
     if (ap3_uart_handles[1] != NULL)
     {
-        ap3_uart_handles[1]->rx_isr();
+        ap3_uart_handles[1]->uart_isr();
     }
 }
