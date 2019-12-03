@@ -81,7 +81,7 @@
 // Baudrate to byte-time in microseconds with a little extra margin.
 //
 //*****************************************************************************
-#define ONE_BYTE_US(baudrate) (12000000/(baudrate))
+#define ONE_BYTE_US(baudrate)       (12000000/(baudrate))
 #define ONE_BYTE_DELAY(handle)                                                \
     am_hal_flash_delay(FLASH_CYCLES_US(ONE_BYTE_US((handle)->ui32BaudRate)))
 
@@ -299,9 +299,9 @@ am_hal_uart_power_control(void *pHandle,
                 UARTn(ui32Module)->IBRD = pState->sRegState.regIBRD;
                 UARTn(ui32Module)->FBRD = pState->sRegState.regFBRD;
                 UARTn(ui32Module)->LCRH = pState->sRegState.regLCRH;
-                UARTn(ui32Module)->CR = pState->sRegState.regCR;
+                UARTn(ui32Module)->CR   = pState->sRegState.regCR;
                 UARTn(ui32Module)->IFLS = pState->sRegState.regIFLS;
-                UARTn(ui32Module)->IER = pState->sRegState.regIER;
+                UARTn(ui32Module)->IER  = pState->sRegState.regIER;
 
                 pState->sRegState.bValid = false;
 
@@ -322,9 +322,9 @@ am_hal_uart_power_control(void *pHandle,
                 pState->sRegState.regIBRD = UARTn(ui32Module)->IBRD;
                 pState->sRegState.regFBRD = UARTn(ui32Module)->FBRD;
                 pState->sRegState.regLCRH = UARTn(ui32Module)->LCRH;
-                pState->sRegState.regCR = UARTn(ui32Module)->CR;
+                pState->sRegState.regCR   = UARTn(ui32Module)->CR;
                 pState->sRegState.regIFLS = UARTn(ui32Module)->IFLS;
-                pState->sRegState.regIER = UARTn(ui32Module)->IER;
+                pState->sRegState.regIER  = UARTn(ui32Module)->IER;
                 pState->sRegState.bValid = true;
 
                 AM_CRITICAL_END
