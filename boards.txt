@@ -28,7 +28,7 @@ menu.sbl_baud=Ambiq Secure Bootloader Baud Rate
 ###############################################################
 
 artemis.name=SparkFun Artemis Module
-artemis.build.variant=SparkFun_Artemis
+artemis.build.variant=artemis
 artemis.build.board=SFE_ARTEMIS
 artemis.upload.maximum_size=960000
 artemis.upload.sbl_baud=115200
@@ -65,7 +65,7 @@ artemis.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scri
 ###############################################################
 
 amap3redboard.name=SparkFun RedBoard Artemis
-amap3redboard.build.variant=SparkFun_RedBoard_Artemis
+amap3redboard.build.variant=redboard_artemis
 amap3redboard.build.board=AM_AP3_SFE_BB_ARTEMIS
 amap3redboard.upload.maximum_size=960000
 amap3redboard.upload.sbl_baud=115200
@@ -102,7 +102,7 @@ amap3redboard.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linke
 ###############################################################
 
 amap3nano.name=SparkFun RedBoard Artemis Nano
-amap3nano.build.variant=SparkFun_RedBoard_Artemis_Nano
+amap3nano.build.variant=redboard_artemis_nano
 amap3nano.build.board=AM_AP3_SFE_BB_ARTEMIS_NANO
 amap3nano.upload.maximum_size=960000
 amap3nano.upload.sbl_baud=115200
@@ -139,7 +139,7 @@ amap3nano.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_sc
 ###############################################################
 
 amap3atp.name=SparkFun RedBoard Artemis ATP
-amap3atp.build.variant=SparkFun_RedBoard_Artemis_ATP
+amap3atp.build.variant=redboard_artemis_atp
 amap3atp.build.board=AM_AP3_SFE_BB_ARTEMIS_ATP
 amap3atp.upload.maximum_size=960000
 amap3atp.upload.sbl_baud=115200
@@ -176,7 +176,7 @@ amap3atp.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scr
 ###############################################################
 
 amap3thing.name=SparkFun Artemis Thing Plus
-amap3thing.build.variant=SparkFun_Artemis_Thing_Plus
+amap3thing.build.variant=artemis_thing_plus
 amap3thing.build.board=AM_AP3_SFE_THING_PLUS
 amap3thing.upload.maximum_size=960000
 amap3thing.upload.sbl_baud=115200
@@ -213,7 +213,7 @@ amap3thing.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_s
 ###############################################################
 
 edge.name=SparkFun Edge
-edge.build.variant=SparkFun_Edge
+edge.build.variant=edge
 edge.build.board=SFE_EDGE
 edge.upload.tool=ambiq_bin2board
 edge.upload.maximum_size=960000
@@ -260,7 +260,7 @@ edge.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts
 ###############################################################
 
 edge2.name=SparkFun Edge2
-edge2.build.variant=SparkFun_Edge2
+edge2.build.variant=edge2
 edge2.build.board=SFE_EDGE2
 edge2.upload.maximum_size=960000
 edge2.upload.sbl_baud=115200
