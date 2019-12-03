@@ -271,79 +271,79 @@ am_hal_uart_power_control(void *pHandle,
     //
     switch (ePowerState)
     {
-    //
-    // Turn on the UART.
-    //
-    case AM_HAL_SYSCTRL_WAKE:
         //
-        // Make sure we don't try to restore an invalid state.
+        // Turn on the UART.
         //
-        if (bRetainState && !pState->sRegState.bValid)
-        {
-            return AM_HAL_STATUS_INVALID_OPERATION;
-        }
-
-        //
-        // Enable power control.
-        //
-        am_hal_pwrctrl_periph_enable(eUARTPowerModule);
-
-        if (bRetainState)
-        {
+        case AM_HAL_SYSCTRL_WAKE:
             //
-            // Restore UART registers
+            // Make sure we don't try to restore an invalid state.
             //
-            AM_CRITICAL_BEGIN
+            if (bRetainState && !pState->sRegState.bValid)
+            {
+                return AM_HAL_STATUS_INVALID_OPERATION;
+            }
 
-            UARTn(ui32Module)->ILPR = pState->sRegState.regILPR;
-            UARTn(ui32Module)->IBRD = pState->sRegState.regIBRD;
-            UARTn(ui32Module)->FBRD = pState->sRegState.regFBRD;
-            UARTn(ui32Module)->LCRH = pState->sRegState.regLCRH;
-            UARTn(ui32Module)->CR = pState->sRegState.regCR;
-            UARTn(ui32Module)->IFLS = pState->sRegState.regIFLS;
-            UARTn(ui32Module)->IER = pState->sRegState.regIER;
+            //
+            // Enable power control.
+            //
+            am_hal_pwrctrl_periph_enable(eUARTPowerModule);
 
-            pState->sRegState.bValid = false;
+            if (bRetainState)
+            {
+                //
+                // Restore UART registers
+                //
+                AM_CRITICAL_BEGIN
 
-            AM_CRITICAL_END
-        }
-        break;
+                UARTn(ui32Module)->ILPR = pState->sRegState.regILPR;
+                UARTn(ui32Module)->IBRD = pState->sRegState.regIBRD;
+                UARTn(ui32Module)->FBRD = pState->sRegState.regFBRD;
+                UARTn(ui32Module)->LCRH = pState->sRegState.regLCRH;
+                UARTn(ui32Module)->CR = pState->sRegState.regCR;
+                UARTn(ui32Module)->IFLS = pState->sRegState.regIFLS;
+                UARTn(ui32Module)->IER = pState->sRegState.regIER;
 
-    //
-    // Turn off the UART.
-    //
-    case AM_HAL_SYSCTRL_NORMALSLEEP:
-    case AM_HAL_SYSCTRL_DEEPSLEEP:
-        if (bRetainState)
-        {
-            AM_CRITICAL_BEGIN
+                pState->sRegState.bValid = false;
 
-            pState->sRegState.regILPR = UARTn(ui32Module)->ILPR;
-            pState->sRegState.regIBRD = UARTn(ui32Module)->IBRD;
-            pState->sRegState.regFBRD = UARTn(ui32Module)->FBRD;
-            pState->sRegState.regLCRH = UARTn(ui32Module)->LCRH;
-            pState->sRegState.regCR = UARTn(ui32Module)->CR;
-            pState->sRegState.regIFLS = UARTn(ui32Module)->IFLS;
-            pState->sRegState.regIER = UARTn(ui32Module)->IER;
-            pState->sRegState.bValid = true;
-
-            AM_CRITICAL_END
-        }
+                AM_CRITICAL_END
+            }
+            break;
 
         //
-        // Clear all interrupts before sleeping as having a pending UART
-        // interrupt burns power.
+        // Turn off the UART.
         //
-        am_hal_uart_interrupt_clear(pState, 0xFFFFFFFF);
+        case AM_HAL_SYSCTRL_NORMALSLEEP:
+        case AM_HAL_SYSCTRL_DEEPSLEEP:
+            if (bRetainState)
+            {
+                AM_CRITICAL_BEGIN
 
-        //
-        // Disable power control.
-        //
-        am_hal_pwrctrl_periph_disable(eUARTPowerModule);
-        break;
+                pState->sRegState.regILPR = UARTn(ui32Module)->ILPR;
+                pState->sRegState.regIBRD = UARTn(ui32Module)->IBRD;
+                pState->sRegState.regFBRD = UARTn(ui32Module)->FBRD;
+                pState->sRegState.regLCRH = UARTn(ui32Module)->LCRH;
+                pState->sRegState.regCR = UARTn(ui32Module)->CR;
+                pState->sRegState.regIFLS = UARTn(ui32Module)->IFLS;
+                pState->sRegState.regIER = UARTn(ui32Module)->IER;
+                pState->sRegState.bValid = true;
 
-    default:
-        return AM_HAL_STATUS_INVALID_ARG;
+                AM_CRITICAL_END
+            }
+
+            //
+            // Clear all interrupts before sleeping as having a pending UART
+            // interrupt burns power.
+            //
+            am_hal_uart_interrupt_clear(pState, 0xFFFFFFFF);
+
+            //
+            // Disable power control.
+            //
+            am_hal_pwrctrl_periph_disable(eUARTPowerModule);
+            break;
+
+        default:
+            return AM_HAL_STATUS_INVALID_ARG;
     }
 
     //
@@ -1323,7 +1323,7 @@ am_hal_uart_interrupt_disable(void *pHandle, uint32_t ui32IntMask)
 uint32_t
 am_hal_uart_interrupt_clear(void *pHandle, uint32_t ui32IntMask)
 {
-    am_hal_uart_state_t *pState = (am_hal_uart_state_t *)pHandle;
+    am_hal_uart_state_t *pState = (am_hal_uart_state_t *) pHandle;
     uint32_t ui32Module = pState->ui32Module;
 
     if (!AM_HAL_UART_CHK_HANDLE(pHandle))
