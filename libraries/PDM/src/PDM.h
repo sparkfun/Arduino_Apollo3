@@ -95,8 +95,11 @@ const am_hal_pdm_config_t ap3_pdm_config_default = {
 class AP3_PDM
 {
 public:
+    //AP3_PDM(uint16_t *userBuffer, uint32_t bufferSize);
+
     bool begin(ap3_gpio_pin_t pinPDMData = MIC_DATA, ap3_gpio_pin_t pinPDMClock = MIC_CLOCK);
-    bool available(void); //Goes true once an interrupt has occured
+    bool available(void); //Goes true if circular buffer is not empty
+    bool isOverrun(void); //Goes true if head crosses tail
 
     bool setClockSpeed(am_hal_pdm_clkspd_e clockSpeed);
     am_hal_pdm_clkspd_e getClockSpeed();
@@ -114,7 +117,7 @@ public:
 
     bool updateConfig(am_hal_pdm_config_t newConfiguration);
 
-    void getData(uint32_t *PDMDataBuffer, uint32_t bufferSize);
+    uint32_t getData(uint16_t *externalBuffer, uint32_t bufferSize);
 
     void pdm_isr(void);
 
@@ -126,7 +129,25 @@ private:
 
     ap3_err_t _begin(void);
 
-    volatile bool _PDMdataReady = false;
+    //volatile bool _PDMdataReady = false;
+
+    am_hal_pdm_transfer_t sTransfer;
+
+    // uint32_t _userBufferSize = 0;
+    // uint16_t *_userBuffer;
+
+    // volatile uint32_t _writeHead = 0;
+    // volatile uint32_t _readHead = 0;
+    volatile bool _overrun = false;
+
+#define _pdmBufferSize 4096 //Default is array of 4096 * 32bit
+    volatile uint32_t _pdmDataBuffer[_pdmBufferSize];
+    int16_t *pi16Buffer = (int16_t *)_pdmDataBuffer;
+
+    volatile int16_t outBuffer1[_pdmBufferSize];
+    volatile int16_t outBuffer2[_pdmBufferSize];
+    volatile int buff1New = false;
+    volatile int buff2New = false;
 };
 
 #endif //_PDM_H_

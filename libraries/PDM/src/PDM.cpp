@@ -23,6 +23,15 @@ SOFTWARE.
 
 AP3_PDM *ap3_pdm_handle = 0;
 
+// AP3_PDM::AP3_PDM(uint16_t *userBuffer, uint32_t bufferSize)
+// {
+//     _userBuffer = userBuffer;
+//     _userBufferSize = bufferSize;
+
+//     _readHead = 0;
+//     _writeHead = 0;
+// }
+
 bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 {
     _PDMhandle = NULL;
@@ -39,7 +48,20 @@ bool AP3_PDM::begin(ap3_gpio_pin_t pinPDMData, ap3_gpio_pin_t pinPDMClock)
 
 bool AP3_PDM::available(void)
 {
-    return (_PDMdataReady);
+    //   if (_readHead != _writeHead)
+    if (buff1New || buff2New)
+        return (true);
+    return (false);
+}
+
+bool AP3_PDM::isOverrun(void)
+{
+    if (_overrun == true)
+    {
+        _overrun = false;
+        return (true);
+    }
+    return (false);
 }
 
 ap3_err_t AP3_PDM::_begin(void)
@@ -106,11 +128,21 @@ ap3_err_t AP3_PDM::_begin(void)
     // completion).
     //
     am_hal_pdm_interrupt_enable(_PDMhandle, (AM_HAL_PDM_INT_DERR | AM_HAL_PDM_INT_DCMP | AM_HAL_PDM_INT_UNDFL | AM_HAL_PDM_INT_OVF));
-    am_hal_interrupt_master_enable();
+    //am_hal_interrupt_master_enable();
     NVIC_EnableIRQ(PDM_IRQn);
 
     // Register the class into the local list
     ap3_pdm_handle = this;
+
+    // Configure DMA and set target address of internal buffer.
+    sTransfer.ui32TargetAddr = (uint32_t)_pdmDataBuffer;
+    sTransfer.ui32TotalCount = _pdmBufferSize * 2;
+
+    // Start the data transfer.
+    am_hal_pdm_enable(_PDMhandle);
+    am_util_delay_ms(100);
+    am_hal_pdm_fifo_flush(_PDMhandle);
+    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
 
     return retval;
 }
@@ -197,7 +229,11 @@ uint32_t AP3_PDM::getDecimationRate()
 //Send a given configuration struct to PDM
 bool AP3_PDM::updateConfig(am_hal_pdm_config_t newConfiguration)
 {
-    ap3_err_t retval = (ap3_err_t)am_hal_pdm_configure(_PDMhandle, &newConfiguration);
+    _PDMconfig = newConfiguration;
+    ap3_err_t retval = (ap3_err_t)am_hal_pdm_configure(_PDMhandle, &_PDMconfig);
+
+    am_hal_pdm_enable(_PDMhandle); //Reenable after changes
+
     if (retval != AP3_OK)
     {
         return false;
@@ -250,51 +286,110 @@ invalid_args:
 
 //*****************************************************************************
 //
-// Start a transaction to get some number of bytes from the PDM interface.
+// Read PDM data from internal buffer
+// Returns number of bytes read.
 //
 //*****************************************************************************
-void AP3_PDM::getData(uint32_t *PDMDataBuffer, uint32_t bufferSize)
+uint32_t AP3_PDM::getData(uint16_t *externalBuffer, uint32_t externalBufferSize)
 {
-    //
-    // Configure DMA and target address.
-    //
-    am_hal_pdm_transfer_t sTransfer;
-    sTransfer.ui32TargetAddr = (uint32_t)PDMDataBuffer;
-    sTransfer.ui32TotalCount = bufferSize * 2; //PDM_FFT_BYTES;
+    if (externalBufferSize > _pdmBufferSize)
+        externalBufferSize = _pdmBufferSize;
 
-    //
-    // Start the data transfer.
-    //
-    am_hal_pdm_enable(_PDMhandle);
-    am_util_delay_ms(100);
-    am_hal_pdm_fifo_flush(_PDMhandle);
-    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
+    //Move data from internal buffers to external caller
+    if (buff1New == true)
+    {
+        for (int x = 0; x < externalBufferSize; x++)
+        {
+            externalBuffer[x] = outBuffer1[x];
+        }
+        buff1New = false;
+    }
+    else if (buff2New == true)
+    {
+        for (int x = 0; x < externalBufferSize; x++)
+        {
+            externalBuffer[x] = outBuffer2[x];
+        }
+        buff2New = false;
+    }
+    // for (int x = 0; x < externalBufferSize; x++)
+    // {
+    //     externalBuffer[x] = _userBuffer[_readHead];
+    //     _readHead++;                  //Advance the read head
+    //     _readHead %= _userBufferSize; //Wrap if necessary
+    // }
 
-    _PDMdataReady = false;
+    return (externalBufferSize);
 }
 
 inline void AP3_PDM::pdm_isr(void)
 {
     uint32_t ui32Status;
 
-    //
     // Read the interrupt status.
-    //
     am_hal_pdm_interrupt_status_get(_PDMhandle, &ui32Status, true);
     am_hal_pdm_interrupt_clear(_PDMhandle, ui32Status);
 
-    //
-    // Once our DMA transaction completes, we will disable the PDM and send a
-    // flag back down to the main routine. Disabling the PDM is only necessary
-    // because this example only implemented a single buffer for storing FFT
-    // data. More complex programs could use a system of multiple buffers to
-    // allow the CPU to run the FFT in one buffer while the DMA pulls PCM data
-    // into another buffer.
-    //
     if (ui32Status & AM_HAL_PDM_INT_DCMP)
     {
-        am_hal_pdm_disable(_PDMhandle);
-        _PDMdataReady = true;
+        uint32_t tempReadAmt = _pdmBufferSize;
+
+        // if (_writeHead + _pdmBufferSize > _userBufferSize)
+        // {
+        //     //Goes past the end of our buffer, adjust the amout to read so we hit end of buffer
+        //     tempReadAmt = _userBufferSize - _writeHead; //16384 - 16000 = 384
+        // }
+
+        // int i;
+        // for (i = 0; i < tempReadAmt; i++)
+        // {
+        //     _userBuffer[_writeHead + i] = _pdmDataBuffer[i];
+        // }
+
+        // _writeHead += tempReadAmt;     //Advance the head
+        // _writeHead %= _userBufferSize; //Wrap the head
+
+        // if (tempReadAmt < _pdmBufferSize)
+        // {
+        //     //Finish the read where i had left off
+        //     for (; i < _pdmBufferSize; i++)
+        //     {
+        //         _userBuffer[i - tempReadAmt] = _pdmDataBuffer[i];
+        //     }
+
+        //     _writeHead += _pdmBufferSize - tempReadAmt;
+        // }
+        //Check for overflow
+        //if (_writeHead + pdmBufferSize
+
+        //Store in the first available buffer
+        if (buff1New == false)
+        {
+            for (int i = 0; i < _pdmBufferSize; i++)
+            {
+                outBuffer1[i] = pi16Buffer[i];
+            }
+            buff1New = true;
+        }
+        else if (buff2New == false)
+        {
+            for (int i = 0; i < _pdmBufferSize; i++)
+            {
+                outBuffer2[i] = pi16Buffer[i];
+            }
+            buff2New = true;
+        }
+        else
+        {
+            _overrun = true;
+            //Used for debugging
+            Serial.println("\n\rOver flow!");
+            while (1)
+                ;
+        }
+
+        //Start next conversion
+        am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
     }
 }
 

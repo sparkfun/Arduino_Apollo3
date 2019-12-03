@@ -28,6 +28,8 @@
 
 const SPISettings DEFAULT_SPI_SETTINGS = SPISettings();
 
+am_hal_iom_transfer_t iomTransfer = {0};
+
 SPIClass::SPIClass(uint8_t iom_instance) : IOMaster(iom_instance)
 {
   _duplex = ap3_spi_full_duplex;
@@ -105,12 +107,25 @@ void SPIClass::begin()
   }
 
   config(DEFAULT_SPI_SETTINGS);
+
+  //Set global's settings that won't change between transfers
+  iomTransfer.ui32InstrLen = 0; // No instructions
+  iomTransfer.ui32Instr = 0;    // No instructions
+  iomTransfer.bContinue = false;
+  iomTransfer.ui8RepeatCount = 0;     // ?
+  iomTransfer.ui8Priority = 1;        // ?
+  iomTransfer.ui32PauseCondition = 0; // ?
+  iomTransfer.ui32StatusSetClr = 0;   // ?
 }
 
 void SPIClass::config(SPISettings settings)
 {
   memset((void *)&_config, 0x00, sizeof(am_hal_iom_config_t)); // Set the IOM configuration
   _config.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
+
+  if (settings.clockFreq > AM_HAL_IOM_MAX_FREQ)
+    settings.clockFreq = AM_HAL_IOM_MAX_FREQ;
+
   _config.ui32ClockFreq = settings.clockFreq;
   _config.eSpiMode = settings.dataMode;
   _order = settings.bitOrder;
@@ -272,19 +287,9 @@ void SPIClass::transferIn(void *buf, size_t count)
 
 void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
 {
-  am_hal_iom_transfer_t iomTransfer = {0};
-  // iomTransfer.uPeerInfo.ui32SpiChipSelect = cs_pad;
-  iomTransfer.ui32InstrLen = 0;     // No instructions
-  iomTransfer.ui32Instr = 0;        // No instructions
-  iomTransfer.ui32NumBytes = count; // How many bytes to transfer
-  // iomTransfer.eDirection = AM_HAL_IOM_TX; // AM_HAL_IOM_FULLDUPLEX - Note: Ambiq SDK says that FULLDUPLEX is not yet supported // todo:
+  iomTransfer.ui32NumBytes = count;                // How many bytes to transfer
   iomTransfer.pui32TxBuffer = (uint32_t *)buf_out; // todo: does this have the proper lifetime?
   iomTransfer.pui32RxBuffer = (uint32_t *)buf_in;
-  iomTransfer.bContinue = false;
-  iomTransfer.ui8RepeatCount = 0;     // ?
-  iomTransfer.ui8Priority = 1;        // ?
-  iomTransfer.ui32PauseCondition = 0; // ?
-  iomTransfer.ui32StatusSetClr = 0;   // ?
 
   // Determine direction
   if ((buf_out != NULL) && (buf_in != NULL))
