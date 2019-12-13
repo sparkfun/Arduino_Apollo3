@@ -5,6 +5,13 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
+1.0.23 - In Progress
+====================
+
+1.0.22 - Dec 13 2019
+====================
+- Merge #100: SVL Loader to v4 - Adds de-initialization of peripherals. Addresses [this issue](https://forum.sparkfun.com/viewtopic.php?f=168&t=51391&p=210375#p210375)
+
 1.0.21 - Dec 3 2019
 ===================
 - Merge #89: Improvements to SPI library (overhead reduction, configuration checking)
