@@ -7,6 +7,9 @@ Each log entry will use the version number of the release that contains the chan
 
 1.0.23 - In Progress
 ====================
+- Update SVL bootloader to v5 (increases reliability and speed). For best results make sure to re-burn the bootloader.
+- Adds compatibility for std C++ min/max functions
+- Updates variants according to latest BSP release
 
 1.0.22 - Dec 13 2019
 ====================
