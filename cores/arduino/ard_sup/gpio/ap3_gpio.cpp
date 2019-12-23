@@ -75,6 +75,38 @@ void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode)
     padMode(pad, mode, NULL);
 }
 
+// translate Arduino style pin mode function to apollo3 implementation
+void pinMode(uint8_t pin, uint8_t mode) {
+
+    am_hal_gpio_pincfg_t pinmode = AP3_GPIO_PINCFG_NULL;
+
+    switch (mode) {
+        case INPUT:
+            pinmode = AP3_PINCFG_INPUT;
+            break;
+        case OUTPUT:
+            pinmode = AP3_PINCFG_OUTPUT;
+            break;
+        case INPUT_PULLUP:
+            pinmode = AP3_PINCFG_INPUT_PULLUP;
+            break;
+        case INPUT_PULLDOWN:
+            pinmode = AP3_PINCFG_INPUT_PULLDOWN;
+            break;
+        case OPEN_DRAIN:
+            pinmode = AP3_PINCFG_OPEN_DRAIN;
+            break;
+        case TRISTATE:
+            pinmode = AP3_PINCFG_TRISTATE;
+            break;
+        default:
+            //no match, just do nothing
+            return;
+    }
+
+    pinMode(pin, pinmode);
+}
+
 void pinMode(uint8_t pin, am_hal_gpio_pincfg_t mode, ap3_err_t *retval)
 {
     ap3_gpio_pad_t pad = ap3_gpio_pin2pad(pin);
