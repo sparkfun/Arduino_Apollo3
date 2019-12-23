@@ -50,3 +50,5 @@ cp -r $BSP_ROOT/common/tools_sfe/artemis/linux $ARTEMIS_TOOLS_ROOT/linux
 cp -r $BSP_ROOT/common/tools_sfe/artemis/macosx $ARTEMIS_TOOLS_ROOT/macosx
 cp -r $BSP_ROOT/common/tools_sfe/artemis/windows $ARTEMIS_TOOLS_ROOT/windows
 cp $BSP_ROOT/common/tools_sfe/artemis/artemis_svl.py $ARTEMIS_TOOLS_ROOT/artemis_svl.py
+
+echo "You are not done! Have you rebuilt the embedded artemis_svl.bin and copied it under the 'bootloaders' folder?"
