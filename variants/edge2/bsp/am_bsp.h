@@ -139,6 +139,18 @@ extern "C"
 #define AM_BSP_NUM_LEDS                   4
 extern am_devices_led_t am_bsp_psLEDs[AM_BSP_NUM_LEDS];
 
+// LED Device Array Indices
+#define AM_BSP_LED0 0
+#define AM_BSP_LED1 1
+#define AM_BSP_LED2 2
+#define AM_BSP_LED3 3
+
+#define AM_BSP_LED_RED      AM_BSP_LED0
+#define AM_BSP_LED_BLUE     AM_BSP_LED1
+#define AM_BSP_LED_GREEN    AM_BSP_LED2
+#define AM_BSP_LED_YELLOW   AM_BSP_LED3
+
+// Corresponding GPIO Numbers
 #define AM_BSP_GPIO_LED0             AM_BSP_GPIO_LED_RED
 #define AM_BSP_GPIO_LED1            AM_BSP_GPIO_LED_BLUE
 #define AM_BSP_GPIO_LED2           AM_BSP_GPIO_LED_GREEN
@@ -230,8 +242,12 @@ extern void am_bsp_ios_pins_disable(uint32_t ui32Module, uint32_t ui32IOSMode);
 extern void am_bsp_debug_printf_enable(void);
 extern void am_bsp_debug_printf_disable(void);
 
-extern void am_bsp_itm_string_print(char *pcString);
+#ifdef AM_BSP_GPIO_ITM_SWO
 extern void am_bsp_itm_printf_enable(void);
+#else
+extern void am_bsp_itm_printf_enable(uint32_t ui32Pin, am_hal_gpio_pincfg_t sPincfg);
+#endif
+extern void am_bsp_itm_string_print(char *pcString);
 extern void am_bsp_itm_printf_disable(void);
 
 extern void am_bsp_uart_string_print(char *pcString);

@@ -64,10 +64,10 @@ extern "C"
 
 //*****************************************************************************
 //
-//  LED_BLUE pin: The BLUE LED labelled 37.
+//  LED_BLUE pin: The BLUE LED labelled 19.
 //
 //*****************************************************************************
-#define AM_BSP_GPIO_LED_BLUE            	37
+#define AM_BSP_GPIO_LED_BLUE            	19
 extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_LED_BLUE;
 
 //*****************************************************************************
@@ -543,6 +543,14 @@ extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_IOS_SCL;
 //*****************************************************************************
 #define AM_BSP_GPIO_IOS_SDA             	1
 extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_IOS_SDA;
+
+//*****************************************************************************
+//
+//  ITM_SWO pin: ITM Serial Wire Output.
+//
+//*****************************************************************************
+#define AM_BSP_GPIO_ITM_SWO             	33
+extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_ITM_SWO;
 
 //*****************************************************************************
 //

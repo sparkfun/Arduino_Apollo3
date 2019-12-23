@@ -155,8 +155,12 @@ extern void am_bsp_ios_pins_disable(uint32_t ui32Module, uint32_t ui32IOSMode);
 extern void am_bsp_debug_printf_enable(void);
 extern void am_bsp_debug_printf_disable(void);
 
-extern void am_bsp_itm_string_print(char *pcString);
+#ifdef AM_BSP_GPIO_ITM_SWO
 extern void am_bsp_itm_printf_enable(void);
+#else
+extern void am_bsp_itm_printf_enable(uint32_t ui32Pin, am_hal_gpio_pincfg_t sPincfg);
+#endif
+extern void am_bsp_itm_string_print(char *pcString);
 extern void am_bsp_itm_printf_disable(void);
 
 extern void am_bsp_uart_string_print(char *pcString);
