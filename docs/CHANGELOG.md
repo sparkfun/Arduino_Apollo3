@@ -5,7 +5,10 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
-1.0.23 - In Progress
+1.0.24 - In progress
+====================
+
+1.0.23 - Dec 23 2019
 ====================
 - Update SVL bootloader to v5 (increases reliability and speed). For best results make sure to re-burn the bootloader.
 - Adds compatibility for std C++ min/max functions
