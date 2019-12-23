@@ -12,7 +12,7 @@ DIR=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
 
 # defaults
 BSP_ROOT=.
-BOARDS_FILE=$DIR/arduino_boards.sh
+BOARDS_FILE=$DIR/config/arduino_boards.sh
 VARIANTS_ROOT=../../variants
 
 # handle arguments
