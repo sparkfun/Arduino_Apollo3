@@ -1023,6 +1023,17 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_IOS_SDA =
 
 //*****************************************************************************
 //
+//  ITM_SWO pin: ITM Serial Wire Output.
+//
+//*****************************************************************************
+const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_ITM_SWO =
+{
+    .uFuncSel            = AM_HAL_PIN_33_SWO,
+    .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
+};
+
+//*****************************************************************************
+//
 //  SWDCK pin: Cortex Serial Wire DCK.
 //
 //*****************************************************************************

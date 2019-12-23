@@ -74,13 +74,26 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_MIC_CLK =
 
 //*****************************************************************************
 //
-//  LED_BLUE pin: The BLUE LED.
+//  LED_BLUE pin: The BLUE LED labelled 18.
 //
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_LED_BLUE =
 {
     .uFuncSel            = AM_HAL_PIN_26_GPIO,
     .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA
+};
+
+//*****************************************************************************
+//
+//  BUTTON0 pin: Labeled 10 on the Artemis Thing Plus.
+//
+//*****************************************************************************
+const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_BUTTON0 =
+{
+    .uFuncSel            = AM_HAL_PIN_14_GPIO,
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
+    .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA,
+    .eGPInput            = AM_HAL_GPIO_PIN_INPUT_ENABLE
 };
 
 //*****************************************************************************
@@ -819,6 +832,17 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_IOS_SDA =
     .uFuncSel            = AM_HAL_PIN_1_SLSDAWIR3,
     .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
     .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN
+};
+
+//*****************************************************************************
+//
+//  ITM_SWO pin: ITM Serial Wire Output.
+//
+//*****************************************************************************
+const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_ITM_SWO =
+{
+    .uFuncSel            = AM_HAL_PIN_33_SWO,
+    .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
 };
 
 //*****************************************************************************

@@ -80,11 +80,19 @@ extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_MIC_CLK;
 
 //*****************************************************************************
 //
-//  LED_BLUE pin: The BLUE LED.
+//  LED_BLUE pin: The BLUE LED labelled 18.
 //
 //*****************************************************************************
 #define AM_BSP_GPIO_LED_BLUE            	26
 extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_LED_BLUE;
+
+//*****************************************************************************
+//
+//  BUTTON0 pin: Labeled 10 on the Artemis Thing Plus.
+//
+//*****************************************************************************
+#define AM_BSP_GPIO_BUTTON0             	14
+extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_BUTTON0;
 
 //*****************************************************************************
 //
@@ -543,6 +551,14 @@ extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_IOS_SCL;
 //*****************************************************************************
 #define AM_BSP_GPIO_IOS_SDA             	1
 extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_IOS_SDA;
+
+//*****************************************************************************
+//
+//  ITM_SWO pin: ITM Serial Wire Output.
+//
+//*****************************************************************************
+#define AM_BSP_GPIO_ITM_SWO             	33
+extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_ITM_SWO;
 
 //*****************************************************************************
 //

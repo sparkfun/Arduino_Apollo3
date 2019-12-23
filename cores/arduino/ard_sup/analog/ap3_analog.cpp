@@ -313,7 +313,7 @@ ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber)
     ap3_err_t retval = AP3_ERR;
 
     uint8_t funcsel = 0;
-    am_hal_gpio_pincfg_t pincfg = INPUT;
+    am_hal_gpio_pincfg_t pincfg = AP3_PINCFG_INPUT;
     retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
 
     if (retval != AP3_OK)
