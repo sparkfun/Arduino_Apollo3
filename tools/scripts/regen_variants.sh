@@ -2,8 +2,6 @@
 
 # use this script to update variants based on bsp files
 
-
-
 # setup
 set -e
 set -o errexit
