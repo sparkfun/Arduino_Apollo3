@@ -89,7 +89,7 @@ am_devices_button_t am_bsp_psButtons[AM_BSP_NUM_BUTTONS] =
 // Print interface tracking variable.
 //
 //*****************************************************************************
-static uint32_t g_ui32PrintInterface = AM_BSP_PRINT_INFC_NONE;
+static uint32_t g_ui32PrintInterface = AM_BSP_PRINT_INFC_UART0;
 
 //*****************************************************************************
 //
@@ -176,12 +176,6 @@ void
 am_bsp_low_power_init(void)
 {
     //
-    // Make sure SWO/ITM/TPIU is disabled.
-    // SBL may not get it completely shut down.
-    //
-    am_bsp_itm_printf_disable();
-
-    //
     // Initialize for low power in the power control block
     //
     am_hal_pwrctrl_low_power_init();
@@ -197,9 +191,10 @@ am_bsp_low_power_init(void)
     am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_XTAL_STOP, 0);
 
     //
-    // Disable the RTC.
+    // Make sure SWO/ITM/TPIU is disabled.
+    // SBL may not get it completely shut down.
     //
-    am_hal_rtc_osc_disable();
+    am_bsp_itm_printf_disable();
 
 #ifdef AM_BSP_NUM_LEDS
     //
@@ -244,7 +239,9 @@ am_bsp_debug_printf_enable(void)
 {
     if (g_ui32PrintInterface == AM_BSP_PRINT_INFC_SWO)
     {
+#ifdef AM_BSP_GPIO_ITM_SWO
         am_bsp_itm_printf_enable();
+#endif
     }
     else if (g_ui32PrintInterface == AM_BSP_PRINT_INFC_UART0)
     {
@@ -287,7 +284,11 @@ am_bsp_debug_printf_disable(void)
 //
 //*****************************************************************************
 void
+#ifdef AM_BSP_GPIO_ITM_SWO
 am_bsp_itm_printf_enable(void)
+#else
+am_bsp_itm_printf_enable(uint32_t ui32Pin, am_hal_gpio_pincfg_t sPincfg)
+#endif
 {
     am_hal_tpiu_config_t TPIUcfg;
 
@@ -300,21 +301,39 @@ am_bsp_itm_printf_enable(void)
     // Enable the ITM interface and the SWO pin.
     //
     am_hal_itm_enable();
-    // am_hal_gpio_pinconfig(AM_BSP_GPIO_ITM_SWO, g_AM_BSP_GPIO_ITM_SWO);
 
     //
     // Enable the ITM and TPIU
     // Set the BAUD clock for 1M
     //
-    TPIUcfg.ui32SetItmBaud = AM_HAL_TPIU_BAUD_1M;
+    TPIUcfg.ui32SetItmBaud = AM_HAL_TPIU_BAUD_2M;
     am_hal_tpiu_enable(&TPIUcfg);
-    // am_hal_gpio_pinconfig(AM_BSP_GPIO_ITM_SWO, g_AM_BSP_GPIO_ITM_SWO);
+    #ifdef AM_BSP_GPIO_ITM_SWO
+    am_hal_gpio_pinconfig(AM_BSP_GPIO_ITM_SWO, g_AM_BSP_GPIO_ITM_SWO);
+    #else
+    am_hal_gpio_pinconfig(ui32Pin, sPincfg);
+    #endif
 
     //
     // Attach the ITM to the STDIO driver.
     //
     am_util_stdio_printf_init(am_hal_itm_print);
 } // am_bsp_itm_printf_enable()
+
+//*****************************************************************************
+//
+//! @brief ITM-based string print function.
+//!
+//! This function is used for printing a string via the ITM.
+//!
+//! @return None.
+//
+//*****************************************************************************
+void
+am_bsp_itm_string_print(char *pcString)
+{
+    am_hal_itm_print(pcString);
+}
 
 //*****************************************************************************
 //
