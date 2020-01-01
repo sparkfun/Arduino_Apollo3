@@ -92,6 +92,18 @@ void TwoWire::begin(void)
 	_config.eInterfaceMode = AM_HAL_IOM_I2C_MODE;
 	_config.ui32ClockFreq = _clockSpeed;
 
+	//Setup defaults that do not change
+	iomTransfer.ui32InstrLen = 0; // Use only data phase
+	iomTransfer.ui32Instr = 0;	//
+	// iomTransfer.ui32NumBytes = ;         //
+	iomTransfer.eDirection = AM_HAL_IOM_TX;
+	iomTransfer.pui32TxBuffer = (uint32_t *)_linearBugger;
+	iomTransfer.pui32RxBuffer = NULL;
+	iomTransfer.ui8RepeatCount = 0;		// ?
+	iomTransfer.ui8Priority = 1;		// ?
+	iomTransfer.ui32PauseCondition = 0; // ?
+	iomTransfer.ui32StatusSetClr = 0;   // ?
+
 	initialize(); // Initialize the IOM
 }
 
@@ -190,19 +202,8 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 {
 	_transmissionBegun = false;
 
-	am_hal_iom_transfer_t iomTransfer = {0};
 	iomTransfer.uPeerInfo.ui32I2CDevAddr = _transmissionAddress;
-	iomTransfer.ui32InstrLen = 0; // Use only data phase
-	iomTransfer.ui32Instr = 0;	//
-	// iomTransfer.ui32NumBytes = ;         //
-	iomTransfer.eDirection = AM_HAL_IOM_TX;
-	iomTransfer.pui32TxBuffer = (uint32_t *)_linearBugger;
-	iomTransfer.pui32RxBuffer = NULL;
 	iomTransfer.bContinue = (stopBit ? false : true); // whether or not to hold onto the bus after this transfer
-	iomTransfer.ui8RepeatCount = 0;					  // ?
-	iomTransfer.ui8Priority = 1;					  // ?
-	iomTransfer.ui32PauseCondition = 0;				  // ?
-	iomTransfer.ui32StatusSetClr = 0;				  // ?
 
 	// Copy the bytes from the TX Buffer into the linear buffer
 	size_t count = 0;
