@@ -114,11 +114,11 @@ void TwoWire::setPullups(uint32_t pullupAmount)
 {
 	if (pullupAmount == 0)
 		_pullups = AM_HAL_GPIO_PIN_PULLUP_NONE;
-	if (pullupAmount > 0 || pullupAmount < 6)
+	if (pullupAmount > 0 && pullupAmount < 6)
 		_pullups = AM_HAL_GPIO_PIN_PULLUP_1_5K;
-	else if (pullupAmount >= 6 || pullupAmount < 12)
+	else if (pullupAmount >= 6 && pullupAmount < 12)
 		_pullups = AM_HAL_GPIO_PIN_PULLUP_6K;
-	else if (pullupAmount >= 12 || pullupAmount < 24)
+	else if (pullupAmount >= 12 && pullupAmount < 24)
 		_pullups = AM_HAL_GPIO_PIN_PULLUP_12K;
 	else if (pullupAmount >= 24)
 		_pullups = AM_HAL_GPIO_PIN_PULLUP_24K;

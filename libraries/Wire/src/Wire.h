@@ -74,7 +74,7 @@ private:
 
   bool _transmissionBegun;
   uint8_t _transmissionAddress;
-  uint32_t _pullups;
+  am_hal_gpio_pullup_e _pullups;
   uint32_t _clockSpeed;
 
   RingBufferN<AP3_WIRE_RX_BUFFER_LEN> _rxBuffer;     // RX Buffer
