@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-extern "C" {
+extern "C"
+{
 #include <string.h>
 }
 
@@ -31,17 +32,19 @@ extern "C" {
 
 #include "Wire.h"
 
-typedef enum{
+typedef enum
+{
 	AP3_WIRE_SCL = 0x00,
 	AP3_WIRE_SDA,
-}ap3_iom_i2c_pad_type_e;
+} ap3_iom_i2c_pad_type_e;
 
 TwoWire::TwoWire(uint8_t iom_instance) : IOMaster(iom_instance)
 {
 	_transmissionBegun = false;
 }
 
-void TwoWire::begin(void) {
+void TwoWire::begin(void)
+{
 	//Master Mode
 
 	am_hal_gpio_pincfg_t pincfg = AP3_GPIO_DEFAULT_PINCFG;
@@ -49,58 +52,70 @@ void TwoWire::begin(void) {
 
 	ap3_err_t retval = AP3_OK;
 
-	retval = ap3_iom_pad_funcsel( _instance, AP3_IOM_I2C_SCL, &_padSCL, &funcsel);
-	if( retval != AP3_OK ){ return /*retval*/; }
+	retval = ap3_iom_pad_funcsel(_instance, AP3_IOM_I2C_SCL, &_padSCL, &funcsel);
+	if (retval != AP3_OK)
+	{
+		return /*retval*/;
+	}
 	pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
 	pincfg.ePullup = AM_HAL_GPIO_PIN_PULLUP_1_5K;
 	pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
 	pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN;
 	pincfg.uIOMnum = _instance;
-	padMode( _padSCL, pincfg, &retval );   if( retval != AP3_OK){ return /*ap3_return(retval)*/; }
+	padMode(_padSCL, pincfg, &retval);
+	if (retval != AP3_OK)
+	{
+		return /*ap3_return(retval)*/;
+	}
 	pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
 
-	retval = ap3_iom_pad_funcsel( _instance, AP3_IOM_I2C_SDA, &_padSDA, &funcsel);
-	if( retval != AP3_OK ){ return /*retval*/; }
+	retval = ap3_iom_pad_funcsel(_instance, AP3_IOM_I2C_SDA, &_padSDA, &funcsel);
+	if (retval != AP3_OK)
+	{
+		return /*retval*/;
+	}
 	pincfg.uFuncSel = funcsel;
 	pincfg.ePullup = AM_HAL_GPIO_PIN_PULLUP_1_5K;
 	pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
 	pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN;
 	pincfg.uIOMnum = _instance;
-	padMode( _padSDA, pincfg, &retval );   if( retval != AP3_OK){ return /*ap3_return(retval)*/; }
+	padMode(_padSDA, pincfg, &retval);
+	if (retval != AP3_OK)
+	{
+		return /*ap3_return(retval)*/;
+	}
 	pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
 
-
-	memset( (void*)&_config, 0x00, sizeof(am_hal_iom_config_t) ); // Set the IOM configuration
+	memset((void *)&_config, 0x00, sizeof(am_hal_iom_config_t)); // Set the IOM configuration
 	_config.eInterfaceMode = AM_HAL_IOM_I2C_MODE;
 	_config.ui32ClockFreq = AM_HAL_IOM_100KHZ;
 
 	initialize(); // Initialize the IOM
 }
 
-void TwoWire::begin(uint8_t address, bool enableGeneralCall) {
+void TwoWire::begin(uint8_t address, bool enableGeneralCall)
+{
 	//Slave mode
 
 	// ToDo:
 }
 
-void TwoWire::setClock(uint32_t baudrate) {
-	// sercom->disableWIRE();
-	// sercom->initMasterWIRE(baudrate);
-	// sercom->enableWIRE();
-
+void TwoWire::setClock(uint32_t baudrate)
+{
 	// ToDo: disable I2C while switching, if necessary
 
 	_config.ui32ClockFreq = baudrate;
 	initialize(); // Initialize the IOM
 }
 
-void TwoWire::end() {
+void TwoWire::end()
+{
 	// sercom->disableWIRE();
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 {
-	if(quantity == 0)
+	if (quantity == 0)
 	{
 		return 0;
 	}
@@ -108,36 +123,37 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 	_rxBuffer.clear();
 
 	am_hal_iom_transfer_t iomTransfer = {0};
-    iomTransfer.uPeerInfo.ui32I2CDevAddr = address; 
-    iomTransfer.ui32InstrLen = 0;           // 8-bit transfers
-    iomTransfer.ui32Instr = 0;   // Offset;
-    iomTransfer.ui32NumBytes = quantity;         // How many bytes to receive
-    iomTransfer.eDirection = AM_HAL_IOM_RX;
-    iomTransfer.pui32TxBuffer = NULL;
-    iomTransfer.pui32RxBuffer = (uint32_t*)_linearBugger;       // Link in the RX buffer
-    iomTransfer.bContinue = stopBit ? false : true;
-    iomTransfer.ui8RepeatCount = 0;         // ?
-    iomTransfer.ui8Priority = 1;            // ?
-    iomTransfer.ui32PauseCondition = 0;     // ?
-    iomTransfer.ui32StatusSetClr = 0;       // ?
-    
-    uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
-    if (retVal32 != 0)
-    {
-        // Serial.println("got an error on requestFrom");
-        return retVal32;
-    }
+	iomTransfer.uPeerInfo.ui32I2CDevAddr = address;
+	iomTransfer.ui32InstrLen = 0;		 // 8-bit transfers
+	iomTransfer.ui32Instr = 0;			 // Offset;
+	iomTransfer.ui32NumBytes = quantity; // How many bytes to receive
+	iomTransfer.eDirection = AM_HAL_IOM_RX;
+	iomTransfer.pui32TxBuffer = NULL;
+	iomTransfer.pui32RxBuffer = (uint32_t *)_linearBugger; // Link in the RX buffer
+	iomTransfer.bContinue = stopBit ? false : true;
+	iomTransfer.ui8RepeatCount = 0;		// ?
+	iomTransfer.ui8Priority = 1;		// ?
+	iomTransfer.ui32PauseCondition = 0; // ?
+	iomTransfer.ui32StatusSetClr = 0;   // ?
+
+	uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
+	if (retVal32 != 0)
+	{
+		// Serial.println("got an error on requestFrom");
+		return retVal32;
+	}
 
 	// Copy the bytes into the rx buffer
-    for (byteRead = 0; byteRead < quantity; byteRead++)
+	for (byteRead = 0; byteRead < quantity; byteRead++)
 	{
-		_rxBuffer.store_char( _linearBugger[byteRead] );          // Read data and send the ACK
+		_rxBuffer.store_char(_linearBugger[byteRead]); // Read data and send the ACK
 	}
 
 	return byteRead;
 }
 
-void TwoWire::beginTransmission(uint8_t address) {
+void TwoWire::beginTransmission(uint8_t address)
+{
 	// save address of target and clear buffer
 	_transmissionAddress = address;
 	_txBuffer.clear();
@@ -153,71 +169,77 @@ void TwoWire::beginTransmission(uint8_t address) {
 //  4 : Other error
 uint8_t TwoWire::endTransmission(bool stopBit)
 {
-	_transmissionBegun = false ;
+	_transmissionBegun = false;
 
 	am_hal_iom_transfer_t iomTransfer = {0};
-	iomTransfer.uPeerInfo.ui32I2CDevAddr = _transmissionAddress; 
-    iomTransfer.ui32InstrLen = 0;           // Use only data phase
-    iomTransfer.ui32Instr = 0;    			// 
-    // iomTransfer.ui32NumBytes = ;         // 
-    iomTransfer.eDirection = AM_HAL_IOM_TX;
-    iomTransfer.pui32TxBuffer = (uint32_t*)_linearBugger;
-    iomTransfer.pui32RxBuffer = NULL;
-    iomTransfer.bContinue = (stopBit ? false : true); // whether or not to hold onto the bus after this transfer
-    iomTransfer.ui8RepeatCount = 0;         // ?
-    iomTransfer.ui8Priority = 1;            // ?
-    iomTransfer.ui32PauseCondition = 0;     // ?
-    iomTransfer.ui32StatusSetClr = 0;       // ?
+	iomTransfer.uPeerInfo.ui32I2CDevAddr = _transmissionAddress;
+	iomTransfer.ui32InstrLen = 0; // Use only data phase
+	iomTransfer.ui32Instr = 0;	//
+	// iomTransfer.ui32NumBytes = ;         //
+	iomTransfer.eDirection = AM_HAL_IOM_TX;
+	iomTransfer.pui32TxBuffer = (uint32_t *)_linearBugger;
+	iomTransfer.pui32RxBuffer = NULL;
+	iomTransfer.bContinue = (stopBit ? false : true); // whether or not to hold onto the bus after this transfer
+	iomTransfer.ui8RepeatCount = 0;					  // ?
+	iomTransfer.ui8Priority = 1;					  // ?
+	iomTransfer.ui32PauseCondition = 0;				  // ?
+	iomTransfer.ui32StatusSetClr = 0;				  // ?
 
 	// Copy the bytes from the TX Buffer into the linear buffer
 	size_t count = 0;
-	if( _txBuffer.available() > AP3_WIRE_LINEAR_BUFFER_LEN ){
+	if (_txBuffer.available() > AP3_WIRE_LINEAR_BUFFER_LEN)
+	{
 		return 1; // data too long
 	}
-	while( _txBuffer.available() )
+	while (_txBuffer.available())
 	{
 		*(_linearBugger + count++) = _txBuffer.read_char();
 	}
 
 	iomTransfer.ui32NumBytes = count; // Set the length
 
-	// ToDo: better error reporting	
+	// ToDo: better error reporting
 	uint32_t retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
-	switch( retVal32 ){
-		case AM_HAL_STATUS_SUCCESS : 
-			return 0;
-			break;
+	switch (retVal32)
+	{
+	case AM_HAL_STATUS_SUCCESS:
+		return 0;
+		break;
 
 		// return 1; // data too long
 		// return 2; // NAK on address
 		// return 3; // NAK on data
 
-		case AM_HAL_STATUS_INVALID_OPERATION :
-		case AM_HAL_STATUS_INVALID_ARG :
-		case AM_HAL_STATUS_INVALID_HANDLE : 
-		default:
-			return 4; break; // other error
+	case AM_HAL_STATUS_INVALID_OPERATION:
+	case AM_HAL_STATUS_INVALID_ARG:
+	case AM_HAL_STATUS_INVALID_HANDLE:
+	default:
+		return 4;
+		break; // other error
 	}
 }
 
 size_t TwoWire::write(uint8_t ucData)
 {
 	// No writing, without begun transmission or a full buffer
-	if ( !_transmissionBegun || _txBuffer.isFull() ){
-		return 0 ;
+	if (!_transmissionBegun || _txBuffer.isFull())
+	{
+		return 0;
 	}
-	_txBuffer.store_char( ucData ) ;
-	return 1 ;
+	_txBuffer.store_char(ucData);
+	return 1;
 }
 
 size_t TwoWire::write(const uint8_t *data, size_t quantity)
 {
-	for(size_t i = 0; i < quantity; ++i){ //Try to store all data
-		if(!write(data[i])){ //Return the number of data stored, when the buffer is full (if write return 0)
+	for (size_t i = 0; i < quantity; ++i)
+	{ //Try to store all data
+		if (!write(data[i]))
+		{ //Return the number of data stored, when the buffer is full (if write return 0)
 			return i;
 		}
 	}
-	return quantity;//All data stored
+	return quantity; //All data stored
 }
 
 int TwoWire::available(void)
@@ -241,12 +263,12 @@ void TwoWire::flush(void)
 	// data transfer.
 }
 
-void TwoWire::onReceive(void(*function)(int))
+void TwoWire::onReceive(void (*function)(int))
 {
 	_onReceiveCallback = function;
 }
 
-void TwoWire::onRequest(void(*function)(void))
+void TwoWire::onRequest(void (*function)(void))
 {
 	_onRequestCallback = function;
 }
@@ -257,7 +279,7 @@ void TwoWire::onService(void)
 
 	// if ( sercom->isSlaveWIRE() )
 	// {
-	// 	if(sercom->isStopDetectedWIRE() || 
+	// 	if(sercom->isStopDetectedWIRE() ||
 	// 		(sercom->isAddressMatch() && sercom->isRestartDetectedWIRE() && !sercom->isMasterReadOperationWIRE())) //Stop or Restart detected
 	// 	{
 	// 		sercom->prepareAckBitWIRE();
@@ -268,7 +290,7 @@ void TwoWire::onService(void)
 	// 		{
 	// 		onReceiveCallback(available());
 	// 		}
-			
+
 	// 		rxBuffer.clear();
 	// 	}
 	// 	else if(sercom->isAddressMatch())  //Address Match
@@ -302,12 +324,12 @@ void TwoWire::onService(void)
 	// 		transmissionBegun = sercom->sendDataSlaveWIRE(c);
 	// 		} else { //Received data
 	// 		if (rxBuffer.isFull()) {
-	// 			sercom->prepareNackBitWIRE(); 
+	// 			sercom->prepareNackBitWIRE();
 	// 		} else {
 	// 			//Store data
 	// 			rxBuffer.store_char(sercom->readDataWIRE());
 
-	// 			sercom->prepareAckBitWIRE(); 
+	// 			sercom->prepareAckBitWIRE();
 	// 		}
 
 	// 		sercom->prepareCommandBitsWire(0x03);
@@ -316,12 +338,10 @@ void TwoWire::onService(void)
 	// }
 }
 
-
-
 // In variant.h define WIRE_INTERFACES_COUNT as well as the io master instance to use for each AP3_Wire_IOM and AP3_WireN_IOM [1 <= N <= 5]
 
 #if WIRE_INTERFACES_COUNT > 0
-  TwoWire Wire(AP3_Wire_IOM);
+TwoWire Wire(AP3_Wire_IOM);
 
 //   void WIRE_IT_HANDLER(void) { // example of how you might implement directable callbacks. #define WIRE_IT_HANDLER your_handler in variant.h
 //     Wire.onService();
@@ -329,21 +349,21 @@ void TwoWire::onService(void)
 #endif
 
 #if WIRE_INTERFACES_COUNT > 1
-  TwoWire Wire1(AP3_Wire1_IOM);
+TwoWire Wire1(AP3_Wire1_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 2
-  TwoWire Wire2(AP3_Wire1_IOM);
+TwoWire Wire2(AP3_Wire1_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 3
-  TwoWire Wire3(AP3_Wire1_IOM);
+TwoWire Wire3(AP3_Wire1_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 4
-  TwoWire Wire4(AP3_Wire1_IOM);
+TwoWire Wire4(AP3_Wire1_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 5
-  TwoWire Wire5(AP3_Wire1_IOM);
+TwoWire Wire5(AP3_Wire1_IOM);
 #endif
