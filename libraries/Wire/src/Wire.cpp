@@ -41,6 +41,8 @@ typedef enum
 TwoWire::TwoWire(uint8_t iom_instance) : IOMaster(iom_instance)
 {
 	_transmissionBegun = false;
+	_pullups = AM_HAL_GPIO_PIN_PULLUP_1_5K; //Default
+	_clockSpeed = AM_HAL_IOM_100KHZ;
 }
 
 void TwoWire::begin(void)
@@ -58,7 +60,7 @@ void TwoWire::begin(void)
 		return /*retval*/;
 	}
 	pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-	pincfg.ePullup = AM_HAL_GPIO_PIN_PULLUP_1_5K;
+	pincfg.ePullup = _pullups;
 	pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
 	pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN;
 	pincfg.uIOMnum = _instance;
@@ -75,7 +77,7 @@ void TwoWire::begin(void)
 		return /*retval*/;
 	}
 	pincfg.uFuncSel = funcsel;
-	pincfg.ePullup = AM_HAL_GPIO_PIN_PULLUP_1_5K;
+	pincfg.ePullup = _pullups;
 	pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
 	pincfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN;
 	pincfg.uIOMnum = _instance;
@@ -88,7 +90,7 @@ void TwoWire::begin(void)
 
 	memset((void *)&_config, 0x00, sizeof(am_hal_iom_config_t)); // Set the IOM configuration
 	_config.eInterfaceMode = AM_HAL_IOM_I2C_MODE;
-	_config.ui32ClockFreq = AM_HAL_IOM_100KHZ;
+	_config.ui32ClockFreq = _clockSpeed;
 
 	initialize(); // Initialize the IOM
 }
@@ -103,9 +105,26 @@ void TwoWire::begin(uint8_t address, bool enableGeneralCall)
 void TwoWire::setClock(uint32_t baudrate)
 {
 	// ToDo: disable I2C while switching, if necessary
-
-	_config.ui32ClockFreq = baudrate;
+	_clockSpeed = baudrate;
+	_config.ui32ClockFreq = _clockSpeed;
 	initialize(); // Initialize the IOM
+}
+
+void TwoWire::setPullups(uint32_t pullupAmount)
+{
+	if (pullupAmount == 0)
+		_pullups = AM_HAL_GPIO_PIN_PULLUP_NONE;
+	if (pullupAmount > 0 || pullupAmount < 6)
+		_pullups = AM_HAL_GPIO_PIN_PULLUP_1_5K;
+	else if (pullupAmount >= 6 || pullupAmount < 12)
+		_pullups = AM_HAL_GPIO_PIN_PULLUP_6K;
+	else if (pullupAmount >= 12 || pullupAmount < 24)
+		_pullups = AM_HAL_GPIO_PIN_PULLUP_12K;
+	else if (pullupAmount >= 24)
+		_pullups = AM_HAL_GPIO_PIN_PULLUP_24K;
+
+	//Reinit I2C pins with this new pullup value
+	begin();
 }
 
 void TwoWire::end()

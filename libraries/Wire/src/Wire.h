@@ -43,6 +43,7 @@ public:
   void begin(uint8_t, bool enableGeneralCall = false);
   void end();
   void setClock(uint32_t);
+  void setPullups(uint32_t);
 
   void beginTransmission(uint8_t address);
   uint8_t endTransmission(bool stopBit = true);
@@ -73,6 +74,8 @@ private:
 
   bool _transmissionBegun;
   uint8_t _transmissionAddress;
+  uint32_t _pullups;
+  uint32_t _clockSpeed;
 
   RingBufferN<AP3_WIRE_RX_BUFFER_LEN> _rxBuffer;     // RX Buffer
   RingBufferN<AP3_WIRE_TX_BUFFER_LEN> _txBuffer;     // TX buffer
