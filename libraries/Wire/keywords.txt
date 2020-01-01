@@ -17,6 +17,8 @@ requestFrom	KEYWORD2
 onReceive	KEYWORD2
 onRequest	KEYWORD2
 setClock	KEYWORD2
+setPullups	KEYWORD2
+
 
 #######################################
 # Instances (KEYWORD2)
