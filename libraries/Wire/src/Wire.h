@@ -30,77 +30,77 @@ SOFTWARE.
 
 #define AP3_WIRE_RX_BUFFER_LEN 256
 #define AP3_WIRE_TX_BUFFER_LEN 256
-#define AP3_WIRE_LINEAR_BUFFER_LEN (AP3_WIRE_RX_BUFFER_LEN+AP3_WIRE_TX_BUFFER_LEN)
+#define AP3_WIRE_LINEAR_BUFFER_LEN (AP3_WIRE_RX_BUFFER_LEN + AP3_WIRE_TX_BUFFER_LEN)
 
- // WIRE_HAS_END means Wire has end()
+// WIRE_HAS_END means Wire has end()
 #define WIRE_HAS_END 1
 
-class TwoWire : public Stream, public IOMaster {
-  public:
-    TwoWire(uint8_t iom_instance);
-    void begin();
-    void begin(uint8_t, bool enableGeneralCall = false);
-    void end();
-    void setClock(uint32_t);
+class TwoWire : public Stream, public IOMaster
+{
+public:
+  TwoWire(uint8_t iom_instance);
+  void begin();
+  void begin(uint8_t, bool enableGeneralCall = false);
+  void end();
+  void setClock(uint32_t);
 
-    void beginTransmission(uint8_t address);
-    uint8_t endTransmission(bool stopBit = true);
+  void beginTransmission(uint8_t address);
+  uint8_t endTransmission(bool stopBit = true);
 
-    uint8_t requestFrom(uint8_t address, size_t quantity, bool stopBit = true);
+  uint8_t requestFrom(uint8_t address, size_t quantity, bool stopBit = true);
 
-    size_t write(uint8_t data);
-    size_t write(const uint8_t * data, size_t quantity);
+  size_t write(uint8_t data);
+  size_t write(const uint8_t *data, size_t quantity);
 
-    virtual int available(void);
-    virtual int read(void);
-    virtual int peek(void);
-    virtual void flush(void);
-    void onReceive(void(*)(int));
-    void onRequest(void(*)(void));
+  virtual int available(void);
+  virtual int read(void);
+  virtual int peek(void);
+  virtual void flush(void);
+  void onReceive(void (*)(int));
+  void onRequest(void (*)(void));
 
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
-    using Print::write;
+  inline size_t write(unsigned long n) { return write((uint8_t)n); }
+  inline size_t write(long n) { return write((uint8_t)n); }
+  inline size_t write(unsigned int n) { return write((uint8_t)n); }
+  inline size_t write(int n) { return write((uint8_t)n); }
+  using Print::write;
 
-    void onService(void);
+  void onService(void);
 
-  private:
-    ap3_gpio_pin_t  _padSDA;
-    ap3_gpio_pin_t  _padSCL;
+private:
+  ap3_gpio_pin_t _padSDA;
+  ap3_gpio_pin_t _padSCL;
 
-    bool _transmissionBegun;
-    uint8_t _transmissionAddress;
+  bool _transmissionBegun;
+  uint8_t _transmissionAddress;
 
-    
-    RingBufferN<AP3_WIRE_RX_BUFFER_LEN> _rxBuffer;// RX Buffer    
-    RingBufferN<AP3_WIRE_TX_BUFFER_LEN> _txBuffer;// TX buffer
-    uint8_t _linearBugger[AP3_WIRE_LINEAR_BUFFER_LEN]; // ToDo: choose a more efficient way to handle this
-    uint8_t txAddress;
+  RingBufferN<AP3_WIRE_RX_BUFFER_LEN> _rxBuffer;     // RX Buffer
+  RingBufferN<AP3_WIRE_TX_BUFFER_LEN> _txBuffer;     // TX buffer
+  uint8_t _linearBugger[AP3_WIRE_LINEAR_BUFFER_LEN]; // ToDo: choose a more efficient way to handle this
+  uint8_t txAddress;
 
-    // Callback user functions
-    void (*_onRequestCallback)(void);
-    void (*_onReceiveCallback)(int);
+  // Callback user functions
+  void (*_onRequestCallback)(void);
+  void (*_onReceiveCallback)(int);
 };
 
 #if WIRE_INTERFACES_COUNT > 0
-  extern TwoWire Wire;
+extern TwoWire Wire;
 #endif
 #if WIRE_INTERFACES_COUNT > 1
-  extern TwoWire Wire1;
+extern TwoWire Wire1;
 #endif
 #if WIRE_INTERFACES_COUNT > 2
-  extern TwoWire Wire2;
+extern TwoWire Wire2;
 #endif
 #if WIRE_INTERFACES_COUNT > 3
-  extern TwoWire Wire3;
+extern TwoWire Wire3;
 #endif
 #if WIRE_INTERFACES_COUNT > 4
-  extern TwoWire Wire4;
+extern TwoWire Wire4;
 #endif
 #if WIRE_INTERFACES_COUNT > 5
-  extern TwoWire Wire5;
+extern TwoWire Wire5;
 #endif
 
 #endif // _AP3_WIRE_H_
