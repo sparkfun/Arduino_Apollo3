@@ -13,9 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "himax_driver_HM01B0.h"
+#include "HM01B0.h"
 
-#include "himax_driver_HM01B0_Walking1s_01.h"
+#include "HM01B0_Walking1s_01.h"
 #include "am_bsp.h"
 #include "am_mcu_apollo.h"
 #include "am_util.h"
