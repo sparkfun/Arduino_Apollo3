@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "himax_driver_HM01B0.h"
+#include "HM01B0.h"
 #include "am_bsp.h" //NOLINT
 #include "am_mcu_apollo.h" //NOLINT
 #include "hm01b0_platform.h" // TARGET specific implementation

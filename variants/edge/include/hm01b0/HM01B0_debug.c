@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "himax_driver_HM01B0_debug.h"
+#include "HM01B0_debug.h"
 #include "am_util.h" // NOLINT
 
 void hm01b0_framebuffer_dump(uint8_t* frame, uint32_t length) {

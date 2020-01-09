@@ -16,7 +16,7 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_HIMAX_DRIVER_HM01B0_WALKING1S_01_H_
 #define TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_HIMAX_DRIVER_HM01B0_WALKING1S_01_H_
 
-#include "himax_driver_HM01B0.h"
+#include "HM01B0.h"
 
 const hm_script_t sHM01b0TestModeScript_Walking1s[] = {
     {
