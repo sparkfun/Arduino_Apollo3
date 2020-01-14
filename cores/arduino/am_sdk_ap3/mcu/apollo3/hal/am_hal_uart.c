@@ -1104,12 +1104,7 @@ am_hal_uart_flags_get(void *pHandle, uint32_t *ui32Flags)
         return AM_HAL_STATUS_INVALID_HANDLE;
     }
 
-    //Correct code
-    *ui32Flags = (uint32_t)UARTn(ui32Module)->FR;
-    return AM_HAL_STATUS_SUCCESS;
-
-    //return UARTn(ui32Module)->FR; //Incorrect code?
-
+    return UARTn(ui32Module)->FR;
 } // am_hal_uart_flags_get()
 
 //*****************************************************************************
