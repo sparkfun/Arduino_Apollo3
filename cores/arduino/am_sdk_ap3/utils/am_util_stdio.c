@@ -61,9 +61,8 @@
 // function pointer for printf
 am_util_stdio_print_char_t g_pfnCharPrint;
 
-// // buffer for printf
-// static char g_prfbuf[AM_PRINTF_BUFSIZE];
-char g_prfbuf[AM_PRINTF_BUFSIZE];
+// buffer for printf
+static char g_prfbuf[AM_PRINTF_BUFSIZE];
 
 // Flag to do conversion of '\n' to '\n\r' in sprintf()
 static bool g_bTxtXlate = false;
