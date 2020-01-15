@@ -417,10 +417,10 @@ uint32_t Uart::printf(const char *pcFmt, ...)
     //
     va_list pArgs;
     va_start(pArgs, pcFmt);
-    ui32NumChars = am_util_stdio_vsprintf(g_prfbuf, pcFmt, pArgs);
+    ui32NumChars = am_util_stdio_vsprintf(ap3_g_prfbuf, pcFmt, pArgs);
     va_end(pArgs);
 
-    write((const uint8_t *)g_prfbuf, ui32NumChars);
+    write((const uint8_t *)ap3_g_prfbuf, ui32NumChars);
 
     return ui32NumChars;
 }

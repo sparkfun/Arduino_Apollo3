@@ -55,6 +55,9 @@
 #include "am_hal_status.h"
 #include "am_hal_sysctrl.h"
 
+#ifdef __cplusplus // Patch
+extern "C" {
+#endif // End patch
 
 //*****************************************************************************
 //
@@ -831,4 +834,9 @@ uint32_t am_hal_iom_highprio_transfer(void *pHandle,
 //! @}
 //
 //*****************************************************************************
+
+#ifdef __cplusplus // Patch
+}
+#endif // End patch
+
 #endif // AM_HAL_IOM_H

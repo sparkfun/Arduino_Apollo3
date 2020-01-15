@@ -35,6 +35,8 @@ SOFTWARE.
 
 typedef RingBufferN<AP3_UART_RINGBUFF_SIZE> AP3UartRingBuffer;
 
+extern char ap3_g_prfbuf[AM_PRINTF_BUFSIZE];
+
 extern const am_hal_uart_config_t ap3_uart_config_default;
 
 extern const ap3_uart_pad_map_elem_t ap3_uart0_tx_map[AP3_UART0_NUM_TX_PADS];

@@ -1,5 +1,3 @@
-// based on demo from Himax
-
 /*
 Copyright (c) 2019 SparkFun Electronics
 
@@ -22,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef HM01B0_PLATFORM_H
-#define HM01B0_PLATFORM_H
+#ifndef HM01B0_PLATFORM_EDGE_H
+#define HM01B0_PLATFORM_EDGE_H
 
 #ifdef __cplusplus
 extern "C"
@@ -70,4 +68,4 @@ extern "C"
 }
 #endif
 
-#endif // HM01B0_PLATFORM_H
+#endif // HM01B0_PLATFORM_EDGE_H
