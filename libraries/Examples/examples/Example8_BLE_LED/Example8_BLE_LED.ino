@@ -34,11 +34,9 @@
 
 void setup() {
 
-  #ifdef DEBUG
-    SERIAL_PORT.begin(115200);
-    delay(1000);
-    SERIAL_PORT.printf("Apollo3 Arduino BLE Example. Compiled: %s\n", __TIME__);
-  #endif
+  SERIAL_PORT.begin(115200);
+  delay(1000);
+  SERIAL_PORT.printf("Apollo3 Arduino BLE Example. Compiled: %s\n", __TIME__);
 
   pinMode(LED_BUILTIN, OUTPUT);
   set_led_low();
