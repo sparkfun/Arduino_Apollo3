@@ -24,6 +24,7 @@ SOFTWARE.
 #define AP3_NUM_UART 2
 
 Uart *ap3_uart_handles[AP3_NUM_UART] = {0};
+char ap3_g_prfbuf[AM_PRINTF_BUFSIZE];
 
 Uart::Uart(uint8_t instance, ap3_gpio_pin_t pinRX, ap3_gpio_pin_t pinTX, ap3_gpio_pin_t pinRTS, ap3_gpio_pin_t pinCTS)
 {
