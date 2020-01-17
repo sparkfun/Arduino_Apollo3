@@ -80,7 +80,7 @@ defines.variant={build.defs}
 
 
 ## Compiler and Toolchain
-compiler.path={runtime.tools.arm-none-eabi-gcc-7-2017q4.path}/bin
+compiler.path={runtime.tools.arm-none-eabi-gcc-8-2018-q4-major.path}/bin
 compiler.cmd.cpp=arm-none-eabi-g++
 compiler.cmd.c=arm-none-eabi-gcc
 compiler.cmd.S=arm-none-eabi-gcc
