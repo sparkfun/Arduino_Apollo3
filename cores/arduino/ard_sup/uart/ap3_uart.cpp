@@ -117,48 +117,50 @@ size_t Uart::write(const uint8_t data)
 
 size_t Uart::write(const uint8_t *buffer, size_t size)
 {
-    uint32_t ui32BytesWritten = 0;
-    uint32_t remaining = size;
+    uint32_t ui32TransferBytesWritten = 0;
+    uint32_t ui32TotalBytesWritten = 0;
 
-    //FIFO on Apollo3 is 32 bytes
+    //
+    // Print the string via the UART.
+    //
+    am_hal_uart_transfer_t sUartWrite =
+        {
+            .ui32Direction = AM_HAL_UART_WRITE,
+            .pui8Data = NULL,
+            .ui32NumBytes = 0,
+            .ui32TimeoutMs = 0,
+            .pui32BytesTransferred = &ui32TransferBytesWritten,
+        };
 
-    //If TX UART is sitting idle, load it. This will start the ISR TX handler as well.
-    uint32_t uartFlags;
-    am_hal_uart_flags_get(_handle, &uartFlags);
-    if (uartFlags & AM_HAL_UART_FR_TX_EMPTY)
+    do
     {
-        uint32_t amtToSend = remaining;
-        if (amtToSend > AM_HAL_UART_FIFO_MAX)
-            amtToSend = AM_HAL_UART_FIFO_MAX;
+        while (!_tx_idle)
+        {
+        }; // wait for tx to become idle
 
-        remaining -= amtToSend;
-
-        //Transfer to local buffer
-        uint8_t tempTX[AM_HAL_UART_FIFO_MAX];
-        for (int x = 0; x < amtToSend; x++)
-            tempTX[x] = buffer[x];
-
-        const am_hal_uart_transfer_t sUartWrite =
-            {
-                .ui32Direction = AM_HAL_UART_WRITE,
-                .pui8Data = (uint8_t *)tempTX,
-                .ui32NumBytes = amtToSend,
-                .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
-                .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
-            };
+        sUartWrite.pui8Data = (uint8_t *)((uint8_t *)buffer + ui32TotalBytesWritten);
+        sUartWrite.ui32NumBytes = (size > AP3_UART_LINBUFF_SIZE) ? AP3_UART_LINBUFF_SIZE : size;
         am_hal_uart_transfer(_handle, &sUartWrite);
-    }
 
-    //Transfer any remaining bytes into ring buffer
-    for (int x = size - remaining; x < size; x++)
+        ui32TotalBytesWritten += ui32TransferBytesWritten;
+
+    } while (ui32TotalBytesWritten < size);
+
+    if (ui32TotalBytesWritten != size)
     {
-        //If TX ring buffer is full, begin blocking
-        while (_tx_buffer.availableForStore() == 0)
-            delay(1);
-        _tx_buffer.store_char(buffer[x]);
+        //
+        // Couldn't send the whole string!!
+        //
+        while (1)
+        {
+            digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
+            delay(50);                       // wait for a second
+            digitalWrite(LED_BUILTIN, LOW);  // turn the LED off by making the voltage LOW
+            delay(50);
+        }
     }
 
-    return ui32BytesWritten; //Return number of bytes pushed to UART hardware
+    return ui32TotalBytesWritten; //Return number of bytes pushed to UART hardware
 }
 
 // Stop Bits
@@ -303,6 +305,12 @@ ap3_err_t Uart::_begin(void)
     am_hal_gpio_pincfg_t pincfg = AP3_GPIO_DEFAULT_PINCFG;
     uint8_t funcsel = 0;
 
+    // Link in the buffers for the HAL
+    _config.pui8RxBuffer = _rx_linbuff;
+    _config.pui8TxBuffer = _tx_linbuff;
+    _config.ui32RxBufferSize = sizeof(_rx_linbuff);
+    _config.ui32TxBufferSize = sizeof(_tx_linbuff);
+
     // Check for a valid instance
     // Check pins for compatibility with the selcted instance
 
@@ -402,6 +410,9 @@ ap3_err_t Uart::_begin(void)
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + _instance));
     am_hal_uart_interrupt_enable(_handle, (AM_HAL_UART_INT_RX | AM_HAL_UART_INT_TX));
     am_hal_interrupt_master_enable();
+
+    // Service interrupts to determine idle state
+    am_hal_uart_interrupt_service(_handle, 0, (uint32_t *)&_tx_idle);
 
     // Register the class into the local list
     ap3_uart_handles[_instance] = this;
@@ -517,13 +528,12 @@ invalid_args:
 //*****************************************************************************
 inline void Uart::uart_isr(void)
 {
-
     uint32_t ui32Status;
 
-    // Read the masked interrupt status from the UART.
+    // Service the FIFOs as necessary, and clear the interrupts.
     am_hal_uart_interrupt_status_get(_handle, &ui32Status, true);
     am_hal_uart_interrupt_clear(_handle, ui32Status);
-    am_hal_uart_interrupt_service(_handle, ui32Status, 0);
+    am_hal_uart_interrupt_service(_handle, ui32Status, (uint32_t *)&_tx_idle);
 
     if (ui32Status & AM_HAL_UART_INT_RX)
     {
@@ -538,40 +548,15 @@ inline void Uart::uart_isr(void)
                 .ui32TimeoutMs = 0,
                 .pui32BytesTransferred = &ui32BytesRead,
             };
-        am_hal_uart_transfer(_handle, &sRead);
 
-        if (ui32BytesRead)
+        do
         {
-            _rx_buffer.store_char(rx_c);
-        }
-    }
-
-    if (ui32Status & AM_HAL_UART_INT_TX)
-    {
-        //If bytes are sitting in TX buffer, load them into UART buffer for transfer
-        if (_tx_buffer.available())
-        {
-            uint32_t ui32BytesWritten = 0;
-
-            uint32_t amtToSend = _tx_buffer.available();
-            if (amtToSend > AM_HAL_UART_FIFO_MAX)
-                amtToSend = AM_HAL_UART_FIFO_MAX;
-
-            //Transfer to local buffer
-            uint8_t tempTX[AM_HAL_UART_FIFO_MAX];
-            for (int x = 0; x < amtToSend; x++)
-                tempTX[x] = _tx_buffer.read_char();
-
-            const am_hal_uart_transfer_t sUartWrite =
-                {
-                    .ui32Direction = AM_HAL_UART_WRITE,
-                    .pui8Data = (uint8_t *)tempTX,
-                    .ui32NumBytes = (uint32_t)amtToSend,
-                    .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
-                    .pui32BytesTransferred = (uint32_t *)&ui32BytesWritten,
-                };
-            am_hal_uart_transfer(_handle, &sUartWrite);
-        }
+            am_hal_uart_transfer(_handle, &sRead);
+            if (ui32BytesRead)
+            {
+                _rx_buffer.store_char(rx_c);
+            }
+        } while (ui32BytesRead);
     }
 }
 
