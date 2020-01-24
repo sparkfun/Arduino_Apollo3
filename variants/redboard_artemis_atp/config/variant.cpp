@@ -80,3 +80,14 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
 //Serial(instance, RX, TX)
 Uart Serial(0, 49, 48);  // Declares a Uart object called Serial using instance 0 of Apollo3 UART peripherals with RX on variant pin 49 and TX on pin 48 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
 Uart Serial1(1, 25, 24); // Declares a Uart object called Serial1 using instance 1 of Apollo3 UART peripherals with RX on pin 25 and TX on pin 24 (note, you specify *pins* not Apollo3 pads. This uses the variant's pin map to determine the Apollo3 pad)
+
+// Mapping of analog pins to digital pins of variant
+extern const ap3_gpio_pin_t ap3_analog_A29 = 29;
+extern const ap3_gpio_pin_t ap3_analog_A11 = 11;
+extern const ap3_gpio_pin_t ap3_analog_A34 = 34;
+extern const ap3_gpio_pin_t ap3_analog_A16 = 16;
+extern const ap3_gpio_pin_t ap3_analog_A31 = 31;
+extern const ap3_gpio_pin_t ap3_analog_A13 = 13;
+extern const ap3_gpio_pin_t ap3_analog_A12 = 12;
+extern const ap3_gpio_pin_t ap3_analog_A33 = 33;
+extern const ap3_gpio_pin_t ap3_analog_A35 = 35;
