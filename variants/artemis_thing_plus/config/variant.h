@@ -48,14 +48,25 @@ extern Uart Serial1;
 #define AP3_SPI_DUP ap3_spi_full_duplex // Specify that SPI is full-duplex (as opposed to ap3_spi_tx_only or ap3_spi_rx_only)
 
 // Mapping of analog pins to digital pins of variant
-#define A0 19
-#define A1 20
-#define A2 21
-#define A3 22
-#define A4 23
-#define A5 24
-#define A6 3
-#define A7 9
+// (this method - aliasing the name of a constant variable - is compatible with the usage of 'AX' names in 'arm_math.h')
+#define A0 ap3_analog_A0
+#define A1 ap3_analog_A1
+#define A2 ap3_analog_A2
+#define A3 ap3_analog_A3
+#define A4 ap3_analog_A4
+#define A5 ap3_analog_A5
+#define A6 ap3_analog_A6
+#define A7 ap3_analog_A7
+
+// Promise the existence of analog pin names
+extern const ap3_gpio_pin_t ap3_analog_A0;
+extern const ap3_gpio_pin_t ap3_analog_A1;
+extern const ap3_gpio_pin_t ap3_analog_A2;
+extern const ap3_gpio_pin_t ap3_analog_A3;
+extern const ap3_gpio_pin_t ap3_analog_A4;
+extern const ap3_gpio_pin_t ap3_analog_A5;
+extern const ap3_gpio_pin_t ap3_analog_A6;
+extern const ap3_gpio_pin_t ap3_analog_A7;
 
 #define LED_BUILTIN 18
 
