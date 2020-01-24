@@ -1640,12 +1640,12 @@ extern "C"
    */
   typedef struct
   {
-    q15_t A0; /**< The derived gain, A0 = Kp + Ki + Kd . */
+    q15_t ap3_A0; /**< The derived gain, A0 = Kp + Ki + Kd . */
 #if !defined(ARM_MATH_DSP)
-    q15_t A1;
-    q15_t A2;
+    q15_t ap3_A1;
+    q15_t ap3_A2;
 #else
-  q31_t A1; /**< The derived gain A1 = -Kp - 2Kd | Kd.*/
+  q31_t ap3_A1; /**< The derived gain A1 = -Kp - 2Kd | Kd.*/
 #endif
     q15_t state[3]; /**< The state array of length 3. */
     q15_t Kp;       /**< The proportional gain. */
@@ -1658,9 +1658,9 @@ extern "C"
    */
   typedef struct
   {
-    q31_t A0;       /**< The derived gain, A0 = Kp + Ki + Kd . */
-    q31_t A1;       /**< The derived gain, A1 = -Kp - 2Kd. */
-    q31_t A2;       /**< The derived gain, A2 = Kd . */
+    q31_t ap3_A0;   /**< The derived gain, A0 = Kp + Ki + Kd . */
+    q31_t ap3_A1;   /**< The derived gain, A1 = -Kp - 2Kd. */
+    q31_t ap3_A2;   /**< The derived gain, A2 = Kd . */
     q31_t state[3]; /**< The state array of length 3. */
     q31_t Kp;       /**< The proportional gain. */
     q31_t Ki;       /**< The integral gain. */
@@ -1672,9 +1672,9 @@ extern "C"
    */
   typedef struct
   {
-    float32_t A0;       /**< The derived gain, A0 = Kp + Ki + Kd . */
-    float32_t A1;       /**< The derived gain, A1 = -Kp - 2Kd. */
-    float32_t A2;       /**< The derived gain, A2 = Kd . */
+    float32_t ap3_A0;   /**< The derived gain, A0 = Kp + Ki + Kd . */
+    float32_t ap3_A1;   /**< The derived gain, A1 = -Kp - 2Kd. */
+    float32_t ap3_A2;   /**< The derived gain, A2 = Kd . */
     float32_t state[3]; /**< The state array of length 3. */
     float32_t Kp;       /**< The proportional gain. */
     float32_t Ki;       /**< The integral gain. */
@@ -4541,8 +4541,8 @@ extern "C"
     float32_t out;
 
     /* y[n] = y[n-1] + A0 * x[n] + A1 * x[n-1] + A2 * x[n-2]  */
-    out = (S->A0 * in) +
-          (S->A1 * S->state[0]) + (S->A2 * S->state[1]) + (S->state[2]);
+    out = (S->ap3_A0 * in) +
+          (S->ap3_A1 * S->state[0]) + (S->ap3_A2 * S->state[1]) + (S->state[2]);
 
     /* Update state */
     S->state[1] = S->state[0];
@@ -4575,13 +4575,13 @@ extern "C"
     q31_t out;
 
     /* acc = A0 * x[n]  */
-    acc = (q63_t)S->A0 * in;
+    acc = (q63_t)S->ap3_A0 * in;
 
     /* acc += A1 * x[n-1] */
-    acc += (q63_t)S->A1 * S->state[0];
+    acc += (q63_t)S->ap3_A1 * S->state[0];
 
     /* acc += A2 * x[n-2]  */
-    acc += (q63_t)S->A2 * S->state[1];
+    acc += (q63_t)S->ap3_A2 * S->state[1];
 
     /* convert output to 1.31 format to add y[n-1] */
     out = (q31_t)(acc >> 31U);
@@ -4626,18 +4626,18 @@ extern "C"
     /* Implementation of PID controller */
 
     /* acc = A0 * x[n]  */
-    acc = (q31_t)__SMUAD((uint32_t)S->A0, (uint32_t)in);
+    acc = (q31_t)__SMUAD((uint32_t)S->ap3_A0, (uint32_t)in);
 
     /* acc += A1 * x[n-1] + A2 * x[n-2]  */
     vstate = __SIMD32_CONST(S->state);
-    acc = (q63_t)__SMLALD((uint32_t)S->A1, (uint32_t)*vstate, (uint64_t)acc);
+    acc = (q63_t)__SMLALD((uint32_t)S->ap3_A1, (uint32_t)*vstate, (uint64_t)acc);
 #else
   /* acc = A0 * x[n]  */
-  acc = ((q31_t)S->A0) * in;
+  acc = ((q31_t)S->ap3_A0) * in;
 
   /* acc += A1 * x[n-1] + A2 * x[n-2]  */
-  acc += (q31_t)S->A1 * S->state[0];
-  acc += (q31_t)S->A2 * S->state[1];
+  acc += (q31_t)S->ap3_A1 * S->state[0];
+  acc += (q31_t)S->ap3_A2 * S->state[1];
 #endif
 
     /* acc += y[n-1] */
