@@ -122,10 +122,10 @@ static const uint8_t outcfg_tbl[32][4] =
 uint16_t _analogBits = 10;    //10-bit by default
 uint8_t _analogWriteBits = 8; // 8-bit by default for writes
 uint8_t _servoWriteBits = 8;  // 8-bit by default for writes
+static bool ap3_adc_initialized = false; // flag to show if the ADC has been initialized
 
 uint16_t analogRead(uint8_t pinNumber)
 {
-    static bool ap3_adc_initialized = false;
     if(!ap3_adc_initialized){
         ap3_adc_setup();
         ap3_adc_initialized = true;
@@ -242,6 +242,7 @@ bool power_adc_disable()
         return (false);
     }
 
+    ap3_adc_initialized = false; // The adc will be reinitialized by the next analogRead
     g_ADCHandle = NULL;
     return (true);
 }
