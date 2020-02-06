@@ -55,7 +55,7 @@ void APM3_RTC::setTime(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund, uin
   hal_time.ui32Hundredths = hund;
 
   hal_time.ui32DayOfMonth = dayOfMonth;
-  hal_time.ui32Month = month - 1; //HAL is expecting 0 to 11 months
+  hal_time.ui32Month = month; //HAL is expecting 1 to 12 months
   hal_time.ui32Year = year;
   hal_time.ui32Century = 0;
 
@@ -76,7 +76,7 @@ void APM3_RTC::setToCompilerTime()
   hal_time.ui32Hundredths = 00;
   hal_time.ui32Weekday = am_util_time_computeDayofWeek(2000 + toVal(&__DATE__[9]), mthToIndex(&__DATE__[0]) + 1, toVal(&__DATE__[4]));
   hal_time.ui32DayOfMonth = toVal(&__DATE__[4]);
-  hal_time.ui32Month = mthToIndex(&__DATE__[0]);
+  hal_time.ui32Month = mthToIndex(&__DATE__[0]) + 1; //Compiler ouputs months in 0-11.
   hal_time.ui32Year = toVal(&__DATE__[9]);
   hal_time.ui32Century = 0;
 
@@ -92,7 +92,7 @@ void APM3_RTC::getTime()
   seconds = hal_time.ui32Second;
   hundredths = hal_time.ui32Hundredths;
 
-  month = hal_time.ui32Month + 1; //Convert from 0-11 to 1-12
+  month = hal_time.ui32Month; //HAL outputs months in 1 to 12 form
   dayOfMonth = hal_time.ui32DayOfMonth;
   year = hal_time.ui32Year;
 
