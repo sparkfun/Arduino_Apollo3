@@ -17,9 +17,15 @@ SPISettings mySettings(SPI_SPEED, SPI_ORDER, SPI_MODE);
 
 const char *msg = "Hello world!";
 
+//SPIClass SPI(); //This is default and automatically defined on RedBoard/ATP/Nano. Access using pins labeled SCK/MISO/MOSI (connects to pads 5/6/7 on module).
+SPIClass SPI1(1); //Use IO Master 1 on pads 8/9/10. See schematic of your board for pin locations.
+// SPIClass mySPI(2); //Use IO Master 2 on pads 27/25/28
+// SPIClass anotherSPI(3); //Use IO Master 3 on pads 42/43/44
+// SPIClass SPI4(4); //Use IO Master 4 on pads 39/40/38
+// SPIClass SPI5(5); //Use IO Master 5 on pads 48/49/47
+
 void setup()
 {
-
   Serial.begin(115200);
   while (!Serial)
   {
@@ -28,7 +34,7 @@ void setup()
   Serial.println("SparkFun Arduino Apollo3 SPI Example");
   Serial.printf("Compiled on %s, %s\n\n", __DATE__, __TIME__);
 
-  SPI.begin();
+  SPI1.begin();
 
   pinMode(CS_PIN, OUTPUT);
 }
@@ -36,13 +42,13 @@ void setup()
 void loop()
 {
   digitalWrite(CS_PIN, LOW);
-  SPI.beginTransaction(mySettings);
-  SPI.transfer(0xAA);
-  SPI.endTransaction();
+  SPI1.beginTransaction(mySettings);
+  SPI1.transfer(0xAA);
+  SPI1.endTransaction();
 
-  SPI.beginTransaction(mySettings);
-  SPI.transferOut((void *)msg, strlen(msg));
-  SPI.endTransaction();
+  SPI1.beginTransaction(mySettings);
+  SPI1.transferOut((void *)msg, strlen(msg));
+  SPI1.endTransaction();
   digitalWrite(CS_PIN, HIGH);
   delay(1000);
 }
