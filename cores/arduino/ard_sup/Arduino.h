@@ -42,6 +42,7 @@ extern "C"
 #include "am_bsp.h"
 
 #include "hooks.h"
+#include "binary.h"
 
 #include <math.h> //Gets us pow()
 
