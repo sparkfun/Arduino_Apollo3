@@ -40,10 +40,12 @@
 #include "EEPROM.h"
 #include "Arduino.h"
 
+EEPROMClass EEPROM; // the (magnificent) one and only EEPROM!!!!!
+
 //Write a byte to a given "EEPROM" location
-void write(uint16_t eepromLocation, uint8_t dataToWrite)
+void write(uint16_t eepromLocation, uint8_t dataToWrite, uint16_t allowedSize)
 {
-  writeBlockToEEPROM(eepromLocation, &dataToWrite, 1);
+  writeBlockToEEPROM(eepromLocation, &dataToWrite, 1, allowedSize);
 }
 
 //Read a byte from a given location in "EEPROM"
@@ -66,23 +68,23 @@ void EEPROMClass::erase()
 //3) Check if new data is different from flash.
 //4) Erase flash page (8k)
 //5) Write SRAM back into flash
-void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize)
+void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize, uint16_t allowedSize)
 {
   //Error check
-  if (eepromLocation + blockSize >= AP3_FLASH_EEPROM_SIZE)
+  if (eepromLocation + blockSize >= allowedSize)
   {
-    blockSize = AP3_FLASH_EEPROM_SIZE - eepromLocation;
+    blockSize = allowedSize - eepromLocation;
   }
 
   //Read the contents of current "EEPROM" to SRAM
   //Flash is written in 32-bit words but user passes in array of bytes
   //Create an array of 32-bit words but reference it a byte at a time
-  uint32_t flashContent[AP3_FLASH_EEPROM_SIZE / 4];
+  uint32_t flashContent[allowedSize / 4];
 
   //We can't read 32bits at a time because the way flash is oriented (little endian)
   //So we read a byte at a time
   uint8_t *eepromContents = (uint8_t *)flashContent;
-  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x++)
+  for (uint16_t x = 0; x < allowedSize; x++)
   {
     eepromContents[x] = *(uint8_t *)(AP3_FLASH_EEPROM_START + x);
   }
@@ -96,7 +98,7 @@ void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uin
   //Run a check here to see if the new data is the same as what's in flash. If it's the same,
   //just return, don't erase flash.
   bool theSame = true;
-  for (uint16_t x = 0; x < AP3_FLASH_EEPROM_SIZE; x++)
+  for (uint16_t x = 0; x < allowedSize; x++)
   {
     if (eepromContents[x] != *(uint8_t *)(AP3_FLASH_EEPROM_START + x))
     {
@@ -116,5 +118,10 @@ void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uin
   am_hal_flash_program_main(AM_HAL_FLASH_PROGRAM_KEY,
                             flashContent,
                             (uint32_t *)AP3_FLASH_EEPROM_START,
-                            AP3_FLASH_EEPROM_SIZE / 4);
+                            allowedSize / 4);
+}
+
+EERef &EERef::operator=(uint8_t in)
+{
+  return write(index, in, EEPROM.length()), *this;
 }

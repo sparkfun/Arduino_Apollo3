@@ -59,8 +59,10 @@
 //The SparkFun Apollo3 linker script has been modified to limit user code space to less than 0xFE000
 
 #define AP3_FLASH_EEPROM_START 0xFE000
+#define AP3_FLASH_PAGE_SIZE 8192
+#define AP3_EEPROM_MAX_LENGTH AP3_FLASH_PAGE_SIZE
 
-#if AP3_FLASH_EEPROM_START % 8192
+#if AP3_FLASH_EEPROM_START % AP3_FLASH_PAGE_SIZE
 Error : EEPROM start address must be divisble by 8192
 #endif
 
@@ -69,11 +71,11 @@ Error : EEPROM start address must be divisble by 8192
         //to 2048 if needed
         //1024 = 19ms update time
         //2048 = 23ms update time
-        const int AP3_FLASH_EEPROM_SIZE = 1024; //In bytes
+        const uint16_t AP3_DEFAULT_FLASH_EEPROM_SIZE = 1024; //In bytes
 
 uint8_t read(uint16_t eepromLocation);
-void write(uint16_t eepromLocation, uint8_t dataToWrite);
-void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize);
+void write(uint16_t eepromLocation, uint8_t dataToWrite, uint16_t allowedSize);
+void writeBlockToEEPROM(uint16_t eepromLocation, const uint8_t *dataToWrite, uint16_t blockSize, uint16_t allowedSize);
 
 struct EERef
 {
@@ -86,7 +88,7 @@ struct EERef
 
   //Assignment/write members.
   EERef &operator=(const EERef &ref) { return *this = *ref; }
-  EERef &operator=(uint8_t in) { return write(index, in), *this; }
+  EERef &operator=(uint8_t in);
   EERef &operator+=(uint8_t in) { return *this = **this + in; }
   EERef &operator-=(uint8_t in) { return *this = **this - in; }
   EERef &operator*=(uint8_t in) { return *this = **this * in; }
@@ -163,7 +165,10 @@ struct EEPROMClass
   //Basic user access methods.
   EERef operator[](const int idx) { return idx; }
   uint8_t read(int idx) { return EERef(idx); }
-  void write(int idx, uint8_t val) { (EERef(idx)) = val; }
+  void write(int idx, uint8_t val)
+  {
+    (EERef(idx)) = val;
+  }
   void update(int idx, uint8_t val) { EERef(idx).update(val); }
   void erase();
 
@@ -174,7 +179,14 @@ struct EEPROMClass
     return 0x00;
   }
   EEPtr end() { return length(); } //Standards requires this to be the item after the last valid entry. The returned pointer is invalid.
-  uint16_t length() { return AP3_FLASH_EEPROM_SIZE; }
+  uint16_t length()
+  {
+    return allowedSize;
+  }
+  void setLength(uint16_t length)
+  {
+    allowedSize = length;
+  }
 
   //Functionality to 'get' and 'put' objects to and from EEPROM.
   template <typename T>
@@ -192,11 +204,13 @@ struct EEPROMClass
   {
     const uint8_t *ptr = (const uint8_t *)&t;
 
-    writeBlockToEEPROM(idx, ptr, sizeof(T)); //Address, data, sizeOfData
+    writeBlockToEEPROM(idx, ptr, sizeof(T), allowedSize); //Address, data, sizeOfData
 
     return t;
   }
+
+  uint16_t allowedSize = AP3_DEFAULT_FLASH_EEPROM_SIZE;
 };
 
-static EEPROMClass EEPROM __attribute__((unused));
+extern EEPROMClass EEPROM;
 #endif //_EEPROM_H

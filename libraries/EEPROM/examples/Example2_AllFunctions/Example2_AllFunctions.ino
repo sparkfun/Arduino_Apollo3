@@ -23,6 +23,12 @@
 
 void setup()
 {
+  // You may choose to enable more or less EEPROM -
+  // Default length is 1024 bytes (if setLength is not called)
+  EEPROM.setLength(1080); // this would make the length 1080 bytes
+  // EEPROM.setLength(AP3_EEPROM_MAX_LENGTH); // the maximum length is 8192 bytes (AP3_EEPROM_MAX_LENGTH)
+  // Note: larger sizes will increase RAM usage and execution time
+
   Serial.begin(115200);
   Serial.println("EEPROM Examples");
 
@@ -44,7 +50,7 @@ void setup()
   Serial.println("8 bit tests");
   byte myValue1 = 200;
   byte myValue2 = 23;
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
 
   startTime = millis();
   EEPROM.write(randomLocation, myValue1); //(location, data)
@@ -72,7 +78,7 @@ void setup()
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   uint16_t myValue3 = 3411;
   int16_t myValue4 = -366;
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
 
   EEPROM.put(randomLocation, myValue3);
   EEPROM.put(randomLocation + 2, myValue4);
@@ -93,7 +99,7 @@ void setup()
   Serial.printf("Size of int: %d\n", sizeof(int));
   int myValue5 = -245000;
   unsigned int myValue6 = 400123;
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
 
   EEPROM.put(randomLocation, myValue5);
   EEPROM.put(randomLocation + 4, myValue6);
@@ -110,7 +116,7 @@ void setup()
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   int32_t myValue7 = -341002;
   uint32_t myValue8 = 241544;
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
 
   EEPROM.put(randomLocation, myValue7);
   EEPROM.put(randomLocation + 4, myValue8);
@@ -128,7 +134,7 @@ void setup()
   Serial.printf("Size of float: %d\n", sizeof(float));
   float myValue9 = -7.35;
   float myValue10 = 5.22;
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
 
   EEPROM.put(randomLocation, myValue9);
   EEPROM.put(randomLocation + 4, myValue10);
@@ -151,7 +157,7 @@ void setup()
   double myValue12 = 384.95734987;
   double myValue13 = 917.14159;
   double myValue14 = 254.8877;
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
 
   startTime = millis();
   EEPROM.put(randomLocation, myValue11);
@@ -183,7 +189,7 @@ void setup()
   //String write test
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   char myString[19] = "How are you today?";
-  randomLocation = random(0, AP3_FLASH_EEPROM_SIZE);
+  randomLocation = random(0, EEPROM.length());
   EEPROM.put(randomLocation, myString);
 
   char readMy[19];
