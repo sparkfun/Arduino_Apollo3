@@ -66,6 +66,11 @@
 Error : EEPROM start address must be divisble by 8192
 #endif
 
+        //The size of the EEPROM may be (ptionally) user-configured using the EEPROM.setLength()
+        //method. Valid values are in the range [0, AP3_EEPROM_MAX_LENGTH]. Reducing the size of
+        //EEPROM will cause data stored in the higher addresses to be lost. The default size is
+        //set below. See Example2_AllFunctions for a usage example.
+
         //Operations on psuedo-EEPROM require a read-write-modify cycle on the entire
         //configured memory area because flash pages cannot be partially erased. The
         //larger the memory area the longer this operation will take. Here are some
