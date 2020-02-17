@@ -66,9 +66,10 @@
 Error : EEPROM start address must be divisble by 8192
 #endif
 
-        //By limiting EEPROM size to 1024 bytes, we reduce the amount of SRAM required and
-        //time needed to read/write words into flash. It can be increased
-        //to 2048 if needed
+        //Operations on psuedo-EEPROM require a read-write-modify cycle on the entire
+        //configured memory area because flash pages cannot be partially erased. The
+        //larger the memory area the longer this operation will take. Here are some
+        //benchmarks:
         //1024 = 19ms update time
         //2048 = 23ms update time
         const uint16_t AP3_DEFAULT_FLASH_EEPROM_SIZE = 1024; //In bytes
@@ -185,7 +186,7 @@ struct EEPROMClass
   }
   void setLength(uint16_t length)
   {
-    allowedSize = length;
+    allowedSize = (length <= AP3_EEPROM_MAX_LENGTH) ? length : AP3_EEPROM_MAX_LENGTH;
   }
 
   //Functionality to 'get' and 'put' objects to and from EEPROM.
