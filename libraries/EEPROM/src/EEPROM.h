@@ -60,13 +60,13 @@
 
 #define AP3_FLASH_EEPROM_START 0xFE000
 #define AP3_FLASH_PAGE_SIZE 8192
-#define AP3_EEPROM_MAX_LENGTH AP3_FLASH_PAGE_SIZE
+#define AP3_EEPROM_MAX_LENGTH (AP3_FLASH_PAGE_SIZE - 16)
 
 #if AP3_FLASH_EEPROM_START % AP3_FLASH_PAGE_SIZE
 Error : EEPROM start address must be divisble by 8192
 #endif
 
-        //The size of the EEPROM may be (ptionally) user-configured using the EEPROM.setLength()
+        //The size of the EEPROM may be (optionally) user-configured using the EEPROM.setLength()
         //method. Valid values are in the range [0, AP3_EEPROM_MAX_LENGTH]. Reducing the size of
         //EEPROM will cause data stored in the higher addresses to be lost. The default size is
         //set below. See Example2_AllFunctions for a usage example.
