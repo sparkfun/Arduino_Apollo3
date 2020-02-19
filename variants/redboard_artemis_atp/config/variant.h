@@ -55,6 +55,7 @@ extern Uart Serial1;
 #define A31 ap3_analog_A31
 #define A13 ap3_analog_A13
 #define A12 ap3_analog_A12
+#define A32 ap3_analog_A32
 #define A33 ap3_analog_A33
 #define A35 ap3_analog_A35
 
@@ -66,6 +67,7 @@ extern const ap3_gpio_pin_t ap3_analog_A16;
 extern const ap3_gpio_pin_t ap3_analog_A31;
 extern const ap3_gpio_pin_t ap3_analog_A13;
 extern const ap3_gpio_pin_t ap3_analog_A12;
+extern const ap3_gpio_pin_t ap3_analog_A32;
 extern const ap3_gpio_pin_t ap3_analog_A33;
 extern const ap3_gpio_pin_t ap3_analog_A35;
 
