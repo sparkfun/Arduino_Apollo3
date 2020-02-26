@@ -25,6 +25,7 @@ SOFTWARE.
 IOMaster::IOMaster(uint8_t instance)
 {
     _instance = instance;
+    _handle = NULL;
 }
 
 ap3_err_t IOMaster::initialize(void)
@@ -37,8 +38,10 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config)
     uint32_t retVal32 = 0;
     _config = config;
 
-    am_hal_iom_disable(_handle);
-    am_hal_iom_uninitialize(_handle);
+    if (_handle != NULL)
+    {
+        deinitialize();
+    }
 
     retVal32 = am_hal_iom_initialize(_instance, &_handle);
     if (retVal32 != AM_HAL_STATUS_SUCCESS)
@@ -73,18 +76,28 @@ ap3_err_t IOMaster::deinitialize(void)
 {
     uint32_t retVal32 = 0;
 
-    retVal32 = am_hal_iom_disable(_handle);
-    if (retVal32 != AM_HAL_STATUS_SUCCESS)
+    if (_handle != NULL)
     {
-        return AP3_ERR;
+        retVal32 = am_hal_iom_disable(_handle);
+        if (retVal32 != AM_HAL_STATUS_SUCCESS)
+        {
+            return AP3_ERR;
+        }
+
+        retVal32 = am_hal_iom_power_ctrl(_handle, AM_HAL_SYSCTRL_DEEPSLEEP, false);
+        if (retVal32 != AM_HAL_STATUS_SUCCESS)
+        {
+            return AP3_ERR;
+        }
+
+        retVal32 = am_hal_iom_uninitialize(_handle);
+        if (retVal32 != AM_HAL_STATUS_SUCCESS)
+        {
+            return AP3_ERR;
+        }
     }
 
-    retVal32 = am_hal_iom_uninitialize(_handle);
-    if (retVal32 != AM_HAL_STATUS_SUCCESS)
-    {
-        return AP3_ERR;
-    }
-
+    _handle = NULL;
     return AP3_OK;
 }
 
