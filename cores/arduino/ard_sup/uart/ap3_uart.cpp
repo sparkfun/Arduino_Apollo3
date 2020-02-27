@@ -314,7 +314,6 @@ ap3_err_t Uart::_begin(void)
     //User may want to change settings mid-sketch. Only init UART if it's new.
     if (_handle == NULL)
     {
-        // Now that pins are initialized start the actual driver
         retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);
         if (retval != AP3_OK)
         {
