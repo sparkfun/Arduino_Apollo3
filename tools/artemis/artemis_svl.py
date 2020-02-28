@@ -3,27 +3,27 @@
 # Variable baud rate bootloader for Artemis Apollo3 modules
 
 # Immediately upon reset the Artemis module will search for the timing character
-#   to auto-detect the baud rate. If a valid baud rate is found the Artemis will 
+#   to auto-detect the baud rate. If a valid baud rate is found the Artemis will
 #   respond with the bootloader version packet
 # If the computer receives a well-formatted version number packet at the desired
-#   baud rate it will send a command to begin bootloading. The Artemis shall then 
-#   respond with the a command asking for the next frame. 
-# The host will then send a frame packet. If the CRC is OK the Artemis will write 
+#   baud rate it will send a command to begin bootloading. The Artemis shall then
+#   respond with the a command asking for the next frame.
+# The host will then send a frame packet. If the CRC is OK the Artemis will write
 #   that to memory and request the next frame. If the CRC fails the Artemis will
 #   discard that data and send a request to re-send the previous frame.
 # This cycle repeats until the Artemis receives a done command in place of the
 #   requested frame data command.
-# The initial baud rate determination must occur within some small timeout. Once 
-#   baud rate detection has completed all additional communication will have a 
+# The initial baud rate determination must occur within some small timeout. Once
+#   baud rate detection has completed all additional communication will have a
 #   universal timeout value. Once the Artemis has begun requesting data it may no
-#   no longer exit the bootloader. If the host detects a timeout at any point it 
-#   will stop bootloading. 
+#   no longer exit the bootloader. If the host detects a timeout at any point it
+#   will stop bootloading.
 
 # Notes about PySerial timeout:
-# The timeout operates on whole functions - that is to say that a call to 
-#   ser.read(10) will return after ser.timeout, just as will ser.read(1) (assuming 
+# The timeout operates on whole functions - that is to say that a call to
+#   ser.read(10) will return after ser.timeout, just as will ser.read(1) (assuming
 #   that the necessary bytes were not found)
-# If there are no incoming bytes (on the line or in the buffer) then two calls to 
+# If there are no incoming bytes (on the line or in the buffer) then two calls to
 #   ser.read(n) will time out after 2*ser.timeout
 # Incoming UART data is buffered behind the scenes, probably by the OS.
 
@@ -46,12 +46,12 @@ from sys import exit
 # Commands
 #
 # ***********************************************************************************
-SVL_CMD_VER     = 0x01  # version
-SVL_CMD_BL      = 0x02  # enter bootload mode
-SVL_CMD_NEXT    = 0x03  # request next chunk
-SVL_CMD_FRAME   = 0x04  # indicate app data frame
-SVL_CMD_RETRY   = 0x05  # request re-send frame
-SVL_CMD_DONE    = 0x06  # finished - all data sent
+SVL_CMD_VER = 0x01  # version
+SVL_CMD_BL = 0x02  # enter bootload mode
+SVL_CMD_NEXT = 0x03  # request next chunk
+SVL_CMD_FRAME = 0x04  # indicate app data frame
+SVL_CMD_RETRY = 0x05  # request re-send frame
+SVL_CMD_DONE = 0x06  # finished - all data sent
 
 barWidthInCharacters = 50  # Width of progress bar, ie [###### % complete
 
@@ -97,7 +97,7 @@ crcTable = (
 
 def get_crc16(data):
 
-    #Table and code ported from Artemis SVL bootloader
+    # Table and code ported from Artemis SVL bootloader
     crc = 0x0000
     data = bytearray(data)
     for ch in data:
@@ -108,30 +108,33 @@ def get_crc16(data):
     return crc
 
 
-
 # ***********************************************************************************
 #
-# Wait for a packet 
+# Wait for a packet
 #
 # ***********************************************************************************
 def wait_for_packet(ser):
 
-    packet = {'len':0, 'cmd':0, 'data':0, 'crc':1, 'timeout':1}
+    packet = {'len': 0, 'cmd': 0, 'data': 0, 'crc': 1, 'timeout': 1}
 
-    n = ser.read(2) # get the number of bytes
+    n = ser.read(2)  # get the number of bytes
     if(len(n) < 2):
         return packet
-    
-    packet['len'] = int.from_bytes(n, byteorder='big', signed=False)    # 
+
+    packet['len'] = int.from_bytes(n, byteorder='big', signed=False)    #
     payload = ser.read(packet['len'])
 
     if(len(payload) != packet['len']):
         return packet
-    
-    packet['timeout'] = 0                           # all bytes received, so timeout is not true
-    packet['cmd'] = payload[0]                      # cmd is the first byte of the payload
-    packet['data'] = payload[1:packet['len']-2]     # the data is the part of the payload that is not cmd or crc
-    packet['crc'] = get_crc16(payload)              # performing the crc on the whole payload should return 0
+
+    # all bytes received, so timeout is not true
+    packet['timeout'] = 0
+    # cmd is the first byte of the payload
+    packet['cmd'] = payload[0]
+    # the data is the part of the payload that is not cmd or crc
+    packet['data'] = payload[1:packet['len']-2]
+    # performing the crc on the whole payload should return 0
+    packet['crc'] = get_crc16(payload)
 
     return packet
 
@@ -140,20 +143,18 @@ def wait_for_packet(ser):
 # Send a packet
 #
 # ***********************************************************************************
+
+
 def send_packet(ser, cmd, data):
     data = bytearray(data)
     num_bytes = 3 + len(data)
-    payload = bytearray(cmd.to_bytes(1,'big'))
+    payload = bytearray(cmd.to_bytes(1, 'big'))
     payload.extend(data)
     crc = get_crc16(payload)
-    payload.extend(bytearray(crc.to_bytes(2,'big')))
+    payload.extend(bytearray(crc.to_bytes(2, 'big')))
 
-    ser.write(num_bytes.to_bytes(2,'big'))
+    ser.write(num_bytes.to_bytes(2, 'big'))
     ser.write(bytes(payload))
-
-
-
-
 
 
 # ***********************************************************************************
@@ -166,28 +167,24 @@ def phase_setup(ser):
     baud_detect_byte = b'U'
 
     verboseprint('\nphase:\tsetup')
-    
-                                            # Handle the serial startup blip
+
+    # Handle the serial startup blip
     ser.reset_input_buffer()
-    verboseprint('\tcleared startup blip')         
+    verboseprint('\tcleared startup blip')
 
     ser.write(baud_detect_byte)             # send the baud detection character
 
     packet = wait_for_packet(ser)
     if(packet['timeout'] or packet['crc']):
         return 1
-    
-    twopartprint('\t','Got SVL Bootloader Version: ' +
+
+    twopartprint('\t', 'Got SVL Bootloader Version: ' +
                  str(int.from_bytes(packet['data'], 'big')))
     verboseprint('\tSending \'enter bootloader\' command')
 
     send_packet(ser, SVL_CMD_BL, b'')
 
     # Now enter the bootload phase
-
-    
-
-
 
 
 # ***********************************************************************************
@@ -222,8 +219,9 @@ def phase_bootload(ser):
         bl_done = False
         bl_failed = False
         while((not bl_done) and (not bl_failed)):
-                
-            packet = wait_for_packet(ser)               # wait for indication by Artemis
+
+            # wait for indication by Artemis
+            packet = wait_for_packet(ser)
             if(packet['timeout'] or packet['crc']):
                 print('\n\terror receiving packet')
                 print(packet)
@@ -231,14 +229,14 @@ def phase_bootload(ser):
                 bl_failed = True
                 bl_done = True
 
-            if( packet['cmd'] == SVL_CMD_NEXT ):
+            if(packet['cmd'] == SVL_CMD_NEXT):
                 # verboseprint('\tgot frame request')
                 curr_frame += 1
                 resend_count = 0
-            elif( packet['cmd'] == SVL_CMD_RETRY ):
+            elif(packet['cmd'] == SVL_CMD_RETRY):
                 verboseprint('\t\tretrying...')
                 resend_count += 1
-                if( resend_count >= resend_max ):
+                if(resend_count >= resend_max):
                     bl_failed = True
                     bl_done = True
             else:
@@ -246,8 +244,9 @@ def phase_bootload(ser):
                 bl_failed = True
                 bl_done = True
 
-            if( curr_frame <= total_frames ):
-                frame_data = application[((curr_frame-1)*frame_size):((curr_frame-1+1)*frame_size)]
+            if(curr_frame <= total_frames):
+                frame_data = application[(
+                    (curr_frame-1)*frame_size):((curr_frame-1+1)*frame_size)]
                 if(args.verbose):
                     verboseprint('\tsending frame #'+str(curr_frame) +
                                  ', length: '+str(len(frame_data)))
@@ -267,7 +266,7 @@ def phase_bootload(ser):
                 send_packet(ser, SVL_CMD_DONE, b'')
                 bl_done = True
 
-        if( bl_failed == False ):
+        if(bl_failed == False):
             twopartprint('\n\t', 'Upload complete')
             endTime = time.time()
             bps = total_len / (endTime - startTime)
@@ -276,10 +275,6 @@ def phase_bootload(ser):
             twopartprint('\n\t', 'Upload failed')
 
         return bl_failed
-
-
-
-
 
 
 # ***********************************************************************************
@@ -294,12 +289,12 @@ def phase_serial_port_help():
     for dev in devices:
         if(dev.device.upper() == args.port.upper()):
             print(dev.device + " is currently open. Please close any other terminal programs that may be using " +
-                    dev.device + " and try again.")
+                  dev.device + " and try again.")
             exit()
 
     # otherwise, give user a list of possible com ports
     print(args.port.upper() +
-            " not found but we detected the following serial ports:")
+          " not found but we detected the following serial ports:")
     for dev in devices:
         if 'CH340' in dev.description:
             print(
@@ -329,19 +324,20 @@ def main():
 
             with serial.Serial(args.port, args.baud, timeout=args.timeout) as ser:
 
-                t_su = 0.15             # startup time for Artemis bootloader   (experimentally determined - 0.095 sec min delay)
+                # startup time for Artemis bootloader   (experimentally determined - 0.095 sec min delay)
+                t_su = 0.15
 
                 time.sleep(t_su)        # Allow Artemis to come out of reset
                 phase_setup(ser)        # Perform baud rate negotiation
 
                 bl_failed = phase_bootload(ser)     # Bootload
 
-            if( bl_failed == False ):
+            if(bl_failed == False):
                 break
 
     except:
         phase_serial_port_help()
-    
+
     exit()
 
 
@@ -367,7 +363,7 @@ if __name__ == '__main__':
                         action="store_true")
 
     parser.add_argument("-t", "--timeout", default=0.50, help="Communication timeout in seconds (default 0.5)",
-                         type=float)
+                        type=float)
 
     if len(sys.argv) < 2:
         print("No port selected. Detected Serial Ports:")
@@ -390,7 +386,7 @@ if __name__ == '__main__':
 
     def twopartprint(verbosestr, printstr):
         if args.verbose:
-            print(verbosestr, end = '')
+            print(verbosestr, end='')
 
         print(printstr)
 
