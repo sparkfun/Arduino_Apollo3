@@ -177,13 +177,15 @@ def phase_setup(ser):
 
     packet = wait_for_packet(ser)
     if(packet['timeout'] or packet['crc']):
-        return 1
+        return False  # failed to enter bootloader
 
     twopartprint('\t', 'Got SVL Bootloader Version: ' +
                  str(int.from_bytes(packet['data'], 'big')))
     verboseprint('\tSending \'enter bootloader\' command')
 
     send_packet(ser, SVL_CMD_BL, b'')
+
+    return True
 
     # Now enter the bootload phase
 
@@ -218,8 +220,8 @@ def phase_bootload(ser):
                      ' bytes to send in ' + str(total_frames) + ' frames')
 
         bl_done = False
-        bl_failed = False
-        while((not bl_done) and (not bl_failed)):
+        bl_succeeded = True
+        while((bl_done == False) and (bl_succeeded == True)):
 
             # wait for indication by Artemis
             packet = wait_for_packet(ser)
@@ -227,7 +229,7 @@ def phase_bootload(ser):
                 verboseprint('\n\tError receiving packet')
                 verboseprint(packet)
                 verboseprint('\n')
-                bl_failed = True
+                bl_succeeded = False
                 bl_done = True
 
             if(packet['cmd'] == SVL_CMD_NEXT):
@@ -238,11 +240,11 @@ def phase_bootload(ser):
                 verboseprint('\t\tRetrying...')
                 resend_count += 1
                 if(resend_count >= resend_max):
-                    bl_failed = True
+                    bl_succeeded = False
                     bl_done = True
             else:
                 print('Timeout or unknown error')
-                bl_failed = True
+                bl_succeeded = False
                 bl_done = True
 
             if(curr_frame <= total_frames):
@@ -267,7 +269,7 @@ def phase_bootload(ser):
                 send_packet(ser, SVL_CMD_DONE, b'')
                 bl_done = True
 
-        if(bl_failed == False):
+        if(bl_succeeded == True):
             twopartprint('\n\t', 'Upload complete')
             endTime = time.time()
             bps = total_len / (endTime - startTime)
@@ -275,7 +277,7 @@ def phase_bootload(ser):
         else:
             twopartprint('\n\t', 'Upload failed')
 
-        return bl_failed
+        return bl_succeeded
 
 
 # ***********************************************************************************
@@ -324,6 +326,9 @@ def main():
             print("Bin file {} does not exits.".format(args.binfile))
             exit()
 
+        bl_success = False
+        entered_bootloader = False
+
         for _ in range(num_tries):
 
             with serial.Serial(args.port, args.baud, timeout=args.timeout) as ser:
@@ -332,12 +337,24 @@ def main():
                 t_su = 0.15
 
                 time.sleep(t_su)        # Allow Artemis to come out of reset
-                phase_setup(ser)        # Perform baud rate negotiation
 
-                bl_failed = phase_bootload(ser)     # Bootload
+                # Perform baud rate negotiation
+                entered_bootloader = phase_setup(ser)
 
-            if(bl_failed == False):
+                if(entered_bootloader == True):
+                    bl_success = phase_bootload(ser)
+                    if(bl_success == True):     # Bootload
+                        #print("Bootload complete!")
+                        break
+                else:
+                    verboseprint("Failed to enter bootload phase")
+
+            if(bl_success == True):
                 break
+
+        if(entered_bootloader == False):
+            print(
+                "Target failed to enter bootload mode. Verify the right COM port is selected.")
 
     except serial.SerialException:
         phase_serial_port_help()
