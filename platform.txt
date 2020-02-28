@@ -180,3 +180,9 @@ tools.artemis_svl.upload.params.quiet=
 
 # Upload tool pattern
 tools.artemis_svl.upload.pattern={pgm} {args}
+
+#### postsavehex hook to also copy out .axf file into the sketch path
+executable_exporter={runtime.platform.path}/tools/exporter/linux/apollo3_ee
+executable_exporter.macosx={runtime.platform.path}/tools/exporter/macosx/apollo3_ee
+executable_exporter.windows={runtime.platform.path}/tools/exporter/windows/apollo3_ee.exe
+recipe.hooks.savehex.postsavehex.0.pattern={executable_exporter} -s "{sketch_path}" -b "{build.path}/{build.project_name}.bin" -a "{build.path}/{build.project_name}.axf"
