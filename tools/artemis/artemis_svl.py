@@ -39,6 +39,7 @@ import serial.tools.list_ports as list_ports
 import sys
 import time
 import math
+import os.path
 from sys import exit
 
 # ***********************************************************************************
@@ -166,11 +167,11 @@ def phase_setup(ser):
 
     baud_detect_byte = b'U'
 
-    verboseprint('\nphase:\tsetup')
+    verboseprint('\nPhase:\tSetup')
 
     # Handle the serial startup blip
     ser.reset_input_buffer()
-    verboseprint('\tcleared startup blip')
+    verboseprint('\tCleared startup blip')
 
     ser.write(baud_detect_byte)             # send the baud detection character
 
@@ -200,7 +201,7 @@ def phase_bootload(ser):
     resend_max = 4
     resend_count = 0
 
-    verboseprint('\nphase:\tbootload')
+    verboseprint('\nPhase:\tBootload')
 
     with open(args.binfile, mode='rb') as binfile:
         application = binfile.read()
@@ -223,9 +224,9 @@ def phase_bootload(ser):
             # wait for indication by Artemis
             packet = wait_for_packet(ser)
             if(packet['timeout'] or packet['crc']):
-                print('\n\terror receiving packet')
-                print(packet)
-                print('\n')
+                verboseprint('\n\tError receiving packet')
+                verboseprint(packet)
+                verboseprint('\n')
                 bl_failed = True
                 bl_done = True
 
@@ -234,13 +235,13 @@ def phase_bootload(ser):
                 curr_frame += 1
                 resend_count = 0
             elif(packet['cmd'] == SVL_CMD_RETRY):
-                verboseprint('\t\tretrying...')
+                verboseprint('\t\tRetrying...')
                 resend_count += 1
                 if(resend_count >= resend_max):
                     bl_failed = True
                     bl_done = True
             else:
-                print('unknown error')
+                print('Timeout or unknown error')
                 bl_failed = True
                 bl_done = True
 
@@ -248,7 +249,7 @@ def phase_bootload(ser):
                 frame_data = application[(
                     (curr_frame-1)*frame_size):((curr_frame-1+1)*frame_size)]
                 if(args.verbose):
-                    verboseprint('\tsending frame #'+str(curr_frame) +
+                    verboseprint('\tSending frame #'+str(curr_frame) +
                                  ', length: '+str(len(frame_data)))
                 else:
                     percentComplete = curr_frame * 100 / total_frames
@@ -319,6 +320,9 @@ def main():
         num_tries = 3
 
         print('\n\nArtemis SVL Bootloader')
+        if not os.path.exists(args.binfile):
+            print("Bin file {} does not exits.".format(args.binfile))
+            exit()
 
         for _ in range(num_tries):
 
@@ -335,7 +339,7 @@ def main():
             if(bl_failed == False):
                 break
 
-    except:
+    except serial.SerialException:
         phase_serial_port_help()
 
     exit()
