@@ -131,7 +131,7 @@ uint16_t analogRead(uint8_t pinNumber)
         ap3_adc_initialized = true;
     }
 
-    uint32_t ui32IntMask = 0xff;
+    uint32_t ui32IntMask;
     am_hal_adc_sample_t Sample;
     uint32_t ui32NumSamples = 1;
 
@@ -174,6 +174,7 @@ uint16_t analogRead(uint8_t pinNumber)
     ap3_change_channel(padNumber); //Point ADC channel at this pad
 
     // Clear the ADC interrupt.
+    am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false);
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask))
     {
         //Serial.println("Error clearing ADC interrupt status");
