@@ -119,15 +119,14 @@ static const uint8_t outcfg_tbl[32][4] =
         {OUTC(1, 7, 1), OUTC(0, 6, 0), OUTC(1, 7, 0), OUTC(1, 3, 1)}, // CTX31: B7OUT2, A6OUT,  B7OUT,  B3OUT2
 };
 
-uint16_t _analogBits = 10;               //10-bit by default
-uint8_t _analogWriteBits = 8;            // 8-bit by default for writes
-uint8_t _servoWriteBits = 8;             // 8-bit by default for writes
+uint16_t _analogBits = 10;    //10-bit by default
+uint8_t _analogWriteBits = 8; // 8-bit by default for writes
+uint8_t _servoWriteBits = 8;  // 8-bit by default for writes
 static bool ap3_adc_initialized = false; // flag to show if the ADC has been initialized
 
 uint16_t analogRead(uint8_t pinNumber)
 {
-    if (!ap3_adc_initialized)
-    {
+    if(!ap3_adc_initialized){
         ap3_adc_setup();
         ap3_adc_initialized = true;
     }
@@ -175,7 +174,6 @@ uint16_t analogRead(uint8_t pinNumber)
     ap3_change_channel(padNumber); //Point ADC channel at this pad
 
     // Clear the ADC interrupt.
-    am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, true);
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask))
     {
         //Serial.println("Error clearing ADC interrupt status");
@@ -672,12 +670,12 @@ ap3_err_t servoWriteResolution(uint8_t res)
 
 uint8_t getServoResolution()
 {
-    return (_servoWriteBits);
+    return(_servoWriteBits);
 }
 
 ap3_err_t servoWrite(uint8_t pin, uint32_t val)
 {
-    return (servoWrite(pin, val, 544, 2400)); //Call servoWrite with Arduino default min/max microseconds. See: https://www.arduino.cc/en/Reference/ServoAttach
+    return(servoWrite(pin, val, 544, 2400)); //Call servoWrite with Arduino default min/max microseconds. See: https://www.arduino.cc/en/Reference/ServoAttach
 }
 
 ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t maxMicros)
@@ -689,9 +687,9 @@ ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t max
     uint32_t fw = 60000;                      // 20 ms wide frame
 
     //Convert microSeconds to PWM counts.
-    uint32_t min = minMicros * 3;
+    uint32_t min = minMicros * 3; 
     uint32_t max = maxMicros * 3;
-
+    
     uint32_t th = (uint32_t)(((max - min) * val) / fsv) + min;
 
     return ap3_pwm_output(pin, th, fw, clk);
