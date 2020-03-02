@@ -131,7 +131,7 @@ uint16_t analogRead(uint8_t pinNumber)
         ap3_adc_initialized = true;
     }
 
-    uint32_t ui32IntMask;
+    uint32_t ui32IntMask = 0xff;
     am_hal_adc_sample_t Sample;
     uint32_t ui32NumSamples = 1;
 
