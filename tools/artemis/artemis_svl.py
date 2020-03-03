@@ -42,6 +42,9 @@ import math
 import os.path
 from sys import exit
 
+SCRIPT_VERSION_MAJOR = "1"
+SCRIPT_VERSION_MINOR = "7"
+
 # ***********************************************************************************
 #
 # Commands
@@ -322,6 +325,10 @@ def main():
         num_tries = 3
 
         print('\n\nArtemis SVL Bootloader')
+
+        verboseprint("Script version " + SCRIPT_VERSION_MAJOR +
+                     "." + SCRIPT_VERSION_MINOR)
+
         if not os.path.exists(args.binfile):
             print("Bin file {} does not exist.".format(args.binfile))
             exit()
