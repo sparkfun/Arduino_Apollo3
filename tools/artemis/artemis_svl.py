@@ -323,7 +323,7 @@ def main():
 
         print('\n\nArtemis SVL Bootloader')
         if not os.path.exists(args.binfile):
-            print("Bin file {} does not exits.".format(args.binfile))
+            print("Bin file {} does not exist.".format(args.binfile))
             exit()
 
         bl_success = False
@@ -354,7 +354,7 @@ def main():
 
         if(entered_bootloader == False):
             print(
-                "Target failed to enter bootload mode. Verify the right COM port is selected.")
+                "Target failed to enter bootload mode. Verify the right COM port is selected and that your board has the SVL bootloader.")
 
     except serial.SerialException:
         phase_serial_port_help()
