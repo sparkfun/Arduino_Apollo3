@@ -5,8 +5,50 @@ This is a record of the major changes between versions of the SparkFun Arduino A
 
 Each log entry will use the version number of the release that contains the changes listed. Newest version at the top of the file (just below this line)
 
-1.0.24 - In progress
+1.0.30 - Mar 9 2020
+===================
+- Add Pin A32 to Redboard Artemis ATP variant (#129)
+- Power down IO Masters on end() (#133)
+- Reorder UART / pin initialization (#134)
+- Disable ADC channels while reconfiguring (#135)
+- Improve warning messages for SVL (#137)
+
+1.0.29 - Feb 6 2020
+===================
+- Add SPI port configuration example (#117)
+- Fix RTC for new HAL version (#120)
+- Improve analogRead/Write operation (#122)
+- Support Arduino binary syntax B (#113)
+
+1.0.28 - Jan 24 2020
 ====================
+- Fixes incompatibility with arm_math.h
+
+1.0.27 - Jan 17 2020
+====================
+- Fixes Serial problems 🥣
+
+- Uart printing is simplified (better utilization of HAL layer)
+- Problem printing floats/doubles is patched by reverting to 8-2018-q4-major version of gcc.
+
+1.0.26 - Jan 16 2020
+====================
+- Fixes printf
+
+1.0.25 - Jan 15 2020
+====================
+Support for TensorFlow Arduino Library!
+
+(Disclaimer We are waiting to land a PR in the TensorFlow repo before their library will support us back 🌠)
+
+- Updated underlying Ambiq HAL to Release 2.2.0
+- Changed expected compiler to match the version used for latest Arduino boards
+- Increased default stack size for all variants to 20k
+- Removed HM01B0 driver files from Edge variant
+
+1.0.24 - Jan 9 2020
+===================
+- Simplifies HM01B0 camera driver naming scheme for Edge board. Compatible with Tensorflow AIOT2019
 
 1.0.23 - Dec 23 2019
 ====================
