@@ -136,6 +136,8 @@ recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.fl
 recipe.size.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
 
+recipe.hooks.objcopy.postobjcopy.0.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
+
 ## Preprocessor
 preproc.macros.flags=-w -x c++ -E -CC
 recipe.preproc.macros="{compiler.path}/{compiler.cmd.cpp}" {compiler.flags.cpp} {preproc.macros.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.extra_flags.cpp} {build.extra_flags} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
@@ -197,3 +199,9 @@ tools.artemis_svl.upload.params.quiet=
 
 # Upload tool pattern
 tools.artemis_svl.upload.pattern={pgm} {args}
+
+#### postsavehex hook to also copy out .axf file into the sketch path
+executable_exporter={runtime.platform.path}/tools/exporter/linux/apollo3_ee
+executable_exporter.macosx={runtime.platform.path}/tools/exporter/macosx/apollo3_ee
+executable_exporter.windows={runtime.platform.path}/tools/exporter/windows/apollo3_ee.exe
+recipe.hooks.savehex.postsavehex.0.pattern={executable_exporter} -s "{sketch_path}" -b "{build.path}/{build.project_name}.bin" -a "{build.path}/{build.project_name}.axf"

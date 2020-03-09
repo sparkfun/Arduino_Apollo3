@@ -311,6 +311,28 @@ ap3_err_t Uart::_begin(void)
     _config.ui32RxBufferSize = sizeof(_rx_linbuff);
     _config.ui32TxBufferSize = sizeof(_tx_linbuff);
 
+    //User may want to change settings mid-sketch. Only init UART if it's new.
+    if (_handle == NULL)
+    {
+        retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);
+        if (retval != AP3_OK)
+        {
+            return ap3_return(retval);
+        }
+    }
+    retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);
+    if (retval != AP3_OK)
+    {
+        return ap3_return(retval);
+    }
+    retval = (ap3_err_t)am_hal_uart_configure(_handle, &_config);
+    if (retval != AP3_OK)
+    {
+        return ap3_return(retval);
+    }
+
+    UARTn(_instance)->LCRH_b.FEN = 0; // Disable that pesky FIFO
+
     // Check for a valid instance
     // Check pins for compatibility with the selcted instance
 
@@ -382,29 +404,6 @@ ap3_err_t Uart::_begin(void)
         }
         pincfg = AP3_GPIO_DEFAULT_PINCFG; // set back to default for use with next pin
     }
-
-    //User may want to change settings mid-sketch. Only init UART if it's new.
-    if (_handle == NULL)
-    {
-        // Now that pins are initialized start the actual driver
-        retval = (ap3_err_t)am_hal_uart_initialize(_instance, &_handle);
-        if (retval != AP3_OK)
-        {
-            return ap3_return(retval);
-        }
-    }
-    retval = (ap3_err_t)am_hal_uart_power_control(_handle, AM_HAL_SYSCTRL_WAKE, false);
-    if (retval != AP3_OK)
-    {
-        return ap3_return(retval);
-    }
-    retval = (ap3_err_t)am_hal_uart_configure(_handle, &_config);
-    if (retval != AP3_OK)
-    {
-        return ap3_return(retval);
-    }
-
-    UARTn(_instance)->LCRH_b.FEN = 0; // Disable that pesky FIFO
 
     // Enable TX and RX interrupts
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + _instance));

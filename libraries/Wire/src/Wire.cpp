@@ -141,7 +141,7 @@ void TwoWire::setPullups(uint32_t pullupAmount)
 
 void TwoWire::end()
 {
-	// sercom->disableWIRE();
+	deinitialize(); //De init and power down this IOM
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)

@@ -174,6 +174,7 @@ uint16_t analogRead(uint8_t pinNumber)
     ap3_change_channel(padNumber); //Point ADC channel at this pad
 
     // Clear the ADC interrupt.
+    am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false);
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask))
     {
         //Serial.println("Error clearing ADC interrupt status");
@@ -297,13 +298,6 @@ ap3_err_t ap3_adc_setup()
         return AP3_ERR;
     }
 
-    // Enable the ADC.
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_enable(g_ADCHandle))
-    {
-        //Serial.println("Error - enabling ADC failed.\n");
-        return AP3_ERR;
-    }
-
     return AP3_OK;
 }
 
@@ -350,6 +344,11 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
     ADCSlotConfig.eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1;
     ADCSlotConfig.ePrecisionMode = AM_HAL_ADC_SLOT_14BIT;
 
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_disable(g_ADCHandle))
+    {
+        return AP3_ERR;
+    }
+
     //Look up adc channel based on pad number
     uint8_t indi;
     for (indi = 0; indi < AP3_ANALOG_CHANNELS; indi++)
@@ -372,6 +371,11 @@ ap3_err_t ap3_change_channel(uint8_t padNumber)
     if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure_slot(g_ADCHandle, 0, &ADCSlotConfig))
     {
         //Serial.println("Error - configuring ADC Slot 0 failed.\n");
+        return AP3_ERR;
+    }
+
+    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_enable(g_ADCHandle))
+    {
         return AP3_ERR;
     }
 
