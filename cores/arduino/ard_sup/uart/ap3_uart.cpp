@@ -543,19 +543,16 @@ inline void Uart::uart_isr(void)
             {
                 .ui32Direction = AM_HAL_UART_READ,
                 .pui8Data = (uint8_t *)&rx_c,
-                .ui32NumBytes = 1,
+                .ui32NumBytes = sizeof(rx_c),
                 .ui32TimeoutMs = 0,
                 .pui32BytesTransferred = &ui32BytesRead,
             };
 
-        do
+        am_hal_uart_transfer(_handle, &sRead);
+        if (ui32BytesRead)
         {
-            am_hal_uart_transfer(_handle, &sRead);
-            if (ui32BytesRead)
-            {
-                _rx_buffer.store_char(rx_c);
-            }
-        } while (ui32BytesRead);
+            _rx_buffer.store_char(rx_c);
+        }
     }
 }
 
