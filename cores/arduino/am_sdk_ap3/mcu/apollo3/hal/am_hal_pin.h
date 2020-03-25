@@ -48,6 +48,9 @@
 //
 //*****************************************************************************
 
+//2020-03-25, Stephen Fordyce: Checked against Apollo3 datasheet DS-A3-0p9p1 Table 559 (p381) and fixed.  To see fixes, search "Fixed" in the below.
+
+
 #ifndef AM_HAL_PIN_H
 #define AM_HAL_PIN_H
 
@@ -70,6 +73,7 @@
 #define AM_HAL_PIN_1_MSPI5        (5)
 #define AM_HAL_PIN_1_NCE1         (7)
 
+#define AM_HAL_PIN_2_UART1RX	  (0) //Fixed (added) SF 2020-03-25
 #define AM_HAL_PIN_2_SLMISO       (1)
 #define AM_HAL_PIN_2_UART0RX      (2)
 #define AM_HAL_PIN_2_GPIO         (3)
@@ -85,11 +89,12 @@
 #define AM_HAL_PIN_3_I2S_WCLK     (7)
 #define AM_HAL_PIN_3_PSOURCE      (3)
 
-#define AM_HAL_PIN_4_UART0CTS     (0)
+#define AM_HAL_PIN_4_UART0CTS     (0)	
 #define AM_HAL_PIN_4_SLINT        (1)
 #define AM_HAL_PIN_4_NCE4         (2)
 #define AM_HAL_PIN_4_GPIO         (3)
-#define AM_HAL_PIN_4_UART0RX      (5)
+//#define AM_HAL_PIN_4_UART0RX      (5)	//Fixed (removed) SF 2020-03-25
+#define	AM_HAL_PIN_4_UART1RX	  (5)	//Fixed (added) SF 2020-03-25
 #define AM_HAL_PIN_4_CTIM17       (6)
 #define AM_HAL_PIN_4_MSPI2        (7)
 
@@ -129,6 +134,7 @@
 #define AM_HAL_PIN_9_SCCIO        (4)
 #define AM_HAL_PIN_9_UART1RX      (6)
 
+#define AM_HAL_PIN_10_UART1TX	  (0)	//Fixed (added) SF 2020-03-25
 #define AM_HAL_PIN_10_M1MOSI      (1)
 #define AM_HAL_PIN_10_NCE10       (2)
 #define AM_HAL_PIN_10_GPIO        (3)
@@ -437,7 +443,8 @@
 #define AM_HAL_PIN_44_CTIM20      (2)
 #define AM_HAL_PIN_44_GPIO        (3)
 #define AM_HAL_PIN_44_M4MOSI      (5)
-#define AM_HAL_PIN_44_M5nCE6      (6)
+#define AM_HAL_PIN_44_M5nCE6      (6)	//Original, doesn't match Apollo 3 pin mapping table
+#define AM_HAL_PIN_44_UART0TX     (6)	//Fixed (added) SF 2020-03-25
 
 #if defined (AM_PACKAGE_BGA)
 #define AM_HAL_PIN_45_UART1CTS    (0)
