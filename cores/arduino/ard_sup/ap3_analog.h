@@ -30,8 +30,8 @@ SOFTWARE.
 #define AP3_USE_DEFAULT_TIMER_NUM (0xFF)
 
 extern const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS];
-extern const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_PADS];
-extern ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS];
+extern const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS];
+extern ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_CHANNELS];
 
 // ADC Device Handle.
 static void *g_ADCHandle;
