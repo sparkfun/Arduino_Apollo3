@@ -20,24 +20,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-//2020-03-25, Stephen Fordyce: Checked against Apollo3 datasheet DS-A3-0p9p1 Table 559 (p381) and fixed.  To see fixes, search "Fixed" in the below.
-
 #ifndef _AP3_UART_TYPES_H_
 #define _AP3_UART_TYPES_H_
 
 #define AP3_UART_PIN_UNUSED 0xFF
 
-//#define AP3_UART0_NUM_TX_PADS 11	//Fixed (removed) SF 2020-03-25
-#define AP3_UART0_NUM_TX_PADS 12	//Fixed (added) SF 2020-03-25
-//#define AP3_UART0_NUM_RX_PADS 13	//Fixed (removed) SF 2020-03-25
-#define AP3_UART0_NUM_RX_PADS 12	//Fixed (added) SF 2020-03-25
+#define AP3_UART0_NUM_TX_PADS 12
+#define AP3_UART0_NUM_RX_PADS 12
 #define AP3_UART0_NUM_RTS_PADS 8
 #define AP3_UART0_NUM_CTS_PADS 8
 
-//#define AP3_UART1_NUM_TX_PADS 11	//Fixed (removed) SF 2020-03-25
-#define AP3_UART1_NUM_TX_PADS 12	//Fixed (added) SF 2020-03-25
-//#define AP3_UART1_NUM_RX_PADS 11	//Fixed (removed) SF 2020-03-25
-#define AP3_UART1_NUM_RX_PADS 13	//Fixed (added) SF 2020-03-25
+#define AP3_UART1_NUM_TX_PADS 12
+#define AP3_UART1_NUM_RX_PADS 13
 #define AP3_UART1_NUM_RTS_PADS 8
 #define AP3_UART1_NUM_CTS_PADS 8
 
