@@ -47,8 +47,8 @@ ap3_err_t analogReadResolution(uint8_t bits);
 
 ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk);
 ap3_err_t analogWriteResolution(uint8_t res);
-ap3_err_t analogWriteFrameWidth(uint32_t fw); // DANGER (One time use only - before any analogWrite calls)
-ap3_err_t analogWriteFrequency(float freq);   // DANGER (One time use only - before any analogWrite calls)
+ap3_err_t analogWriteFrameWidth(uint32_t fw);
+ap3_err_t analogWriteFrequency(float freq);
 ap3_err_t analogWrite(uint8_t pin, uint32_t val);
 ap3_err_t servoWriteResolution(uint8_t res);
 uint8_t getServoResolution();

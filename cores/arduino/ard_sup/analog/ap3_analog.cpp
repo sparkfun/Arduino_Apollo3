@@ -569,9 +569,6 @@ ap3_err_t analogWriteResolution(uint8_t res)
     return AP3_OK;
 }
 
-/********************************************/
-/* WARNING! Changing the frame width or frequency of analogWrite() after starting a timer can have totally unexpected and frustration-inducing results
-/********************************************/
 ap3_err_t analogWriteFrameWidth(uint32_t fw){
     _analogWriteWidth = fw;
     if(_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH){
@@ -580,9 +577,6 @@ ap3_err_t analogWriteFrameWidth(uint32_t fw){
     return AP3_OK;
 }
 
-/********************************************/
-/* WARNING! Changing the frame width or frequency of analogWrite() after starting a timer can have totally unexpected and frustration-inducing results
-/********************************************/
 ap3_err_t analogWriteFrequency(float freq){
     _analogWriteWidth = (uint32_t)(12000000 / freq);
     if(_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH){
