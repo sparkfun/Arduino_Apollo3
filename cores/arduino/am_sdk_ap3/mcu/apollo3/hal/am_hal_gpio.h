@@ -13,26 +13,26 @@
 
 //*****************************************************************************
 //
-// Copyright (c) 2019, Ambiq Micro
+// Copyright (c) 2020, Ambiq Micro
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright
 // notice, this list of conditions and the following disclaimer in the
 // documentation and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from this
 // software without specific prior written permission.
-// 
+//
 // Third party software included in this distribution is subject to the
 // additional license terms as defined in the /docs/licenses directory.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
+// This is part of revision 2.4.2 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -66,11 +66,127 @@ extern "C"
 // Maximum number of GPIOs on this device
 //
 #define AM_HAL_GPIO_MAX_PADS        (50)
+#define AM_HAL_GPIO_NUMWORDS        ((AM_HAL_GPIO_MAX_PADS + 31) / 32)
 
 //
-// Macro to assist with defining a GPIO bit given a GPIO number.
+//! Macros to assist with defining a GPIO mask given a GPIO number.
+//!
+//! IMPORTANT: AM_HAL_GPIO_BIT(n) is DEPRECATED and is provided only for
+//! backward compatibility.  It is replaced with AM_HAL_GPIO_MASKBIT().
 //
-#define AM_HAL_GPIO_BIT(n)          (((uint64_t) 0x1) << n)
+#define AM_HAL_GPIO_BIT(n)  (((uint64_t) 0x1) << n) /* DEPRECATED, PLEASE USE AM_HAL_GPIO_MASKBIT() */
+
+//!
+//! The following macros ensure forward compatibility with future SDK releases.
+//! They should be used, in lieu of AM_HAL_GPIO_BIT(), when creating bitmasks
+//! for GPIO interrupts.
+//!     AM_HAL_GPIO_MASKCREATE()
+//!     AM_HAL_GPIO_MASKBIT()
+//!
+
+#define AM_HAL_GPIO_MASKCREATE(sMaskNm)     uint64_t p##sMaskNm=0
+//! AM_HAL_GPIO_MASKCREATE() should be used before AM_HAL_GPIO_MASKBIT() to
+//! ensure forward compatibility.  In future releases it will allocate and
+//! initialize a bitmask structure used in the various GPIO interrupt functions.
+//!
+
+// Implented as an inline function below.
+//#define AM_HAL_GPIO_MASKBIT(psMaskNm, n)    (psMaskNm |= (((uint64_t) 0x1) << n))
+#define AM_HAL_GPIO_MASKBIT(psMaskNm, n)    psMaskNm |= (((uint64_t) 0x1) << n)
+//! AM_HAL_GPIO_MASKBIT(psMaskNm, n)
+//! Support macros for use with AM_HAL_GPIO_MASKBIT().
+//!  AM_HAL_GPIO_MASKCREATE()
+//!  AM_HAL_GPIO_MASKCLR()
+//!
+//! To set a single bit based on a pin number in an existing bitmask structure.
+//!     AM_HAL_GPIO_MASKBIT(pGpioIntMask, n)
+//! where n is the desired GPIO bit number.
+//! Note - this usage is analogous to the deprecated AM_HAL_GPIO_BIT(n).
+//!
+
+#define AM_HAL_GPIO_MASKCLR(psMaskNm)
+//! AM_HAL_GPIO_MASKCLR()
+//! Clear an existing GpioIntMask bitmask structure.
+//! Note that AM_HAL_GPIO_MASKCREATE() clears the bitmask struct on creation.
+//! IMPORTANT - The AM_HAL_GPIO_MASKCLR() macro does not operate on any hardware
+//! or register.  It is used for initializing/clearing the memory allocated for
+//! the bitmask structure.
+//!
+//! // Usage example for any Apollo device:
+//! // Create a GPIO interrupt bitmask structure named GpioIntMask, initialize
+//! // that structure, and create a ptr to that structure named pGpioIntMask.
+//! // Then use that structure to pass a bitmask to the interrupt function.
+//! AM_HAL_GPIO_MASKCREATE(GpioIntMask);
+//! am_hal_gpio_interrupt_clear(AM_HAL_GPIO_MASKBIT(pGpioIntMask));
+//!
+
+//*****************************************************************************
+//!
+//! Structure for defining bitmasks used in the interrupt functions.
+//!
+//*****************************************************************************
+typedef struct  // Future use - not currently used for Apollo3.
+{
+    union
+    {
+        volatile  uint32_t Msk[AM_HAL_GPIO_NUMWORDS];
+
+        struct
+        {
+            volatile uint32_t   b0:     1;
+            volatile uint32_t   b1:     1;
+            volatile uint32_t   b2:     1;
+            volatile uint32_t   b3:     1;
+            volatile uint32_t   b4:     1;
+            volatile uint32_t   b5:     1;
+            volatile uint32_t   b6:     1;
+            volatile uint32_t   b7:     1;
+            volatile uint32_t   b8:     1;
+            volatile uint32_t   b9:     1;
+            volatile uint32_t   b10:    1;
+            volatile uint32_t   b11:    1;
+            volatile uint32_t   b12:    1;
+            volatile uint32_t   b13:    1;
+            volatile uint32_t   b14:    1;
+            volatile uint32_t   b15:    1;
+            volatile uint32_t   b16:    1;
+            volatile uint32_t   b17:    1;
+            volatile uint32_t   b18:    1;
+            volatile uint32_t   b19:    1;
+            volatile uint32_t   b20:    1;
+            volatile uint32_t   b21:    1;
+            volatile uint32_t   b22:    1;
+            volatile uint32_t   b23:    1;
+            volatile uint32_t   b24:    1;
+            volatile uint32_t   b25:    1;
+            volatile uint32_t   b26:    1;
+            volatile uint32_t   b27:    1;
+            volatile uint32_t   b28:    1;
+            volatile uint32_t   b29:    1;
+            volatile uint32_t   b30:    1;
+            volatile uint32_t   b31:    1;
+            volatile uint32_t   b32:    1;
+            volatile uint32_t   b33:    1;
+            volatile uint32_t   b34:    1;
+            volatile uint32_t   b35:    1;
+            volatile uint32_t   b36:    1;
+            volatile uint32_t   b37:    1;
+            volatile uint32_t   b38:    1;
+            volatile uint32_t   b39:    1;
+            volatile uint32_t   b40:    1;
+            volatile uint32_t   b41:    1;
+            volatile uint32_t   b42:    1;
+            volatile uint32_t   b43:    1;
+            volatile uint32_t   b44:    1;
+            volatile uint32_t   b45:    1;
+            volatile uint32_t   b46:    1;
+            volatile uint32_t   b47:    1;
+            volatile uint32_t   b48:    1;
+            volatile uint32_t   b49:    1;
+            volatile uint32_t   brsvd: 14;  // Pad out to the next full word
+        } Msk_b;
+    } U;
+} am_hal_gpio_mask_t;
 
 //*****************************************************************************
 //!
@@ -338,6 +454,7 @@ extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_OUTPUT_WITH_READ;
 //
 //*****************************************************************************
 typedef void (*am_hal_gpio_handler_t)(void);
+typedef void (*am_hal_gpio_handler_adv_t)(void *);
 
 //*****************************************************************************
 //
@@ -551,6 +668,23 @@ extern uint32_t am_hal_gpio_interrupt_register(uint32_t ui32GPIONumber,
 
 //*****************************************************************************
 //
+//! @brief Advanced GPIO interrupt service routine registration.
+//!
+//! @param ui32GPIONumber - GPIO number (0-49) to be registered.
+//!
+//! @param pfnHandler - Function pointer to the callback.
+//!
+//! @param pCtxt      - context for the callback.
+//!
+//! @return Status.
+//!         Fails if pfnHandler is NULL or ui32GPIONumber > 49.
+//
+//*****************************************************************************
+extern uint32_t am_hal_gpio_interrupt_register_adv(uint32_t ui32GPIONumber,
+                               am_hal_gpio_handler_adv_t pfnHandler, void *pCtxt);
+
+//*****************************************************************************
+//
 // GPIO interrupt service routine.
 //! @brief GPIO interrupt service routine registration.
 //!
@@ -690,6 +824,11 @@ extern uint32_t am_hal_gpio_interrupt_service(uint64_t ui64Status);
     }
 
 
+//*****************************************************************************
+//!
+//! @brief Fast GPIO helper macros.
+//!
+//*****************************************************************************
 //
 // Define Fast GPIO enable and disable.
 //

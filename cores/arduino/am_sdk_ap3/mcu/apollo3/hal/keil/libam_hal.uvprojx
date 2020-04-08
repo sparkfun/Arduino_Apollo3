@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>AM_ASSERT_INVALID_THRESHOLD=0 AM_PART_APOLLO3 AM_DEBUG_ASSERT keil</Define>
+              <Define>AM_ASSERT_INVALID_THRESHOLD=0 AM_DEBUG_ASSERT AM_PART_APOLLO3 keil</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../mcu/apollo3;../../../../CMSIS/AmbiqMicro/Include;../../../../CMSIS/ARM/Include</IncludePath>
+              <IncludePath>../../../../CMSIS/AmbiqMicro/Include;../../../../mcu/apollo3;../../../../CMSIS/ARM/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
