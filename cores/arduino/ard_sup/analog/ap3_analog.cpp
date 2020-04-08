@@ -525,12 +525,23 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
             pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, AUX0);
             uint32_t ui32WriteVal = AM_REGVAL(pui32ConfigReg);
             uint32_t ui32ConfigVal = (1 << CTIMER_AUX0_TMRA0EN23_Pos); // using CTIMER_AUX0_TMRA0EN23_Pos because for now this number is common to all CTimer instances
+            volatile uint32_t *pui32CompareRegA = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRA0);
+            volatile uint32_t *pui32CompareRegB = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRB0);
+            uint32_t masterPeriod = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
+            uint32_t masterRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
+    
             if (segment == AM_HAL_CTIMER_TIMERB)
             {
                 ui32ConfigVal = ((ui32ConfigVal & 0xFFFF) << 16);
+                masterPeriod = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
+                masterRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
             }
-            ui32WriteVal = (ui32WriteVal & ~(segment)) | ui32ConfigVal;
+            ui32WriteVal |= ui32ConfigVal;
             AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
+
+            // enable the non-auxiliary timer b/c without it the auxialiary timer won't work
+            uint32_t masterTH = ((masterPeriod - masterRisingTrigger) * fw) / masterPeriod; // try to compensate in case _analogWriteWidth was changed
+            am_hal_ctimer_period_set(timer, segment, fw, masterTH); // but this overwrites the non-aux compare regs for this timer / segment
 
             // then set the duty cycle with the 'aux' function
             am_hal_ctimer_aux_period_set(timer, segment, fw, th);
@@ -558,6 +569,9 @@ ap3_err_t analogWriteResolution(uint8_t res)
     return AP3_OK;
 }
 
+/********************************************/
+/* WARNING! Changing the frame width or frequency of analogWrite() after starting a timer can have totally unexpected and frustration-inducing results
+/********************************************/
 ap3_err_t analogWriteFrameWidth(uint32_t fw){
     _analogWriteWidth = fw;
     if(_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH){
@@ -566,9 +580,11 @@ ap3_err_t analogWriteFrameWidth(uint32_t fw){
     return AP3_OK;
 }
 
+/********************************************/
+/* WARNING! Changing the frame width or frequency of analogWrite() after starting a timer can have totally unexpected and frustration-inducing results
+/********************************************/
 ap3_err_t analogWriteFrequency(float freq){
     _analogWriteWidth = (uint32_t)(12000000 / freq);
-    Serial.println(_analogWriteWidth);
     if(_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH){
         return AP3_ERR;
     }
@@ -582,7 +598,7 @@ ap3_err_t analogWrite(uint8_t pin, uint32_t val)
 {
     // Determine the high time based on input value and the current resolution setting
     uint32_t clk = AM_HAL_CTIMER_HFRC_12MHZ; // Use an Ambiq HAL provided value to select which clock
-    uint32_t th = (uint32_t)(val * _analogWriteWidth) / ((0x01 << _analogWriteBits) - 1);
+    uint32_t th = (uint32_t)((val * _analogWriteWidth) / ((0x01 << _analogWriteBits) - 1));
     return ap3_pwm_output(pin, th, _analogWriteWidth, clk);
 }
 
