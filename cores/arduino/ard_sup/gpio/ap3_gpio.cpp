@@ -14,7 +14,7 @@ uint8_t gpio_num_isr = 0;
 //*****************************************************************************
 //  Local function declarations
 //*****************************************************************************
-uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad);
+static inline uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad);
 
 //*****************************************************************************
 //  Local defines.
@@ -151,7 +151,7 @@ extern void digitalWrite(uint8_t pin, uint8_t val)
     }
 }
 
-uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad)
+static inline uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad)
 {
     uint32_t padregAddr = AM_REGADDR(GPIO, PADREGA) + (pad & ~0x3);
     uint32_t padShft = ((pad & 0x3) << 3);
