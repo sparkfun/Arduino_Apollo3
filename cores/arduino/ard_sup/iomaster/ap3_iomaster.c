@@ -506,7 +506,7 @@ ap3_iom_configure(void *pHandle, am_hal_iom_config_t *psConfig)
                 for( ; fsel < 128 ; fsel = fsel * 2)
                 {
                     //IOM and HFRC are not affected by burst mode
-                    totper = (48000000 / (2 * fsel))/reqFreq - 1;
+                    totper = (AM_HAL_IOM_48MHZ / (2 * fsel))/reqFreq - 1;
                     if(totper < 256) break;
                 }
 
