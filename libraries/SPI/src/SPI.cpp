@@ -280,6 +280,10 @@ void SPIClass::transferOut(void *buf, size_t count)
   _transfer(buf, NULL, count);
 }
 
+void SPIClass::transferOutIn(void* buf_out, void* buf_in, size_t count){
+  _transfer(buf_out, buf_in, count);
+}
+
 void SPIClass::transferIn(void *buf, size_t count)
 {
   _transfer(NULL, buf, count);
@@ -291,13 +295,12 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
   iomTransfer.pui32TxBuffer = (uint32_t *)buf_out; // todo: does this have the proper lifetime?
   iomTransfer.pui32RxBuffer = (uint32_t *)buf_in;
 
-  // // Determine direction
-  // if ((buf_out != NULL) && (buf_in != NULL))
-  // {
-  //   iomTransfer.eDirection = AM_HAL_IOM_FULLDUPLEX;
-  // }
-  // else 
-  if (buf_out != NULL)
+  // Determine direction
+  if ((buf_out != NULL) && (buf_in != NULL))
+  {
+    iomTransfer.eDirection = (am_hal_iom_dir_e)AM_HAL_IOM_FULLDUPLEX;
+  }
+  else if (buf_out != NULL)
   {
     iomTransfer.eDirection = AM_HAL_IOM_TX;
   }
@@ -307,20 +310,20 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
   }
 
   uint32_t retVal32 = 0;
-  // if (iomTransfer.eDirection == AM_HAL_IOM_FULLDUPLEX)
-  // {
-  //   retVal32 = am_hal_iom_spi_blocking_fullduplex(_handle, &iomTransfer);
-  // }
-  // else
-  // {
+  if (iomTransfer.eDirection == AM_HAL_IOM_FULLDUPLEX)
+  {
+    retVal32 = am_hal_iom_spi_blocking_fullduplex(_handle, &iomTransfer);
+  }
+  else
+  {
     retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
-  // }
+  }
 
-  // if (retVal32 != 0)
-  // {
-  //   Serial.printf("got an error on _transfer: %d\n", retVal32);
-  //   return retVal32;
-  // }
+  if (retVal32 != 0)
+  {
+    Serial.printf("got an error on _transfer: %d\n", retVal32);
+    // return retVal32;
+  }
 }
 
 void SPIClass::attachInterrupt()

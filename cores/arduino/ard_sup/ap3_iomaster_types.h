@@ -35,4 +35,6 @@ typedef enum{
     AP3_IOM_PAD_TYPES_NUM,
 }ap3_iom_pad_type_e;
 
+#define AM_HAL_IOM_FULLDUPLEX (3) // providing this symbol to recover SPI FULLDUPLEX capabilities within SDK 2.4.2
+
 #endif // _AP3_IOM_TYPES_H_
