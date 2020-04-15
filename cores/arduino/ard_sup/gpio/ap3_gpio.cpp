@@ -35,7 +35,6 @@ static inline uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad);
 //Additional Defines
 #define PADREG_FNSEL_Msk 0x38
 #define GPIO_FUNCTION 3
-#
 
 ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin)
 {
@@ -136,10 +135,6 @@ extern void digitalWrite(uint8_t pin, uint8_t val)
     if (!ap3_gpio_is_valid(pad))
     {
         return;
-    }
-    if (ap3_get_funct_sel(pad) != GPIO_FUNCTION)
-    {
-        pinMode(pin, OUTPUT);
     }
     if (val)
     {
