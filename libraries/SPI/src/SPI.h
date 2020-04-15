@@ -98,6 +98,7 @@ public:
   void transfer(void *buf, size_t count);
   void transferOut(void *buf, size_t count);
   void transferIn(void *buf, size_t count);
+  void transferOutIn(void* buf_out, void* buf_in, size_t count);
 
   // Transaction Functions
   void usingInterrupt(int interruptNumber);

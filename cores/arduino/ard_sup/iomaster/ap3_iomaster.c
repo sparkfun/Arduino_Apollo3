@@ -1,3 +1,4 @@
+#include "ap3_iomaster_types.h"
 #include "am_mcu_apollo.h"
 
 
@@ -584,3 +585,430 @@ ap3_iom_configure(void *pHandle, am_hal_iom_config_t *psConfig)
     return status;
 
 } // am_hal_iom_configure()
+
+// SDK 2.4.2 fix... copying fullduplex function from previous SDK (2.2.0) (also need some supporting functions)
+// Some declarations of functions that will be used from am_hal_iom.c (this is ugly c hacks... bear with me)
+uint32_t internal_iom_get_int_err(uint32_t ui32Module, uint32_t ui32IntStatus);
+uint32_t validate_transaction(am_hal_iom_state_t *pIOMState, am_hal_iom_transfer_t *psTransaction, bool bBlocking);
+//*****************************************************************************
+//
+// Function to build the CMD value.
+// Returns the CMD value, but does not set the CMD register.
+//
+// The OFFSETHI register must still be handled by the caller, e.g.
+//      AM_REGn(IOM, ui32Module, OFFSETHI) = (uint16_t)(ui32Offset >> 8);
+//
+//*****************************************************************************
+static uint32_t
+build_cmd(uint32_t ui32CS,     uint32_t ui32Dir, uint32_t ui32Cont,
+          uint32_t ui32Offset, uint32_t ui32OffsetCnt,
+          uint32_t ui32nBytes)
+{
+    //
+    // Initialize the CMD variable
+    //
+    uint32_t ui32Cmd = 0;
+
+    //
+    // If SPI, we'll need the chip select
+    //
+    ui32Cmd |= _VAL2FLD(IOM0_CMD_CMDSEL, ui32CS);
+
+    //
+    // Build the CMD with number of bytes and direction.
+    //
+    ui32Cmd |= _VAL2FLD(IOM0_CMD_TSIZE, ui32nBytes);
+
+    if (ui32Dir == AM_HAL_IOM_RX)
+    {
+        ui32Cmd |= _VAL2FLD(IOM0_CMD_CMD, IOM0_CMD_CMD_READ);
+    }
+    else
+    {
+        ui32Cmd |= _VAL2FLD(IOM0_CMD_CMD, IOM0_CMD_CMD_WRITE);
+    }
+
+    ui32Cmd |= _VAL2FLD(IOM0_CMD_CONT, ui32Cont);
+
+    //
+    // Now add the OFFSETLO and OFFSETCNT information.
+    //
+    ui32Cmd |= _VAL2FLD(IOM0_CMD_OFFSETLO, (uint8_t)ui32Offset);
+    ui32Cmd |= _VAL2FLD(IOM0_CMD_OFFSETCNT, ui32OffsetCnt);
+
+    return ui32Cmd;
+} // build_cmd()
+
+static void
+internal_iom_reset_on_error(am_hal_iom_state_t  *pIOMState, uint32_t ui32IntMask)
+{
+    uint32_t iterationsToWait = 2 * pIOMState->ui32BitTimeTicks; // effectively > 6 clocks
+    uint32_t ui32Module = pIOMState->ui32Module;
+    uint32_t curIntCfg = IOMn(ui32Module)->INTEN;
+    IOMn(ui32Module)->INTEN = 0;
+
+    // Disable interrupts temporarily
+    if (ui32IntMask & AM_HAL_IOM_INT_DERR)
+    {
+        if ((IOMn(ui32Module)->DMACFG & IOM0_DMACFG_DMADIR_Msk) == _VAL2FLD(IOM0_DMACFG_DMADIR, IOM0_DMACFG_DMADIR_M2P))
+        {
+            // Write
+            uint32_t dummy = 0xDEADBEEF;
+            uint32_t numBytesRemaining = IOMn(ui32Module)->DMATOTCOUNT;
+
+            while (numBytesRemaining)
+            {
+                if (IOMn(ui32Module)->FIFOPTR_b.FIFO0REM >= 4)
+                {
+                    // Write one 4-byte word to FIFO
+                    IOMn(ui32Module)->FIFOPUSH = dummy;
+                    if (numBytesRemaining > 4)
+                    {
+                        numBytesRemaining -= 4;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            // Now wait for command to finish
+            while ((IOMn(ui32Module)->STATUS & (IOM0_STATUS_IDLEST_Msk | IOM0_STATUS_CMDACT_Msk)) != IOM0_STATUS_IDLEST_Msk);
+        }
+        else
+        {
+            // Read
+            // Let command finish
+            while (IOMn(ui32Module)->STATUS_b.CMDACT)
+            {
+                while (IOMn(ui32Module)->FIFOPTR_b.FIFO1SIZ >= 4)
+                {
+                    // Read one 4-byte word from FIFO
+                    IOMn(ui32Module)->FIFOPOP;
+#if MANUAL_POP
+                    IOMn(ui32Module)->FIFOPOP = 0x11111111;
+#endif
+                }
+            }
+            // Now wait for command to finish
+            while ((IOMn(ui32Module)->STATUS & (IOM0_STATUS_IDLEST_Msk | IOM0_STATUS_CMDACT_Msk)) != IOM0_STATUS_IDLEST_Msk);
+            // Flush any remaining data from FIFO
+            while  (IOMn(ui32Module)->FIFOPTR_b.FIFO1SIZ)
+            {
+                while (IOMn(ui32Module)->FIFOPTR_b.FIFO1SIZ >= 4)
+                {
+                    // Read one 4-byte word from FIFO
+                    IOMn(ui32Module)->FIFOPOP;
+#if MANUAL_POP
+                    IOMn(ui32Module)->FIFOPOP = 0x11111111;
+#endif
+                }
+            }
+        }
+    }
+    if (ui32IntMask & AM_HAL_IOM_INT_NAK)
+    {
+        //
+        // Wait for Idle
+        //
+        while ((IOMn(ui32Module)->STATUS & (IOM0_STATUS_IDLEST_Msk | IOM0_STATUS_CMDACT_Msk)) != IOM0_STATUS_IDLEST_Msk);
+
+        //
+        // Reset Submodule & FIFO
+        //
+        // Disable the submodules
+        //
+        IOMn(ui32Module)->SUBMODCTRL_b.SMOD1EN = 0;
+        // Reset Fifo
+        IOMn(ui32Module)->FIFOCTRL_b.FIFORSTN = 0;
+
+        // Wait for few IO clock cycles
+        am_hal_flash_delay(iterationsToWait);
+
+        IOMn(ui32Module)->FIFOCTRL_b.FIFORSTN = 1;
+
+        // Enable submodule
+        IOMn(ui32Module)->SUBMODCTRL_b.SMOD1EN = 1;
+    }
+
+    IOMn(ui32Module)->INTCLR = AM_HAL_IOM_INT_ALL;
+
+    // Restore interrupts
+    IOMn(ui32Module)->INTEN = curIntCfg;
+}
+
+//*****************************************************************************
+//
+//! @brief Perform a simple full-duplex transaction to the SPI interface.
+//!
+//! This function performs SPI full-duplex operation to a selected SPI device.
+//!
+//! @note The actual SPI and I2C interfaces operate in BYTES, not 32-bit words.
+//! This means that you will need to byte-pack the \e pui32TxData array with the
+//! data you intend to send over the interface. One easy way to do this is to
+//! declare the array as a 32-bit integer array, but use an 8-bit pointer to
+//! put your actual data into the array. If there are not enough bytes in your
+//! desired message to completely fill the last 32-bit word, you may pad that
+//! last word with bytes of any value. The IOM hardware will only read the
+//! first \e ui32NumBytes in the \e pui32TxData array.
+//!
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
+//
+//*****************************************************************************
+uint32_t
+am_hal_iom_spi_blocking_fullduplex(void *pHandle,
+                                   am_hal_iom_transfer_t *psTransaction)
+{
+    uint32_t ui32Cmd, ui32Offset, ui32OffsetCnt, ui32Dir, ui32Cont;
+    uint32_t ui32FifoRem, ui32FifoSiz;
+    uint32_t ui32Bytes;
+    uint32_t ui32RxBytes;
+    uint32_t ui32IntConfig;
+    uint32_t *pui32TxBuffer;
+    uint32_t *pui32RxBuffer;
+    am_hal_iom_state_t *pIOMState = (am_hal_iom_state_t*)pHandle;
+    uint32_t ui32Module;
+    uint32_t ui32Status = AM_HAL_STATUS_SUCCESS;
+    bool     bCmdCmp = false;
+    uint32_t numWait = 0;
+
+#ifndef AM_HAL_DISABLE_API_VALIDATION
+    if ( !AM_HAL_IOM_CHK_HANDLE(pHandle) )
+    {
+        return AM_HAL_STATUS_INVALID_HANDLE;
+    }
+
+    if ( !psTransaction )
+    {
+        return AM_HAL_STATUS_INVALID_ARG;
+    }
+
+    if ( psTransaction->eDirection != AM_HAL_IOM_FULLDUPLEX )
+    {
+        return AM_HAL_STATUS_INVALID_OPERATION;
+    }
+
+    //
+    // Validate parameters
+    //
+    ui32Status = validate_transaction(pIOMState, psTransaction, true);
+
+    if ( ui32Status != AM_HAL_STATUS_SUCCESS )
+    {
+        return ui32Status;
+    }
+#endif // AM_HAL_DISABLE_API_VALIDATION
+
+    ui32Module = pIOMState->ui32Module;
+    ui32Offset = psTransaction->ui32Instr;
+    ui32OffsetCnt = psTransaction->ui32InstrLen;
+    ui32Bytes = psTransaction->ui32NumBytes;
+    ui32Dir = psTransaction->eDirection;
+    ui32Cont = psTransaction->bContinue ? 1 : 0;
+    pui32RxBuffer = psTransaction->pui32RxBuffer;
+    pui32TxBuffer = psTransaction->pui32TxBuffer;
+
+    //
+    // Make sure any previous non-blocking transfers have completed.
+    //
+    ui32Status = am_hal_flash_delay_status_check(pIOMState->waitTimeout,
+                                                 (uint32_t)&pIOMState->ui32NumPendTransactions,
+                                                 0xFFFFFFFF,
+                                                 0,
+                                                 true);
+    if ( ui32Status != AM_HAL_STATUS_SUCCESS )
+    {
+        return ui32Status;
+    }
+
+    //
+    // Make sure any previous blocking transfer has been completed.
+    // This check is required to make sure previous transaction has cleared if the blocking call
+    // finished with a timeout
+    //
+    ui32Status = am_hal_flash_delay_status_check(pIOMState->waitTimeout,
+                            (uint32_t)&IOMn(ui32Module)->STATUS,
+                            (IOM0_STATUS_IDLEST_Msk | IOM0_STATUS_CMDACT_Msk),
+                            IOM0_STATUS_IDLEST_Msk,
+                            true);
+
+    if ( ui32Status != AM_HAL_STATUS_SUCCESS )
+    {
+        return ui32Status;
+    }
+
+    //
+    // Disable interrupts so that we don't get any undesired interrupts.
+    //
+    ui32IntConfig = IOMn(ui32Module)->INTEN;
+
+    //
+    // Disable IOM interrupts as we'll be polling
+    //
+    IOMn(ui32Module)->INTEN = 0;
+
+    //
+    // Clear interrupts
+    //
+    IOMn(ui32Module)->INTCLR = AM_HAL_IOM_INT_ALL;
+
+    //
+    // Set the dev addr (either 7 or 10 bit as configured in MI2CCFG).
+    //
+    IOMn(ui32Module)->DEVCFG = psTransaction->uPeerInfo.ui32I2CDevAddr;
+    // CMDRPT register has been repurposed for DCX
+    // Set the DCX
+    IOMn(ui32Module)->DCX = pIOMState->dcx[psTransaction->uPeerInfo.ui32SpiChipSelect];
+
+    //
+    // Build the CMD value
+    //
+
+    ui32Cmd = pIOMState->eInterfaceMode == AM_HAL_IOM_SPI_MODE ?
+              psTransaction->uPeerInfo.ui32SpiChipSelect : 0;
+    ui32Cmd = build_cmd(ui32Cmd, ui32Dir,  ui32Cont, ui32Offset, ui32OffsetCnt, ui32Bytes);
+
+    //
+    // Set the OFFSETHI register.
+    //
+    IOMn(ui32Module)->OFFSETHI = (uint16_t)(ui32Offset >> 8);
+
+    //
+    // Set FULLDUPLEX mode
+    //
+    IOMn(ui32Module)->MSPICFG |= _VAL2FLD(IOM0_MSPICFG_FULLDUP, 1);
+
+    //
+    // Start the transfer
+    //
+    IOMn(ui32Module)->CMD = ui32Cmd;
+
+    ui32Bytes = psTransaction->ui32NumBytes;
+    ui32RxBytes = ui32Bytes;
+
+    //
+    // Start a loop to catch the Rx data.
+    //
+    //
+    // Keep looping until we're out of bytes to send or command complete (error).
+    //
+    while (ui32Bytes || ui32RxBytes)
+    {
+        //
+        // Limit the wait to reasonable limit - instead of blocking forever
+        //
+        numWait = 0;
+        ui32FifoRem = IOMn(ui32Module)->FIFOPTR_b.FIFO0REM;
+        ui32FifoSiz = IOMn(ui32Module)->FIFOPTR_b.FIFO1SIZ;
+
+        while ((ui32FifoRem < 4) &&
+               (ui32FifoSiz < 4))
+        {
+            if (numWait++ < AM_HAL_IOM_MAX_BLOCKING_WAIT)
+            {
+                if (bCmdCmp && (ui32RxBytes > ui32FifoSiz))
+                {
+                    //
+                    // No more data expected. Get out of the loop
+                    //
+                    break;
+                }
+                am_hal_flash_delay( FLASH_CYCLES_US(1) );
+            }
+            else
+            {
+                //
+                // We've waited long enough - get out!
+                //
+                break;
+            }
+            bCmdCmp     = IOMn(ui32Module)->INTSTAT_b.CMDCMP;
+            ui32FifoRem = IOMn(ui32Module)->FIFOPTR_b.FIFO0REM;
+            ui32FifoSiz = IOMn(ui32Module)->FIFOPTR_b.FIFO1SIZ;
+        }
+        if (bCmdCmp || ((ui32FifoRem < 4) && (ui32FifoSiz < 4)))
+        {
+            //
+            // Something went wrong - bail out
+            //
+            break;
+        }
+
+        while ((ui32FifoRem >= 4) && ui32Bytes)
+        {
+            IOMn(ui32Module)->FIFOPUSH = *pui32TxBuffer++;
+            ui32FifoRem -= 4;
+            if (ui32Bytes >= 4)
+            {
+                ui32Bytes -= 4;
+            }
+            else
+            {
+                ui32Bytes = 0;
+            }
+        }
+        while ((ui32FifoSiz >= 4) && ui32RxBytes)
+        {
+            //
+            // Safe to read the FIFO, read 4 bytes
+            //
+            *pui32RxBuffer++ = IOMn(ui32Module)->FIFOPOP;
+#if MANUAL_POP
+            IOMn(ui32Module)->FIFOPOP = 0x11111111;
+#endif
+            ui32FifoSiz -= 4;
+            if (ui32RxBytes >= 4)
+            {
+                ui32RxBytes -= 4;
+            }
+            else
+            {
+                ui32RxBytes = 0;
+            }
+        }
+    }
+
+    //
+    // Make sure transfer is completed.
+    //
+    ui32Status = am_hal_flash_delay_status_check(AM_HAL_IOM_MAX_BLOCKING_WAIT,
+                            (uint32_t)&IOMn(ui32Module)->STATUS,
+                            (IOM0_STATUS_IDLEST_Msk | IOM0_STATUS_CMDACT_Msk),
+                            IOM0_STATUS_IDLEST_Msk,
+                            true);
+
+    if ( ui32Status != AM_HAL_STATUS_SUCCESS )
+    {
+        return ui32Status;
+    }
+
+    ui32Status = internal_iom_get_int_err(ui32Module, 0);
+
+    if (ui32Status == AM_HAL_STATUS_SUCCESS)
+    {
+        if (ui32Bytes)
+        {
+            // Indicates transaction did not finish for some reason
+            ui32Status = AM_HAL_STATUS_FAIL;
+        }
+    }
+    else
+    {
+        // Do Error recovery
+        // Reset Submodule & FIFO
+        internal_iom_reset_on_error(pIOMState, IOMn(ui32Module)->INTSTAT);
+    }
+
+    //
+    // Clear interrupts
+    // Re-enable IOM interrupts.
+    //
+    IOMn(ui32Module)->INTCLR = AM_HAL_IOM_INT_ALL;
+    IOMn(ui32Module)->INTEN = ui32IntConfig;
+
+    //
+    // Return the status.
+    //
+    return ui32Status;
+
+}
