@@ -546,22 +546,55 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
             if (segment == AM_HAL_CTIMER_TIMERB)
             {
                 ui32ConfigVal = ((ui32ConfigVal & 0xFFFF) << 16);
-                masterPeriod = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
-                masterRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
+                masterPeriod = (uint32_t)(*(pui32CompareRegB) & CTIMER_CMPRB0_CMPR1B0_Msk) >> CTIMER_CMPRB0_CMPR1B0_Pos;
+                masterRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRB0_CMPR0B0_Msk) >> CTIMER_CMPRB0_CMPR0B0_Pos;
             }
             ui32WriteVal |= ui32ConfigVal;
             AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
 
-            // enable the non-auxiliary timer b/c without it the auxialiary timer won't work
-            uint32_t masterTH = ((masterPeriod - masterRisingTrigger) * fw) / masterPeriod; // try to compensate in case _analogWriteWidth was changed
-            am_hal_ctimer_period_set(timer, segment, fw, masterTH); // but this overwrites the non-aux compare regs for this timer / segment
+            if(masterPeriod != fw){
+                // the master output fw dictates the secondary fw... so if they are different try to change the master while preserving duty cycle
+                uint32_t masterTH = ((masterPeriod - masterRisingTrigger) * fw) / masterPeriod; // try to compensate in case _analogWriteWidth was changed
+                if(masterPeriod == 0){  // if masterPeriod was 0 then masterTH will be invalid (divide by 0). This usually means that the master timer output did not have a set duty cycle. This also means the output is probably not configured and so it is okay to choose an arbitrary duty cycle
+                    masterTH = fw - 1; 
+                }
+                am_hal_ctimer_period_set(timer, segment, fw, masterTH); // but this overwrites the non-aux compare regs for this timer / segment
+                // Serial.printf("th = %d, fw = %d, (masterPeriod - masterRisingTrigger) = (%d - %d) = %d\n", th, fw, masterPeriod, masterRisingTrigger, (masterPeriod - masterRisingTrigger));
+            }
 
             // then set the duty cycle with the 'aux' function
             am_hal_ctimer_aux_period_set(timer, segment, fw, th);
         }
         else
         {
-            // Otherwise simply set the primary duty cycle
+            // Try to preserve settings of the secondary output
+            uint32_t *pui32ConfigReg = NULL;
+            pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, AUX0);
+            volatile uint32_t *pui32CompareRegA = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
+            volatile uint32_t *pui32CompareRegB = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
+            uint32_t slavePeriod = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
+            uint32_t slaveRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
+            
+            uint32_t auxEnabled = (AM_REGVAL(pui32ConfigReg) & CTIMER_AUX0_TMRA0EN23_Msk);
+            
+            if (segment == AM_HAL_CTIMER_TIMERB)
+            {
+                auxEnabled = (AM_REGVAL(pui32ConfigReg) & (CTIMER_AUX0_TMRA0EN23_Msk << 16));
+                slavePeriod = (uint32_t)(*(pui32CompareRegB) & CTIMER_CMPRB0_CMPR1B0_Msk) >> CTIMER_CMPRB0_CMPR1B0_Pos;
+                slaveRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRB0_CMPR0B0_Msk) >> CTIMER_CMPRB0_CMPR0B0_Pos;
+            }
+
+            if( auxEnabled ){ // if secondary outputs are enabled
+                if( slavePeriod != fw ){ // and if fw is different from previous slavePeriod
+                    uint32_t slaveTH = ((slavePeriod - slaveRisingTrigger) * fw) / slavePeriod; // try to compensate in case _analogWriteWidth was changed
+                    if(slavePeriod == 0){  // if masterPeriod was 0 then masterTH will be invalid (divide by 0). This usually means that the master timer output did not have a set duty cycle. This also means the output is probably not configured and so it is okay to choose an arbitrary duty cycle
+                        slaveTH = fw - 1; 
+                    }
+                    am_hal_ctimer_aux_period_set(timer, segment, fw, slaveTH); // but this overwrites the non-aux compare regs for this timer / segment
+                }
+            }
+
+            // Now set the primary duty cycle
             am_hal_ctimer_period_set(timer, segment, fw, th);
         }
 
