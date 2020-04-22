@@ -33,6 +33,11 @@ void setup()
   Serial.begin(115200);
   Serial.println("Low power sleep example");
 
+  Serial.println("Going to sleep...");
+  delay(100); //Wait for print to complete
+
+  Serial.end(); //Disable Serial
+
 #if defined(ARDUINO_SFE_EDGE2)
   pinMode(ACCEL_VDD, OUTPUT);
   digitalWrite(ACCEL_VDD, LOW);
@@ -90,11 +95,6 @@ void setup()
 
   // Power down SRAM
   PWRCTRL->MEMPWDINSLEEP_b.SRAMPWDSLP = PWRCTRL_MEMPWDINSLEEP_SRAMPWDSLP_ALLBUTLOWER32K;
-
-  Serial.println("Going to sleep...");
-  delay(100); //Wait for print to complete
-
-  Serial.end(); //Disable Serial
 
   am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
 
