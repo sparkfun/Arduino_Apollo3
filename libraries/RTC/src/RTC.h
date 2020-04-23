@@ -9,16 +9,14 @@ public:
   APM3_RTC();
 
   void getTime(); //Query the RTC for the current time/date. Loads .seconds, .minute, etc.
-  void getEpoch(); //Return the current RTC time/date as UNIX Epoch time 
+  uint32_t getEpoch(); //Return the current RTC time/date as UNIX Epoch time 
   
-  void setTime(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund,
-               uint8_t dayOfMonth, uint8_t month, uint16_t year); //Set current time to provided hundredths/seconds/etc
-  void setToCompilerTime();                                       //Set to time when sketch was compiled
+  void setTime(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month, uint16_t year); //Set current time to provided hundredths/seconds/etc
+  void setToCompilerTime(); //Set to time when sketch was compiled
 
   void getAlarm(); //Query the RTC for the current alarm time/date.
-  void setAlarm(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund,
-                uint8_t dayOfMonth, uint8_t month, uint16_t year); //Set alarm time to provided hundredths/seconds/etc
-  void setAlarmMode(); //Set the RTC alarm repeat interval
+  void setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, uint8_t dayOfMonth, uint8_t month); //Set alarm time to provided hundredths/seconds/etc
+  void setAlarmMode(uint8_t mode); //Set the RTC alarm repeat interval
 
   uint32_t hour;
   uint32_t minute;
