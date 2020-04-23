@@ -70,15 +70,15 @@ void APM3_RTC::setToCompilerTime()
 {
   //Get the current date/time from the compiler
   //Alternatively, you can set these values manually
+  hal_time.ui32Weekday = am_util_time_computeDayofWeek(2000 + toVal(&__DATE__[9]), mthToIndex(&__DATE__[0]) + 1, toVal(&__DATE__[4]));
+  hal_time.ui32Century = 0;
+  hal_time.ui32Year = toVal(&__DATE__[9]);
+  hal_time.ui32Month = mthToIndex(&__DATE__[0]) + 1; //Compiler ouputs months in 0-11.  
+  hal_time.ui32DayOfMonth = toVal(&__DATE__[4]);
   hal_time.ui32Hour = toVal(&__TIME__[0]);
   hal_time.ui32Minute = toVal(&__TIME__[3]);
   hal_time.ui32Second = toVal(&__TIME__[6]);
   hal_time.ui32Hundredths = 00;
-  hal_time.ui32Weekday = am_util_time_computeDayofWeek(2000 + toVal(&__DATE__[9]), mthToIndex(&__DATE__[0]) + 1, toVal(&__DATE__[4]));
-  hal_time.ui32DayOfMonth = toVal(&__DATE__[4]);
-  hal_time.ui32Month = mthToIndex(&__DATE__[0]) + 1; //Compiler ouputs months in 0-11.
-  hal_time.ui32Year = toVal(&__DATE__[9]);
-  hal_time.ui32Century = 0;
 
   am_hal_rtc_time_set(&hal_time); //Initialize the RTC with this date/time
 }
@@ -90,8 +90,8 @@ void APM3_RTC::getTime()
   weekday = hal_time.ui32Weekday;
   textWeekday = pcWeekday[hal_time.ui32Weekday]; //Given a number (day of week) return the string that represents the name
   year = hal_time.ui32Year;
-  dayOfMonth = hal_time.ui32DayOfMonth;
   month = hal_time.ui32Month; //HAL outputs months in 1 to 12 form
+  dayOfMonth = hal_time.ui32DayOfMonth;
   hour = hal_time.ui32Hour;
   minute = hal_time.ui32Minute;
   seconds = hal_time.ui32Second;
@@ -121,25 +121,24 @@ void APM3_RTC::getAlarm()
 {
   am_hal_rtc_alarm_get(&alm_time); //Get the RTC's alarm time
   
-  weekday = hal_time.ui32Weekday;
-  textWeekday = pcWeekday[hal_time.ui32Weekday]; //Given a number (day of week) return the string that represents the name
-  year = hal_time.ui32Year;
-  dayOfMonth = hal_time.ui32DayOfMonth;
-  month = hal_time.ui32Month; //HAL outputs months in 1 to 12 form
-  hour = hal_time.ui32Hour;
-  minute = hal_time.ui32Minute;
-  seconds = hal_time.ui32Second;
-  hundredths = hal_time.ui32Hundredths;
+  alarmWeekday = alm_time.ui32Weekday;
+  alarmMonth = alm_time.ui32Month; //HAL outputs months in 1 to 12 form
+  alarmDayOfMonth = alm_time.ui32DayOfMonth;
+  alarmHour = alm_time.ui32Hour;
+  alarmMinute = alm_time.ui32Minute;
+  alarmSeconds = alm_time.ui32Second;
+	alarmHundredths = alm_time.ui32Hundredths;
+
 }
-  
-void APM3_RTC::setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
+
+void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
 {
-  hal_time.ui32Month = month;
-  hal_time.ui32DayOfMonth = dayOfMonth;
-  hal_time.ui32Hour = hour;
-  hal_time.ui32Minute = min;
-  hal_time.ui32Second = sec;
-  hal_time.ui32Hundredths = hund;
+  alm_time.ui32Month = month;
+  alm_time.ui32DayOfMonth = dayOfMonth;
+  alm_time.ui32Hour = hour;
+  alm_time.ui32Minute = min;
+  alm_time.ui32Second = sec;
+  alm_time.ui32Hundredths = hund;
 
   am_hal_rtc_alarm_set(&alm_time, AM_HAL_RTC_ALM_RPT_DIS); //Initialize the RTC alarm with this date/time
 }
@@ -160,7 +159,7 @@ void APM3_RTC::setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, ui
 */
 void APM3_RTC::setAlarmMode(uint8_t mode)
 {
-  am_hal_rtc_alarm_interval_set(mode);
+  //am_hal_rtc_alarm_interval_set(mode);
 }
 
 // mthToIndex() converts a string indicating a month to an index value.
