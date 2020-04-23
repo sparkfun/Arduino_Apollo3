@@ -18,18 +18,25 @@ public:
   void setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, uint8_t dayOfMonth, uint8_t month); //Set alarm time to provided hundredths/seconds/etc
   void setAlarmMode(uint8_t mode); //Set the RTC alarm repeat interval
 
+  uint32_t weekday; //0 to 6 representing the day of the week
+  uint32_t century;
+  uint32_t year;
+  uint32_t month;
+  uint32_t dayOfMonth;    
   uint32_t hour;
   uint32_t minute;
   uint32_t seconds;
   uint32_t hundredths;
-
-  uint32_t dayOfMonth;
-  uint32_t month;
-  uint32_t year;
-  uint32_t century;
-
-  uint32_t weekday; //0 to 6 representing the day of the week
   const char *textWeekday;
+
+  uint32_t alarmWeekday; //0 to 6 representing the day of the week
+  uint32_t alarmMonth;
+  uint32_t alarmDayOfMonth;    
+  uint32_t alarmHour;
+  uint32_t alarmMinute;
+  uint32_t alarmSeconds;
+  uint32_t alarmHundredths;
+  const char *alarmTextWeekday;
 
 private:
   //Helper functions to convert compiler date/time to ints
