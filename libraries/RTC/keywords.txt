@@ -32,6 +32,15 @@ year	KEYWORD2
 weekday	KEYWORD2
 textWeekday	KEYWORD2
 
+alarmWeekday	KEYWORD2
+alarmMonth	KEYWORD2
+alarmDayOfMonth	KEYWORD2
+alarmHour	KEYWORD2
+alarmMinute	KEYWORD2
+alarmSeconds	KEYWORD2
+alarmHundredths	KEYWORD2
+alarmTextWeekday	KEYWORD2
+
 #######################################
 # Constants (LITERAL1)
 #######################################
