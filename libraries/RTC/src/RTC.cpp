@@ -127,8 +127,7 @@ void APM3_RTC::getAlarm()
   alarmHour = alm_time.ui32Hour;
   alarmMinute = alm_time.ui32Minute;
   alarmSeconds = alm_time.ui32Second;
-	alarmHundredths = alm_time.ui32Hundredths;
-
+  alarmHundredths = alm_time.ui32Hundredths;
 }
 
 void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
