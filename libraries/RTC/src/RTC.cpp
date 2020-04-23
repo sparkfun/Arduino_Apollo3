@@ -6,6 +6,7 @@
 #include <time.h>
 
 am_hal_rtc_time_t hal_time;
+am_hal_rtc_time_t alm_time;
 
 // String arrays to index Days and Months with the values returned by the RTC.
 char const *pcWeekday[] =
@@ -133,7 +134,6 @@ void APM3_RTC::getAlarm()
   
 void APM3_RTC::setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
 {
-  hal_time.ui32Weekday = am_util_time_computeDayofWeek(2000 + year, month, dayOfMonth); //computeDayofWeek is expecting 1 to 12 months
   hal_time.ui32Month = month;
   hal_time.ui32DayOfMonth = dayOfMonth;
   hal_time.ui32Hour = hour;
@@ -161,7 +161,6 @@ void APM3_RTC::setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, ui
 void APM3_RTC::setAlarmMode(uint8_t mode)
 {
   am_hal_rtc_alarm_interval_set(mode);
-
 }
 
 // mthToIndex() converts a string indicating a month to an index value.
