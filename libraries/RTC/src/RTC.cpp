@@ -127,7 +127,7 @@ void APM3_RTC::getAlarm()
   alarmHour = alm_time.ui32Hour;
   alarmMinute = alm_time.ui32Minute;
   alarmSeconds = alm_time.ui32Second;
-	alarmHundredths = alm_time.ui32Hundredths;
+  alarmHundredths = alm_time.ui32Hundredths;
 
 }
 
@@ -159,7 +159,7 @@ void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, ui
 */
 void APM3_RTC::setAlarmMode(uint8_t mode)
 {
-  //am_hal_rtc_alarm_interval_set(mode);
+  am_hal_rtc_alarm_interval_set(mode);
 }
 
 // mthToIndex() converts a string indicating a month to an index value.
