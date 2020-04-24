@@ -14,12 +14,17 @@ RTC	KEYWORD1
 
 getTime	KEYWORD2
 getEpoch	KEYWORD2
+
 setTime	KEYWORD2
 setTimeToCompiler	KEYWORD2
+setEpoch	KEYWORD2
 
 getAlarm	KEYWORD2
+getAlarmEpoch	KEYWORD2
 setAlarm	KEYWORD2
 setAlarmMode	KEYWORD2
+attachInterrupt	KEYWORD2
+detachInterrupt	KEYWORD2
 
 weekday	KEYWORD2
 textWeekday	KEYWORD2
