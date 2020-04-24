@@ -155,27 +155,9 @@ void APM3_RTC::getAlarm()
   alarmHundredths = alm_time.ui32Hundredths;
 }
 
-uint32_t APM3_RTC::getAlarmEpoch()
-{
-  am_hal_rtc_alarm_get(&alm_time); //Get the RTC's alarm time
-
-  struct tm tm;
-
-  tm.tm_isdst = -1;
-  tm.tm_yday = 0;
-  tm.tm_wday = 0;
-  tm.tm_year = alm_time.ui32Year + 100; //Number of years since 1900.
-  tm.tm_mon = alm_time.ui32Month - 1; //mktime is expecting 0 to 11 months
-  tm.tm_mday = alm_time.ui32DayOfMonth;
-  tm.tm_hour = alm_time.ui32Hour;
-  tm.tm_min = alm_time.ui32Minute;
-  tm.tm_sec = alm_time.ui32Second;
-
-  return mktime(&tm);
-}
-
 void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
 {
+  alm_time.ui32Weekday = 0; // WIP
   alm_time.ui32Month = month;
   alm_time.ui32DayOfMonth = dayOfMonth;
   alm_time.ui32Hour = hour;
@@ -186,73 +168,52 @@ void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, ui
   am_hal_rtc_alarm_set(&alm_time, AM_HAL_RTC_ALM_RPT_DIS); //Initialize the RTC alarm with this date/time
 }
 
-void APM3_RTC::setAlarmEpoch(uint32_t ts)
-{
-  if (ts < EPOCH_TIME) {
-    ts = EPOCH_TIME;
-  }
-
-  struct tm tm;
-
-  time_t t = ts;
-  struct tm* tmp = gmtime(&t);
-  alm_time.ui32Weekday = 0;
-  alm_time.ui32Century = 0;
-  alm_time.ui32Year = tmp->tm_year - 100;
-  alm_time.ui32Month = tmp->tm_mon + 1;
-  alm_time.ui32DayOfMonth = tmp->tm_mday;
-  alm_time.ui32Hour = tmp->tm_hour;
-  alm_time.ui32Minute = tmp->tm_min;
-  alm_time.ui32Second = tmp->tm_sec;
-  alm_time.ui32Hundredths = 0;
-
-  am_hal_rtc_alarm_set(&alm_time, AM_HAL_RTC_ALM_RPT_DIS); //Initialize the RTC alarm with this date/time
-}
-
 // Sets the RTC alarm repeat interval.
 /*
   RTC alarm repeat intervals
-  0: Alarm interrupt disabled
-  1: Interrupt every year
-  2: Interrupt every month
-  3: Interrupt every week
-  4: Interrupt every day
-  5: Interrupt every hour
-  6: Interrupt every minute
-  7: Interrupt every second/10th/100th
-  8: AM_HAL_RTC_ALM_RPT_10TH
-  9: AM_HAL_RTC_ALM_RPT_100TH
+  0: AM_HAL_RTC_ALM_RPT_DIS     Alarm interrupt disabled
+  1: AM_HAL_RTC_ALM_RPT_YR      Interrupt every year
+  2: AM_HAL_RTC_ALM_RPT_MTH     Interrupt every month
+  3: AM_HAL_RTC_ALM_RPT_WK      Interrupt every week
+  4: AM_HAL_RTC_ALM_RPT_DAY     Interrupt every day
+  5: AM_HAL_RTC_ALM_RPT_HR      Interrupt every hour
+  6: AM_HAL_RTC_ALM_RPT_MIN     Interrupt every minute
+  7: AM_HAL_RTC_ALM_RPT_SEC     Interrupt every second
+  8: AM_HAL_RTC_ALM_RPT_10TH    Interrupt every 10th second
+  9: AM_HAL_RTC_ALM_RPT_100TH   Interrupt every 100th second
 */
 void APM3_RTC::setAlarmMode(uint8_t mode)
 {
   am_hal_rtc_alarm_interval_set(mode);
 }
 
-
 void APM3_RTC::attachInterrupt()
 {
-  //Clear the RTC interrupt.
+  // Enable the RTC interrupt.
+  am_hal_rtc_int_enable(AM_HAL_RTC_INT_ALM);
+
+  // Clear the RTC interrupt.
   am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 
-  //Enable RTC interrupts to the NVIC.
+  // Enable RTC interrupts to the NVIC.
   NVIC_EnableIRQ(RTC_IRQn);
 
-  //Enable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
-  am_hal_interrupt_master_enable();
+  // Enable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
+  //am_hal_interrupt_master_enable();
+
 }
 
 void APM3_RTC::detachInterrupt()
 {
-  //Clear the RTC interrupt.
-  am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
-
-  //Disable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
-  am_hal_interrupt_master_disable();
+  // Disable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
+ // am_hal_interrupt_master_disable();
 
   // Disable RTC interrupts to the NVIC.
   NVIC_DisableIRQ(RTC_IRQn);
-}
 
+  // Disable the RTC interrupt.
+  am_hal_rtc_int_disable(AM_HAL_RTC_INT_ALM);
+}
 
 // mthToIndex() converts a string indicating a month to an index value.
 // The return value is a value 0-12, with 0-11 indicating the month given
