@@ -13,10 +13,14 @@ public:
   
   void setTime(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month, uint16_t year); //Set current time to provided hundredths/seconds/etc
   void setToCompilerTime(); //Set to time when sketch was compiled
+  void setEpoch(uint32_t ts); //Set RTC date time with provided UNIX Epoch time
 
   void getAlarm(); //Query the RTC for the current alarm time/date.
+  uint32_t getAlarmEpoch(); //Return the current RTC alarm time/date as UNIX Epoch time 
   void setAlarm(uint8_t hund, uint8_t min, uint8_t sec, uint8_t hour, uint8_t dayOfMonth, uint8_t month); //Set alarm time to provided hundredths/seconds/etc
   void setAlarmMode(uint8_t mode); //Set the RTC alarm repeat interval
+  void attachInterrupt(); //Attach RTC alarm interrupt
+  void detachInterrupt(); //Detach RTC alarm interrupt
 
   uint32_t weekday; //0 to 6 representing the day of the week
   uint32_t century;
