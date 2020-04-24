@@ -8,7 +8,9 @@
 am_hal_rtc_time_t hal_time;
 am_hal_rtc_time_t alm_time;
 
-// String arrays to index Days and Months with the values returned by the RTC.
+#define EPOCH_TIME 946684800 // UNIX Epoch time = 2000-01-01 00:00:00
+
+//String arrays to index Days and Months with the values returned by the RTC.
 char const *pcWeekday[] =
     {
         "Sunday",
@@ -83,6 +85,29 @@ void APM3_RTC::setToCompilerTime()
   am_hal_rtc_time_set(&hal_time); //Initialize the RTC with this date/time
 }
 
+void APM3_RTC::setEpoch(uint32_t ts)
+{
+  if (ts < EPOCH_TIME) {
+    ts = EPOCH_TIME;
+  }
+
+  struct tm tm;
+
+  time_t t = ts;
+  struct tm* tmp = gmtime(&t);
+  hal_time.ui32Weekday = 0;
+  hal_time.ui32Century = 0;
+  hal_time.ui32Year = tmp->tm_year - 100;
+  hal_time.ui32Month = tmp->tm_mon + 1;
+  hal_time.ui32DayOfMonth = tmp->tm_mday;
+  hal_time.ui32Hour = tmp->tm_hour;
+  hal_time.ui32Minute = tmp->tm_min;
+  hal_time.ui32Second = tmp->tm_sec;
+  hal_time.ui32Hundredths = 0;
+
+  am_hal_rtc_time_set(&hal_time); //Initialize the RTC with this date/time
+}
+
 void APM3_RTC::getTime()
 {
   am_hal_rtc_time_get(&hal_time);
@@ -128,7 +153,25 @@ void APM3_RTC::getAlarm()
   alarmMinute = alm_time.ui32Minute;
   alarmSeconds = alm_time.ui32Second;
   alarmHundredths = alm_time.ui32Hundredths;
+}
 
+uint32_t APM3_RTC::getAlarmEpoch()
+{
+  am_hal_rtc_alarm_get(&alm_time); //Get the RTC's alarm time
+
+  struct tm tm;
+
+  tm.tm_isdst = -1;
+  tm.tm_yday = 0;
+  tm.tm_wday = 0;
+  tm.tm_year = alm_time.ui32Year + 100; //Number of years since 1900.
+  tm.tm_mon = alm_time.ui32Month - 1; //mktime is expecting 0 to 11 months
+  tm.tm_mday = alm_time.ui32DayOfMonth;
+  tm.tm_hour = alm_time.ui32Hour;
+  tm.tm_min = alm_time.ui32Minute;
+  tm.tm_sec = alm_time.ui32Second;
+
+  return mktime(&tm);
 }
 
 void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
@@ -139,6 +182,29 @@ void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, ui
   alm_time.ui32Minute = min;
   alm_time.ui32Second = sec;
   alm_time.ui32Hundredths = hund;
+
+  am_hal_rtc_alarm_set(&alm_time, AM_HAL_RTC_ALM_RPT_DIS); //Initialize the RTC alarm with this date/time
+}
+
+void APM3_RTC::setAlarmEpoch(uint32_t ts)
+{
+  if (ts < EPOCH_TIME) {
+    ts = EPOCH_TIME;
+  }
+
+  struct tm tm;
+
+  time_t t = ts;
+  struct tm* tmp = gmtime(&t);
+  alm_time.ui32Weekday = 0;
+  alm_time.ui32Century = 0;
+  alm_time.ui32Year = tmp->tm_year - 100;
+  alm_time.ui32Month = tmp->tm_mon + 1;
+  alm_time.ui32DayOfMonth = tmp->tm_mday;
+  alm_time.ui32Hour = tmp->tm_hour;
+  alm_time.ui32Minute = tmp->tm_min;
+  alm_time.ui32Second = tmp->tm_sec;
+  alm_time.ui32Hundredths = 0;
 
   am_hal_rtc_alarm_set(&alm_time, AM_HAL_RTC_ALM_RPT_DIS); //Initialize the RTC alarm with this date/time
 }
@@ -161,6 +227,32 @@ void APM3_RTC::setAlarmMode(uint8_t mode)
 {
   am_hal_rtc_alarm_interval_set(mode);
 }
+
+
+void APM3_RTC::attachInterrupt()
+{
+  //Clear the RTC interrupt.
+  am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
+
+  //Enable RTC interrupts to the NVIC.
+  NVIC_EnableIRQ(RTC_IRQn);
+
+  //Enable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
+  am_hal_interrupt_master_enable();
+}
+
+void APM3_RTC::detachInterrupt()
+{
+  //Clear the RTC interrupt.
+  am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
+
+  //Disable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
+  am_hal_interrupt_master_disable();
+
+  // Disable RTC interrupts to the NVIC.
+  NVIC_DisableIRQ(RTC_IRQn);
+}
+
 
 // mthToIndex() converts a string indicating a month to an index value.
 // The return value is a value 0-12, with 0-11 indicating the month given
