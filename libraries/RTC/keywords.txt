@@ -20,7 +20,6 @@ setTimeToCompiler	KEYWORD2
 setEpoch	KEYWORD2
 
 getAlarm	KEYWORD2
-getAlarmEpoch	KEYWORD2
 setAlarm	KEYWORD2
 setAlarmMode	KEYWORD2
 attachInterrupt	KEYWORD2
