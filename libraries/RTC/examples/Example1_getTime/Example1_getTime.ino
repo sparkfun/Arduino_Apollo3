@@ -20,7 +20,7 @@ void setup()
   Serial.println("SparkFun RTC Example");
 
   myRTC.setToCompilerTime(); //Easily set RTC using the system __DATE__ and __TIME__ macros from compiler
-  //myRTC.setTime(7, 28, 51, 0, 21, 10, 15); //Manually set RTC back to the future: Oct 21st, 2015 at 7:28.51 AM
+  //myRTC.setTime(0, 51, 28, 7, 21, 10, 15); //Manually set RTC back to the future: Oct 21st, 2015 at 7:28.51 AM
 }
 
 void loop()
