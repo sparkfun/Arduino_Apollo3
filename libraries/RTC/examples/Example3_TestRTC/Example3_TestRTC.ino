@@ -6,7 +6,7 @@
 */
 
 #include "RTC.h"
-APM3_RTC myRTC; //Create instance of RTC class
+APM3_RTC myRTC; // Create instance of RTC class
 
 int previousDay = 1;
 
@@ -16,8 +16,8 @@ void setup()
   delay(10);
   Serial.println("Artemis RTC testing");
 
-  //myRTC.setTime(hh, mm, ss, hund, dd, mm, yy);
-  myRTC.setTime(23, 59, 59, 99, 1, 1, 19); //Manually set RTC to 1s before midnight
+  //myRTC.setTime(hund, ss, mm, hh, dd, mm, yy);
+  myRTC.setTime(0, 59, 59, 23, 1, 1, 20); // Manually set RTC to 1s before midnight
 }
 
 void loop()
@@ -25,7 +25,7 @@ void loop()
   printArtemisTime();
 
   myRTC.getTime();
-  myRTC.setTime(23, 59, 59, 99, myRTC.dayOfMonth, myRTC.month, myRTC.year); //Manually set RTC
+  myRTC.setTime(99, 59, 59, 23, myRTC.dayOfMonth, myRTC.month, myRTC.year); //Manually set RTC
   delay(11);                                                                //Allow us to roll from midnight the night before to the new day
 }
 
