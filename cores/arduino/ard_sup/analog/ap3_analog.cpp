@@ -223,6 +223,35 @@ uint16_t analogRead(uint8_t pinNumber)
     }
 }
 
+//Returns the internal temperature of the Apollo3
+float getTemperature()
+{
+    const float fReferenceVoltage = 2.0;
+    float fADCTempDegreesC = 0.0;
+
+    uint16_t internalTemp = analogRead(ADC_INTERNAL_TEMP); //Read internal temp sensor channel
+
+    //
+    // Convert and scale the temperature.
+    // Temperatures are in Fahrenheit range -40 to 225 degrees.
+    // Voltage range is 0.825V to 1.283V
+    // First get the ADC voltage corresponding to temperature.
+    //
+    float fADCTempVolts = ((float)internalTemp) * fReferenceVoltage / ((float)(pow(2, _analogBits)));
+
+    float fVT[3];
+    fVT[0] = fADCTempVolts;
+    fVT[1] = 0.0f;
+    fVT[2] = -123.456;
+    uint32_t ui32Retval = am_hal_adc_control(g_ADCHandle, AM_HAL_ADC_REQ_TEMP_CELSIUS_GET, fVT);
+    if (ui32Retval == AM_HAL_STATUS_SUCCESS)
+    {
+        fADCTempDegreesC = fVT[1]; // Get the temperature
+    }
+
+    return (fADCTempDegreesC);
+}
+
 //Power down ADC. Comes from adc_lpmode2.c example from Ambiq SDK
 bool power_adc_disable()
 {
