@@ -320,6 +320,7 @@ extern void detachInterrupt(uint8_t pin)
     gpio_isr_entries[gpio_num_isr].callback = NULL;
     gpio_isr_entries[gpio_num_isr].mode = LOW;
     gpio_isr_entries[gpio_num_isr].arg = NULL;
+    gpio_num_isr--;
 }
 
 uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir)
