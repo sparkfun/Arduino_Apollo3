@@ -44,7 +44,7 @@ ap3_err_t ap3_change_channel(ap3_gpio_pad_t padNumber);
 bool power_adc_disable();
 uint16_t analogRead(uint8_t pinNumber);
 ap3_err_t analogReadResolution(uint8_t bits);
-float getTemperature();
+float getInternalTemp();
 
 ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk);
 ap3_err_t analogWriteResolution(uint8_t res);
