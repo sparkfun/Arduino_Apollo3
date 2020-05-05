@@ -53,7 +53,7 @@ void loop()
   Serial.print("V");
 
   Serial.print("\tinternalTemp: ");
-  Serial.print(getTemperature(), 2);
+  Serial.print(getInternalTemp(), 2);
 
   int vss = analogRead(ADC_INTERNAL_VSS); //Read internal VSS (should be 0)
   Serial.print("\tvss: ");

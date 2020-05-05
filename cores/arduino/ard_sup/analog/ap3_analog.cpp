@@ -224,7 +224,7 @@ uint16_t analogRead(uint8_t pinNumber)
 }
 
 //Returns the internal temperature of the Apollo3
-float getTemperature()
+float getInternalTemp()
 {
     const float fReferenceVoltage = 2.0;
     float fADCTempDegreesC = 0.0;
