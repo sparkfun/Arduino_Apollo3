@@ -55,7 +55,7 @@ ap3_err_t IOMaster::initialize(am_hal_iom_config_t config)
         return AP3_ERR;
     }
 
-    retVal32 = am_hal_iom_configure(_handle, &_config);
+    retVal32 = ap3_iom_configure(_handle, &_config);
     if (retVal32 != AM_HAL_STATUS_SUCCESS)
     {
         return AP3_ERR;

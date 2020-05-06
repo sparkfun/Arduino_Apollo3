@@ -46,6 +46,7 @@ public:
 
 ap3_err_t ap3_iom_pad_funcsel( uint8_t instance, ap3_iom_pad_type_e type, ap3_gpio_pad_t* pad, uint8_t* funcsel );
 
+extern "C" uint32_t ap3_iom_configure(void *pHandle, am_hal_iom_config_t *psConfig);
 
 
 #endif // _AP3_IOMASTER_H_

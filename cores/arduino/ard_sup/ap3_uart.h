@@ -30,11 +30,11 @@ SOFTWARE.
 #include "RingBuffer.h"
 
 #ifndef AP3_UART_RINGBUFF_SIZE
-#define AP3_UART_RINGBUFF_SIZE 256
+#define AP3_UART_RINGBUFF_SIZE 256 * 16
 #endif
 
 #ifndef AP3_UART_LINBUFF_SIZE
-#define AP3_UART_LINBUFF_SIZE 256
+#define AP3_UART_LINBUFF_SIZE 256 * 16
 #endif
 
 typedef RingBufferN<AP3_UART_RINGBUFF_SIZE> AP3UartRingBuffer;
@@ -78,7 +78,7 @@ public:
 	operator bool() { return true; } // todo: wait for a serial terminal to be open... probably depends on RTS or CTS...
 
 private:
-public:													//temporary
+public:							  //temporary
 	AP3UartRingBuffer _rx_buffer; // These buffers guarantee the lifespan of the data to transmit
 	AP3UartRingBuffer _tx_buffer; //		to allow for asynchronous tranfsers
 
