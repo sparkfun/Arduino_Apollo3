@@ -56,6 +56,9 @@ void setup()
     // These two GPIOs are critical: the TX/RX connections between the Artemis module and the CH340S on the Blackboard
     // are prone to backfeeding each other. To stop this from happening, we must reconfigure those pins as GPIOs
     // and then disable them completely:
+    Serial.println("The TX and RX pins need to be disabled to minimize the current draw.");
+    Serial.println("You should not see any more Serial messages after this...");
+    delay(100);
     am_hal_gpio_pinconfig(48 /* TXO-0 */, g_AM_HAL_GPIO_DISABLE);
     am_hal_gpio_pinconfig(49 /* RXI-0 */, g_AM_HAL_GPIO_DISABLE);
 
