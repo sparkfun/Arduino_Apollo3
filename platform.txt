@@ -1,0 +1,100 @@
+# Copyright (c) 2020 SparkFun Electronics
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+name=SparkFun Apollo3
+version=2.0.0
+
+# paths
+ap3core.path={runtime.platform.path}/cores/{build.core}
+ap3variant.path={build.variant.path}
+ap3core.ambiq_sdk.path={ap3core.path}/am_sdk_ap3
+
+# defines
+defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
+defines.hw=-DF_CPU={build.f_cpu}
+defines.variant={build.defines}
+defines.extra=
+defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
+
+# includes
+includes.core={includes}
+includes.mbed=
+includes.variant={build.includes}
+includes.extra=
+includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
+
+# libraries
+libs.core=
+libs.mbed={build.libmbed}
+libs.variant={build.libs}
+libs.extra=
+libs.all={archive_file_path} {libs.core} {libs.mbed} {libs.variant} {libs.extra}
+
+# warnings
+compiler.warning_flags=
+compiler.warning_flags.none=
+compiler.warning_flags.default=
+compiler.warning_flags.more=-Wall
+compiler.warning_flags.all=-Wall -Wextra
+
+# flags
+compiler.common_cpp_c_S_preproc.flags=-mcpu={build.mcu}
+compiler.common_cpp_c_S.flags={build.extra_flags} -c -g -MMD
+compiler.common_cpp_c.flags=-mthumb -mfloat-abi=hard -fdata-sections -Os
+compiler.S.flags={compiler.common_cpp_c_S_preproc.flags} {compiler.common_cpp_c_S.flags} {compiler.S.extra_flags} -x assembler-with-cpp
+compiler.c.flags={compiler.common_cpp_c_S_preproc.flags} {compiler.common_cpp_c_S.flags} {compiler.common_cpp_c.flags} {compiler.c.extra_flags} --function-sections -mfpu=fpv4-sp-d16 -std=gnu11 -Wall 
+compiler.cpp.flags={compiler.common_cpp_c_S_preproc.flags} {compiler.common_cpp_c_S.flags} {compiler.common_cpp_c.flags} {compiler.cpp.extra_flags} -ffunction-sections  {compiler.warning_flags} -std=gnu++11 -fno-threadsafe-statics -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions
+compiler.preproc.flags={compiler.cpp.flags} -w -x c++ -E -CC
+# compiler.ld.flags={compiler.ld.extra_flags} "-L{ap3core.ambiq_sdk.path}/CMSIS/ARM/Lib/ARM" -larm_cortexM4lf_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
+compiler.ld.flags={compiler.ld.extra_flags} -larm_cortexM4lf_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
+compiler.ar.flags=rcs {compiler.ar.extra_flags}
+compiler.axf2bin.flags={compiler.axf2bin.extra_flags} -O binary
+compiler.axf2hex.flags={compiler.axf2hex.extra_flags} -O hex
+
+# extra flags (can be overridden in platform.local.txt)
+compiler.cpp.extra_flags=
+compiler.c.extra_flags=
+compiler.S.extra_flags=
+compiler.ld.extra_flags=
+compiler.ar.extra_flags=
+compiler.axf2bin.extra_flags=
+compiler.axf2hex.extra_flags=
+
+# compiler information
+compiler.path={runtime.tools.arm-none-eabi-gcc-8-2018-q4-major.path}/bin
+compiler.prefix={compiler.path}/arm-none-eabi-
+compiler.gcc.cmd={compiler.prefix}gcc
+compiler.g++.cmd={compiler.prefix}g++
+compiler.ar.cmd={compiler.prefix}ar
+compiler.objcopy.cmd={compiler.prefix}objcopy
+compiler.size.cmd={compiler.prefix}size
+
+# arduino recipes
+recipe.preproc.macros="{compiler.g++.cmd}" {compiler.preproc.flags} {defines.all} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
+recipe.S.o.pattern="{compiler.gcc.cmd}" {compiler.S.flags} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.gcc.cmd}" {compiler.c.flags} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.g++.cmd}" {compiler.cpp.flags} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.ar.pattern="{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
+recipe.c.combine.pattern="{compiler.gcc.cmd}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.ld.flags}
+recipe.objcopy.bin.pattern="{compiler.objcopy.cmd}" {compiler.axf2bin.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"
+recipe.objcopy.hex.pattern="{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.hex"
+recipe.size.pattern="{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
+recipe.size.regex=\.text\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
