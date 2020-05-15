@@ -55,23 +55,20 @@ compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
 # flags
-compiler.common_cpp_c_S_preproc.flags=-mcpu={build.mcu}
-compiler.common_cpp_c_S.flags={build.extra_flags} -c -g -MMD
-compiler.common_cpp_c.flags=-mthumb -mfloat-abi=hard -fdata-sections -Os
-compiler.S.flags={compiler.common_cpp_c_S_preproc.flags} {compiler.common_cpp_c_S.flags} {compiler.S.extra_flags} -x assembler-with-cpp
-compiler.c.flags={compiler.common_cpp_c_S_preproc.flags} {compiler.common_cpp_c_S.flags} {compiler.common_cpp_c.flags} {compiler.c.extra_flags} --function-sections -mfpu=fpv4-sp-d16 -std=gnu11 -Wall 
-compiler.cpp.flags={compiler.common_cpp_c_S_preproc.flags} {compiler.common_cpp_c_S.flags} {compiler.common_cpp_c.flags} {compiler.cpp.extra_flags} -ffunction-sections  {compiler.warning_flags} -std=gnu++11 -fno-threadsafe-statics -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions
-compiler.preproc.flags={compiler.cpp.flags} -w -x c++ -E -CC
-# compiler.ld.flags={compiler.ld.extra_flags} "-L{ap3core.ambiq_sdk.path}/CMSIS/ARM/Lib/ARM" -larm_cortexM4lf_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
-compiler.ld.flags={compiler.ld.extra_flags} -larm_cortexM4lf_math -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard  -static -Wl,--gc-sections,--entry,Reset_Handler -Wl,--start-group -lm -lc -lgcc -Wl,--end-group -fno-exceptions -nostdlib --specs=nano.specs -t -lstdc++ -lc -lnosys -lm
-compiler.ar.flags=rcs {compiler.ar.extra_flags}
-compiler.axf2bin.flags={compiler.axf2bin.extra_flags} -O binary
-compiler.axf2hex.flags={compiler.axf2hex.extra_flags} -O hex
+compiler.preproc.flags={build.preproc.flags} {compiler.preproc.extra_flags}
+compiler.asm.flags={build.asm.flags} {compiler.asm.extra_flags}
+compiler.c.flags={build.c.flags} {compiler.c.extra_flags}
+compiler.cxx.flags={build.cxx.flags} {compiler.cxx.extra_flags}
+compiler.ld.flags={build.ld.flags} {compiler.ld.extra_flags} --specs=nosys.specs
+compiler.ar.flags=rcs {compiler.ar.extra_flags} {compiler.ar.extra_flags}
+compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
+compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags}
 
 # extra flags (can be overridden in platform.local.txt)
-compiler.cpp.extra_flags=
+compiler.preproc.extra_flags=
+compiler.asm.extra_flags=
 compiler.c.extra_flags=
-compiler.S.extra_flags=
+compiler.cxx.extra_flags=
 compiler.ld.extra_flags=
 compiler.ar.extra_flags=
 compiler.axf2bin.extra_flags=
@@ -81,16 +78,16 @@ compiler.axf2hex.extra_flags=
 compiler.path={runtime.tools.arm-none-eabi-gcc-8-2018-q4-major.path}/bin
 compiler.prefix={compiler.path}/arm-none-eabi-
 compiler.gcc.cmd={compiler.prefix}gcc
-compiler.g++.cmd={compiler.prefix}g++
+compiler.gxx.cmd={compiler.prefix}g++
 compiler.ar.cmd={compiler.prefix}ar
 compiler.objcopy.cmd={compiler.prefix}objcopy
 compiler.size.cmd={compiler.prefix}size
 
 # arduino recipes
-recipe.preproc.macros="{compiler.g++.cmd}" {compiler.preproc.flags} {defines.all} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
-recipe.S.o.pattern="{compiler.gcc.cmd}" {compiler.S.flags} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
-recipe.c.o.pattern="{compiler.gcc.cmd}" {compiler.c.flags} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
-recipe.cpp.o.pattern="{compiler.g++.cmd}" {compiler.cpp.flags} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.preproc.macros="{compiler.gxx.cmd}" {compiler.preproc.flags} {build.preproc.defines} {defines.all} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
+recipe.S.o.pattern="{compiler.gcc.cmd}" {compiler.asm.flags} {build.asm.defines} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.gcc.cmd}" {compiler.c.flags} {build.c.defines} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.gxx.cmd}" {compiler.cxx.flags} {build.cxx.defines} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
 recipe.ar.pattern="{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
 recipe.c.combine.pattern="{compiler.gcc.cmd}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.ld.flags}
 recipe.objcopy.bin.pattern="{compiler.objcopy.cmd}" {compiler.axf2bin.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"
