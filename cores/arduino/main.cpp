@@ -25,7 +25,7 @@ SOFTWARE.
 extern void setup(void);
 extern void loop(void);
 
-extern "C" int main(void)
+int main(void)
 {
   setup();
   for (;;)
