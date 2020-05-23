@@ -53,7 +53,7 @@ void loop()
     // Set the RTC's rolling alarm
     myRTC.setAlarm(0, (myRTC.seconds + 5) % 60, myRTC.minute,
                    myRTC.hour, myRTC.dayOfMonth, myRTC.month);
-    myRTC.setAlarmMode(2);
+    myRTC.setAlarmMode(6);
     Serial.print("Rolling alarm: "); printAlarm();
   }
 
