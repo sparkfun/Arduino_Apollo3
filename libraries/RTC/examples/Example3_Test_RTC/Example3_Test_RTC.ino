@@ -1,0 +1,83 @@
+/*
+  Author: Nathan Seidle and stephenf7072
+  Created: January 28th, 2020
+  License: MIT. See SparkFun Arduino Apollo3 Project for more information
+
+  This example test the internal HAL to make sure the days advance correctly.
+*/
+
+#include "RTC.h"
+APM3_RTC myRTC; // Create instance of RTC class
+
+int previousDay = 1;
+
+void setup()
+{
+  Serial.begin(115200);
+  delay(10);
+  Serial.println("Artemis RTC testing");
+
+  //myRTC.setTime(hund, ss, mm, hh, dd, mm, yy);
+  myRTC.setTime(0, 59, 59, 23, 1, 1, 20); // Manually set RTC to 1s before midnight
+}
+
+void loop()
+{
+  printArtemisTime();
+
+  myRTC.getTime();
+  myRTC.setTime(99, 59, 59, 23, myRTC.dayOfMonth, myRTC.month, myRTC.year); //Manually set RTC
+  delay(11); //Allow us to roll from midnight the night before to the new day
+}
+
+void printArtemisTime()
+{
+  char buf[50];
+  char weekdayBuf[4];
+
+  myRTC.getTime();
+  int i = myRTC.weekday + 1;
+  switch (i)
+  {
+  case (1):
+    strcpy(weekdayBuf, "Sun");
+    break;
+  case (2):
+    strcpy(weekdayBuf, "Mon");
+    break;
+  case (3):
+    strcpy(weekdayBuf, "Tue");
+    break;
+  case (4):
+    strcpy(weekdayBuf, "Wed");
+    break;
+  case (5):
+    strcpy(weekdayBuf, "Thu");
+    break;
+  case (6):
+    strcpy(weekdayBuf, "Fri");
+    break;
+  case (7):
+    strcpy(weekdayBuf, "Sat");
+    break;
+
+  default:
+    strcpy(weekdayBuf, "???");
+    break;
+  }
+
+  sprintf(buf, "%02d-%02d-%02d (%s) %02d:%02d:%02d.%02d", myRTC.year, myRTC.month, myRTC.dayOfMonth, weekdayBuf, myRTC.hour, myRTC.minute, myRTC.seconds, myRTC.hundredths);
+  Serial.print(buf);
+
+  //Move the previous day forward one day and make sure it matches today
+  if ((previousDay + 1) % 7 != myRTC.weekday)
+  {
+    Serial.printf(" Error! previousDay: %d today: %d\n", previousDay, myRTC.weekday);
+    while (1)
+      ;
+  }
+
+  previousDay = myRTC.weekday;
+
+  Serial.println();
+}
