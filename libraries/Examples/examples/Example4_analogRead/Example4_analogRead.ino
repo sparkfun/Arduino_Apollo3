@@ -52,11 +52,8 @@ void loop()
   Serial.print(vcc, 2);
   Serial.print("V");
 
-  int internalTempVoltage = analogRead(ADC_INTERNAL_TEMP); //Read internal temp sensor. 3.8mV/C, +/-3C
-  double internalTemp = internalTempVoltage * vcc / 16384.0; //Convert internal temp reading to voltage
-  internalTemp /= 0.0038; //Convert voltage to degrees C
   Serial.print("\tinternalTemp: ");
-  Serial.print(internalTemp, 2);
+  Serial.print(getInternalTemp(), 2);
 
   int vss = analogRead(ADC_INTERNAL_VSS); //Read internal VSS (should be 0)
   Serial.print("\tvss: ");

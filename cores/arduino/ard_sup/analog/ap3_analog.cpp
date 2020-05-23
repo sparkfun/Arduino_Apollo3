@@ -121,15 +121,16 @@ static const uint8_t outcfg_tbl[32][4] =
 
 #define AP3_MAX_ANALOG_WRITE_WIDTH 0x0000FFFF
 
-uint16_t _analogBits = 10;    //10-bit by default
-uint8_t _analogWriteBits = 8; // 8-bit by default for writes
-uint8_t _servoWriteBits = 8;  // 8-bit by default for writes
+uint16_t _analogBits = 10;               //10-bit by default
+uint8_t _analogWriteBits = 8;            // 8-bit by default for writes
+uint8_t _servoWriteBits = 8;             // 8-bit by default for writes
 static bool ap3_adc_initialized = false; // flag to show if the ADC has been initialized
 static uint32_t _analogWriteWidth = 0x0000FFFF;
 
 uint16_t analogRead(uint8_t pinNumber)
 {
-    if(!ap3_adc_initialized){
+    if (!ap3_adc_initialized)
+    {
         ap3_adc_setup();
         ap3_adc_initialized = true;
     }
@@ -220,6 +221,35 @@ uint16_t analogRead(uint8_t pinNumber)
     {
         return (result << (_analogBits - 14)); //Pad with zeros
     }
+}
+
+//Returns the internal temperature of the Apollo3
+float getInternalTemp()
+{
+    const float fReferenceVoltage = 2.0;
+    float fADCTempDegreesC = 0.0;
+
+    uint16_t internalTemp = analogRead(ADC_INTERNAL_TEMP); //Read internal temp sensor channel
+
+    //
+    // Convert and scale the temperature.
+    // Temperatures are in Fahrenheit range -40 to 225 degrees.
+    // Voltage range is 0.825V to 1.283V
+    // First get the ADC voltage corresponding to temperature.
+    //
+    float fADCTempVolts = ((float)internalTemp) * fReferenceVoltage / ((float)(pow(2, _analogBits)));
+
+    float fVT[3];
+    fVT[0] = fADCTempVolts;
+    fVT[1] = 0.0f;
+    fVT[2] = -123.456;
+    uint32_t ui32Retval = am_hal_adc_control(g_ADCHandle, AM_HAL_ADC_REQ_TEMP_CELSIUS_GET, fVT);
+    if (ui32Retval == AM_HAL_STATUS_SUCCESS)
+    {
+        fADCTempDegreesC = fVT[1]; // Get the temperature
+    }
+
+    return (fADCTempDegreesC);
 }
 
 //Power down ADC. Comes from adc_lpmode2.c example from Ambiq SDK
@@ -508,19 +538,21 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
 
     // if timer is running wait for timer value to roll over (will indicate that at least one pulse has been emitted)
     AM_CRITICAL_BEGIN // critical section when reading / writing config registers
-    if(*((uint32_t*)CTIMERADDRn(CTIMER, timer, CTRL0)) & (CTIMER_CTRL0_TMRA0EN_Msk | CTIMER_CTRL0_TMRB0EN_Msk)){
+        if (*((uint32_t *)CTIMERADDRn(CTIMER, timer, CTRL0)) & (CTIMER_CTRL0_TMRA0EN_Msk | CTIMER_CTRL0_TMRB0EN_Msk))
+    {
         uint32_t current = 0;
         uint32_t last = 0;
-        do {
+        do
+        {
             last = current;
-            current = am_hal_ctimer_read( timer, segment);
-        }while(current >= last);
+            current = am_hal_ctimer_read(timer, segment);
+        } while (current >= last);
     }
 
     AM_CRITICAL_END // end critical section
 
-    // clear timer (also stops the timer)
-    am_hal_ctimer_clear(timer, segment);
+        // clear timer (also stops the timer)
+        am_hal_ctimer_clear(timer, segment);
 
     // Configure the repeated pulse mode with our clock source
     am_hal_ctimer_config_single(timer,
@@ -538,25 +570,27 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
             pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, AUX0);
             uint32_t ui32WriteVal = AM_REGVAL(pui32ConfigReg);
             uint32_t ui32ConfigVal = (1 << CTIMER_AUX0_TMRA0EN23_Pos); // using CTIMER_AUX0_TMRA0EN23_Pos because for now this number is common to all CTimer instances
-            volatile uint32_t *pui32CompareRegA = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRA0);
-            volatile uint32_t *pui32CompareRegB = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRB0);
-            uint32_t masterPeriod = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
-            uint32_t masterRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
-    
+            volatile uint32_t *pui32CompareRegA = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRA0);
+            volatile uint32_t *pui32CompareRegB = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRB0);
+            uint32_t masterPeriod = (uint32_t)(*(pui32CompareRegA)&CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
+            uint32_t masterRisingTrigger = (uint32_t)(*(pui32CompareRegA)&CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
+
             if (segment == AM_HAL_CTIMER_TIMERB)
             {
                 ui32ConfigVal = ((ui32ConfigVal & 0xFFFF) << 16);
-                masterPeriod = (uint32_t)(*(pui32CompareRegB) & CTIMER_CMPRB0_CMPR1B0_Msk) >> CTIMER_CMPRB0_CMPR1B0_Pos;
-                masterRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRB0_CMPR0B0_Msk) >> CTIMER_CMPRB0_CMPR0B0_Pos;
+                masterPeriod = (uint32_t)(*(pui32CompareRegB)&CTIMER_CMPRB0_CMPR1B0_Msk) >> CTIMER_CMPRB0_CMPR1B0_Pos;
+                masterRisingTrigger = (uint32_t)(*(pui32CompareRegA)&CTIMER_CMPRB0_CMPR0B0_Msk) >> CTIMER_CMPRB0_CMPR0B0_Pos;
             }
             ui32WriteVal |= ui32ConfigVal;
             AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
 
-            if(masterPeriod != fw){
+            if (masterPeriod != fw)
+            {
                 // the master output fw dictates the secondary fw... so if they are different try to change the master while preserving duty cycle
                 uint32_t masterTH = ((masterPeriod - masterRisingTrigger) * fw) / masterPeriod; // try to compensate in case _analogWriteWidth was changed
-                if(masterPeriod == 0){  // if masterPeriod was 0 then masterTH will be invalid (divide by 0). This usually means that the master timer output did not have a set duty cycle. This also means the output is probably not configured and so it is okay to choose an arbitrary duty cycle
-                    masterTH = fw - 1; 
+                if (masterPeriod == 0)
+                { // if masterPeriod was 0 then masterTH will be invalid (divide by 0). This usually means that the master timer output did not have a set duty cycle. This also means the output is probably not configured and so it is okay to choose an arbitrary duty cycle
+                    masterTH = fw - 1;
                 }
                 am_hal_ctimer_period_set(timer, segment, fw, masterTH); // but this overwrites the non-aux compare regs for this timer / segment
                 // Serial.printf("th = %d, fw = %d, (masterPeriod - masterRisingTrigger) = (%d - %d) = %d\n", th, fw, masterPeriod, masterRisingTrigger, (masterPeriod - masterRisingTrigger));
@@ -570,25 +604,28 @@ ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk)
             // Try to preserve settings of the secondary output
             uint32_t *pui32ConfigReg = NULL;
             pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, timer, AUX0);
-            volatile uint32_t *pui32CompareRegA = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
-            volatile uint32_t *pui32CompareRegB = (uint32_t*)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
-            uint32_t slavePeriod = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
-            uint32_t slaveRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
-            
+            volatile uint32_t *pui32CompareRegA = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRAUXA0);
+            volatile uint32_t *pui32CompareRegB = (uint32_t *)CTIMERADDRn(CTIMER, timer, CMPRAUXB0);
+            uint32_t slavePeriod = (uint32_t)(*(pui32CompareRegA)&CTIMER_CMPRA0_CMPR1A0_Msk) >> CTIMER_CMPRA0_CMPR1A0_Pos;
+            uint32_t slaveRisingTrigger = (uint32_t)(*(pui32CompareRegA)&CTIMER_CMPRA0_CMPR0A0_Msk) >> CTIMER_CMPRA0_CMPR0A0_Pos;
+
             uint32_t auxEnabled = (AM_REGVAL(pui32ConfigReg) & CTIMER_AUX0_TMRA0EN23_Msk);
-            
+
             if (segment == AM_HAL_CTIMER_TIMERB)
             {
                 auxEnabled = (AM_REGVAL(pui32ConfigReg) & (CTIMER_AUX0_TMRA0EN23_Msk << 16));
-                slavePeriod = (uint32_t)(*(pui32CompareRegB) & CTIMER_CMPRB0_CMPR1B0_Msk) >> CTIMER_CMPRB0_CMPR1B0_Pos;
-                slaveRisingTrigger = (uint32_t)(*(pui32CompareRegA) & CTIMER_CMPRB0_CMPR0B0_Msk) >> CTIMER_CMPRB0_CMPR0B0_Pos;
+                slavePeriod = (uint32_t)(*(pui32CompareRegB)&CTIMER_CMPRB0_CMPR1B0_Msk) >> CTIMER_CMPRB0_CMPR1B0_Pos;
+                slaveRisingTrigger = (uint32_t)(*(pui32CompareRegA)&CTIMER_CMPRB0_CMPR0B0_Msk) >> CTIMER_CMPRB0_CMPR0B0_Pos;
             }
 
-            if( auxEnabled ){ // if secondary outputs are enabled
-                if( slavePeriod != fw ){ // and if fw is different from previous slavePeriod
+            if (auxEnabled)
+            { // if secondary outputs are enabled
+                if (slavePeriod != fw)
+                {                                                                               // and if fw is different from previous slavePeriod
                     uint32_t slaveTH = ((slavePeriod - slaveRisingTrigger) * fw) / slavePeriod; // try to compensate in case _analogWriteWidth was changed
-                    if(slavePeriod == 0){  // if masterPeriod was 0 then masterTH will be invalid (divide by 0). This usually means that the master timer output did not have a set duty cycle. This also means the output is probably not configured and so it is okay to choose an arbitrary duty cycle
-                        slaveTH = fw - 1; 
+                    if (slavePeriod == 0)
+                    { // if masterPeriod was 0 then masterTH will be invalid (divide by 0). This usually means that the master timer output did not have a set duty cycle. This also means the output is probably not configured and so it is okay to choose an arbitrary duty cycle
+                        slaveTH = fw - 1;
                     }
                     am_hal_ctimer_aux_period_set(timer, segment, fw, slaveTH); // but this overwrites the non-aux compare regs for this timer / segment
                 }
@@ -615,20 +652,25 @@ ap3_err_t analogWriteResolution(uint8_t res)
     return AP3_OK;
 }
 
-ap3_err_t analogWriteFrameWidth(uint32_t fw){
+ap3_err_t analogWriteFrameWidth(uint32_t fw)
+{
     _analogWriteWidth = fw;
-    if(_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH){
+    if (_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH)
+    {
         _analogWriteWidth = AP3_MAX_ANALOG_WRITE_WIDTH;
     }
     return AP3_OK;
 }
 
-ap3_err_t analogWriteFrequency(float freq){
+ap3_err_t analogWriteFrequency(float freq)
+{
     _analogWriteWidth = (uint32_t)(12000000 / freq);
-    if(_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH){
+    if (_analogWriteWidth > AP3_MAX_ANALOG_WRITE_WIDTH)
+    {
         return AP3_ERR;
     }
-    if(_analogWriteWidth < 3){
+    if (_analogWriteWidth < 3)
+    {
         return AP3_ERR;
     }
     return AP3_OK;
@@ -655,12 +697,12 @@ ap3_err_t servoWriteResolution(uint8_t res)
 
 uint8_t getServoResolution()
 {
-    return(_servoWriteBits);
+    return (_servoWriteBits);
 }
 
 ap3_err_t servoWrite(uint8_t pin, uint32_t val)
 {
-    return(servoWrite(pin, val, 544, 2400)); //Call servoWrite with Arduino default min/max microseconds. See: https://www.arduino.cc/en/Reference/ServoAttach
+    return (servoWrite(pin, val, 544, 2400)); //Call servoWrite with Arduino default min/max microseconds. See: https://www.arduino.cc/en/Reference/ServoAttach
 }
 
 ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t maxMicros)
@@ -672,9 +714,9 @@ ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t max
     uint32_t fw = 60000;                      // 20 ms wide frame
 
     //Convert microSeconds to PWM counts.
-    uint32_t min = minMicros * 3; 
+    uint32_t min = minMicros * 3;
     uint32_t max = maxMicros * 3;
-    
+
     uint32_t th = (uint32_t)(((max - min) * val) / fsv) + min;
 
     return ap3_pwm_output(pin, th, fw, clk);
