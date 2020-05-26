@@ -1,0 +1,4 @@
+[submodule "cores/mbed-os"]
+	path = cores/mbed-os
+	url = https://github.com/sparkfun/mbed-os-ambiq-apollo3
+	branch = ambiq-apollo3-2
