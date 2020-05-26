@@ -13,8 +13,8 @@ volatile bool alarmFlag = false;
 int alarmSeconds = 5;
 int alarmMinutes = 0;
 int alarmHours = 0;
-int alarmDays = 0;
-int alarmMonths = 0;
+int alarmDay = 0;
+int alarmMonth = 0;
 
 
 void setup()
