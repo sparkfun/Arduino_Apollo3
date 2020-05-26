@@ -10,6 +10,12 @@
 APM3_RTC myRTC; //Create instance of RTC class
 
 volatile bool alarmFlag = false;
+int alarmSeconds = 5;
+int alarmMinutes = 0;
+int alarmHours = 0;
+int alarmDays = 0;
+int alarmMonths = 0;
+
 
 void setup()
 {
@@ -51,8 +57,11 @@ void loop()
     alarmFlag = false;
 
     // Set the RTC's rolling alarm
-    myRTC.setAlarm(0, (myRTC.seconds + 5) % 60, myRTC.minute,
-                   myRTC.hour, myRTC.dayOfMonth, myRTC.month);
+    myRTC.setAlarm(0, (myRTC.seconds + alarmSeconds) % 60,
+                   (myRTC.minute + alarmMinutes) % 60,
+                   (myRTC.hour + alarmHours) % 24,
+                   (myRTC.dayOfMonth + alarmDay) % 31, // To do: How to # days in a month rollovers
+                   (myRTC.month + alarmMonth) % 12);
     myRTC.setAlarmMode(6);
     Serial.print("Rolling alarm: "); printAlarm();
   }
