@@ -32,13 +32,13 @@ void setup()
   // Set the RTC alarm mode
   /*
     0: Alarm interrupt disabled
-    1: Alarm match every year
-    2: Alarm match every month
-    3: Alarm match every week
-    4: Alarm match every day
-    5: Alarm match every hour
-    6: Alarm match every minute
-    7: Alarm match every second
+    1: Alarm match every year   (hundredths, seconds, minutes, hour, day, month)
+    2: Alarm match every month  (hundredths, seconds, minutes, hours, day)
+    3: Alarm match every week   (hundredths, seconds, minutes, hours, weekday)
+    4: Alarm match every day    (hundredths, seconds, minute, hours)
+    5: Alarm match every hour   (hundredths, seconds, minutes)
+    6: Alarm match every minute (hundredths, seconds)
+    7: Alarm match every second (hundredths)
   */
   myRTC.setAlarmMode(6); // Set the RTC alarm to match on minutes rollover
   myRTC.attachInterrupt(); // Attach RTC alarm interrupt
