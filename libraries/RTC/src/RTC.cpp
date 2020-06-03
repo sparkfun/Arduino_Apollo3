@@ -179,8 +179,8 @@ void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, ui
   5: AM_HAL_RTC_ALM_RPT_HR      Interrupt every hour
   6: AM_HAL_RTC_ALM_RPT_MIN     Interrupt every minute
   7: AM_HAL_RTC_ALM_RPT_SEC     Interrupt every second
-  8: AM_HAL_RTC_ALM_RPT_10TH    Interrupt every 10th second
-  9: AM_HAL_RTC_ALM_RPT_100TH   Interrupt every 100th second
+  8: AM_HAL_RTC_ALM_RPT_10TH    Interrupt every 10th second (unused)
+  9: AM_HAL_RTC_ALM_RPT_100TH   Interrupt every 100th second (unused)
 */
 void APM3_RTC::setAlarmMode(uint8_t mode)
 {
@@ -197,17 +197,10 @@ void APM3_RTC::attachInterrupt()
 
   // Enable RTC interrupts to the NVIC.
   NVIC_EnableIRQ(RTC_IRQn);
-
-  // Enable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
-  //am_hal_interrupt_master_enable();
-
 }
 
 void APM3_RTC::detachInterrupt()
 {
-  // Disable interrupt signals from the NVIC to trigger ISR entry in the CPU. (Redundant?)
- // am_hal_interrupt_master_disable();
-
   // Disable RTC interrupts to the NVIC.
   NVIC_DisableIRQ(RTC_IRQn);
 
