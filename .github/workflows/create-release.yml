@@ -17,7 +17,7 @@ jobs:
           # fetch-depth: 0
       - name: update variants
         # run: echo "I would update the variants here"
-        uses: https://github.com/oclyke-actions/compile-mbed-projects@v0
+        uses: https://github.com/oclyke-actions/compile-mbed-projects@v0.0.0
       - name: changelog
         id: changelog
         run: echo "placeholder for changelog generation"
