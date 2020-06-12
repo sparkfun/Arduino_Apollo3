@@ -12,8 +12,9 @@ jobs:
     steps:
       - name: check out code
         uses: actions/checkout@v1 # currently only v1 supports submodules
-        submodules: recursive
-        # fetch-depth: 0
+        with:
+          submodules: recursive
+          # fetch-depth: 0
       - name: update variants
         run: echo "I would update the variants here"
       - name: changelog

@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: check out code
         uses: actions/checkout@v1 # currently only v1 supports submodules
-        submodules: recursive
-        # fetch-depth: 0
+        with:
+          submodules: recursive
+          # fetch-depth: 0
       - name: generate binaries
         run: echo "here's where I would generate tars / zips of the full item"
       - name: attach binaries
