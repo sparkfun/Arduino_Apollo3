@@ -1,0 +1,37 @@
+on:
+  push:
+    # branches:
+    #   - master
+
+name: Release
+
+jobs:
+  build:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out code
+        uses: actions/checkout@latest
+        submodules: recursive
+        # fetch-depth: 0
+      - name: update variants
+        run: echo "I would update the variants here"
+      - name: changelog
+        id: changelog
+        run: echo "placeholder for changelog generation"
+        # uses: scottbrenner/generate-changelog-action@1.0.0
+        env:
+          REPO: ${{ github.repository }}
+      - name: create release
+        id: create_release
+        run: echo "placeholder for release creation"
+        # uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
