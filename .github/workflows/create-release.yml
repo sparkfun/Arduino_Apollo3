@@ -3,15 +3,15 @@ on:
     # branches:
     #   - master
 
-name: Release
+name: Create Release
 
 jobs:
   build:
-    name: Release
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
       - name: check out code
-        uses: actions/checkout@latest
+        uses: actions/checkout@v1 # currently only v1 supports submodules
         submodules: recursive
         # fetch-depth: 0
       - name: update variants
