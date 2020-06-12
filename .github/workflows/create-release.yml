@@ -18,15 +18,16 @@ jobs:
       - name: update variants
         # run: echo "I would update the variants here"
         uses: https://github.com/oclyke-actions/compile-mbed-projects@v0
+        with:
+          jobs: '{"artemis-dev-kit-lib": {"loc": "/artemis-dev-kit-lib", "cmd": "compile -m SPARKFUN_REDBOARD_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"}}'
       - name: changelog
         id: changelog
-        run: echo "placeholder for changelog generation"
-        # uses: scottbrenner/generate-changelog-action@1.0.0
+        uses: scottbrenner/generate-changelog-action@1.0.0
         env:
           REPO: ${{ github.repository }}
       - name: create release
         id: create_release
-        run: echo "placeholder for release creation"
+        run: echo "placeholder for release creation ${{ steps.changelog.outputs.changelog }}"
         # uses: actions/create-release@latest
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
