@@ -20,8 +20,13 @@ jobs:
         # run: echo "I would update the variants here"
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
         with:
-          jobs: '[{"name": "artemis-dev-kit-lib", "loc": "/artemis-dev-kit-lib", "cmd": "compile -m SPARKFUN_REDBOARD_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"}]'
-          mbed: '{"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-2"}'
+          jobs: |
+            [
+              {"name": "artemis-dev-kit-lib", "loc": "/artemis-dev-kit-lib", "cmd": "compile -m ARTEMIS_DEV_KIT -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"},
+              {"name": "artemis-redboard-atp-lib", "loc": "/artemis-dev-kit-lib", "cmd": "compile -m SPARKFUN_REDBOARD_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"},
+            ]
+          mbed: |
+            {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-2"}
       - name: echo results from variant updates
         run: echo "update variants output jobs:\ ${{ steps.updatevariants.outputs.jobs }}"
       - name: changelog
