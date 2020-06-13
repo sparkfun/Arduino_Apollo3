@@ -19,7 +19,8 @@ jobs:
         # run: echo "I would update the variants here"
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
         with:
-          jobs: '{"artemis-dev-kit-lib": {"loc": "/artemis-dev-kit-lib", "cmd": "compile -m SPARKFUN_REDBOARD_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"}}'
+          jobs: '[{"name": "artemis-dev-kit-lib", "loc": "/artemis-dev-kit-lib", "cmd": "compile -m SPARKFUN_REDBOARD_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"}]'
+          mbed: '{"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-2"}'
       - name: changelog
         id: changelog
         uses: scottbrenner/generate-changelog-action@1.0.0
