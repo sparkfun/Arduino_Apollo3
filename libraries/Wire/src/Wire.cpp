@@ -373,17 +373,17 @@ TwoWire Wire1(AP3_Wire1_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 2
-TwoWire Wire2(AP3_Wire1_IOM);
+TwoWire Wire2(AP3_Wire2_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 3
-TwoWire Wire3(AP3_Wire1_IOM);
+TwoWire Wire3(AP3_Wire3_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 4
-TwoWire Wire4(AP3_Wire1_IOM);
+TwoWire Wire4(AP3_Wire4_IOM);
 #endif
 
 #if WIRE_INTERFACES_COUNT > 5
-TwoWire Wire5(AP3_Wire1_IOM);
+TwoWire Wire5(AP3_Wire5_IOM);
 #endif
