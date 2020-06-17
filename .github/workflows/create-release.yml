@@ -13,7 +13,7 @@ jobs:
       - name: check out code
         uses: actions/checkout@v1 # currently only v1 supports submodules
         with:
-          submodules: recursive
+          # submodules: recursive
           # fetch-depth: 0
       - name: update variants
         id: updatevariants
