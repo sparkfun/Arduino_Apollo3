@@ -28,7 +28,8 @@ jobs:
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: echo results from variant updates
-        run: 'echo "update variants output jobs: ${{ steps.updatevariants.outputs.jobs }}"'
+        # run: 'echo "update variants output jobs: ${{ steps.updatevariants.outputs.jobs }}"'
+        run: echo ${{steps.updatevariants.output.jobs}} | jq '.'
       # - name: changelog
       #   id: changelog
       #   uses: scottbrenner/generate-changelog-action@1.0.0
@@ -37,7 +38,7 @@ jobs:
       - name: create release
         id: create_release
         # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
-        run: echo ${{steps.changelog.outputs.changelog}} | jq '.'
+        run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
         # uses: actions/create-release@latest
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
