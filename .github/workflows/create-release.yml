@@ -26,7 +26,7 @@ jobs:
               {"name": "artemis-redboard-atp-lib", "cmd": "compile -m SFE_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os"}
             ]
           mbed: |
-            {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-2"}
+            {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: echo results from variant updates
         run: 'echo "update variants output jobs: ${{ steps.updatevariants.outputs.jobs }}"'
       # - name: changelog
