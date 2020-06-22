@@ -28,7 +28,8 @@ jobs:
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: echo results from variant updates
-        run: "echo update variants output jobs: '${{ steps.updatevariants.outputs.jobs }}'"
+        # run: "echo update variants output jobs: '${{ steps.updatevariants.outputs.jobs }}'"
+        run: "echo '${{ steps.updatevariants.outputs.jobs }}' | jq '.'"
         # run: echo "${{steps.updatevariants.output.jobs}}" | jq '.'
       # - name: changelog
       #   id: changelog
