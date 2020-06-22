@@ -10,6 +10,11 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: install tools
+        run: |
+          apt-get update -y &&
+          apt-get install -y --no-install-recommends
+          jq
       - name: check out code
         uses: actions/checkout@v1 # currently only v1 supports submodules
         # with:
