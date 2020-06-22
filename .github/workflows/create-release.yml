@@ -22,20 +22,21 @@ jobs:
         with:
           jobs: |
             [
-              {"name": "artemis-dev-kit-lib", "loc": "artemis-dev-kit-lib", "cmd": "compile -m ARTEMIS_DEV_KIT -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"},
-              {"name": "artemis-redboard-atp-lib", "loc": "artemis-rba-atp-lib", "cmd": "compile -m SPARKFUN_REDBOARD_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os --build=mbed-os-build"}
+              {"name": "artemis-dev-kit-lib", "cmd": "compile -m SFE_ARTEMIS_DK -t GCC_ARM --library --source=mbed-os"},
+              {"name": "artemis-redboard-atp-lib", "cmd": "compile -m SFE_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os"}
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-2"}
       - name: echo results from variant updates
         run: 'echo "update variants output jobs: ${{ steps.updatevariants.outputs.jobs }}"'
-      - name: changelog
-        id: changelog
-        uses: scottbrenner/generate-changelog-action@1.0.0
-        env:
-          REPO: ${{ github.repository }}
+      # - name: changelog
+      #   id: changelog
+      #   uses: scottbrenner/generate-changelog-action@1.0.0
+      #   env:
+      #     REPO: ${{ github.repository }}
       - name: create release
         id: create_release
+        # run: echo "placeholder for release creation ${{ steps.changelog.outputs.changelog }}"
         run: echo "placeholder for release creation ${{ steps.changelog.outputs.changelog }}"
         # uses: actions/create-release@latest
         # env:
