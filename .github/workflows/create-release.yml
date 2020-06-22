@@ -10,11 +10,6 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: install tools
-        run: |
-          apt-get update -y &&
-          apt-get install -y --no-install-recommends
-          jq
       - name: check out code
         uses: actions/checkout@v1 # currently only v1 supports submodules
         # with:
@@ -42,7 +37,7 @@ jobs:
       - name: create release
         id: create_release
         # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
-        run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
+        run: echo ${{steps.changelog.outputs.changelog}} | jq '.'
         # uses: actions/create-release@latest
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
