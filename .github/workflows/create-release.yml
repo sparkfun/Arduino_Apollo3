@@ -36,8 +36,8 @@ jobs:
       #     REPO: ${{ github.repository }}
       - name: create release
         id: create_release
-        # run: echo "placeholder for release creation ${{ steps.changelog.outputs.changelog }}"
-        run: echo "placeholder for release creation ${{ steps.changelog.outputs.changelog }}"
+        # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
+        run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
         # uses: actions/create-release@latest
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
