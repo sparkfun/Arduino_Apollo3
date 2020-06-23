@@ -35,7 +35,10 @@ jobs:
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: check out new staging branch
-        run: git branch -c staging
+        run: |
+          cd ambiq-apollo3
+          git branch -c staging
+          cd ${GITHUB_WORKSPACE}
       - name: copy libs to variants
         run: |
           ls -la arduino-apollo3
@@ -58,17 +61,23 @@ jobs:
             echo "${job_count}:"
             echo "'${name}'"
 
-            lib_path="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
-            var_path="${GITHUB_WORKSPACE}/arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
-            echo "copying '${lib_path}' to '${var_path}'"
-            cp $lib_path $var_path
+            lib_src="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
+            lib_dest="${GITHUB_WORKSPACE}/arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
+            echo "copying '${lib_src}' to '${lib_dest}'"
+
+            mkdir -p $(dirname $lib_src)
+            mkdir -p $(dirname $lib_dest)
+            touch $lib_src
+            echo "this is stand-in text where the libmbed-os library should be" > $lib_src
+
+            cp $lib_src $lib_dest
 
             
             echo "loc: '${loc}'"
             echo "config: '${config}'"
             echo "user: '${user}'"
 
-            git add ${var_path}
+            git add ${lib_dest}
 
             job_count="$((job_count + 1))"
           done
