@@ -60,9 +60,9 @@ jobs:
             lib_src="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_src}' to '${lib_dest}'"
-            cat $lib_src
+            echo "contents of src file: $(cat $lib_src)"
             cp $lib_src $lib_dest
-            cat $lib_dest
+            echo "contents of dest file: $(cat $lib_dest)"
 
             
             echo "loc: '${loc}'"
