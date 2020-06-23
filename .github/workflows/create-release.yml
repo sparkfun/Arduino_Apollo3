@@ -29,28 +29,23 @@ jobs:
       - name: copy libs to variants
         run: |
           jobs='${{ steps.buildvariants.outputs.jobs }}'
-          echo ${jobs} | jq '.'
           job_count=0
 
-          echo ${jobs} | jq -r '.[] | @base64' | base64 --decode
-
           for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
-
             echo ""
             echo "${job_count}:"
 
             # echo ${row} | base64 --decode
-
             name="$(echo ${row} | base64 --decode | jq -r '.name')"
             loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
             cmd="$(echo ${row} | base64 --decode | jq -r '.cmd')"
-            # args="$(echo ${row} | base64 --decode | jq -r '.args')"
+            args="$(echo ${row} | base64 --decode | jq -r '.args')"
 
 
             echo "\tname: '${name}'"
             echo "\tloc: '${loc}'"
             echo "\tcmd: '${cmd}'"
-            # echo "\targs: '${args}'"
+            echo "\targs: '${args}'"
 
             job_count="$((job_count + 1))"
           done
