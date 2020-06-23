@@ -19,10 +19,10 @@ jobs:
         with:
           path: arduino-apollo3
           fetch-depth: 0
-      - name: init submodules
-        run: |
-          cd arduino-apollo3
-          git submodule update --init --recursive
+      # - name: init submodules
+      #   run: |
+      #     cd arduino-apollo3
+      #     git submodule update --init --recursive
       - name: build variant libs
         id: buildvariants
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
@@ -36,7 +36,7 @@ jobs:
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: check out new staging branch
         run: |
-          cd ambiq-apollo3
+          cd arduino-apollo3
           git branch -c staging
           cd ${GITHUB_WORKSPACE}
       - name: copy libs to variants
