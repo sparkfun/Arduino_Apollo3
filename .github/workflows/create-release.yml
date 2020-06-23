@@ -34,7 +34,7 @@ jobs:
 
           echo ${jobs} | jq -r '.[] | @base64' | base64 --decode
 
-          for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
+          for row in $($(echo ${jobs} | jq -r '.[] | @base64')); do
 
             echo ""
             echo "${job_count}:"
