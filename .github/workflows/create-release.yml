@@ -11,10 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check out code
-        uses: actions/checkout@v1 # currently only v1 supports submodules
+        # uses: actions/checkout@v1 # currently only v1 supports submodules
         # with:
         #   # submodules: recursive
         #   # fetch-depth: 0
+        uses: actions/checkout@latest
+        with:
+          path: arduino-apollo3
+          fetch-depth: 0
+        run: |
+          cd arduino-apollo3
+          git branch
+          git submodule update --init --recursive
       - name: build variant libs
         id: buildvariants
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
@@ -47,12 +55,15 @@ jobs:
             echo "copying '${lib_path}' to '${var_path}'"
 
             
-            echo "\tloc: '${loc}'"
-            echo "\tconfig: '${config}'"
-            echo "\tuser: '${user}'"
+            echo "loc: '${loc}'"
+            echo "config: '${config}'"
+            echo "user: '${user}'"
 
             job_count="$((job_count + 1))"
           done
+
+          ls -la
+
       # - name: changelog
       #   id: changelog
       #   uses: scottbrenner/generate-changelog-action@1.0.0
