@@ -81,7 +81,11 @@ jobs:
       #   uses: scottbrenner/generate-changelog-action@1.0.0
       #   env:
       #     REPO: ${{ github.repository }}
-      - name: merge staging branch into 
+      - name: merge staging branch into master
+        run: |
+          git checkout master
+          git merge staging
+          git push
       - name: create release
         id: create_release
         # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
