@@ -22,7 +22,7 @@ jobs:
       - name: init submodules
         run: |
           cd arduino-apollo3
-          git branch
+          echo $(git branch)
           git submodule update --init --recursive
       - name: build variant libs
         id: buildvariants
@@ -47,13 +47,17 @@ jobs:
             config="$(echo ${row} | base64 --decode | jq -r '.config')"
             user="$(echo ${row} | base64 --decode | jq -r '.user')"
 
+            tgt="$(echo ${config} | jq -r -c '.tgt')"
+            tool="$(echo ${config} | jq -r -c '.tool')"
+
             echo ""
             echo "${job_count}:"
             echo "'${name}'"
 
-            lib_path="${loc}/"
-            var_path="$(echo ${user} | jq -r '.variant.loc')"
+            lib_path="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
+            var_path="./arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_path}' to '${var_path}'"
+            cp $lib_path $var_path
 
             
             echo "loc: '${loc}'"
