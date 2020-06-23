@@ -19,7 +19,7 @@ jobs:
         with:
           path: arduino-apollo3
           fetch-depth: 0
-      -name: init submodules
+      - name: init submodules
         run: |
           cd arduino-apollo3
           git branch
