@@ -56,18 +56,17 @@ jobs:
             echo ""
             echo "${job_count}:"
             echo "'${name}'"
+            
+            echo "loc: '${loc}'"
+            echo "config: '${config}'"
+            echo "user: '${user}'"
 
-            lib_src="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
+            lib_src="./${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_src}' to '${lib_dest}'"
             echo "contents of src file: $(cat $lib_src)"
             cp $lib_src $lib_dest
             echo "contents of dest file: $(cat $lib_dest)"
-
-            
-            echo "loc: '${loc}'"
-            echo "config: '${config}'"
-            echo "user: '${user}'"
 
             git add ${lib_dest}
 
