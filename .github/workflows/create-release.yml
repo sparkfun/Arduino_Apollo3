@@ -21,16 +21,16 @@ jobs:
         with:
           jobs: |
             [
-              {"name": "artemis-dev-kit-lib", "cmd": "compile -m SFE_ARTEMIS_DK -t GCC_ARM --library --source=mbed-os"},
-              {"name": "artemis-redboard-atp-lib", "cmd": "compile -m SFE_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os"}
+              {"name": "artemis-dev-kit-lib", "cmd": "compile -m SFE_ARTEMIS_DK -t GCC_ARM --library --source=mbed-os", "args": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
+              {"name": "artemis-redboard-atp-lib", "cmd": "compile -m SFE_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os", "args": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}}
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: copy libs to variants
         run: |
-          echo '${ steps.buildvariants.outputs.jobs }' | jq '.'
-          for row in $(echo ${ steps.buildvariants.outputs.jobs } | jq -r '.[] | @base64'); do
-            echo $row
+          echo '${{ steps.buildvariants.outputs.jobs }}' | jq '.'
+          for row in "$(echo ${{ steps.buildvariants.outputs.jobs }} | jq -r '.[] | @base64')"; do
+            echo ${{row}}
           done
       # - name: changelog
       #   id: changelog
