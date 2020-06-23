@@ -21,8 +21,8 @@ jobs:
         with:
           jobs: |
             [
-              {"name": "artemis-dev-kit-lib", "cmd": "compile -m SFE_ARTEMIS_DK -t GCC_ARM --library --source=mbed-os", "args": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
-              {"name": "artemis-redboard-atp-lib", "cmd": "compile -m SFE_ARTEMIS_ATP -t GCC_ARM --library --source=mbed-os", "args": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}}
+              {"name": "artemis-dev-kit-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_DK", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
+              {"name": "artemis-redboard-atp-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_ATP", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}}
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
@@ -32,17 +32,25 @@ jobs:
           job_count=0
 
           for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
-            echo ""
-            echo "${job_count}:"
-
             # echo ${row} | base64 --decode
             name="$(echo ${row} | base64 --decode | jq -r '.name')"
             loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
             cmd="$(echo ${row} | base64 --decode | jq -r '.cmd')"
             args="$(echo ${row} | base64 --decode | jq -r '.args')"
 
+            echo ""
+            echo "${job_count}:"
+            echo "'${name}'"
 
-            echo "\tname: '${name}'"
+            lib_path="${loc}/"
+            var_path="$(echo ${args} | jq -r '.variant.loc')"
+            echo "copying '${lib_path}' to '${var_path}'"
+
+
+
+
+
+            
             echo "\tloc: '${loc}'"
             echo "\tcmd: '${cmd}'"
             echo "\targs: '${args}'"
