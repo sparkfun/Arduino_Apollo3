@@ -22,7 +22,6 @@ jobs:
       - name: init submodules
         run: |
           cd arduino-apollo3
-          echo $(git branch)
           git submodule update --init --recursive
       - name: build variant libs
         id: buildvariants
@@ -37,6 +36,8 @@ jobs:
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
       - name: copy libs to variants
         run: |
+          ls -la arduino-apollo3
+
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
 
@@ -55,7 +56,7 @@ jobs:
             echo "'${name}'"
 
             lib_path="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
-            var_path="./arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
+            var_path="${GITHUB_WORKSPACE}/arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_path}' to '${var_path}'"
             cp $lib_path $var_path
 
@@ -66,8 +67,6 @@ jobs:
 
             job_count="$((job_count + 1))"
           done
-
-          ls -la
 
       # - name: changelog
       #   id: changelog
