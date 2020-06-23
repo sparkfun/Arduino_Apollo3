@@ -34,6 +34,8 @@ jobs:
         run: |
           cd arduino-apollo3
           git branch -c staging
+          git config --global user.email "arduino-apollo3-builder@sparkfun.com"
+          git config --global user.name "arduino-apollo3-builder"
           cd ${GITHUB_WORKSPACE}
       - name: copy libs to variants
         run: |
