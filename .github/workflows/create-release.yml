@@ -47,10 +47,10 @@ jobs:
             # args="$(echo ${row} | base64 --decode | jq -r '.args')"
 
 
-            "$(echo "\tname: '${name}'")"
-            "$(echo "\tloc: '${loc}'")"
-            "$(echo "\tcmd: '${cmd}'")"
-            # "$(echo "\targs: '${args}'")"
+            echo "\tname: '${name}'"
+            echo "\tloc: '${loc}'"
+            echo "\tcmd: '${cmd}'"
+            # echo "\targs: '${args}'"
 
             job_count="$((job_count + 1))"
           done
