@@ -37,14 +37,14 @@ jobs:
             cmd="$(echo ${row} | base64 --decode | jq -r '.cmd')"
             args="$(echo ${row} | base64 --decode | jq -r '.args')"
 
-            echo ""
-            echo "${job_count}:"
-            echo "\tname: '${name}'"
-            echo "\tloc: '${loc}'"
-            echo "\tcmd: '${cmd}'"
-            echo "\targs: '${args}'"
+            "$(echo "")"
+            "$(echo "${job_count}:")"
+            "$(echo "\tname: '${name}'")"
+            "$(echo "\tloc: '${loc}'")"
+            "$(echo "\tcmd: '${cmd}'")"
+            "$(echo "\targs: '${args}'")"
 
-            job_count=$((job_count + 1))
+            job_count="$((job_count + 1))"
           done
       # - name: changelog
       #   id: changelog
