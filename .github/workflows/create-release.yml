@@ -11,10 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check out code
-        # uses: actions/checkout@v1 # currently only v1 supports submodules
-        # with:
-        #   # submodules: recursive
-        #   # fetch-depth: 0
         uses: actions/checkout@v2.3.1
         with:
           path: arduino-apollo3
@@ -64,13 +60,8 @@ jobs:
             lib_src="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
             lib_dest="${GITHUB_WORKSPACE}/arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_src}' to '${lib_dest}'"
-
-            mkdir -p $(dirname $lib_src)
-            mkdir -p $(dirname $lib_dest)
-            touch $lib_src
-            echo "this is stand-in text where the libmbed-os library should be" > $lib_src
-
             cp $lib_src $lib_dest
+            cat $lib_dest
 
             
             echo "loc: '${loc}'"
