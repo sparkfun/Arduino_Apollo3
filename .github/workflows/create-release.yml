@@ -69,13 +69,16 @@ jobs:
             cp $lib_src $lib_dest
             echo "contents of dest file: $(cat $lib_dest)"
 
+            cd arduino-apollo3
             git add ${lib_dest}
+            cd ${GITHUB_WORKSPACE}
 
             job_count="$((job_count + 1))"
           done
 
-
+          cd arduino-apollo3
           git commit -a -m "generated mbed libs"
+          cd ${GITHUB_WORKSPACE}
 
       # - name: changelog
       #   id: changelog
