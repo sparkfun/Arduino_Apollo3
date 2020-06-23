@@ -34,9 +34,12 @@ jobs:
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
+      - name: check out new staging branch
+        run: git branch -c staging
       - name: copy libs to variants
         run: |
           ls -la arduino-apollo3
+
 
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
@@ -65,14 +68,20 @@ jobs:
             echo "config: '${config}'"
             echo "user: '${user}'"
 
+            git add ${var_path}
+
             job_count="$((job_count + 1))"
           done
+
+
+          git commit -a -m "generated mbed libs"
 
       # - name: changelog
       #   id: changelog
       #   uses: scottbrenner/generate-changelog-action@1.0.0
       #   env:
       #     REPO: ${{ github.repository }}
+      - name: merge staging branch into 
       - name: create release
         id: create_release
         # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
