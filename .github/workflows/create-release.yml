@@ -35,25 +35,21 @@ jobs:
             # echo ${row} | base64 --decode
             name="$(echo ${row} | base64 --decode | jq -r '.name')"
             loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
-            cmd="$(echo ${row} | base64 --decode | jq -r '.cmd')"
-            args="$(echo ${row} | base64 --decode | jq -r '.args')"
+            config="$(echo ${row} | base64 --decode | jq -r '.config')"
+            user="$(echo ${row} | base64 --decode | jq -r '.user')"
 
             echo ""
             echo "${job_count}:"
             echo "'${name}'"
 
             lib_path="${loc}/"
-            var_path="$(echo ${args} | jq -r '.variant.loc')"
+            var_path="$(echo ${user} | jq -r '.variant.loc')"
             echo "copying '${lib_path}' to '${var_path}'"
-
-
-
-
 
             
             echo "\tloc: '${loc}'"
-            echo "\tcmd: '${cmd}'"
-            echo "\targs: '${args}'"
+            echo "\tconfig: '${config}'"
+            echo "\tuser: '${user}'"
 
             job_count="$((job_count + 1))"
           done
