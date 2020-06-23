@@ -58,8 +58,9 @@ jobs:
             echo "'${name}'"
 
             lib_src="${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
-            lib_dest="${GITHUB_WORKSPACE}/arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
+            lib_dest="./arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_src}' to '${lib_dest}'"
+            cat $lib_src
             cp $lib_src $lib_dest
             cat $lib_dest
 
