@@ -38,6 +38,7 @@ jobs:
       - name: copy libs to variants
         run: |
           ls -la arduino-apollo3
+          cd arduino-apollo3
 
 
           jobs='${{ steps.buildvariants.outputs.jobs }}'
@@ -61,22 +62,20 @@ jobs:
             echo "config: '${config}'"
             echo "user: '${user}'"
 
-            lib_src="./${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
-            lib_dest="./arduino-apollo3/$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
+            lib_src="./../${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
+            lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_src}' to '${lib_dest}'"
             echo "contents of src file: $(cat $lib_src)"
             mkdir -p $(dirname $lib_dest)
             cp $lib_src $lib_dest
             echo "contents of dest file: $(cat $lib_dest)"
 
-            cd arduino-apollo3
+            
             git add ${lib_dest}
-            cd ${GITHUB_WORKSPACE}
 
             job_count="$((job_count + 1))"
           done
 
-          cd arduino-apollo3
           git commit -a -m "generated mbed libs"
           cd ${GITHUB_WORKSPACE}
 
