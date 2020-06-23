@@ -15,9 +15,8 @@ jobs:
         # with:
         #   # submodules: recursive
         #   # fetch-depth: 0
-      - name: update variants
-        id: updatevariants
-        # run: echo "I would update the variants here"
+      - name: build variant libs
+        id: buildvariants
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
         with:
           jobs: |
@@ -27,10 +26,12 @@ jobs:
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
-      - name: echo results from variant updates
-        # run: "echo update variants output jobs: '${{ steps.updatevariants.outputs.jobs }}'"
-        run: "echo '${{ steps.updatevariants.outputs.jobs }}' | jq '.'"
-        # run: echo "${{steps.updatevariants.output.jobs}}" | jq '.'
+      - name: copy libs to variants
+        run: |
+          echo '${{ steps.buildvariants.outputs.jobs }}' | jq '.'
+          for row in $(echo ${{ steps.buildvariants.outputs.jobs }} | jq -r '.[] | @base64'); do
+            echo $row
+          done
       # - name: changelog
       #   id: changelog
       #   uses: scottbrenner/generate-changelog-action@1.0.0
