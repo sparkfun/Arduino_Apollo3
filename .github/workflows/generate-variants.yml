@@ -26,25 +26,23 @@ jobs:
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
-      - name: check out new staging branch
+      - name: check out staging branch
         run: |
           cd arduino-apollo3
           git fetch --all
           git pull --all
-          git checkout -b staging
+          git checkout staging
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
           cd ${GITHUB_WORKSPACE}
       - name: copy libs to variants
         run: |
-          ls -la arduino-apollo3
           cd arduino-apollo3
 
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
 
           for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
-            # echo ${row} | base64 --decode
             name="$(echo ${row} | base64 --decode | jq -r '.name')"
             loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
             config="$(echo ${row} | base64 --decode | jq -r '.config')"
@@ -76,10 +74,10 @@ jobs:
 
           git commit -a -m "generated mbed libs"
           cd ${GITHUB_WORKSPACE}
-      - name: merge staging branch into master
+      - name: rebase staging branch to release-candidate
         run: |
           cd arduino-apollo3
-          git checkout spoof-master
-          git merge staging
+          git checkout staging
+          git rebase release-candidate
           git push origin
 
