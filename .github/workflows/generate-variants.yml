@@ -31,7 +31,7 @@ jobs:
           cd arduino-apollo3
           git fetch --all
           git pull --all
-          git checkout staging
+          git checkout spoof-staging
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
           cd ${GITHUB_WORKSPACE}
@@ -77,7 +77,7 @@ jobs:
       - name: rebase staging branch to release-candidate
         run: |
           cd arduino-apollo3
-          git checkout staging
-          git rebase origin/release-candidate
+          git checkout spoof-staging
+          git rebase origin/spoof-release-candidate
           git push origin
 
