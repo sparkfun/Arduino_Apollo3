@@ -29,6 +29,8 @@ jobs:
       - name: check out new staging branch
         run: |
           cd arduino-apollo3
+          git fetch --all
+          git pull --all
           git checkout -b staging
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
@@ -74,12 +76,6 @@ jobs:
 
           git commit -a -m "generated mbed libs"
           cd ${GITHUB_WORKSPACE}
-
-      # - name: changelog
-      #   id: changelog
-      #   uses: scottbrenner/generate-changelog-action@1.0.0
-      #   env:
-      #     REPO: ${{ github.repository }}
       - name: merge staging branch into master
         run: |
           cd arduino-apollo3
