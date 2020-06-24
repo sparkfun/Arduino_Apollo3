@@ -1,7 +1,7 @@
 on:
   push:
-    # branches:
-    #   - release-candidate
+    branches:
+      - spoof-release-candidate
 
 name: Generate Variants
 
