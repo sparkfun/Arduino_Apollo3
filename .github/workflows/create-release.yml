@@ -90,7 +90,7 @@ jobs:
           cd arduino-apollo3
           git checkout spoof-master
           git merge staging
-          git push
+          git push origin
       - name: create release
         id: create_release
         # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
