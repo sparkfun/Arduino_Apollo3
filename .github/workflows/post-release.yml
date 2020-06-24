@@ -10,10 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check out code
-        uses: actions/checkout@v1 # currently only v1 supports submodules
+        uses: actions/checkout@v2.3.1
         with:
-          submodules: recursive
-          # fetch-depth: 0
+          path: arduino-apollo3
+          fetch-depth: 0
+
+      - name: initialize submodules
+        run: |
+          cd arduino-apollo3
+          git submodule update --init --recursive
+
       - name: generate binaries
         run: echo "here's where I would generate tars / zips of the full item"
       - name: attach binaries
@@ -23,6 +29,7 @@ jobs:
       #   uses: scottbrenner/generate-changelog-action@1.0.0
       #   env:
       #     REPO: ${{ github.repository }}
+
       - name: create release
         id: create_release
         # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"

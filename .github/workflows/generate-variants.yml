@@ -15,6 +15,7 @@ jobs:
         with:
           path: arduino-apollo3
           fetch-depth: 0
+
       - name: build variant libs
         id: buildvariants
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
@@ -26,6 +27,7 @@ jobs:
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
+
       - name: check out staging branch
         run: |
           cd arduino-apollo3
@@ -35,6 +37,7 @@ jobs:
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
           cd ${GITHUB_WORKSPACE}
+
       - name: copy libs to variants
         run: |
           cd arduino-apollo3
@@ -68,12 +71,14 @@ jobs:
 
           git commit -a -m "generated mbed libs"
           cd ${GITHUB_WORKSPACE}
+
       - name: rebase staging branch to release-candidate
         run: |
           cd arduino-apollo3
           git checkout spoof-staging
           git rebase origin/spoof-release-candidate
           cd ${GITHUB_WORKSPACE}
+
       - name: push changes
         run: |
           cd arduino-apollo3
