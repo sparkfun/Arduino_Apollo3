@@ -75,6 +75,7 @@ jobs:
           git rebase origin/spoof-release-candidate
           cd ${GITHUB_WORKSPACE}
       - name: push changes
-          cd arduino-apollo3
-          git push origin
-          cd ${GITHUB_WORKSPACE}
+          run: |
+            cd arduino-apollo3
+            git push origin
+            cd ${GITHUB_WORKSPACE}
