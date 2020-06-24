@@ -54,18 +54,12 @@ jobs:
             echo ""
             echo "${job_count}:"
             echo "'${name}'"
-            
-            echo "loc: '${loc}'"
-            echo "config: '${config}'"
-            echo "user: '${user}'"
 
             lib_src="./../${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
             echo "copying '${lib_src}' to '${lib_dest}'"
-            echo "contents of src file: $(cat $lib_src)"
             mkdir -p $(dirname $lib_dest)
             cp $lib_src $lib_dest
-            echo "contents of dest file: $(cat $lib_dest)"
             
             git add ${lib_dest}
 
@@ -79,5 +73,8 @@ jobs:
           cd arduino-apollo3
           git checkout spoof-staging
           git rebase origin/spoof-release-candidate
+          cd ${GITHUB_WORKSPACE}
+      - name: push changes
+          cd arduino-apollo3
           git push origin
-
+          cd ${GITHUB_WORKSPACE}
