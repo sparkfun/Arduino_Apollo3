@@ -71,7 +71,6 @@ jobs:
             mkdir -p $(dirname $lib_dest)
             cp $lib_src $lib_dest
             echo "contents of dest file: $(cat $lib_dest)"
-
             
             git add ${lib_dest}
 
@@ -89,7 +88,7 @@ jobs:
       - name: merge staging branch into master
         run: |
           cd arduino-apollo3
-          git checkout master
+          git checkout spoof-master
           git merge staging
           git push
       - name: create release
