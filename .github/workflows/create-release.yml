@@ -33,7 +33,8 @@ jobs:
       - name: check out new staging branch
         run: |
           cd arduino-apollo3
-          git branch -c staging
+          # git branch -c staging # creates only does not check out branch
+          git checkout -b staging
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
           cd ${GITHUB_WORKSPACE}
