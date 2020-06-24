@@ -78,6 +78,6 @@ jobs:
         run: |
           cd arduino-apollo3
           git checkout staging
-          git rebase release-candidate
+          git rebase origin/release-candidate
           git push origin
 
