@@ -1,13 +1,13 @@
 on:
   push:
     # branches:
-    #   - master
+    #   - release-candidate
 
-name: Create Release
+name: Generate Variants
 
 jobs:
   build:
-    name: Create Release
+    name: Generate Variants
     runs-on: ubuntu-latest
     steps:
       - name: check out code
@@ -15,10 +15,6 @@ jobs:
         with:
           path: arduino-apollo3
           fetch-depth: 0
-      # - name: init submodules
-      #   run: |
-      #     cd arduino-apollo3
-      #     git submodule update --init --recursive
       - name: build variant libs
         id: buildvariants
         uses: oclyke-actions/compile-mbed-projects@v0.0.0
@@ -33,7 +29,6 @@ jobs:
       - name: check out new staging branch
         run: |
           cd arduino-apollo3
-          # git branch -c staging # creates only does not check out branch
           git checkout -b staging
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
@@ -42,7 +37,6 @@ jobs:
         run: |
           ls -la arduino-apollo3
           cd arduino-apollo3
-
 
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
@@ -92,17 +86,4 @@ jobs:
           git checkout spoof-master
           git merge staging
           git push origin
-      - name: create release
-        id: create_release
-        # run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
-        run: echo "placeholder for release creation ${{steps.changelog.outputs.changelog}}"
-        # uses: actions/create-release@latest
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # with:
-        #   tag_name: ${{ github.ref }}
-        #   release_name: Release ${{ github.ref }}
-        #   body: |
-        #     ${{ steps.changelog.outputs.changelog }}
-        #   draft: false
-        #   prerelease: false
+
