@@ -64,7 +64,7 @@ jobs:
             echo "${job_count}:"
             echo "'${name}'"
 
-            lib_src="./../${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
+            lib_src="./../${loc}/BUILD/libraries/${name}/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
 
             
@@ -72,7 +72,9 @@ jobs:
             clear_ls "./../${loc}"
             clear_ls "./../${loc}/BUILD"
             clear_ls "./../${loc}/BUILD/libraries"
-            clear_ls "./../${loc}/BUILD/libraries/mbed-os/"
+            clear_ls "./../${loc}/BUILD/libraries/${name}"
+            clear_ls "./../${loc}/BUILD/libraries/${name}/${tgt}"
+            clear_ls "./../${loc}/BUILD/libraries/${name}/${tgt}/${tool}"
 
             echo "copying '${lib_src}' to '${lib_dest}'"
             mkdir -p $(dirname $lib_dest)
