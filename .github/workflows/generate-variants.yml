@@ -46,11 +46,6 @@ jobs:
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
 
-          function clear_ls() {
-            echo " "
-            echo "listing $1 $(ls -la $1)"
-          }
-
           for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
             name="$(echo ${row} | base64 --decode | jq -r '.name')"
             loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
@@ -68,15 +63,6 @@ jobs:
 
             lib_src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
-
-            
-            clear_ls "./../${build_root}/.."
-            clear_ls "./../${build_root}"
-            clear_ls "./../${build_root}/BUILD"
-            clear_ls "./../${build_root}/BUILD/libraries"
-            clear_ls "./../${build_root}/BUILD/libraries/${build_id}"
-            clear_ls "./../${build_root}/BUILD/libraries/${build_id}/${tgt}"
-            clear_ls "./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}"
 
             echo "copying '${lib_src}' to '${lib_dest}'"
             mkdir -p $(dirname $lib_dest)
@@ -100,5 +86,5 @@ jobs:
       - name: push changes
         run: |
           cd arduino-apollo3
-          git push origin
+          git push -f origin spoof-staging
           cd ${GITHUB_WORKSPACE}
