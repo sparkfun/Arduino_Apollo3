@@ -46,6 +46,11 @@ jobs:
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
 
+          function clear_ln() {
+            echo " "
+            echo "listing $1 $(ln -la $1)"
+          }
+
           for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
             name="$(echo ${row} | base64 --decode | jq -r '.name')"
             loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
@@ -62,12 +67,12 @@ jobs:
             lib_src="./../${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
 
-            ls $(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $lib_src)))))))
-            ls $(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $lib_src))))))
-            ls $(dirname $(dirname $(dirname $(dirname $(dirname $lib_src)))))
-            ls $(dirname $(dirname $(dirname $lib_src)))
-            ls $(dirname $(dirname $lib_src))
-            ls $(dirname $lib_src)
+            
+            clear_ln "./../${loc}/.."
+            clear_ln "./../${loc}"
+            clear_ln "./../${loc}/BUILD"
+            clear_ln "./../${loc}/BUILD/libraries"
+            clear_ln "./../${loc}/BUILD/libraries/mbed-os/"
 
             echo "copying '${lib_src}' to '${lib_dest}'"
             mkdir -p $(dirname $lib_dest)
