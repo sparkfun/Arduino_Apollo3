@@ -48,7 +48,7 @@ jobs:
 
           function clear_ln() {
             echo " "
-            echo "listing $1 $(ln -la $1)"
+            echo "listing $1 $(ln $1)"
           }
 
           for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
