@@ -59,22 +59,24 @@ jobs:
 
             tgt="$(echo ${config} | jq -r -c '.tgt')"
             tool="$(echo ${config} | jq -r -c '.tool')"
+            build_root="$(echo ${loc} | jq -r -c '.root')"
+            build_id="$(echo ${loc} | jq -r -c '.id')"
 
             echo ""
             echo "${job_count}:"
             echo "'${name}'"
 
-            lib_src="./../${loc}/BUILD/libraries/${name}/${tgt}/${tool}/libmbed-os.a"
+            lib_src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
 
             
-            clear_ls "./../${loc}/.."
-            clear_ls "./../${loc}"
-            clear_ls "./../${loc}/BUILD"
-            clear_ls "./../${loc}/BUILD/libraries"
-            clear_ls "./../${loc}/BUILD/libraries/${name}"
-            clear_ls "./../${loc}/BUILD/libraries/${name}/${tgt}"
-            clear_ls "./../${loc}/BUILD/libraries/${name}/${tgt}/${tool}"
+            clear_ls "./../${build_root}/.."
+            clear_ls "./../${build_root}"
+            clear_ls "./../${build_root}/BUILD"
+            clear_ls "./../${build_root}/BUILD/libraries"
+            clear_ls "./../${build_root}/BUILD/libraries/${build_id}"
+            clear_ls "./../${build_root}/BUILD/libraries/${build_id}/${tgt}"
+            clear_ls "./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}"
 
             echo "copying '${lib_src}' to '${lib_dest}'"
             mkdir -p $(dirname $lib_dest)
