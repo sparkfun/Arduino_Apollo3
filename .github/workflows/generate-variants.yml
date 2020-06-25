@@ -30,12 +30,13 @@ jobs:
 
       - name: check out staging branch
         run: |
+          git config --global pull.rebase true
+          git config --global user.email "arduino-apollo3-builder@sparkfun.com"
+          git config --global user.name "arduino-apollo3-builder"
           cd arduino-apollo3
           git fetch --all
           git pull --all
           git checkout spoof-staging
-          git config --global user.email "arduino-apollo3-builder@sparkfun.com"
-          git config --global user.name "arduino-apollo3-builder"
           cd ${GITHUB_WORKSPACE}
 
       - name: copy libs to variants
@@ -60,6 +61,14 @@ jobs:
 
             lib_src="./../${loc}/BUILD/libraries/libmbed-os/${tgt}/${tool}/libmbed-os.a"
             lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
+
+            ls $(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $lib_src)))))))
+            ls $(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $lib_src))))))
+            ls $(dirname $(dirname $(dirname $(dirname $(dirname $lib_src)))))
+            ls $(dirname $(dirname $(dirname $lib_src)))
+            ls $(dirname $(dirname $lib_src))
+            ls $(dirname $lib_src)
+
             echo "copying '${lib_src}' to '${lib_dest}'"
             mkdir -p $(dirname $lib_dest)
             cp $lib_src $lib_dest
