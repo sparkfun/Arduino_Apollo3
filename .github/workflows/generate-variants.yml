@@ -70,6 +70,8 @@ jobs:
             
             git add ${lib_dest}
 
+            python ./tools/scripts/transmute-profiles.py
+
             job_count="$((job_count + 1))"
           done
 
