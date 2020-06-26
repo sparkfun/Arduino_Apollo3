@@ -39,6 +39,13 @@ jobs:
           git checkout spoof-staging
           cd ${GITHUB_WORKSPACE}
 
+      - name: incorporate changes from release-candidate
+        run: |
+          cd arduino-apollo3
+          git checkout spoof-staging
+          git rebase origin/spoof-release-candidate
+          cd ${GITHUB_WORKSPACE}
+
       - name: copy libs to variants
         run: |
           cd arduino-apollo3
