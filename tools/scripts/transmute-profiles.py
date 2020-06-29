@@ -68,7 +68,7 @@ if __name__ == '__main__':
             # Print each argument separately so caller doesn't need to
             # stuff everything to be printed into a single string
             for arg in args:
-                print(arg, end='', flush=True),
+                print(arg, end='', flush=True)
             print()
     else:
         verboseprint = lambda *a: None      # do-nothing function
