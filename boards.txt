@@ -24,28 +24,166 @@ menu.svl_baud=SVL Baud Rate
 menu.sbl_baud=Ambiq Secure Bootloader Baud Rate
 
 
+###############################################################
+
+sfe_artemis_atp.name=SparkFun RedBoard Artemis ATP
+sfe_artemis_atp.build.variant=SFE_ARTEMIS_ATP
+sfe_artemis_atp.build.arch=APOLLO3
+sfe_artemis_atp.build.board=APOLLO3_SFE_ARTEMIS_ATP
+sfe_artemis_atp.build.defines=
+sfe_artemis_atp.build.includes=
+sfe_artemis_atp.build.libs=
+sfe_artemis_atp.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_artemis_atp.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_artemis_atp.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_atp.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_artemis_atp.build.preproc.defines={build.cxx.defines}
+sfe_artemis_atp.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_artemis_atp.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_artemis_atp.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_artemis_atp.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_artemis_atp.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_artemis_atp.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_artemis_atp.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_artemis_atp.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
 
 ###############################################################
 
-sfe_rba_atp.name=SparkFun RedBoard Artemis ATP
-sfe_rba_atp.build.variant=SPARKFUN_REDBOARD_ARTEMIS_ATP
-sfe_rba_atp.build.board=SFE_RBA_ATP
-sfe_rba_atp.build.defines=
-sfe_rba_atp.build.includes=
-sfe_rba_atp.build.libs=
-sfe_rba_atp.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
-sfe_rba_atp.build.mbed.includes=@{build.variant.path}/mbed/.includes
-sfe_rba_atp.build.ldscript={build.variant.path}/link_script.ld
-sfe_rba_atp.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
-sfe_rba_atp.build.preproc.defines={build.cxx.defines}
-sfe_rba_atp.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.flags-asm
-sfe_rba_atp.build.asm.defines=@{build.variant.path}/mbed/.defines-asm
-sfe_rba_atp.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.flags-c
-sfe_rba_atp.build.c.defines=@{build.variant.path}/mbed/.defines-c
-sfe_rba_atp.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.flags-cxx
-sfe_rba_atp.build.cxx.defines=@{build.variant.path}/mbed/.defines-cxx
-sfe_rba_atp.build.ld.flags=@{build.variant.path}/mbed/.flags-ld
-sfe_rba_atp.build.ld.defines=@{build.variant.path}/mbed/.defines-ld
+sfe_artemis_dk.name=SparkFun RedBoard Artemis Dev Kit
+sfe_artemis_dk.build.variant=SFE_ARTEMIS_DK
+sfe_artemis_dk.build.arch=APOLLO3
+sfe_artemis_dk.build.board=APOLLO3_SFE_ARTEMIS_DK
+sfe_artemis_dk.build.defines=
+sfe_artemis_dk.build.includes=
+sfe_artemis_dk.build.libs=
+sfe_artemis_dk.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_artemis_dk.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_artemis_dk.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_dk.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_artemis_dk.build.preproc.defines={build.cxx.defines}
+sfe_artemis_dk.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_artemis_dk.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_artemis_dk.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_artemis_dk.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_artemis_dk.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_artemis_dk.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_artemis_dk.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_artemis_dk.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
+
+###############################################################
+
+sfe_artemis_module.name=SparkFun Artemis Module
+sfe_artemis_module.build.variant=SFE_ARTEMIS_MODULE
+sfe_artemis_module.build.arch=APOLLO3
+sfe_artemis_module.build.board=APOLLO3_SFE_ARTEMIS_MODULE
+sfe_artemis_module.build.defines=
+sfe_artemis_module.build.includes=
+sfe_artemis_module.build.libs=
+sfe_artemis_module.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_artemis_module.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_artemis_module.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_module.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_artemis_module.build.preproc.defines={build.cxx.defines}
+sfe_artemis_module.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_artemis_module.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_artemis_module.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_artemis_module.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_artemis_module.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_artemis_module.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_artemis_module.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_artemis_module.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
+
+###############################################################
+
+sfe_artemis_nano.name=SparkFun RedBoard Artemis Nano
+sfe_artemis_nano.build.variant=SFE_ARTEMIS_NANO
+sfe_artemis_nano.build.arch=APOLLO3
+sfe_artemis_nano.build.board=APOLLO3_SFE_ARTEMIS_NANO
+sfe_artemis_nano.build.defines=
+sfe_artemis_nano.build.includes=
+sfe_artemis_nano.build.libs=
+sfe_artemis_nano.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_artemis_nano.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_artemis_nano.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_nano.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_artemis_nano.build.preproc.defines={build.cxx.defines}
+sfe_artemis_nano.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_artemis_nano.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_artemis_nano.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_artemis_nano.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_artemis_nano.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_artemis_nano.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_artemis_nano.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_artemis_nano.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
+
+###############################################################
+
+sfe_artemis_thing_plus.name=SparkFun Artemis Thing Plus
+sfe_artemis_thing_plus.build.variant=SFE_ARTEMIS_THING_PLUS
+sfe_artemis_thing_plus.build.arch=APOLLO3
+sfe_artemis_thing_plus.build.board=APOLLO3_SFE_ARTEMIS_THING_PLUS
+sfe_artemis_thing_plus.build.defines=
+sfe_artemis_thing_plus.build.includes=
+sfe_artemis_thing_plus.build.libs=
+sfe_artemis_thing_plus.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_artemis_thing_plus.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_artemis_thing_plus.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_thing_plus.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_artemis_thing_plus.build.preproc.defines={build.cxx.defines}
+sfe_artemis_thing_plus.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_artemis_thing_plus.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_artemis_thing_plus.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_artemis_thing_plus.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_artemis_thing_plus.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_artemis_thing_plus.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_artemis_thing_plus.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_artemis_thing_plus.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
+
+###############################################################
+
+sfe_edge.name=SparkFun Edge
+sfe_edge.build.variant=SFE_EDGE
+sfe_edge.build.arch=APOLLO3
+sfe_edge.build.board=APOLLO3_SFE_EDGE
+sfe_edge.build.defines=
+sfe_edge.build.includes=
+sfe_edge.build.libs=
+sfe_edge.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_edge.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_edge.build.ldscript={build.variant.path}/0xC000.ld
+sfe_edge.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_edge.build.preproc.defines={build.cxx.defines}
+sfe_edge.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_edge.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_edge.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_edge.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_edge.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_edge.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_edge.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_edge.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
+
+###############################################################
+
+sfe_edge2.name=SparkFun Edge2
+sfe_edge2.build.variant=SFE_EDGE2
+sfe_edge2.build.arch=APOLLO3
+sfe_edge2.build.board=APOLLO3_SFE_EDGE2
+sfe_edge2.build.defines=
+sfe_edge2.build.includes=
+sfe_edge2.build.libs=
+sfe_edge2.build.mbed.libs={build.variant.path}/mbed/libmbed-os.a
+sfe_edge2.build.mbed.includes=@{build.variant.path}/mbed/.includes
+sfe_edge2.build.ldscript={build.variant.path}/0xC000.ld
+sfe_edge2.build.preproc.flags={build.cxx.flags} -w -x c++ -E -CC
+sfe_edge2.build.preproc.defines={build.cxx.defines}
+sfe_edge2.build.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags
+sfe_edge2.build.asm.defines=@{build.variant.path}/mbed/.asm-symbols
+sfe_edge2.build.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags
+sfe_edge2.build.c.defines=@{build.variant.path}/mbed/.c-symbols
+sfe_edge2.build.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags
+sfe_edge2.build.cxx.defines=@{build.variant.path}/mbed/.cxx-symbols
+sfe_edge2.build.ld.flags=@{build.variant.path}/mbed/.ld-flags
+sfe_edge2.build.ld.defines=@{build.variant.path}/mbed/.ld-defines
 
 # sfe_rba_atp.upload.maximum_size=960000
 # sfe_rba_atp.upload.sbl_baud=115200
