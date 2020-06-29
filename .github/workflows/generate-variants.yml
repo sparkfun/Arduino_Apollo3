@@ -18,7 +18,7 @@ jobs:
 
       - name: build variant libs
         id: buildvariants
-        uses: oclyke-actions/compile-mbed-projects@v0.0.0
+        uses: oclyke-actions/run-mbed-jobs@v1
         with:
           jobs: |
             [
