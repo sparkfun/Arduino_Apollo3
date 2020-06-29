@@ -86,10 +86,10 @@ jobs:
             git add ${dest}
 
             # generate flag and define files from mbed profiles
-            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-asm  -d ./${variant_root}/mbed/.asm
-            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-c    -d ./${variant_root}/mbed/.c
-            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-cxx  -d ./${variant_root}/mbed/.cxx
-            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-ld   -d ./${variant_root}/mbed/.ld
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-asm  -d ./${variant_root}/mbed/.asm
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-c    -d ./${variant_root}/mbed/.c
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-cxx  -d ./${variant_root}/mbed/.cxx
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-ld   -d ./${variant_root}/mbed/.ld
             git add ./${variant_root}/mbed/.asm*
             git add ./${variant_root}/mbed/.c*
             git add ./${variant_root}/mbed/.cxx*
