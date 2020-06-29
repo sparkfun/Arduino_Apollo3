@@ -29,8 +29,8 @@ jobs:
               {"name": "edge-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE", "loc": "variants/SFE_EDGE"}}},
               {"name": "edge2-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE2", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE2", "loc": "variants/SFE_EDGE2"}}}
             ]
-          # mbed: |
-          #   {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
+          mbed: |
+            {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-dev"}
 
       - name: check out staging branch
         run: |
