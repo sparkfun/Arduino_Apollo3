@@ -63,26 +63,38 @@ jobs:
             tool="$(echo ${config} | jq -r -c '.tool')"
             build_root="$(echo ${loc} | jq -r -c '.root')"
             build_id="$(echo ${loc} | jq -r -c '.id')"
+            variant_root="$(echo ${user} | jq -r '.variant.loc')"
 
             echo ""
             echo "${job_count}:"
             echo "'${name}'"
 
-            lib_src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/libmbed-os.a"
-            lib_dest="./$(echo ${user} | jq -r '.variant.loc')/mbed/libmbed-os.a"
+            # copy the mbed static library
+            src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/libmbed-os.a"
+            dest="./${variant_root}/mbed/libmbed-os.a"
+            echo "copying '${src}' to '${dest}'"
+            mkdir -p $(dirname $dest)
+            cp $src $dest
+            git add ${dest}
 
-            echo "copying '${lib_src}' to '${lib_dest}'"
-            mkdir -p $(dirname $lib_dest)
-            cp $lib_src $lib_dest
-            
-            git add ${lib_dest}
+            # copy mbed_config.h
+            src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/mbed_config.h"
+            dest="./${variant_root}/mbed/mbed_config.h"
+            echo "copying '${src}' to '${dest}'"
+            mkdir -p $(dirname $dest)
+            cp $src $dest
+            git add ${dest}
 
-            python ./tools/scripts/transmute-profiles.py
+            # generate flag and define files from mbed profiles
+            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-asm  -d ./${variant_root}/mbed/.asm
+            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-c    -d ./${variant_root}/mbed/.c
+            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-cxx  -d ./${variant_root}/mbed/.cxx
+            python ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-ld   -d ./${variant_root}/mbed/.ld
 
             job_count="$((job_count + 1))"
           done
 
-          git commit -a -m "generated mbed libs"
+          git commit -a -m "generated variants mbed resources"
           cd ${GITHUB_WORKSPACE}
 
       - name: rebase staging branch to release-candidate
