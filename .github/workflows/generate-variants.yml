@@ -32,7 +32,11 @@ jobs:
         run: |
           cd arduino-apollo3
 
-          git checkout ${GITHUB_REF}
+          git fetch origin
+          git branch
+          echo ${GITHUB_REF}
+
+          # git checkout ${GITHUB_REF}
 
           echo "i am a string added from the automated build" >> unused.txt
 
