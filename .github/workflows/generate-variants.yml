@@ -25,6 +25,8 @@ jobs:
 
       - name: try committing to the same PR
         run: |
+          cd arduino-apollo3
+          
           echo "i am a string added from the automated build" >> unused.txt
 
           git add unused.txt
