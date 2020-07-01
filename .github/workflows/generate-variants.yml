@@ -20,6 +20,8 @@ jobs:
         run: |
           cd arduino-apollo3
           git status
+          ls -la
+          cat unused.txt
 
 
 #       - name: build variant libs
