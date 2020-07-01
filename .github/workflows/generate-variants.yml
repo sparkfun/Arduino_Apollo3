@@ -32,7 +32,7 @@ jobs:
         run: |
           cd arduino-apollo3
 
-          git fetch origin
+          git fetch origin +refs/pull/*/head:refs/remotes/origin/pr/*
           git branch
           echo ${GITHUB_REF}
 
