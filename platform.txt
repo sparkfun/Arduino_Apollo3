@@ -95,3 +95,5 @@ recipe.objcopy.hex.pattern="{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{b
 recipe.size.pattern="{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
 recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
+recipe.output.tmp_file={build.project_name}.{build.export_format}
+recipe.output.save_file={build.project_name}.{build.export_format}
