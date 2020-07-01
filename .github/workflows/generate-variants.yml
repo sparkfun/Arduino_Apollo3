@@ -23,10 +23,15 @@ jobs:
           ls -la
           cat unused.txt
 
+      - name: configure git
+        run: |
+          git config --global user.email "arduino-apollo3-builder@sparkfun.com"
+          git config --global user.name "arduino-apollo3-builder"
+
       - name: try committing to the same PR
         run: |
           cd arduino-apollo3
-          
+
           echo "i am a string added from the automated build" >> unused.txt
 
           git add unused.txt
