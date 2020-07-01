@@ -23,6 +23,14 @@ jobs:
           ls -la
           cat unused.txt
 
+      - name: try committing to the same PR
+        run: |
+          echo "i am a string added from the automated build" >> unused.txt
+
+          git add unused.txt
+          git commit -m "appended to unused.txt"
+          git push
+
 
 #       - name: build variant libs
 #         id: buildvariants
