@@ -32,12 +32,15 @@ jobs:
         run: |
           cd arduino-apollo3
 
+          git checkout ${GITHUB_REF}
+
           echo "i am a string added from the automated build" >> unused.txt
 
-          echo ${GITHUB_REPOSITORY}
-          echo ${GITHUB_EVENT_NAME}
-          echo ${GITHUB_SHA}
-          echo ${GITHUB_REF}
+          # echo ${GITHUB_REPOSITORY}
+          # echo ${GITHUB_EVENT_NAME}
+          # echo ${GITHUB_SHA}
+          # echo ${GITHUB_REF}
+
 
           git add unused.txt
           git commit -m "appended to unused.txt"
