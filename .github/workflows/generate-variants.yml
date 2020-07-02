@@ -37,7 +37,7 @@ jobs:
 
           git add unused.txt
           git commit -m "appended to unused.txt"
-          git push
+          git push -f
 
           # # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
           # # echo "$target"
