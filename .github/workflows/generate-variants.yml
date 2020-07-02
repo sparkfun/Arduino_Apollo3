@@ -36,10 +36,11 @@ jobs:
 
           echo "i am a string added from the automated build" >> unused.txt
 
-          # echo ${GITHUB_REPOSITORY}
-          # echo ${GITHUB_EVENT_NAME}
-          # echo ${GITHUB_SHA}
-          # echo ${GITHUB_REF}
+          echo ${GITHUB_ACTOR}
+          echo ${GITHUB_REPOSITORY}
+          echo ${GITHUB_EVENT_NAME}
+          echo ${GITHUB_SHA}
+          echo ${GITHUB_REF}
 
 
           git add unused.txt
