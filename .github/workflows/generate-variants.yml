@@ -31,8 +31,8 @@ jobs:
 
           git branch
           # echo ${GITHUB_REF}
-          git switch spoof-release-candidate
-          git rebase spoof-dev
+          git switch origin/spoof-release-candidate
+          git rebase origin/spoof-dev
 
 
           # # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
