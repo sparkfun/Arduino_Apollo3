@@ -27,8 +27,8 @@ jobs:
 
           git fetch
           git pull
-          git checkout origin/spoof-dev
-          git checkout origin/spoof-release-candidate
+          git checkout spoof-dev
+          git checkout spoof-release-candidate
 
           git rebase spoof-dev
 
