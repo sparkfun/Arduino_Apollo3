@@ -26,8 +26,8 @@ jobs:
         run: |
           cd arduino-apollo3
 
-          git fetch
-          git pull
+          git fetch --all
+          git pull --all
           git checkout spoof-dev
           git checkout spoof-release-candidate
 
