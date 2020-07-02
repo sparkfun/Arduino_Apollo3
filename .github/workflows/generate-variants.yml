@@ -26,6 +26,7 @@ jobs:
           cd arduino-apollo3
 
           git fetch
+          git pull
           git checkout origin/spoof-dev
           git checkout origin/spoof-release-candidate
 
