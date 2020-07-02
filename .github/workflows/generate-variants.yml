@@ -21,35 +21,37 @@ jobs:
           git config --global user.email "arduino-apollo3-builder@sparkfun.com"
           git config --global user.name "arduino-apollo3-builder"
 
-      - name: try committing to the same PR
+      - name: test
         run: |
           cd arduino-apollo3
 
-          git branch -r
+          # git branch -r
           git fetch origin spoof-dev
           git fetch origin spoof-release-candidate
 
           git branch
-          echo ${GITHUB_REF}
+          # echo ${GITHUB_REF}
+          git switch spoof-release-candidate
+          git merge spoof-dev
 
-          # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
-          # echo "$target"
-          # git checkout ${target}
-          git checkout origin/pr/211
+
+          # # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
+          # # echo "$target"
+          # # git checkout ${target}
+          # git checkout origin/pr/211
 
           echo "i am a string added from the automated build" >> unused.txt
 
-          echo ${GITHUB_ACTOR}
-          echo ${GITHUB_REPOSITORY}
-          echo ${GITHUB_EVENT_NAME}
-          echo ${GITHUB_SHA}
-          echo ${GITHUB_REF}
+          # echo ${GITHUB_ACTOR}
+          # echo ${GITHUB_REPOSITORY}
+          # echo ${GITHUB_EVENT_NAME}
+          # echo ${GITHUB_SHA}
+          # echo ${GITHUB_REF}
 
 
           git add unused.txt
           git commit -m "appended to unused.txt"
-          # git push
-          git push origin HEAD:refs/heads/pr/211
+          git push
 
 
 #       - name: build variant libs
