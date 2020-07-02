@@ -25,7 +25,10 @@ jobs:
         run: |
           cd arduino-apollo3
 
-          git fetch origin +refs/pull/*/head:refs/remotes/origin/pr/*
+          git branch -r
+          git fetch origin spoof-dev
+          git fetch origin spoof-release-candidate
+
           git branch
           echo ${GITHUB_REF}
 
