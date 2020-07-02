@@ -32,7 +32,7 @@ jobs:
           git branch
           # echo ${GITHUB_REF}
           git switch spoof-release-candidate
-          git merge spoof-dev
+          git rebase spoof-dev
 
 
           # # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
