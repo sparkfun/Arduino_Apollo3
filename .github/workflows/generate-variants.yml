@@ -32,7 +32,7 @@ jobs:
           # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
           # echo "$target"
           # git checkout ${target}
-          git checkout refs/pull/211/head
+          git checkout origin/pr/211
 
           echo "i am a string added from the automated build" >> unused.txt
 
