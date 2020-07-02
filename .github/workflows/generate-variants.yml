@@ -25,34 +25,28 @@ jobs:
         run: |
           cd arduino-apollo3
 
-          # git branch -r
-          git fetch origin spoof-dev
-          git fetch origin spoof-release-candidate
+          git fetch
+          git checkout --track origin/spoof-dev
+          git checkout --track origin/spoof-release-candidate
 
-          git branch
-          # echo ${GITHUB_REF}
-          git switch origin/spoof-release-candidate
-          git rebase origin/spoof-dev
+          git rebase spoof-dev
 
+          echo "i am a string added from the automated build" >> unused.txt
+
+          git add unused.txt
+          git commit -m "appended to unused.txt"
+          git push
 
           # # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
           # # echo "$target"
           # # git checkout ${target}
           # git checkout origin/pr/211
 
-          echo "i am a string added from the automated build" >> unused.txt
-
           # echo ${GITHUB_ACTOR}
           # echo ${GITHUB_REPOSITORY}
           # echo ${GITHUB_EVENT_NAME}
           # echo ${GITHUB_SHA}
           # echo ${GITHUB_REF}
-
-
-          git add unused.txt
-          git commit -m "appended to unused.txt"
-          git push origin spoof-release-candidate
-
 
 #       - name: build variant libs
 #         id: buildvariants
