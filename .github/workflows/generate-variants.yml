@@ -29,10 +29,10 @@ jobs:
           git branch
           echo ${GITHUB_REF}
 
-          target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
-          echo "$target"
+          # target=$(echo "${GITHUB_REF}" | grep -o "(?<=refs\/pull\/)(\d*)")
+          # echo "$target"
           # git checkout ${target}
-          git checkout refs/pull/210/head
+          git checkout refs/pull/211/head
 
           echo "i am a string added from the automated build" >> unused.txt
 
