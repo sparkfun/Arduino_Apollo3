@@ -20,15 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// The "Arduino.h" header file is intended to only be included by C++ sources.
-
-#ifndef _ARDUINO_H_
-#define _ARDUINO_H_
-
 #include "mbed.h"
 
-#define PinMode Arduino_PinMode         // note: this changes the Arduino API for mbed compatibility - use Arduino_PinMode where PinMode was specified in the Arduino API
-#include "core-api/api/ArduinoAPI.h"
+#define PinMode Arduino_PinMode
+#include "core-api/api/Common.h"
 #undef PinMode
 
-#endif // _ARDUINO_H_
+#define standInFunc() printf("%s [file: %s, line: %d]\n", __FUNCTION__, __FILE__, __LINE__)
+
+void pinMode(pin_size_t pinNumber, Arduino_PinMode pinMode){
+    standInFunc();
+
+    switch( pinMode ){
+        case INPUT:             printf("\tINPUT\n"); break;
+        case OUTPUT:            printf("\tOUTPUT\n"); break;
+        case INPUT_PULLUP:      printf("\tINPUT_PULLUP\n"); break;
+        case INPUT_PULLDOWN:    printf("\tINPUT_PULLDOWN\n"); break;
+        default:
+            printf("\tunknown pinMode given\n");
+            break;
+    }
+}

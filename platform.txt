@@ -22,9 +22,8 @@ name=SparkFun Apollo3
 version=2.0.0
 
 # paths
-ap3core.path={runtime.platform.path}/cores/{build.core}
-ap3variant.path={build.variant.path}
-ap3core.ambiq_sdk.path={ap3core.path}/am_sdk_ap3
+core.arduino.path={runtime.platform.path}/cores/arduino
+variant.path={build.variant.path}
 
 # defines
 defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
@@ -35,6 +34,7 @@ defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
 
 # includes
 includes.core={includes}
+# includes.core="-I{core.arduino.path}" "-I{core.arduino.path}/core-api/api" {includes}
 includes.mbed={build.mbed.includes}
 includes.variant={build.includes}
 includes.extra=
