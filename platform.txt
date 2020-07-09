@@ -22,7 +22,7 @@ name=SparkFun Apollo3
 version=2.0.0
 
 # paths
-core.arduino.path={runtime.platform.path}/cores/arduino
+cores.path={runtime.platform.path}/cores
 variant.path={build.variant.path}
 
 # defines
@@ -33,8 +33,7 @@ defines.extra=
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
 
 # includes
-includes.core={includes}
-# includes.core="-I{core.arduino.path}" "-I{core.arduino.path}/core-api/api" {includes}
+includes.core={includes} "-I{cores.path}/arduino/bridge"
 includes.mbed={build.mbed.includes}
 includes.variant={build.includes}
 includes.extra=
@@ -50,9 +49,9 @@ libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
 # warnings
 compiler.warning_flags=
 compiler.warning_flags.none=
-compiler.warning_flags.default=
-compiler.warning_flags.more=-Wall
-compiler.warning_flags.all=-Wall -Wextra
+compiler.warning_flags.default=-Wall -Werror=return-type
+compiler.warning_flags.more={compiler.warning_flags.default}
+compiler.warning_flags.all={compiler.warning_flags.default} -Wextra
 
 # flags
 compiler.preproc.flags={build.preproc.flags} {compiler.preproc.extra_flags}
