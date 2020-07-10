@@ -23,8 +23,6 @@ SOFTWARE.
 #ifndef _VARIANT_PINS_H_
 #define _VARIANT_PINS_H_
 
-#include "bridge/pins.h"
-
-#define LED_BUILTIN pinNumberByIndex(pinIndexByName(LED1))
+#define LED_BUILTIN pinNumberByName(LED1)
 
 #endif // _VARIANT_PINS_H_

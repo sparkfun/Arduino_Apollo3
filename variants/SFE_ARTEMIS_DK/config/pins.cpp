@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "pins.h"
+#include "bridge/pins.h"
 
 const pin_size_t variantPinCount = 24;
 
