@@ -59,7 +59,7 @@ compiler.asm.flags={build.asm.flags} {compiler.asm.extra_flags}
 compiler.c.flags={build.c.flags} {compiler.c.extra_flags}
 compiler.cxx.flags={build.cxx.flags} {compiler.cxx.extra_flags}
 compiler.ld.flags={build.ld.flags} {compiler.ld.extra_flags} --specs=nosys.specs
-compiler.ar.flags=rcs {compiler.ar.extra_flags} {compiler.ar.extra_flags}
+compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
 compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags}
 
