@@ -33,7 +33,7 @@ defines.extra=
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
 
 # includes
-includes.core={includes} "-I{cores.path}/arduino/mbed-bridge"
+includes.core={includes} "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/sdk"
 includes.mbed={build.mbed.includes}
 includes.variant={build.includes}
 includes.extra=
