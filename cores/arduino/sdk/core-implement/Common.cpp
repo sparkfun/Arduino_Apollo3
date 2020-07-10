@@ -26,6 +26,8 @@ SOFTWARE.
 
 #include "bridge/pins.h"
 
+#define standInFunc() printf("Stand-In for '%s' [file: %s, line: %d]\n", __FUNCTION__, __FILE__, __LINE__)
+
 void indexAnalogWrite(pin_size_t index, int val){
-    printf("indexAnalogWrite from sdk folder! %d\n", val);
+    standInFunc();
 }
