@@ -2,6 +2,3 @@
 	path = cores/mbed-os
 	url = https://github.com/sparkfun/mbed-os-ambiq-apollo3
 	branch = ambiq-apollo3-2
-[submodule "cores/arduino"]
-	path = cores/arduino
-	url = https://github.com/sparkfun/arduino-mbed
