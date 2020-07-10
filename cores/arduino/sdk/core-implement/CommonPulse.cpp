@@ -24,10 +24,11 @@ SOFTWARE.
 #include "core-api/api/Common.h"
 #undef PinMode
 
-#include "bridge/pins.h"
+#include "core-extend/Common.h"
 
 #define standInFunc() printf("Stand-In for '%s' [file: %s, line: %d]\n", __FUNCTION__, __FILE__, __LINE__)
 
-void indexAnalogWrite(pin_size_t index, int val){
+unsigned long indexPulseIn(pin_size_t index, uint8_t state, unsigned long timeout){
     standInFunc();
+    return 0;
 }
