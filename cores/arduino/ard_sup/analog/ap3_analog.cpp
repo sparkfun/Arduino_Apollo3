@@ -335,21 +335,39 @@ ap3_err_t ap3_adc_setup()
 }
 
 //Set function of pin to analog input
-//TODO Support differential pairs 0/1
 ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber)
 {
     ap3_err_t retval = AP3_ERR;
-
     uint8_t funcsel = 0;
     am_hal_gpio_pincfg_t pincfg = AP3_PINCFG_INPUT;
-    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
 
-    if (retval != AP3_OK)
+    //Handle special pads: differential pairs
+    if (pinNumber == AP3_ADC_DIFF0_PAD)
     {
-        return retval;
+        pincfg.uFuncSel = AM_HAL_PIN_12_ADCD0NSE9;
+        pinMode(12, pincfg, &retval);
+
+        pincfg.uFuncSel = AM_HAL_PIN_13_ADCD0PSE8;
+        pinMode(13, pincfg, &retval);
+
+        retval = AP3_OK;
     }
-    pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-    pinMode(pinNumber, pincfg, &retval);
+    else if (pinNumber == AP3_ADC_DIFF1_PAD)
+    {
+    }
+    else
+    {
+        //Normal analog channels
+        retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
+
+        if (retval != AP3_OK)
+        {
+            return retval;
+        }
+        pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
+        pinMode(pinNumber, pincfg, &retval);
+    }
+
     return retval;
 }
 
