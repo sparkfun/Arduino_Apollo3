@@ -159,7 +159,19 @@ uint16_t analogRead(uint8_t pinNumber)
         {
             if (ap3_analog_configure_map[indi].isAnalog == false)
             {
-                if (ap3_set_pin_to_analog(pinNumber) != AP3_OK)
+                if (padNumber == AP3_ADC_DIFF0_PAD)
+                {
+                    Serial.println("Config diff 0");
+                    retval = ap3_set_pin_to_analog(12);
+                    retval = ap3_set_pin_to_analog(13);
+                    if (retval != AP3_OK)
+                    {
+                        //Serial.println("Error - set pin to analog");
+                        return 0; //Error
+                    }
+                }
+
+                else if (ap3_set_pin_to_analog(pinNumber) != AP3_OK)
                 {
                     //Serial.println("Error - set pin to analog");
                     return 0; //Error
@@ -341,37 +353,19 @@ ap3_err_t ap3_set_pin_to_analog(uint8_t pinNumber)
     uint8_t funcsel = 0;
     am_hal_gpio_pincfg_t pincfg = AP3_PINCFG_INPUT;
 
-    //Handle special pads: differential pairs
-    if (pinNumber == AP3_ADC_DIFF0_PAD)
-    {
-        pincfg.uFuncSel = AM_HAL_PIN_12_ADCD0NSE9;
-        pinMode(12, pincfg, &retval);
+    retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
 
-        pincfg.uFuncSel = AM_HAL_PIN_13_ADCD0PSE8;
-        pinMode(13, pincfg, &retval);
-
-        retval = AP3_OK;
-    }
-    else if (pinNumber == AP3_ADC_DIFF1_PAD)
+    if (retval != AP3_OK)
     {
+        return retval;
     }
-    else
-    {
-        //Normal analog channels
-        retval = ap3_analog_pad_funcsel(ap3_gpio_pin2pad(pinNumber), &funcsel);
-
-        if (retval != AP3_OK)
-        {
-            return retval;
-        }
-        pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
-        pinMode(pinNumber, pincfg, &retval);
-    }
+    pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
+    pinMode(pinNumber, pincfg, &retval);
 
     return retval;
 }
 
-//Given pin number, assign ADC function
+//Given pad number, get ADC function
 ap3_err_t ap3_analog_pad_funcsel(ap3_gpio_pad_t padNumber, uint8_t *funcsel)
 {
     ap3_err_t retval = AP3_ERR;
