@@ -38,9 +38,9 @@ void loop()
   Serial.printf("%02d.", myRTC.seconds);
   Serial.printf("%02d", myRTC.hundredths);
 
-  Serial.printf(" 20%d/", myRTC.year);
-  Serial.printf("%02d/", myRTC.month);
-  Serial.printf("%02d", myRTC.dayOfMonth);
+  Serial.printf(" 20%d/", myRTC.month);
+  Serial.printf("%02d/", myRTC.dayOfMonth);
+  Serial.printf("%02d", myRTC.year);
 
   Serial.printf(" Day of week: %d =", myRTC.weekday);
   Serial.printf(" %s", myRTC.textWeekday);
