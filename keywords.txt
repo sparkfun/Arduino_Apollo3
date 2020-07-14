@@ -1,0 +1,39 @@
+#######################################
+# Syntax Coloring Map For Wire
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+enableBurstMode	KEYWORD2
+disableBurstMode	KEYWORD2
+getCpuFreqMHz	KEYWORD2
+
+getInternalTemp	KEYWORD2
+
+analogWriteResolution	KEYWORD2
+analogWriteFrameWidth	KEYWORD2
+analogWriteFrequency	KEYWORD2
+servoWrite	KEYWORD2
+
+enableFastShift	KEYWORD2
+fastShiftOut	KEYWORD2
+fastShiftIn	KEYWORD2
+
+secs	KEYWORD2
+systicks	KEYWORD2
+sysoverflows	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
