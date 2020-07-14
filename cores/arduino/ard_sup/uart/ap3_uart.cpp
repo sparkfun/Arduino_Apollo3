@@ -296,6 +296,22 @@ ap3_err_t Uart::set_config(HardwareSerial_Config_e HWSconfig)
         retval = AP3_INVALID_ARG;
         break;
     }
+
+    //Setup flow control
+    _config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_NONE;
+    if(_pinRTS != AP3_UART_PIN_UNUSED && _pinCTS != AP3_UART_PIN_UNUSED)
+    {
+        _config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_CTS;
+    }
+    else if(_pinRTS != AP3_UART_PIN_UNUSED)
+    {
+        _config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_ONLY;
+    }
+    else if(_pinCTS != AP3_UART_PIN_UNUSED)
+    {
+        _config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_CTS_ONLY;
+    }
+
     return retval;
 }
 
@@ -375,7 +391,7 @@ ap3_err_t Uart::_begin(void)
 
     if (_pinRTS != AP3_UART_PIN_UNUSED)
     {
-        retval = ap3_uart_pad_funcsel(_instance, AP3_UART_TX, ap3_gpio_pin2pad(_pinRTS), &funcsel);
+        retval = ap3_uart_pad_funcsel(_instance, AP3_UART_RTS, ap3_gpio_pin2pad(_pinRTS), &funcsel);
         if (retval != AP3_OK)
         {
             return retval;
@@ -391,7 +407,7 @@ ap3_err_t Uart::_begin(void)
 
     if (_pinCTS != AP3_UART_PIN_UNUSED)
     {
-        retval = ap3_uart_pad_funcsel(_instance, AP3_UART_RX, ap3_gpio_pin2pad(_pinCTS), &funcsel);
+        retval = ap3_uart_pad_funcsel(_instance, AP3_UART_CTS, ap3_gpio_pin2pad(_pinCTS), &funcsel);
         if (retval != AP3_OK)
         {
             return retval;
