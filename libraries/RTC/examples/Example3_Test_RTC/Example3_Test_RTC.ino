@@ -9,7 +9,7 @@
 #include "RTC.h"
 APM3_RTC myRTC; // Create instance of RTC class
 
-int previousDay = 1;
+int previousDay;
 
 void setup()
 {
@@ -19,15 +19,17 @@ void setup()
 
   // Manually set RTC date and time
   myRTC.setTime(23, 59, 59, 0, 1, 1, 20); // Set to 1 second before midnight
+  myRTC.getTime();
 }
 
 void loop()
 {
-  printArtemisTime();
-
-  myRTC.getTime();
   myRTC.setTime(23, 59, 59, 99, myRTC.dayOfMonth, myRTC.month, myRTC.year); // Manually set RTC
+  myRTC.getTime();
+  previousDay = myRTC.weekday;
   delay(11); //Allow us to roll from midnight the night before to the new day
+
+  printArtemisTime();
 }
 
 void printArtemisTime()
@@ -76,8 +78,6 @@ void printArtemisTime()
     while (1)
       ;
   }
-
-  previousDay = myRTC.weekday;
 
   Serial.println();
 }
