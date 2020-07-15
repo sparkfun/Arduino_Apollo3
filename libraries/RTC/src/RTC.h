@@ -17,7 +17,7 @@ public:
   void setEpoch(uint32_t ts); //Set current time to provided UNIX Epoch time
 
   void getAlarm(); //Query the RTC for the current alarm time/date
-  void setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month); //Set alarm time to provided hundredths/seconds/etc
+  void setAlarm(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund, uint8_t dayOfMonth, uint8_t month); //Set alarm time to provided hundredths/seconds/etc
   void setAlarmMode(uint8_t mode); //Set the RTC alarm repeat interval
   void attachInterrupt(); //Attach the RTC alarm interrupt
   void detachInterrupt(); //Detach the RTC alarm interrupt

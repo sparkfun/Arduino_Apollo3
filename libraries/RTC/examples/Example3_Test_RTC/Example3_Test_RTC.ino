@@ -18,7 +18,7 @@ void setup()
   Serial.println("Artemis RTC Testing");
 
   // Manually set RTC date and time
-  myRTC.setTime(0, 59, 59, 23, 1, 1, 20); // Set to 1 second before midnight
+  myRTC.setTime(23, 59, 59, 0, 1, 1, 20); // Set to 1 second before midnight
 }
 
 void loop()
@@ -26,7 +26,7 @@ void loop()
   printArtemisTime();
 
   myRTC.getTime();
-  myRTC.setTime(99, 59, 59, 23, myRTC.dayOfMonth, myRTC.month, myRTC.year); // Manually set RTC
+  myRTC.setTime(23, 59, 59, 99, myRTC.dayOfMonth, myRTC.month, myRTC.year); // Manually set RTC
   delay(11); //Allow us to roll from midnight the night before to the new day
 }
 

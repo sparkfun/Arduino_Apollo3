@@ -54,7 +54,7 @@ APM3_RTC::APM3_RTC()
 
 // Note: Order of parameters to change in v2.0.0.
 void APM3_RTC::setTime(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund, uint8_t dayOfMonth, uint8_t month, uint16_t year)
-
+{
   hal_time.ui32Weekday = am_util_time_computeDayofWeek(2000 + year, month, dayOfMonth); //computeDayofWeek is expecting 1 to 12 months
   hal_time.ui32Century = 0;
   hal_time.ui32Year = year;
@@ -157,7 +157,8 @@ void APM3_RTC::getAlarm()
   alarmHundredths = alm_time.ui32Hundredths;
 }
 
-void APM3_RTC::setAlarm(uint8_t hund, uint8_t sec, uint8_t min, uint8_t hour, uint8_t dayOfMonth, uint8_t month)
+// Note: Order of parameters to change in v2.0.0.
+void APM3_RTC::setAlarm(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund, uint8_t dayOfMonth, uint8_t month)
 {
   alm_time.ui32Weekday = 0; // WIP
   alm_time.ui32Month = month;

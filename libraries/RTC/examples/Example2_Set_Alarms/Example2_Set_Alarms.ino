@@ -28,11 +28,10 @@ void setup()
   //myRTC.setToCompilerTime();
 
   // Manually set RTC date and time
-  myRTC.setTime(0, 50, 59, 12, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
+  myRTC.setTime(12, 59, 50, 0, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
 
   // Set the RTC's alarm
-  myRTC.setAlarm(0, 0, 0, 13, 3, 6); // 13:00:00.000, June 3rd (hund, ss, mm, hh, dd, mm). Note: No year alarm register
-
+  myRTC.setAlarm(13, 0, 0, 0, 3, 6); // 13:00:00.000, June 3rd (hund, ss, mm, hh, dd, mm). Note: No year alarm register
   // Set the RTC alarm mode
   /*
     0: Alarm interrupt disabled

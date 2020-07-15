@@ -25,7 +25,7 @@ void setup()
   myRTC.setToCompilerTime();
 
   // Manually set RTC date and time
-  //myRTC.setTime(0, 50, 59, 12, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
+  //myRTC.setTime(12, 59, 50, 0, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
 }
 
 void loop()
