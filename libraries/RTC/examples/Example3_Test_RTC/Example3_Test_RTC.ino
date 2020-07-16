@@ -1,4 +1,5 @@
-/* Author: Nathan Seidle and stephenf7072
+/*
+  Author: Nathan Seidle and stephenf7072
   Created: January 28th, 2020
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
@@ -6,27 +7,27 @@
 */
 
 #include "RTC.h"
-APM3_RTC myRTC; //Create instance of RTC class
+APM3_RTC myRTC; // Create instance of RTC class
 
-int previousDay = 1;
+int previousDay;
 
 void setup()
 {
   Serial.begin(115200);
   delay(10);
-  Serial.println("Artemis RTC testing");
+  Serial.println("Artemis RTC Testing");
 
-  //myRTC.setTime(hh, mm, ss, hund, dd, mm, yy);
-  myRTC.setTime(23, 59, 59, 99, 1, 1, 19); //Manually set RTC to 1s before midnight
+  // Manually set RTC date and time to the start of 2020 so that myRTC contains valid times
+  myRTC.setTime(23, 59, 59, 0, 1, 1, 20); // Set to 1 second before midnight Jan 1
 }
 
 void loop()
 {
-  printArtemisTime();
+  myRTC.setTime(23, 59, 59, 99, myRTC.dayOfMonth, myRTC.month, myRTC.year); // Manually set RTC 1/100th of a second from the next day
+  previousDay = myRTC.weekday;
+  delay(11); //Allow us to roll from midnight the night before to the new day
 
-  myRTC.getTime();
-  myRTC.setTime(23, 59, 59, 99, myRTC.dayOfMonth, myRTC.month, myRTC.year); //Manually set RTC
-  delay(11);                                                                //Allow us to roll from midnight the night before to the new day
+  printArtemisTime();
 }
 
 void printArtemisTime()
@@ -75,8 +76,6 @@ void printArtemisTime()
     while (1)
       ;
   }
-
-  previousDay = myRTC.weekday;
 
   Serial.println();
 }

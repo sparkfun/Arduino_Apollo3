@@ -13,19 +13,36 @@ RTC	KEYWORD1
 #######################################
 
 getTime	KEYWORD2
+getEpoch	KEYWORD2
+
 setTime	KEYWORD2
 setTimeToCompiler	KEYWORD2
+setEpoch	KEYWORD2
 
+getAlarm	KEYWORD2
+setAlarm	KEYWORD2
+setAlarmMode	KEYWORD2
+attachInterrupt	KEYWORD2
+detachInterrupt	KEYWORD2
+
+weekday	KEYWORD2
+textWeekday	KEYWORD2
+year	KEYWORD2
+month	KEYWORD2
+dayOfMonth	KEYWORD2
 hour	KEYWORD2
 minute	KEYWORD2
 seconds	KEYWORD2
 hundredths	KEYWORD2
 
-month	KEYWORD2
-dayOfMonth	KEYWORD2
-year	KEYWORD2
-weekday	KEYWORD2
-textWeekday	KEYWORD2
+alarmWeekday	KEYWORD2
+alarmMonth	KEYWORD2
+alarmDayOfMonth	KEYWORD2
+alarmHour	KEYWORD2
+alarmMinute	KEYWORD2
+alarmSeconds	KEYWORD2
+alarmHundredths	KEYWORD2
+alarmTextWeekday	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
