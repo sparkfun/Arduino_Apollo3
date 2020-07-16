@@ -66,6 +66,7 @@ void APM3_RTC::setTime(uint8_t hour, uint8_t min, uint8_t sec, uint8_t hund, uin
   hal_time.ui32Hundredths = hund;
 
   am_hal_rtc_time_set(&hal_time); //Initialize the RTC with this date/time
+  getTime();
 }
 
 //Takes the time from the last build and uses it as the current time
@@ -85,6 +86,7 @@ void APM3_RTC::setToCompilerTime()
   hal_time.ui32Hundredths = 00;
 
   am_hal_rtc_time_set(&hal_time); //Initialize the RTC with this date/time
+  getTime();
 }
 
 void APM3_RTC::setEpoch(uint32_t ts)
