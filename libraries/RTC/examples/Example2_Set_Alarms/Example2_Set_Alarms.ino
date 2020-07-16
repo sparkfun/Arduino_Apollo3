@@ -63,8 +63,11 @@ void loop()
   }
 
   // Print RTC's date and time while waiting for alarm
-  printDateTime();
-  delay(1000);
+  static uint32_t nextPrint = 0;
+  if(millis() > nextPrint){
+    printDateTime();
+    nextPrint = millis() + 1000;
+  }
 }
 
 // Print the RTC's current date and time
