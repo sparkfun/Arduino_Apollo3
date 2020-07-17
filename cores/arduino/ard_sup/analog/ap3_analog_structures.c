@@ -28,6 +28,8 @@ const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS] = {
     {.pad = 11, .funcsel = AM_HAL_PIN_11_ADCSE2},
     {.pad = 12, .funcsel = AM_HAL_PIN_12_ADCD0NSE9},
     {.pad = 13, .funcsel = AM_HAL_PIN_13_ADCD0PSE8},
+    {.pad = 14, .funcsel = AM_HAL_PIN_14_ADCD1P},
+    {.pad = 15, .funcsel = AM_HAL_PIN_15_ADCD1N},
     {.pad = 16, .funcsel = AM_HAL_PIN_16_ADCSE0},
     {.pad = 29, .funcsel = AM_HAL_PIN_29_ADCSE1},
     {.pad = 31, .funcsel = AM_HAL_PIN_31_ADCSE3},
