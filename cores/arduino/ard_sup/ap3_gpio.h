@@ -35,20 +35,20 @@ extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_OPEN_DRAIN_WITH_READ_12;
 extern const am_hal_gpio_pincfg_t g_AM_HAL_GPIO_INPUT_PULLDOWN;
 
 // macros pointing to internal apollo3 GPIO pincfg structures
-#define AP3_PINCFG_INPUT            (g_AM_HAL_GPIO_INPUT)
-#define AP3_PINCFG_OUTPUT           (g_AM_HAL_GPIO_OUTPUT_WITH_READ_12)
-#define AP3_PINCFG_INPUT_PULLUP     (g_AM_HAL_GPIO_INPUT_PULLUP)
-#define AP3_PINCFG_INPUT_PULLDOWN   (g_AM_HAL_GPIO_INPUT_PULLDOWN)
-#define AP3_PINCFG_OPEN_DRAIN       (g_AM_HAL_GPIO_OPEN_DRAIN_WITH_READ_12)
-#define AP3_PINCFG_TRISTATE         (g_AM_HAL_GPIO_TRISTATE)
+#define AP3_PINCFG_INPUT (g_AM_HAL_GPIO_INPUT)
+#define AP3_PINCFG_OUTPUT (g_AM_HAL_GPIO_OUTPUT_WITH_READ_12)
+#define AP3_PINCFG_INPUT_PULLUP (g_AM_HAL_GPIO_INPUT_PULLUP)
+#define AP3_PINCFG_INPUT_PULLDOWN (g_AM_HAL_GPIO_INPUT_PULLDOWN)
+#define AP3_PINCFG_OPEN_DRAIN (g_AM_HAL_GPIO_OPEN_DRAIN_WITH_READ_12)
+#define AP3_PINCFG_TRISTATE (g_AM_HAL_GPIO_TRISTATE)
 
 // constants for Arduino pin modes
-#define INPUT           (0x00)
-#define OUTPUT          (0x01)
-#define INPUT_PULLUP    (0x02)
-#define INPUT_PULLDOWN  (0x03)
-#define OPEN_DRAIN      (0x04)
-#define TRISTATE        (0x05)
+#define INPUT (0x00)
+#define OUTPUT (0x01)
+#define INPUT_PULLUP (0x02)
+#define INPUT_PULLDOWN (0x03)
+#define OPEN_DRAIN (0x04)
+#define TRISTATE (0x05)
 
 #define AP3_GPIO_MAX_PADS (50)
 #define AP3_GPIO_IS_VALID(pad) ((pad >= 0) && (pad < AP3_GPIO_MAX_PADS))
