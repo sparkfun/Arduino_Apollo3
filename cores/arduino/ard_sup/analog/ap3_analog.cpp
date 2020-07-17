@@ -161,16 +161,24 @@ uint16_t analogRead(uint8_t pinNumber)
             {
                 if (padNumber == AP3_ADC_DIFF0_PAD)
                 {
-                    Serial.println("Config diff 0");
-                    retval = ap3_set_pin_to_analog(12);
-                    retval = ap3_set_pin_to_analog(13);
+                    ap3_err_t retval = AP3_ERR;
+                    retval = ap3_set_pin_to_analog(ap3_gpio_pad2pin(12));
+                    retval = ap3_set_pin_to_analog(ap3_gpio_pad2pin(13));
                     if (retval != AP3_OK)
                     {
-                        //Serial.println("Error - set pin to analog");
                         return 0; //Error
                     }
                 }
-
+                else if (padNumber == AP3_ADC_DIFF1_PAD)
+                {
+                    ap3_err_t retval = AP3_ERR;
+                    retval = ap3_set_pin_to_analog(ap3_gpio_pad2pin(14));
+                    retval = ap3_set_pin_to_analog(ap3_gpio_pad2pin(15));
+                    if (retval != AP3_OK)
+                    {
+                        return 0; //Error
+                    }
+                }
                 else if (ap3_set_pin_to_analog(pinNumber) != AP3_OK)
                 {
                     //Serial.println("Error - set pin to analog");
