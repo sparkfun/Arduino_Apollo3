@@ -49,10 +49,11 @@ typedef enum {
 
 // In v2.0.0 there is no more distinction between pins and pads. Now PinNames are an enum of prettified names. The number 
 // associated with a pin is *always* the Apollo3 pad number
-// typedef uint8_t ap3_gpio_pin_t;     // pins are the "prettified" names for connections on a dev board. 
-// typedef uint8_t ap3_gpio_pad_t;     // pads refer directly to what's on the MCU
-//                                     // Therefore you use the pinmap to find out the pad that is associated to the requested pin
+// typedef uint8_t ap3_gpio_pin_t;      // pins are the "prettified" names for connections on a dev board. 
+// typedef uint8_t ap3_gpio_pad_t;      // pads refer directly to what's on the MCU
+//                                      // Therefore you use the pinmap to find out the pad that is associated to the requested pin
 
+#define digitalPinToInterrupt(P) (P)    // all apollo3 pads are interrupt capable
 
 // Arduino compatibility
 typedef uint8_t byte;
