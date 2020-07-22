@@ -22,7 +22,7 @@ name=SparkFun Apollo3
 version=2.0.0
 
 # paths
-core.arduino.path={runtime.platform.path}/cores/arduino
+cores.path={runtime.platform.path}/cores
 variant.path={build.variant.path}
 
 # defines
@@ -33,8 +33,7 @@ defines.extra=
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
 
 # includes
-includes.core={includes}
-# includes.core="-I{core.arduino.path}" "-I{core.arduino.path}/core-api/api" {includes}
+includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" -include {cores.path}/arduino/sdk/ArduinoSDK.h
 includes.mbed={build.mbed.includes}
 includes.variant={build.includes}
 includes.extra=
@@ -50,9 +49,9 @@ libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
 # warnings
 compiler.warning_flags=
 compiler.warning_flags.none=
-compiler.warning_flags.default=
-compiler.warning_flags.more=-Wall
-compiler.warning_flags.all=-Wall -Wextra
+compiler.warning_flags.default=-Wall -Werror=return-type
+compiler.warning_flags.more={compiler.warning_flags.default}
+compiler.warning_flags.all={compiler.warning_flags.default} -Wextra
 
 # flags
 compiler.preproc.flags={build.preproc.flags} {compiler.preproc.extra_flags}
@@ -60,7 +59,7 @@ compiler.asm.flags={build.asm.flags} {compiler.asm.extra_flags}
 compiler.c.flags={build.c.flags} {compiler.c.extra_flags}
 compiler.cxx.flags={build.cxx.flags} {compiler.cxx.extra_flags}
 compiler.ld.flags={build.ld.flags} {compiler.ld.extra_flags} --specs=nosys.specs
-compiler.ar.flags=rcs {compiler.ar.extra_flags} {compiler.ar.extra_flags}
+compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
 compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags}
 
