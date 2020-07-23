@@ -13,26 +13,26 @@
 
 //*****************************************************************************
 //
-// Copyright (c) 2019, Ambiq Micro
+// Copyright (c) 2020, Ambiq Micro
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright
 // notice, this list of conditions and the following disclaimer in the
 // documentation and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from this
 // software without specific prior written permission.
-// 
+//
 // Third party software included in this distribution is subject to the
 // additional license terms as defined in the /docs/licenses directory.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision v2.2.0-7-g63f7c2ba1 of the AmbiqSuite Development Package.
+// This is part of revision 2.4.2 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -336,11 +336,12 @@ g_ui8NCEtable[AM_HAL_GPIO_MAX_PADS][4] =
 //
 //*****************************************************************************
 static am_hal_gpio_handler_t gpio_ppfnHandlers[AM_HAL_GPIO_MAX_PADS];
+static void                  *gpio_pHandlerCtxt[AM_HAL_GPIO_MAX_PADS];
 
 //*****************************************************************************
 //
 // Helper functions
-//  num_bits64() - Determine how many bits are set in a 64-bit value.
+//  popcount()   - Determine how many bits are set in the given bitmasks.
 //  pincfg_equ() - compare 2 am_hal_gpio_pincfg_t structures for equality.
 //
 //*****************************************************************************
@@ -361,17 +362,16 @@ pincfg_equ(void *cfg1, void *cfg2)
 } // pincfg_equ()
 
 static uint32_t
-num_bits64(uint64_t ui64bitmask)
+popcount(uint64_t ui64bitmask)
 {
-    uint32_t ux = 0;
+    uint32_t uCnt = 0;
     while ( ui64bitmask )
     {
-        ux += ui64bitmask & 1;
+        uCnt += ui64bitmask & 1;
         ui64bitmask >>= 1;
     }
-    return ux;
-} // num_bits64()
-
+    return uCnt;
+} // popcount()
 
 //*****************************************************************************
 //
@@ -687,7 +687,7 @@ am_hal_gpio_fast_pinconfig(uint64_t ui64PinMask,
 
 #ifndef AM_HAL_DISABLE_API_VALIDATION
     if ( (ui64PinMask & ~(((uint64_t)1 << AM_HAL_GPIO_MAX_PADS) - 1))   ||
-         (num_bits64(ui64PinMask) > 8)                                  ||
+         (popcount(ui64PinMask) > 8)                                  ||
          (bfGpioCfg.eGPOutcfg == AM_HAL_GPIO_PIN_OUTCFG_TRISTATE) )
     {
         return AM_HAL_STATUS_INVALID_ARG;
@@ -1080,6 +1080,52 @@ am_hal_gpio_interrupt_register(uint32_t ui32GPIONumber,
 
 //*****************************************************************************
 //
+//! @brief Advanced GPIO interrupt service routine registration.
+//!
+//! @param ui32GPIONumber - GPIO number (0-49) to be registered.
+//!
+//! @param pfnHandler - Function pointer to the callback.
+//!
+//! @param pCtxt      - context for the callback.
+//!
+//! @return Status.
+//!         Fails if pfnHandler is NULL or ui32GPIONumber > 49.
+//
+//*****************************************************************************
+uint32_t
+am_hal_gpio_interrupt_register_adv(uint32_t ui32GPIONumber,
+                               am_hal_gpio_handler_adv_t pfnHandler, void *pCtxt)
+{
+#ifndef AM_HAL_DISABLE_API_VALIDATION
+    //
+    // Check parameters
+    //
+    if ( ui32GPIONumber >= AM_HAL_GPIO_MAX_PADS )
+    {
+        return AM_HAL_STATUS_OUT_OF_RANGE;
+    }
+
+    if ( pfnHandler == NULL )
+    {
+        return AM_HAL_STATUS_INVALID_ARG;
+    }
+#endif // AM_HAL_DISABLE_API_VALIDATION
+
+    //
+    // Store the handler function pointer.
+    //
+    gpio_ppfnHandlers[ui32GPIONumber] = (am_hal_gpio_handler_t)((uint32_t)pfnHandler & ~0x1);
+    gpio_pHandlerCtxt[ui32GPIONumber] = pCtxt;
+
+    //
+    // Return the status.
+    //
+    return AM_HAL_STATUS_SUCCESS;
+
+} // am_hal_gpio_interrupt_register_adv()
+
+//*****************************************************************************
+//
 // GPIO interrupt service routine.
 //
 //*****************************************************************************
@@ -1150,7 +1196,15 @@ am_hal_gpio_interrupt_service(uint64_t ui64Status)
                 //
                 // If we found an interrupt handler routine, call it now.
                 //
-                pfnHandler();
+                if ((uint32_t)pfnHandler & 0x1)
+                {
+                    pfnHandler();
+                }
+                else
+                {
+                    am_hal_gpio_handler_adv_t padvHandler = (am_hal_gpio_handler_adv_t)((uint32_t)pfnHandler | 0x1);
+                    padvHandler(gpio_pHandlerCtxt[ui32Cnt + ui32FFS]);
+                }
             }
             else
             {

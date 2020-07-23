@@ -12,11 +12,16 @@ ap3_gpio_isr_entry_t gpio_isr_entries[AP3_GPIO_MAX_PADS] = {NULL};
 uint8_t gpio_num_isr = 0;
 
 //*****************************************************************************
-//  Local defines. Copied from am_hal_gpio.c
+//  Local function declarations
+//*****************************************************************************
+static inline uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad);
+
+//*****************************************************************************
+//  Local defines.
 //*****************************************************************************
 //
 // Generally define GPIO PADREG and GPIOCFG bitfields
-//
+// Copied from am_hal_gpio.c
 #define PADREG_FLD_76_S 6
 #define PADREG_FLD_FNSEL_S 3
 #define PADREG_FLD_DRVSTR_S 2
@@ -26,6 +31,10 @@ uint8_t gpio_num_isr = 0;
 #define GPIOCFG_FLD_INTD_S 3
 #define GPIOCFG_FLD_OUTCFG_S 1
 #define GPIOCFG_FLD_INCFG_S 0
+
+//Additional Defines
+#define PADREG_FNSEL_Msk 0x38
+#define GPIO_FUNCTION 3
 
 ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin)
 {
@@ -76,32 +85,34 @@ void padMode(uint8_t pad, am_hal_gpio_pincfg_t mode)
 }
 
 // translate Arduino style pin mode function to apollo3 implementation
-void pinMode(uint8_t pin, uint8_t mode) {
+void pinMode(uint8_t pin, uint8_t mode)
+{
 
     am_hal_gpio_pincfg_t pinmode = AP3_GPIO_PINCFG_NULL;
 
-    switch (mode) {
-        case INPUT:
-            pinmode = AP3_PINCFG_INPUT;
-            break;
-        case OUTPUT:
-            pinmode = AP3_PINCFG_OUTPUT;
-            break;
-        case INPUT_PULLUP:
-            pinmode = AP3_PINCFG_INPUT_PULLUP;
-            break;
-        case INPUT_PULLDOWN:
-            pinmode = AP3_PINCFG_INPUT_PULLDOWN;
-            break;
-        case OPEN_DRAIN:
-            pinmode = AP3_PINCFG_OPEN_DRAIN;
-            break;
-        case TRISTATE:
-            pinmode = AP3_PINCFG_TRISTATE;
-            break;
-        default:
-            //no match, just do nothing
-            return;
+    switch (mode)
+    {
+    case INPUT:
+        pinmode = AP3_PINCFG_INPUT;
+        break;
+    case OUTPUT:
+        pinmode = AP3_PINCFG_OUTPUT;
+        break;
+    case INPUT_PULLUP:
+        pinmode = AP3_PINCFG_INPUT_PULLUP;
+        break;
+    case INPUT_PULLDOWN:
+        pinmode = AP3_PINCFG_INPUT_PULLDOWN;
+        break;
+    case OPEN_DRAIN:
+        pinmode = AP3_PINCFG_OPEN_DRAIN;
+        break;
+    case TRISTATE:
+        pinmode = AP3_PINCFG_TRISTATE;
+        break;
+    default:
+        //no match, just do nothing
+        return;
     }
 
     pinMode(pin, pinmode);
@@ -133,6 +144,16 @@ extern void digitalWrite(uint8_t pin, uint8_t val)
     {
         am_hal_gpio_output_clear(ap3_gpio_pin2pad(pin));
     }
+}
+
+static inline uint32_t ap3_get_funct_sel(ap3_gpio_pad_t pad)
+{
+    uint32_t padregAddr = AM_REGADDR(GPIO, PADREGA) + (pad & ~0x3);
+    uint32_t padShft = ((pad & 0x3) << 3);
+    uint32_t functSelShift = PADREG_FLD_FNSEL_S;
+    uint32_t functSelMask = PADREG_FNSEL_Msk;
+
+    return (((AM_REGVAL(padregAddr) >> padShft) & functSelMask) >> functSelShift);
 }
 
 extern int digitalRead(uint8_t pin)
@@ -299,6 +320,7 @@ extern void detachInterrupt(uint8_t pin)
     gpio_isr_entries[gpio_num_isr].callback = NULL;
     gpio_isr_entries[gpio_num_isr].mode = LOW;
     gpio_isr_entries[gpio_num_isr].arg = NULL;
+    gpio_num_isr--;
 }
 
 uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, uint32_t eIntDir)

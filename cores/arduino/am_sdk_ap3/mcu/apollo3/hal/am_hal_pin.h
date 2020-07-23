@@ -12,26 +12,26 @@
 
 //*****************************************************************************
 //
-// Copyright (c) 2019, Ambiq Micro
+// Copyright (c) 2020, Ambiq Micro
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright
 // notice, this list of conditions and the following disclaimer in the
 // documentation and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from this
 // software without specific prior written permission.
-// 
+//
 // Third party software included in this distribution is subject to the
 // additional license terms as defined in the /docs/licenses directory.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -44,7 +44,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.2.0-hotfix-2.2.1 of the AmbiqSuite Development Package.
+// This is part of revision 2.4.2 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -70,6 +70,7 @@
 #define AM_HAL_PIN_1_MSPI5        (5)
 #define AM_HAL_PIN_1_NCE1         (7)
 
+#define AM_HAL_PIN_2_UART1RX      (0)
 #define AM_HAL_PIN_2_SLMISO       (1)
 #define AM_HAL_PIN_2_UART0RX      (2)
 #define AM_HAL_PIN_2_GPIO         (3)
@@ -89,7 +90,7 @@
 #define AM_HAL_PIN_4_SLINT        (1)
 #define AM_HAL_PIN_4_NCE4         (2)
 #define AM_HAL_PIN_4_GPIO         (3)
-#define AM_HAL_PIN_4_UART0RX      (5)
+#define AM_HAL_PIN_4_UART1RX      (5)
 #define AM_HAL_PIN_4_CTIM17       (6)
 #define AM_HAL_PIN_4_MSPI2        (7)
 
@@ -129,6 +130,7 @@
 #define AM_HAL_PIN_9_SCCIO        (4)
 #define AM_HAL_PIN_9_UART1RX      (6)
 
+#define AM_HAL_PIN_10_UART1TX     (0)
 #define AM_HAL_PIN_10_M1MOSI      (1)
 #define AM_HAL_PIN_10_NCE10       (2)
 #define AM_HAL_PIN_10_GPIO        (3)
@@ -437,7 +439,7 @@
 #define AM_HAL_PIN_44_CTIM20      (2)
 #define AM_HAL_PIN_44_GPIO        (3)
 #define AM_HAL_PIN_44_M4MOSI      (5)
-#define AM_HAL_PIN_44_M5nCE6      (6)
+#define AM_HAL_PIN_44_UART0TX     (6)
 
 #if defined (AM_PACKAGE_BGA)
 #define AM_HAL_PIN_45_UART1CTS    (0)

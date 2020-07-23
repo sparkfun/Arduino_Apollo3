@@ -118,8 +118,7 @@ recipe.objcopy.bin.pattern="{compiler.path}/{compiler.cmd.axf2bin}" {compiler.fl
 ## Compute size
 recipe.size.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
-
-recipe.hooks.objcopy.postobjcopy.0.pattern="{compiler.path}/{compiler.cmd.size}" -A "{build.path}/{build.project_name}.axf"
+recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
 
 ## Preprocessor
 preproc.macros.flags=-w -x c++ -E -CC

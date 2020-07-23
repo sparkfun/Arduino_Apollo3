@@ -280,6 +280,10 @@ void SPIClass::transferOut(void *buf, size_t count)
   _transfer(buf, NULL, count);
 }
 
+void SPIClass::transferOutIn(void* buf_out, void* buf_in, size_t count){
+  _transfer(buf_out, buf_in, count);
+}
+
 void SPIClass::transferIn(void *buf, size_t count)
 {
   _transfer(NULL, buf, count);
@@ -294,7 +298,7 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
   // Determine direction
   if ((buf_out != NULL) && (buf_in != NULL))
   {
-    iomTransfer.eDirection = AM_HAL_IOM_FULLDUPLEX;
+    iomTransfer.eDirection = (am_hal_iom_dir_e)AM_HAL_IOM_FULLDUPLEX;
   }
   else if (buf_out != NULL)
   {
@@ -315,11 +319,11 @@ void SPIClass::_transfer(void *buf_out, void *buf_in, size_t count)
     retVal32 = am_hal_iom_blocking_transfer(_handle, &iomTransfer);
   }
 
-  // if (retVal32 != 0)
-  // {
-  //   Serial.printf("got an error on _transfer: %d\n", retVal32);
-  //   return retVal32;
-  // }
+  if (retVal32 != 0)
+  {
+    Serial.printf("got an error on _transfer: %d\n", retVal32);
+    // return retVal32;
+  }
 }
 
 void SPIClass::attachInterrupt()

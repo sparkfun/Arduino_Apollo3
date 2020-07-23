@@ -1,8 +1,10 @@
-/* Author: Nathan Seidle
+/*
+  Author: Nathan Seidle
   Created: Septempter 27th, 2019
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
-  This example demonstrates how to initialize and read from the on board RTC.
+  This example demonstrates how to initialize and read from the on-board RTC.
+  
   Most SparkFun Artemis boards have the necessary external 32kHz crystal to
   enable the RTC. If you are using the Artemis module bare you will either
   need an external 32kHz xtal or use the internal LFRC. Read the datasheet
@@ -11,16 +13,19 @@
   This example is based on the Ambiq SDK EVB2 RTC example.
 */
 
-#include "RTC.h" //Include RTC library included with the Aruino_Apollo3 core
-APM3_RTC myRTC; //Create instance of RTC class
+#include "RTC.h" // Include RTC library included with the Aruino_Apollo3 core
+APM3_RTC myRTC; // Create instance of RTC class
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("SparkFun RTC Example");
 
-  myRTC.setToCompilerTime(); //Easily set RTC using the system __DATE__ and __TIME__ macros from compiler
-  //myRTC.setTime(7, 28, 51, 0, 21, 10, 15); //Manually set RTC back to the future: Oct 21st, 2015 at 7:28.51 AM
+  // Easily set RTC using the system __DATE__ and __TIME__ macros from compiler
+  myRTC.setToCompilerTime();
+
+  // Manually set RTC date and time
+  //myRTC.setTime(12, 59, 50, 0, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
 }
 
 void loop()

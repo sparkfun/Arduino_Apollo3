@@ -30,8 +30,8 @@ SOFTWARE.
 #define AP3_USE_DEFAULT_TIMER_NUM (0xFF)
 
 extern const ap3_analog_pad_map_elem_t ap3_analog_map[AP3_ANALOG_PADS];
-extern const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_PADS];
-extern ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_PADS];
+extern const ap3_analog_channel_map_elem_t ap3_analog_channel_map[AP3_ANALOG_CHANNELS];
+extern ap3_analog_configure_map_elem_t ap3_analog_configure_map[AP3_ANALOG_CHANNELS];
 
 // ADC Device Handle.
 static void *g_ADCHandle;
@@ -44,9 +44,12 @@ ap3_err_t ap3_change_channel(ap3_gpio_pad_t padNumber);
 bool power_adc_disable();
 uint16_t analogRead(uint8_t pinNumber);
 ap3_err_t analogReadResolution(uint8_t bits);
+float getInternalTemp();
 
 ap3_err_t ap3_pwm_output(uint8_t pin, uint32_t th, uint32_t fw, uint32_t clk);
 ap3_err_t analogWriteResolution(uint8_t res);
+ap3_err_t analogWriteFrameWidth(uint32_t fw);
+ap3_err_t analogWriteFrequency(float freq);
 ap3_err_t analogWrite(uint8_t pin, uint32_t val);
 ap3_err_t servoWriteResolution(uint8_t res);
 uint8_t getServoResolution();

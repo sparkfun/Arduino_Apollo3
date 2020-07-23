@@ -42,8 +42,8 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     35, //A14 - ~TX1/I2SDAT/PDMCLK
     32, //A15 - ~SCCIO
     12, //A16 - ~PDMCLK/TX1
-    32, //17 - ~SDA2/MISO3/RX1
-    12, //18 - ~SCL2/SCK2
+    25, //17 - ~SDA2/MISO2/RX1
+    27, //18 - ~SCL2/SCK2
     19, //19 - ~Not exposed, Status LED
     48, //20 - Not exposed, TX0
     49, //21 - Not exposed, RX0
