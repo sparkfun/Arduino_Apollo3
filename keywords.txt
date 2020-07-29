@@ -53,6 +53,7 @@ analogReadDiff	KEYWORD2
 analogReadTemp	KEYWORD2
 analogReadVCCDiv3	KEYWORD2
 analogReadVSS	KEYWORD2
+initializeADC	KEYWORD2
 analogWriteResolution	KEYWORD2
 analogWriteFrameWidth	KEYWORD2
 analogWriteFrequency	KEYWORD2
@@ -60,6 +61,7 @@ getServoResolution	KEYWORD2
 servoWriteResolution	KEYWORD2
 servoWrite	KEYWORD2
 analogReadResolution	KEYWORD2
+powerControlADC	KEYWORD2
 
 # Structures (KEYWORD3)
 ap3_adc_channel_config_t	KEYWORD3
@@ -91,6 +93,7 @@ AP3_MEM_ERR	LITERAL1
 AP3_HW_ERR	LITERAL1
 AP3_MODULE_SPECIFIC_START	LITERAL1
 _ARDUINO_SDK_CORE_EXTEND_COMMON_H_	LITERAL1
+_ARDUINO_SDK_CORE_EXTEND_POWER_CONTROL_H_	LITERAL1
 
 # Properties (LITERAL2)
 write	LITERAL2

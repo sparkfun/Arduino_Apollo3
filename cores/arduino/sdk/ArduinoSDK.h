@@ -27,5 +27,6 @@ SOFTWARE.
 
 #include "sdk/core-extend/Common.h"
 #include "sdk/core-extend/AnalogInternal.h"
+#include "sdk/core-extend/PowerControl.h"
 
 #endif // _ARDUINO_SDK_ARDUINOSDK_H_

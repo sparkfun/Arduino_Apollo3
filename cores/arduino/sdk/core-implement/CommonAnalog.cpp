@@ -47,6 +47,7 @@ static uint8_t _analogWriteResolution = 8;
 static uint32_t _analogWriteWidth = 0x0000FFFF;
 
 static void* g_ADCHandle;
+bool adc_initialized = false;
 
 ap3_adc_channel_config_t ap3_adc_channel_configs[] = {
     {11,    AP3_ADC_INTERNAL_CHANNELS_NUM,      AM_HAL_ADC_SLOT_CHSEL_SE2,      AM_HAL_PIN_11_ADCSE2,       },
@@ -318,19 +319,38 @@ static const uint8_t outcfg_tbl[32][4] =
         {OUTC(1, 7, 1), OUTC(0, 6, 0), OUTC(1, 7, 0), OUTC(1, 3, 1)}, // CTX31: B7OUT2, A6OUT,  B7OUT,  B3OUT2
 };
 
-ap3_err_t ap3_adc_start( void )
-{
+uint32_t powerControlADC(bool on){
+    uint32_t status = AM_HAL_STATUS_SUCCESS;
+
+    if(on){
+        status = am_hal_adc_power_control(g_ADCHandle, AM_HAL_SYSCTRL_WAKE, false);
+        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
+        
+        status = am_hal_adc_initialize(0, &g_ADCHandle);
+        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
+
+        adc_initialized = true;
+    }else{
+        adc_initialized = false;
+
+        status = am_hal_adc_disable(g_ADCHandle);
+        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
+
+        status = am_hal_pwrctrl_periph_disable(AM_HAL_PWRCTRL_PERIPH_ADC);
+        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
+
+        status = am_hal_adc_deinitialize(g_ADCHandle);
+        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
+    }
+
+    return status;
+}
+
+uint32_t initializeADC( void ){
     am_hal_adc_config_t ADCConfig;
 
-    // Initialize the ADC and get the handle.
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_initialize(0, &g_ADCHandle)){
-        return AP3_ERR;
-    }
-
     // Power on the ADC.
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_power_control(g_ADCHandle, AM_HAL_SYSCTRL_WAKE, false)){
-        return AP3_ERR;
-    }
+    powerControlADC(true);
 
     // Set up the ADC configuration parameters. These settings are reasonable
     // for accurate measurements at a low sample rate.
@@ -341,11 +361,8 @@ ap3_err_t ap3_adc_start( void )
     ADCConfig.eClockMode = AM_HAL_ADC_CLKMODE_LOW_LATENCY;
     ADCConfig.ePowerMode = AM_HAL_ADC_LPMODE0;
     ADCConfig.eRepeat = AM_HAL_ADC_SINGLE_SCAN;
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_configure(g_ADCHandle, &ADCConfig)){
-        return AP3_ERR;
-    }
 
-    return AP3_OK;
+    return am_hal_adc_configure(g_ADCHandle, &ADCConfig);
 }
 
 ap3_err_t ap3_config_channel(ap3_adc_channel_config_t* config){
@@ -374,9 +391,8 @@ ap3_err_t ap3_config_channel(ap3_adc_channel_config_t* config){
 }
 
 int ap3_analog_read(ap3_adc_channel_config_t* config){
-    static bool ap3_adc_active = false;
-    if (!ap3_adc_active){
-        ap3_adc_active = ap3_adc_start();
+    if (!adc_initialized){
+        initializeADC();
     }
 
     uint32_t ui32IntMask;
