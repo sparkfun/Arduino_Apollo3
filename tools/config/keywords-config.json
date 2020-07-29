@@ -1,12 +1,4 @@
 {
-    "testing-complex-expansions": {
-        "expansion-params": [
-            "{lvl0_0,lvl0_1}",
-            "{lvl1_0,lvl1_1,lvl1_2}"
-        ],
-        "pathspec": "root/{}/intermediate_{0,1,2}/{}/*/*.h",
-        "dest": "root/{}/intermediate_{0,1,2}"
-    },
     "libraries": {
         "expansion-params": [
             "{EEPROM,PDM,RTC,Servo,SoftwareSerial,SPI,Wire}"
