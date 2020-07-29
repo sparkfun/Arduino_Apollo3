@@ -31,14 +31,14 @@ typedef struct _eeprom_config_t {
     mbed::bd_size_t sram_bytes = EEPROM_DEFAULT_SRAM_USAGE;
 } eeprom_config_t;
 
-class EEPROM : protected FlashIAPBlockDevice {
+class EEPROMClass : protected FlashIAPBlockDevice {
 private:
     eeprom_config_t _cfg;
 
 protected:
 public:
-    EEPROM(void);
-    EEPROM(uint32_t address, uint32_t size);
+    EEPROMClass(void);
+    EEPROMClass(uint32_t address, uint32_t size);
 
     void config(eeprom_config_t cfg){
         _cfg = cfg;
@@ -95,6 +95,8 @@ public:
     uint8_t operator[](const int idx){
         return read(idx);
     }
-}
+};
+
+extern EEPROMClass EEPROM;
 
 #endif // _APOLLO3_LIBRARIES_EEPROM_H_
