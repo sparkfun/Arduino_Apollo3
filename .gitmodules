@@ -5,3 +5,6 @@
 [submodule "cores/arduino/mbed-bridge"]
 	path = cores/arduino/mbed-bridge
 	url = https://github.com/sparkfun/arduino-mbed-bridge
+[submodule "tools/keywords_gen"]
+	path = tools/keywords_gen
+	url = https://github.com/sparkfun/Keyword_File_Generator
