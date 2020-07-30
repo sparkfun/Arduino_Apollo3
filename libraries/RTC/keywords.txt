@@ -13,9 +13,11 @@ RTC	KEYWORD1
 #######################################
 
 getTime	KEYWORD2
+getEpoch	KEYWORD2
 
 setTime	KEYWORD2
 setTimeToCompiler	KEYWORD2
+setEpoch	KEYWORD2
 
 getAlarm	KEYWORD2
 setAlarm	KEYWORD2

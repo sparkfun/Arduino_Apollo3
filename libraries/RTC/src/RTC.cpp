@@ -3,6 +3,7 @@
 */
 
 #include "RTC.h"
+#include <time.h>
 
 am_hal_rtc_time_t hal_time;
 am_hal_rtc_time_t alm_time;
@@ -88,6 +89,28 @@ void APM3_RTC::setToCompilerTime()
   getTime();
 }
 
+void APM3_RTC::setEpoch(uint32_t ts)
+{
+  if (ts < EPOCH_TIME) {
+    ts = EPOCH_TIME;
+  }
+
+  struct tm tm;
+
+  time_t t = ts;
+  struct tm* tmp = gmtime(&t);
+  hal_time.ui32Weekday = 0;
+  hal_time.ui32Century = 0;
+  hal_time.ui32Year = tmp->tm_year - 100;
+  hal_time.ui32Month = tmp->tm_mon + 1;
+  hal_time.ui32DayOfMonth = tmp->tm_mday;
+  hal_time.ui32Hour = tmp->tm_hour;
+  hal_time.ui32Minute = tmp->tm_min;
+  hal_time.ui32Second = tmp->tm_sec;
+  hal_time.ui32Hundredths = 0;
+
+  am_hal_rtc_time_set(&hal_time); //Initialize the RTC with this date/time
+}
 
 void APM3_RTC::getTime()
 {
@@ -104,6 +127,24 @@ void APM3_RTC::getTime()
   hundredths = hal_time.ui32Hundredths;
 }
 
+uint32_t APM3_RTC::getEpoch()
+{
+  am_hal_rtc_time_get(&hal_time);
+
+  struct tm tm;
+
+  tm.tm_isdst = -1;
+  tm.tm_yday = 0;
+  tm.tm_wday = 0;
+  tm.tm_year = hal_time.ui32Year + 100; //Number of years since 1900.
+  tm.tm_mon = hal_time.ui32Month - 1; //mktime is expecting 0 to 11 months
+  tm.tm_mday = hal_time.ui32DayOfMonth;
+  tm.tm_hour = hal_time.ui32Hour;
+  tm.tm_min = hal_time.ui32Minute;
+  tm.tm_sec = hal_time.ui32Second;
+
+  return mktime(&tm);
+}
 
 void APM3_RTC::getAlarm()
 {
