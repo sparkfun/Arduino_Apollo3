@@ -12,6 +12,11 @@ WDT	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+configure	KEYWORD2
+start		KEYWORD2
+stop		KEYWORD2
+restart		KEYWORD2
+clear		KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

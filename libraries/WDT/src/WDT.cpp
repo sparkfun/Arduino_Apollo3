@@ -13,13 +13,13 @@ APM3_WDT::APM3_WDT()
 
 
 // Configure the watchdog
-void APM3_WDT::configure(clock, interrupt, reset)
+void APM3_WDT::configure()
 {
-
+  am_hal_wdt_init(&watchdogConfig);
 }
 
 // Enable the watchdog
-void APM3_WDT::enable()
+void APM3_WDT::start()
 {
   // Enable the interrupt for the watchdog in the NVIC
   NVIC_EnableIRQ(WDT_IRQn);
@@ -27,11 +27,13 @@ void APM3_WDT::enable()
 }
 
 // Disable the watchdog
-void APM3_WDT::disable()
+void APM3_WDT::stop()
 {
-  // Enable the interrupt for the watchdog in the NVIC
+  // Disable the interrupt for the watchdog in the NVIC
   NVIC_DisableIRQ(WDT_IRQn);
-  am_hal_wdt_int_disable();
+  // Disable the watchdog timer tick by clearing the 'enable' bit in the
+  // watchdog configuration register
+  am_hal_wdt_halt();
 }
 
 // Restart the watchdog
