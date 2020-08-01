@@ -1,6 +1,6 @@
 /*
   Author: Adam Garbo
-  Created: July 31st, 2020
+  Created: August 1st, 2020
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates the combined use of the Artemis Watchdog Timer (WDT)
@@ -9,11 +9,12 @@
   Both RTC and WDT interrupts will wake the system, print the date and time,
   and then re-enter deep sleep.
 
-  The code is configured to trigger the RTC alarm every minute and enter
-  deep sleep between interrupts. Alarm interupts also restart the WDT and reset
-  the watchdog counter.
-
-  If the WDT is not restarted after 75 seconds, a system reset will occur.
+  The WDT is configured to trigger every 10 seconds. If the WDT is not "pet" 
+  after 100 seconds, a system reset will be triggered.
+  
+  The RTC alarm is configured to trigger every minute and enter deep sleep 
+  between interrupts. Alarm interuptswill also restart the WDT and reset
+  the watchdog interrput counter.
 */
 
 #include <RTC.h>
@@ -24,7 +25,7 @@ APM3_WDT wdt;
 
 volatile bool alarmFlag = false; // RTC ISR flag
 volatile bool watchdogFlag = false; // Watchdog Timer ISR flag
-volatile int watchdogCounter = 0; // Watchdog interrupt counter
+volatile int watchdogInterrupt = 0; // Watchdog interrupt counter
 
 void setup()
 {
@@ -32,16 +33,20 @@ void setup()
 
   Serial.println("Artemis Watchdog Low Power Example");
 
+  // Set the RTC time using UNIX Epoch time
+  rtc.setEpoch(1596240000); // Saturday, August 1, 2020 00:00:00
+
   // Set the RTC's alarm
   rtc.setAlarm(0, 0, 0, 0, 0, 0); // Set alarm (hund, ss, mm, hh, dd, mm)
   rtc.setAlarmMode(6); // Set the RTC alarm to trigger every minute
   rtc.attachInterrupt(); // Attach RTC alarm interrupt
 
-  // Configure the watchdog
-  wdt.configure(); // Default interrupt: 5 seconds. Default reset: 15 seconds
+  // Configure the watchdog timer
+  // See Example2_WDT_Config for more information on how to configure the watchdog
+  wdt.configure(2, 160, 240); // 16 Hz clock, 10-second interrupt period, 15-second reset period
 
-  // Enable the watchdog
-  wdt.enable();
+  // Start the watchdog
+  wdt.start();
 }
 
 void loop()
@@ -49,24 +54,23 @@ void loop()
   // Check for alarm interrupt
   if (alarmFlag)
   {
-    Serial.print("Alarm triggered: ");
+    Serial.print("Alarm interrupt: ");
     printDateTime(); // Print RTC's date and time
     alarmFlag = false;
 
     wdt.restart(); // "Pet" the dog
-    watchdogCounter = 0; // Reset watchdog interrupt counter
+    watchdogInterrupt = 0; // Reset watchdog interrupt counter
   }
 
   // Check for watchdog interrupt
   if (watchdogFlag)
   {
-    Serial.print("Watchdog triggered: ");
+    Serial.print("Watchdog interrupt: ");
     printDateTime(); // Print RTC's date and time
     watchdogFlag = false; // Clear watchdog flag
   }
 
   goToSleep(); // Enter deep sleep
-
 }
 
 // Print the RTC's current date and time
@@ -145,19 +149,20 @@ extern "C" void am_rtc_isr(void)
 }
 
 // Interrupt handler for the watchdog.
-extern "C" void am_watchdog_isr(void) {
-
+extern "C" void am_watchdog_isr(void)
+{
   // Clear the watchdog interrupt
   wdt.clear();
 
-  // Perform system reset after 15 watchdog interrupts (15 * 5 seconds = 75 seconds)
-  if ( watchdogCounter < 20 ) {
+  // Perform system reset after 10 watchdog interrupts (should not occur)
+  if ( watchdogInterrupt < 10 )
+  {
     wdt.restart(); // "Pet" the dog
   }
   else {
-    digitalWrite(LED_BUILTIN, HIGH); // Visual indication of system reset
+    digitalWrite(LED_BUILTIN, HIGH); // Visual indication of system reset trigger
   }
 
   watchdogFlag = true; // Set the watchdog flag
-  watchdogCounter++; // Increment watchdog interrupt counter
+  watchdogInterrupt++; // Increment watchdog interrupt counter
 }

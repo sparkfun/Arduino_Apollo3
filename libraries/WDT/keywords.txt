@@ -17,6 +17,11 @@ start		KEYWORD2
 stop		KEYWORD2
 restart		KEYWORD2
 clear		KEYWORD2
+getCounter	KEYWORD2
+configure	KEYWORD2
+setClock	KEYWORD2
+setInterrupt	KEYWORD2
+setReset	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

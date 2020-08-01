@@ -1,6 +1,6 @@
 /*
   Author: Adam Garbo
-  Created: July 31st, 2020
+  Created: August 1st, 2020
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates a simple configuration of the Artemis Watchdog Timer.
@@ -10,11 +10,15 @@
 
   The watchdog ISR provided will 'pet' the watchdog four times. On the fifth
   interrupt, the watchdog will not be pet, so the 'reset' action can occur.
-
   On the sixth timeout event, the WDT will issue a system reset, and the
   program will start over from the beginning.
 
+  The watchdogCounter will show the number of ticks before the watchdog
+  reset occurs.
+
   This example is based on the Ambiq SDK 2.4.2 watchdog.c example.
+  
+  Tested with SparkFun Artemis Redboard.
 */
 
 #include <WDT.h>
@@ -22,8 +26,7 @@
 APM3_WDT wdt;
 
 volatile bool watchdogFlag = false; // Watchdog Timer ISR flag
-volatile int watchdogCounter = 0; // Watchdog interrupt counter
-
+volatile int  watchdogInterrupt = 0; // Watchdog interrupt counter
 unsigned long currentMillis = 0,
               previousMillis = 0;
 
@@ -33,42 +36,47 @@ void setup() {
 
   Serial.println("Artemis Watchdog Timer Example");
 
-  // Configure the watchdog
-  wdt.configure(); // Default interrupt: 5 seconds. Default reset: 15 seconds
-  wdt.enable(); // Enable the watchdog
+  // Start the watchdog
+  wdt.start();
 }
 
-void loop() {
-
+void loop()
+{
   // Check for watchdog interrupts
-  if (watchdogFlag) {
-
+  if (watchdogFlag)
+  {
     // Calculate duration between watchdog interrupts
     currentMillis = millis() - previousMillis;
     previousMillis = millis();
 
-    Serial.print("Interrupt: "); Serial.print(watchdogCounter); 
-    Serial.print(" Period: "); Serial.println(currentMillis); Serial.print(" ms"); 
+    Serial.print("Interrupt: "); Serial.print(watchdogInterrupt);
+    Serial.print(" Period: "); Serial.print(currentMillis); Serial.println(" ms ");
+
+    if (watchdogInterrupt == 5) 
+    {
+      Serial.println("Warning: Watchdog has triggered a system reset");
+    }
   }
 
   watchdogFlag = false; // Clear watchdog flag
-  delay(10);
+  delay(1);
 }
 
 // Interrupt handler for the watchdog
-extern "C" void am_watchdog_isr(void) {
-
+extern "C" void am_watchdog_isr(void)
+{
   // Clear the watchdog interrupt
   wdt.clear();
 
   // Catch the first four watchdog interrupts, but let the fifth through untouched
-  if ( watchdogCounter < 4 ) {
+  if ( watchdogInterrupt < 4 )
+  {
     wdt.restart(); // "Pet" the dog
   }
   else {
-    digitalWrite(LED_BUILTIN, HIGH); // Visual indication of imminent system reset
+    digitalWrite(LED_BUILTIN, HIGH); // Visual indication of system reset trigger
   }
 
   watchdogFlag = true; // Set watchdog flag
-  watchdogCounter++; // Increment watchdog interrupt counter
+  watchdogInterrupt++; // Increment watchdog interrupt counter
 }
