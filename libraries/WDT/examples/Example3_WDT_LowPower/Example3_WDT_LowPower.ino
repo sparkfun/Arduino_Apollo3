@@ -17,8 +17,8 @@
   the watchdog interrput counter.
 */
 
-#include <RTC.h>
-#include <WDT.h>
+#include "RTC.h"
+#include "WDT.h"
 
 APM3_RTC rtc;
 APM3_WDT wdt;
@@ -43,7 +43,7 @@ void setup()
 
   // Configure the watchdog timer
   // See Example2_WDT_Config for more information on how to configure the watchdog
-  wdt.configure(2, 160, 240); // 16 Hz clock, 10-second interrupt period, 15-second reset period
+  wdt.configure(WDT_16HZ, 160, 240); // 16 Hz clock, 10-second interrupt period, 15-second reset period
 
   // Start the watchdog
   wdt.start();

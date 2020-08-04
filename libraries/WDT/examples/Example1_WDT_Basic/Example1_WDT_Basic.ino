@@ -21,7 +21,7 @@
   Tested with SparkFun Artemis Redboard.
 */
 
-#include <WDT.h>
+#include "WDT.h"
 
 APM3_WDT wdt;
 
@@ -57,7 +57,6 @@ void loop()
       Serial.println("Warning: Watchdog has triggered a system reset");
     }
   }
-
   watchdogFlag = false; // Clear watchdog flag
   delay(1);
 }

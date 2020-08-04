@@ -3,6 +3,13 @@
 
 #include <Arduino.h>
 
+// Simplified WDT Clock Divider Selections
+#define WDT_OFF     WDT_CFG_CLKSEL_OFF      // = 0    Low Power Mode. This setting disables the watch dog timer
+#define WDT_128HZ   WDT_CFG_CLKSEL_128HZ    // = 1,   128 Hz LFRC clock
+#define WDT_16HZ    WDT_CFG_CLKSEL_16HZ     // = 2    16 Hz LFRC clock
+#define WDT_1HZ     WDT_CFG_CLKSEL_1HZ      // = 3,   1 Hz LFRC clock
+#define WDT_1_16HZ  WDT_CFG_CLKSEL_1_16HZ   // = 4,   1/16th Hz LFRC clock
+
 class APM3_WDT
 {
 public:

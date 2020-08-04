@@ -22,7 +22,12 @@ configure	KEYWORD2
 setClock	KEYWORD2
 setInterrupt	KEYWORD2
 setReset	KEYWORD2
-
+WDT_OFF	KEYWORD2
+WDT_128HZ	KEYWORD2
+WDT_16	KEYWORD2
+WDT_1HZ	KEYWORD2
+WDT1_16HZ	KEYWORD2
+    
 #######################################
 # Constants (LITERAL1)
 #######################################
