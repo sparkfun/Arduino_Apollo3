@@ -27,10 +27,11 @@ variant.path={build.variant.path}
 
 # defines
 defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
+defines.mbed=-DMBED_NO_GLOBAL_USING_DIRECTIVE
 defines.hw=-DF_CPU={build.f_cpu}
 defines.variant={build.defines}
 defines.extra=
-defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
+defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.mbed} {defines.extra}
 
 # includes
 includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" -include {cores.path}/arduino/sdk/ArduinoSDK.h

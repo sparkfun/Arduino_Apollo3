@@ -27,4 +27,17 @@ SOFTWARE.
 
 #include "config/pins.h"
 
+#define VARIANT_SPI_INTFCS  1
+#define VARIANT_WIRE_INTFCS 1
+
+// SPI
+#define VARIANT_SPI_SDI     SPI_SDI
+#define VARIANT_SPI_SDO     SPI_SDO
+#define VARIANT_SPI_CLK     SPI_CLK
+
+
+// Wire
+#define VARIANT_Wire_SDA    I2C_SDA
+#define VARIANT_Wire_SCL    I2C_SCL
+
 #endif // _VARIANTH_
