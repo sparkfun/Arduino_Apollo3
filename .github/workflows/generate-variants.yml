@@ -94,7 +94,7 @@ jobs:
             git add ./${variant_root}/mbed/.ld*
 
             # generate includes file
-            python3 ./tools/scripts/transmute-includes.py -i ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.includes_* -d ./${variant_root}/mbed/.includes -v
+            python3 ./tools/scripts/transmute-includes.py -i ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.includes_* -d ./${variant_root}/mbed/.includes -b ./tools/config/blocklist.json -v
             git add ./${variant_root}/mbed/.includes
 
             job_count="$((job_count + 1))"

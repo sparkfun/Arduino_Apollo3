@@ -2,6 +2,8 @@
 
 import argparse
 import glob
+import json
+from braceexpand import braceexpand as expand
 
 
 # ***********************************************************************************
@@ -23,10 +25,33 @@ def main():
     includes = includes.lstrip('"')
     includes = includes.rstrip('"')
 
+    blocklist = []
+    if args.blocklist:
+        print(args.blocklist)
+        try:
+            with open(args.blocklist, 'r') as fin:
+                data = json.loads(fin.read())
+                blocklist = data["includes"]
+            print('\tusing user-specified blocklist')
+            verboseprint('\t\t' + str(data))
+        except FileNotFoundError as e:
+            print(e)
+        except:
+            print('error loading the blocklist file')
+
     with open(args.dest, 'w') as fout:
         for path in includes.split("\" \""):
             old = '-Imbed-os'
             if not old in path:
+                continue
+        
+            blocked = False
+            for blockpath in blocklist:
+                if path == '-Imbed-os/' + blockpath:
+                    blocked = True
+                    print('blocked: ' + path)
+                    break
+            if blocked:
                 continue
 
             transmuted = '"' + path.replace(old, '-iwithprefixbeforembed-os', 1) + '"'
@@ -49,6 +74,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-i', '--include', dest='include', required=True, help='glob pattern matching includes file to convert')
     parser.add_argument('-d', '--dest', dest='dest', required=True, help='path to output file')
+    parser.add_argument('-b', '--blocklist', dest='blocklist', help='path to JSON formatted blocklist of paths to exclude from output - relative to mbed-os')
     parser.add_argument('-v', '--verbose', default=0, help='enable verbose output', action='store_true')
 
     args = parser.parse_args()
