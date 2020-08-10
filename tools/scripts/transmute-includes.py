@@ -3,8 +3,6 @@
 import argparse
 import glob
 import json
-from braceexpand import braceexpand as expand
-
 
 # ***********************************************************************************
 #
