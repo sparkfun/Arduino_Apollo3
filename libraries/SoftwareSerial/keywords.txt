@@ -1,0 +1,32 @@
+# Syntax Coloring Map For 'libraries/SoftwareSerial'
+
+# Datatypes (KEYWORD1)
+SoftwareSerial	KEYWORD1
+
+# Functions (KEYWORD2)
+SoftwareSerial	KEYWORD2
+listen	KEYWORD2
+stopListening	KEYWORD2
+isListening	KEYWORD2
+begin	KEYWORD2
+end	KEYWORD2
+available	KEYWORD2
+read	KEYWORD2
+peek	KEYWORD2
+flush	KEYWORD2
+overflow	KEYWORD2
+write	KEYWORD2
+txHandler	KEYWORD2
+rxBit	KEYWORD2
+rxEndOfByte	KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+_SoftwareSerial_H	LITERAL1
+AP3_SS_BUFFER_SIZE	LITERAL1
+TIMER_FREQ	LITERAL1
+
+# Properties (LITERAL2)
+rxInUse	LITERAL2
+txInUse	LITERAL2
