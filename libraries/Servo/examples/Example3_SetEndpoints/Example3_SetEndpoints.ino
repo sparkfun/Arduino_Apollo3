@@ -2,7 +2,6 @@
   Author: Nathan Seidle
   SparkFun Electronics
   Created: August 18th, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   Purchasing from SparkFun helps write code like this and helps us
   release products open source so that we can help each other learn: https://www.sparkfun.com/artemis
@@ -18,6 +17,11 @@
     Signal (Yellow or White) -> 8
 
   The servo will rotate back and forth.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include <Servo.h>

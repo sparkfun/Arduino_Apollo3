@@ -1,7 +1,6 @@
 /*
   Author: Adam Garbo and Nathan Seidle
   Created: June 3rd, 2020
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to set an RTC alarm and enter deep sleep.
 
@@ -10,6 +9,11 @@
   wake the board and print the date and time upon each alarm interrupt.
 
   Tested with a SparkFun Edge 2. Confirmed sleep current of 2.5 uA.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #ifdef I_WANT_TO_BRICK_MY_BOARD

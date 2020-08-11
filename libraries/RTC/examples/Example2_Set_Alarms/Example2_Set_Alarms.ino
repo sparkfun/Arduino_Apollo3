@@ -1,7 +1,6 @@
 /*
   Author: Adam Garbo and Nathan Seidle
   Created: June 3rd, 2020
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to read and set the RTC alarms.
 
@@ -12,6 +11,11 @@
   The code is configured so that the RTC alarm will trigger every minute.
   The RTC interrupt service routine will set an alarm flag each time the
   alarm triggers and the RTC date and time will printed to the Serial Monitor.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include "RTC.h" // Include RTC library included with the Aruino_Apollo3 core

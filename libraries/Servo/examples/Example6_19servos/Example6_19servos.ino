@@ -2,7 +2,6 @@
   Author: Nathan Seidle
   SparkFun Electronics
   Created: August 18th, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   Purchasing from SparkFun helps write code like this and helps us
   release products open source so that we can help each other learn: https://www.sparkfun.com/artemis
@@ -21,6 +20,11 @@
   The servo will rotate back and forth. Similary, you can move the signal wire to any PWM
   pin and you will see the servo move to a new position and hold. This shows that the other
   PWM pins are all simultaneously and actively outputting a servo signal.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include <Servo.h>

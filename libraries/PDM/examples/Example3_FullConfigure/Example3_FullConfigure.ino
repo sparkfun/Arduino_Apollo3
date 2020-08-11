@@ -1,10 +1,14 @@
 /* 
   Author: Nathan Seidle
   Created: July 24, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example shows how to configure PDM using the pdm config struct so 
   that you can access all settings in one step.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 //Global variables needed for PDM library

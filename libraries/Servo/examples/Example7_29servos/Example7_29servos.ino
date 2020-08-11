@@ -2,7 +2,6 @@
   Author: Nathan Seidle
   SparkFun Electronics
   Created: August 18th, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   Purchasing from SparkFun helps write code like this and helps us
   release products open source so that we can help each other learn: https://www.sparkfun.com/artemis
@@ -23,6 +22,11 @@
 
   There are 30 PWM capable pads on the Artemis. Pin 47 is used for bootloading and is not
   easily accessible. There are 29 easily accessible on the ATP.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include <Servo.h>

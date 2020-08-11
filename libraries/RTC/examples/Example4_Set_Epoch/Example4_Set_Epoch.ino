@@ -1,9 +1,13 @@
 /* 
   Author: Adam Garbo and Nathan Seidle
   Created: June 3rd, 2020
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to set the RTC using UNIX Epoch time.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include "RTC.h" // Include RTC library included with the Aruino_Apollo3 core

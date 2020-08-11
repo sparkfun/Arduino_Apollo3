@@ -1,7 +1,6 @@
 /*
   Author: Nathan Seidle
   Created: Septempter 27th, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to initialize and read from the on-board RTC.
   
@@ -11,6 +10,11 @@
   section 12.1 for more information.
 
   This example is based on the Ambiq SDK EVB2 RTC example.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include "RTC.h" // Include RTC library included with the Aruino_Apollo3 core

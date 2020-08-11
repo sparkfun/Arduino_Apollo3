@@ -1,7 +1,6 @@
 /*
   Author: Adam Garbo and Nathan Seidle
   Created: June 3rdrd, 2020
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to read and set rolling RTC alarms. Each time 
   the alarm triggers, a user-specified additional amount of time (seconds, 
@@ -9,6 +8,11 @@
   minute and hour rollovers are handled using modulo calculations.
 
   The current code is configured as a 5-second rolling RTC alarm. 
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include "RTC.h"

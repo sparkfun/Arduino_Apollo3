@@ -1,9 +1,13 @@
 /*
   Author: Nathan Seidle and stephenf7072
   Created: January 28th, 2020
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example test the internal HAL to make sure the days advance correctly.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include "RTC.h"

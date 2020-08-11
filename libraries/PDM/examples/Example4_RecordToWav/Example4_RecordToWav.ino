@@ -1,6 +1,5 @@
 /* Author: @justiceamoh and Nathan Seidle
   Created: November 19th, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to read audio data and output
   it to a WAV file. This sketch outputs raw serial; an accompanying
@@ -13,6 +12,11 @@
   The PDM library uses DMA to transfer 4096 bytes every 262ms and stores the
   data between two internal buffers. So check available() often and call getData
   to prevent buffer overruns.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 #include <PDM.h> //Include PDM library included with the Aruino_Apollo3 core

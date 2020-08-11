@@ -1,9 +1,13 @@
 /* Author: Nathan Seidle
   Created: July 24, 2019
-  License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates how to use the pulse density microphone (PDM) on Artemis boards.
   This library and example are heavily based on the Apollo3 pdm_fft example.
+*/
+
+/* 
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.md', which is part of this source code package.
 */
 
 //Global variables needed for PDM library
