@@ -21,7 +21,7 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
 ### **Arduino Boards Manager** (recommended)
   - Copy / paste the JSON package URL into the 'Additional Boards Manager URLs' field in Arduino preferences
     
-    [sparkfun/Arduino_Apollo3@master/package_sparkfun_apollo3.json (raw)](sparkfun/Arduino_Apollo3@master/package_sparkfun_apollo3.json)
+    [https://sparkfun/Arduino_Apollo3@master/package_sparkfun_apollo3.json](sparkfun/Arduino_Apollo3@master/package_sparkfun_apollo3.json) (raw)
   - Open 'Boards Manager' and select 'SparkFun Apollo3 Boards' - install the latest version
     
 ### **Git** (development)
