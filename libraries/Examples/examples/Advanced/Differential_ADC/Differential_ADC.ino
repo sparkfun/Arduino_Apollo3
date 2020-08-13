@@ -11,6 +11,11 @@
   A differential ADC port measures -1.0V to 1.0V with
   0 = -1.0V, 8192 = 0V, and 16383 = 1.0V when the ADC is in 14-bit mode.
 
+  Using a trimpot, attach DIFF- to GND and DIFF+ to the center pin of the trimpot.
+  Connect the outer pins of the trimpot to 3.3V and GND.
+  Twisting the trimpot you should see the voltage change from 0 to 1.0V.
+  Switching DIFF-/+ you should see -1.0V to 0V.
+
   SparkFun labored with love to create this code. Feel like supporting open source hardware?
   Buy a board from SparkFun! https://www.sparkfun.com/products/15376
 */
