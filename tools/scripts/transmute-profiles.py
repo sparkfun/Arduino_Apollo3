@@ -6,8 +6,6 @@
 import argparse
 import json
 
-blocklist_format = '{"flags": [], "macros": [], "symbols": []}'
-
 # ***********************************************************************************
 #
 # Main function
@@ -22,11 +20,11 @@ def main():
     with open(args.profile, 'r') as fin:
         profile = json.loads(fin.read())
 
-    blocklist = json.loads(blocklist_format)
+    blocklist = json.loads(b'{}')
     if args.blocklist:
         try:
             with open(args.blocklist, 'r') as fin:
-                blocklist = json.loads(fin.read())
+                blocklist = json.loads(fin.read())['profiles'][args.type]
             print('\tusing user-specified blocklist')
             verboseprint('\t\t' + str(blocklist))
         except FileNotFoundError as e:
@@ -47,7 +45,7 @@ def main():
     except KeyError:
         blocklist['symbols'] = []
 
-    outpath = args.dest + '-flags'
+    outpath = args.dest + args.type + '-flags'
     verboseprint('\twriting into ' + outpath)
     with open(outpath, 'w') as fout:
         for flag in profile['flags']:
@@ -57,7 +55,7 @@ def main():
             verboseprint('\t\t' + output)
             fout.write(output)
 
-    outpath = args.dest + '-macros'
+    outpath = args.dest + args.type + '-macros'
     verboseprint('\twriting into ' + outpath)
     with open(outpath, 'w') as fout:
         for macro in profile['macros']:
@@ -67,7 +65,7 @@ def main():
             verboseprint('\t\t' + output)
             fout.write(output)
 
-    outpath = args.dest + '-symbols'
+    outpath = args.dest + args.type + '-symbols'
     verboseprint('\twriting into ' + outpath)
     with open(outpath, 'w') as fout:
         for symbol in profile['symbols']:
@@ -93,7 +91,8 @@ if __name__ == '__main__':
 
     parser.add_argument('-p', '--profile', dest='profile', required=True, help='path to profile to convert')
     parser.add_argument('-d', '--dest', dest='dest', required=True, help='path to output files - will be postfixed with extension')
-    parser.add_argument('-b', '--blocklist', dest='blocklist', help='path to JSON formatted blocklist for ' + blocklist_format)
+    parser.add_argument('-t', '--type', dest='type', required=True, help='type of profile ("cxx", "c", "asm" or "ld")')
+    parser.add_argument('-b', '--blocklist', dest='blocklist', help='path to JSON formatted blocklist for with a "profiles" document with sub documents for each type each with subdocuemts for "flags", "symbols" and "macros")')
     parser.add_argument('-v', '--verbose', default=0, help='enable verbose output', action='store_true')
 
     args = parser.parse_args()
