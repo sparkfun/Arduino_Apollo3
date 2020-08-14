@@ -26,14 +26,14 @@ cores.path={runtime.platform.path}/cores
 variant.path={build.variant.path}
 
 # defines
-defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
+defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
 defines.hw=-DF_CPU={build.f_cpu}
 defines.variant={build.defines}
 defines.extra=
-defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
+defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra} -DCORDIO_ZERO_COPY_HCI
 
 # includes
-includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" -include {cores.path}/arduino/sdk/ArduinoSDK.h
+includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" -include {cores.path}/arduino/sdk/ArduinoSDK.h
 includes.mbed={build.mbed.includes}
 includes.variant={build.includes}
 includes.extra=
@@ -58,7 +58,7 @@ compiler.preproc.flags={build.preproc.flags} {compiler.preproc.extra_flags}
 compiler.asm.flags={build.asm.flags} {compiler.asm.extra_flags}
 compiler.c.flags={build.c.flags} {compiler.c.extra_flags}
 compiler.cxx.flags={build.cxx.flags} {compiler.cxx.extra_flags}
-compiler.ld.flags={build.ld.flags} {compiler.ld.extra_flags} --specs=nosys.specs
+compiler.ld.flags={build.ld.flags} {compiler.ld.extra_flags} --specs=nosys.specs -lsupc++ -lstdc++
 compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
 compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags}
