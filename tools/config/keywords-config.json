@@ -1,7 +1,7 @@
 {
     "libraries": {
         "expansion-params": [
-            "{EEPROM,PDM,RTC,Servo,SoftwareSerial,SPI,Wire}"
+            "{Apollo3,EEPROM,PDM,RTC,Servo,SoftwareSerial,SPI,Wire}"
         ],
         "pathspec": "libraries/{}/src/*",
         "dest": "libraries/{}"
