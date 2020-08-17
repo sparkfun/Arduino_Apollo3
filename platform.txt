@@ -80,3 +80,16 @@ recipe.size.regex=\.text\s+([0-9]+).*
 recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
 recipe.output.tmp_file={build.project_name}.{build.export_format}
 recipe.output.save_file={build.project_name}.{build.export_format}
+
+# upload tools
+tools.ambiq_secure_bootloader.pgm={runtime.platform.path}/tools/uploaders/asb/linux/asb
+tools.ambiq_secure_bootloader.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/macosx/asb
+tools.ambiq_secure_bootloader.pgm.windows={runtime.platform.path}/tools/uploaders/asb/windows/asb
+tools.ambiq_secure_bootloader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
+tools.ambiq_secure_bootloader.upload.pattern={pgm} {args}
+
+tools.sparkfun_variable_loader.pgm={runtime.platform.path}/tools/uploaders/svl/linux/svl
+tools.sparkfun_variable_loader.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/macosx/svl
+tools.sparkfun_variable_loader.pgm.windows={runtime.platform.path}/tools/uploaders/svl/windows/svl
+tools.sparkfun_variable_loader.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
+tools.sparkfun_variable_loader.upload.pattern={pgm} {args}
