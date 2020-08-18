@@ -86,19 +86,114 @@ recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
 recipe.output.tmp_file={build.project_name}.{build.export_format}
 recipe.output.save_file={build.project_name}.{build.export_format}
 
-# upload tools
-tools.ambiq_secure_bootloader.pgm={runtime.platform.path}/tools/uploaders/asb/linux/asb
-tools.ambiq_secure_bootloader.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/macosx/asb
-tools.ambiq_secure_bootloader.pgm.windows={runtime.platform.path}/tools/uploaders/asb/windows/asb
-tools.ambiq_secure_bootloader.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
-tools.ambiq_secure_bootloader.upload.params.verbose=-v
-tools.ambiq_secure_bootloader.upload.params.quiet=
-tools.ambiq_secure_bootloader.upload.pattern={pgm} {args}
+# tools
 
-tools.sparkfun_variable_loader.pgm={runtime.platform.path}/tools/uploaders/svl/linux/svl
-tools.sparkfun_variable_loader.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/macosx/svl
-tools.sparkfun_variable_loader.pgm.windows={runtime.platform.path}/tools/uploaders/svl/windows/svl
-tools.sparkfun_variable_loader.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
-tools.sparkfun_variable_loader.upload.params.verbose=-v
-tools.sparkfun_variable_loader.upload.params.quiet=
-tools.sparkfun_variable_loader.upload.pattern={pgm} {args}
+
+
+
+
+# Host-specific definitions for upload tool (using the Ambiq Secure Bootloader ASB)
+    # Linux
+tools.ambiq_bin2board.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
+tools.ambiq_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
+
+    # MacOSX
+tools.ambiq_bin2board.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
+tools.ambiq_bin2board.args.macosx=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
+
+    # Windows
+tools.ambiq_bin2board.pgm.windows="{runtime.platform.path}/tools/uploaders/asb/dist/windows/asb.exe"
+tools.ambiq_bin2board.args.windows=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
+
+# Additional Loader Parameters
+tools.ambiq_bin2board.upload.protocol=ap3
+tools.ambiq_bin2board.upload.params.verbose=-v
+tools.ambiq_bin2board.upload.params.quiet=
+
+tools.ambiq_bin2board.bootloader.params.verbose=-v
+tools.ambiq_bin2board.bootloader.params.quiet=
+tools.ambiq_bin2board.erase.params.verbose=-v
+tools.ambiq_bin2board.erase.params.quiet=
+tools.ambiq_bin2board.erase.pattern=
+
+# Upload tool pattern
+tools.ambiq_bin2board.upload.pattern={pgm} {args}
+tools.ambiq_bin2board.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
+tools.ambiq_bin2board.erase.pattern=
+
+
+
+
+
+
+
+##### The following tool settings are for the SparkFun variable bootloader (Artemis SVL) (Saturn Five Loader)
+
+    # Linux
+tools.artemis_svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
+tools.artemis_svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
+
+    # MacOSX
+tools.artemis_svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
+tools.artemis_svl.args.macosx="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
+
+    # Windows
+tools.artemis_svl.pgm.windows="{runtime.platform.path}/tools/uploaders/svl/dist/windows/svl.exe"
+tools.artemis_svl.args.windows="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
+
+# Additional Loader Parameters
+tools.artemis_svl.upload.protocol=ap3
+tools.artemis_svl.upload.params.verbose=-v
+tools.artemis_svl.upload.params.quiet=
+
+# Upload tool pattern
+tools.artemis_svl.upload.pattern={pgm} {args}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # upload tools
+# tools.asb.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
+# tools.asb.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
+# tools.asb.pgm.windows={runtime.platform.path}/tools/uploaders/asb/dist/windows/asb
+# tools.asb.magic=--load-address-blob 0x20000 --magic-num 0xCB --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2
+# tools.asb.args={magic} --bin "{build.path}/{build.project_name}.bin" -o {build.path}/{build.project_name}
+# tools.asb.upload.params.verbose=-v
+# tools.asb.upload.params.quiet=
+# tools.asb.upload.pattern="ambiq_secure_bootloader  --  upload"
+# tools.asb.program.params.verbose=-v
+# tools.asb.program.params.quiet=
+# tools.asb.program.pattern="ambiq_secure_bootloader  --  program"
+# tools.asb.bootloader.params.verbose=-v
+# tools.asb.bootloader.params.quiet=
+# tools.asb.bootloader.pattern={pgm} {magic} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" {bootloader.verbose}
+# tools.asb.erase.params.verbose=-v
+# tools.asb.erase.params.quiet=
+# tools.asb.erase.pattern=
+
+# tools.svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
+# tools.svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
+# tools.svl.pgm.windows={runtime.platform.path}/tools/uploaders/svl/dist/windows/svl
+# tools.svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud}
+# tools.svl.upload.params.verbose=-v
+# tools.svl.upload.params.quiet=
+# tools.svl.upload.pattern="sparkfun_variable_loader  --  upload"
+# tools.svl.program.params.verbose=-v
+# tools.svl.program.params.quiet=
+# tools.svl.program.pattern="sparkfun_variable_loader  --  program"
