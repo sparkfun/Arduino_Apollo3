@@ -93,26 +93,26 @@ recipe.output.save_file={build.project_name}.{build.export_format}
 
 
 # Host-specific definitions for upload tool (using the Ambiq Secure Bootloader ASB)
-tools.ambiq_bin2board.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
-tools.ambiq_bin2board.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
-tools.ambiq_bin2board.pgm.windows="{runtime.platform.path}/tools/uploaders/asb/dist/windows/asb.exe"
-tools.ambiq_bin2board.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
+tools.asb.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
+tools.asb.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
+tools.asb.pgm.windows="{runtime.platform.path}/tools/uploaders/asb/dist/windows/asb.exe"
+tools.asb.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
 
 # Additional Loader Parameters
-tools.ambiq_bin2board.upload.protocol=ap3
-tools.ambiq_bin2board.upload.params.verbose=-v
-tools.ambiq_bin2board.upload.params.quiet=
+tools.asb.upload.protocol=ap3
+tools.asb.upload.params.verbose=-v
+tools.asb.upload.params.quiet=
 
-tools.ambiq_bin2board.bootloader.params.verbose=-v
-tools.ambiq_bin2board.bootloader.params.quiet=
-tools.ambiq_bin2board.erase.params.verbose=-v
-tools.ambiq_bin2board.erase.params.quiet=
-tools.ambiq_bin2board.erase.pattern=
+tools.asb.bootloader.params.verbose=-v
+tools.asb.bootloader.params.quiet=
+tools.asb.erase.params.verbose=-v
+tools.asb.erase.params.quiet=
+tools.asb.erase.pattern=
 
 # Upload tool pattern
-tools.ambiq_bin2board.upload.pattern={pgm} {args}
-tools.ambiq_bin2board.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
-tools.ambiq_bin2board.erase.pattern=
+tools.asb.upload.pattern={pgm} {args}
+tools.asb.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
+tools.asb.erase.pattern=
 
 
 
@@ -121,19 +121,19 @@ tools.ambiq_bin2board.erase.pattern=
 
 
 ##### The following tool settings are for the SparkFun variable bootloader (Artemis SVL) (Saturn Five Loader)
-tools.artemis_svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
-tools.artemis_svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
-tools.artemis_svl.pgm.windows="{runtime.platform.path}/tools/uploaders/svl/dist/windows/svl.exe"
-tools.artemis_svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
+tools.svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
+tools.svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
+tools.svl.pgm.windows="{runtime.platform.path}/tools/uploaders/svl/dist/windows/svl.exe"
+tools.svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
 
 
 # Additional Loader Parameters
-tools.artemis_svl.upload.protocol=ap3
-tools.artemis_svl.upload.params.verbose=-v
-tools.artemis_svl.upload.params.quiet=
+tools.svl.upload.protocol=ap3
+tools.svl.upload.params.verbose=-v
+tools.svl.upload.params.quiet=
 
 # Upload tool pattern
-tools.artemis_svl.upload.pattern={pgm} {args}
+tools.svl.upload.pattern={pgm} {args}
 
 
 

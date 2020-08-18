@@ -34,10 +34,10 @@ sfe_artemis_atp.menu.svl_baud.921600.upload.svl_baud=921600
 
 sfe_artemis_atp.upload.sbl_baud=115200
 
-sfe_artemis_atp.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
+sfe_artemis_atp.menu.loader.ambiq_sbl.upload.tool=asb
 sfe_artemis_atp.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/0xC000.ld
 
-sfe_artemis_atp.menu.loader.sparkfun_svl.upload.tool=artemis_svl
+sfe_artemis_atp.menu.loader.sparkfun_svl.upload.tool=svl
 sfe_artemis_atp.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/0x10000.ld
 
 
