@@ -96,7 +96,7 @@ recipe.output.save_file={build.project_name}.{build.export_format}
 tools.asb.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
 tools.asb.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
 tools.asb.pgm.windows="{runtime.platform.path}/tools/uploaders/asb/dist/windows/asb.exe"
-tools.asb.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {upload.verbose}
+tools.asb.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2 {upload.verbose}
 
 # Additional Loader Parameters
 tools.asb.upload.protocol=ap3
@@ -111,7 +111,7 @@ tools.asb.erase.pattern=
 
 # Upload tool pattern
 tools.asb.upload.pattern={pgm} {args}
-tools.asb.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.sbl_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
+tools.asb.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
 tools.asb.erase.pattern=
 
 
