@@ -91,7 +91,6 @@ tools.asb.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
 tools.asb.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
 tools.asb.pgm.windows="{runtime.platform.path}/tools/uploaders/asb/dist/windows/asb.exe"
 tools.asb.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2 {upload.verbose}
-
 tools.asb.upload.protocol=asb
 tools.asb.upload.params.verbose=-v
 tools.asb.upload.params.quiet=
@@ -100,67 +99,15 @@ tools.asb.bootloader.params.quiet=
 tools.asb.erase.params.verbose=-v
 tools.asb.erase.params.quiet=
 tools.asb.erase.pattern=
-
 tools.asb.upload.pattern={pgm} {args}
 tools.asb.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
 tools.asb.erase.pattern=
-
 
 tools.svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
 tools.svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
 tools.svl.pgm.windows="{runtime.platform.path}/tools/uploaders/svl/dist/windows/svl.exe"
 tools.svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
-
 tools.svl.upload.protocol=svl
 tools.svl.upload.params.verbose=-v
 tools.svl.upload.params.quiet=
 tools.svl.upload.pattern={pgm} {args}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # upload tools
-# tools.asb.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
-# tools.asb.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
-# tools.asb.pgm.windows={runtime.platform.path}/tools/uploaders/asb/dist/windows/asb
-# tools.asb.magic=--load-address-blob 0x20000 --magic-num 0xCB --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2
-# tools.asb.args={magic} --bin "{build.path}/{build.project_name}.bin" -o {build.path}/{build.project_name}
-# tools.asb.upload.params.verbose=-v
-# tools.asb.upload.params.quiet=
-# tools.asb.upload.pattern="ambiq_secure_bootloader  --  upload"
-# tools.asb.program.params.verbose=-v
-# tools.asb.program.params.quiet=
-# tools.asb.program.pattern="ambiq_secure_bootloader  --  program"
-# tools.asb.bootloader.params.verbose=-v
-# tools.asb.bootloader.params.quiet=
-# tools.asb.bootloader.pattern={pgm} {magic} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" {bootloader.verbose}
-# tools.asb.erase.params.verbose=-v
-# tools.asb.erase.params.quiet=
-# tools.asb.erase.pattern=
-
-# tools.svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
-# tools.svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
-# tools.svl.pgm.windows={runtime.platform.path}/tools/uploaders/svl/dist/windows/svl
-# tools.svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud}
-# tools.svl.upload.params.verbose=-v
-# tools.svl.upload.params.quiet=
-# tools.svl.upload.pattern="sparkfun_variable_loader  --  upload"
-# tools.svl.program.params.verbose=-v
-# tools.svl.program.params.quiet=
-# tools.svl.program.pattern="sparkfun_variable_loader  --  program"
