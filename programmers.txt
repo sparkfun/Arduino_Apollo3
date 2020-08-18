@@ -3,5 +3,5 @@
 
 asb.name=Ambiq Secure Bootloader
 asb.communication=serial
-asb.program.tool=ambiq_bin2board
-asb.bootloader.tool=ambiq_bin2board
+asb.program.tool=ambiq_secure_bootloader
+asb.bootloader.tool=ambiq_secure_bootloader

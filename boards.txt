@@ -2,10 +2,9 @@
 # file 'LICENSE.md', which is part of this source code package.
 
 # Menu Options
-menu.loader=Bootloader
-menu.svl_baud=SVL Baud Rate
-menu.sbl_baud=Ambiq Secure Bootloader Baud Rate
-
+menu.uploader=Uploader
+menu.svl_baud=SparkFun Variable Loader Baud Rate
+menu.asb_baud=Ambiq Secure Bootloader Baud Rate
 
 ###############################################################
 
