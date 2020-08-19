@@ -11,7 +11,7 @@
 #include "config/pins.h"
 
 #define VARIANT_SPI_INTFCS  1
-#define VARIANT_WIRE_INTFCS 1
+#define VARIANT_WIRE_INTFCS 2
 
 // SPI
 #define VARIANT_SPI_SDI     SPI_SDI
@@ -21,6 +21,9 @@
 // Wire
 #define VARIANT_Wire_SDA    I2C_SDA
 #define VARIANT_Wire_SCL    I2C_SCL
+
+#define VARIANT_Wire1_SDA    I2C1_SDA
+#define VARIANT_Wire1_SCL    I2C1_SCL
 
 // UART
 extern UART Serial1;

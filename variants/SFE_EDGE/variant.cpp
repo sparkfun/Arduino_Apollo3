@@ -5,8 +5,6 @@
 
 #include "variant.h"
 
-UART Serial1(SERIAL1_TX, SERIAL1_RX);
-
 void initVariant(void){
     
 }

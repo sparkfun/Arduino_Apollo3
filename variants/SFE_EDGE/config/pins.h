@@ -3,10 +3,9 @@
 // file 'LICENSE.md', which is part of this source code package.
 */
 
-#include "variant.h"
+#ifndef _VARIANT_PINS_H_
+#define _VARIANT_PINS_H_
 
-UART Serial1(SERIAL1_TX, SERIAL1_RX);
+#define LED_BUILTIN pinNumberByName(LED1)
 
-void initVariant(void){
-    
-}
+#endif // _VARIANT_PINS_H_
