@@ -223,5 +223,3 @@ sfe_edge2.menu.loader.option_svl.upload.tool=svl
 sfe_edge2.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
 
 ###############################################################
-
-
