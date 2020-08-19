@@ -11,7 +11,6 @@ variant.path={build.variant.path}
 # defines
 defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
 defines.mbed=-DMBED_NO_GLOBAL_USING_DIRECTIVE
-defines.hw=-DF_CPU={build.f_cpu}
 defines.variant={build.defines}
 defines.extra=
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.mbed} {defines.extra} -DCORDIO_ZERO_COPY_HCI
