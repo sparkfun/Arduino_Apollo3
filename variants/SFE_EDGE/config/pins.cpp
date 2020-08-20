@@ -8,7 +8,7 @@
 const pin_size_t variantPinCount = 4;
 
 PinState variantPinStates[variantPinCount] = {
-    {D0, 1, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D1, 1, NULL, /*NULL, NULL, NULL,*/ NULL},
     {D38, 38, NULL, /*NULL, NULL, NULL,*/ NULL},
     {D36, 36, NULL, /*NULL, NULL, NULL,*/ NULL},
     {D3, 3, NULL, /*NULL, NULL, NULL,*/ NULL},

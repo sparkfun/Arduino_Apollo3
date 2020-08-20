@@ -8,7 +8,53 @@ menu.asb_baud=Ambiq Secure Bootloader Baud Rate
 
 ###############################################################
 
-sfe_artemis_atp.name=SparkFun RedBoard Artemis ATP
+sfe_artemis_dk.name=Artemis Dev Kit
+sfe_artemis_dk.build.variant=SFE_ARTEMIS_DK
+sfe_artemis_dk.build.arch=APOLLO3
+sfe_artemis_dk.build.board=APOLLO3_SFE_ARTEMIS_DK
+sfe_artemis_dk.build.export_format=bin
+sfe_artemis_dk.build.defines=
+sfe_artemis_dk.build.includes=
+sfe_artemis_dk.build.libs=
+
+sfe_artemis_dk.build.ldscript={build.variant.path}/0xC000.ld
+
+###############################################################
+
+sfe_artemis.name=RedBoard Artemis
+sfe_artemis.build.variant=SFE_ARTEMIS
+sfe_artemis.build.arch=APOLLO3
+sfe_artemis.build.board=APOLLO3_SFE_ARTEMIS
+sfe_artemis.build.export_format=bin
+sfe_artemis.build.defines=
+sfe_artemis.build.includes=
+sfe_artemis.build.libs=
+
+sfe_artemis.menu.svl_baud.921600=921600
+sfe_artemis.menu.svl_baud.460800=460800
+sfe_artemis.menu.svl_baud.230400=230400
+sfe_artemis.menu.svl_baud.115200=115200
+sfe_artemis.menu.svl_baud.57600=57600
+sfe_artemis.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
+
+sfe_artemis.menu.svl_baud.57600.upload.svl_baud=57600
+sfe_artemis.menu.svl_baud.115200.upload.svl_baud=115200
+sfe_artemis.menu.svl_baud.230400.upload.svl_baud=230400
+sfe_artemis.menu.svl_baud.460800.upload.svl_baud=460800
+sfe_artemis.menu.svl_baud.921600.upload.svl_baud=921600
+
+sfe_artemis.upload.asb_baud=115200
+
+sfe_artemis.menu.loader.option_asb.upload.tool=asb
+sfe_artemis.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
+
+sfe_artemis.menu.loader.option_svl.upload.tool=svl
+sfe_artemis.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
+
+###############################################################
+
+sfe_artemis_atp.name=RedBoard Artemis ATP
 sfe_artemis_atp.build.variant=SFE_ARTEMIS_ATP
 sfe_artemis_atp.build.arch=APOLLO3
 sfe_artemis_atp.build.board=APOLLO3_SFE_ARTEMIS_ATP
@@ -34,60 +80,14 @@ sfe_artemis_atp.menu.svl_baud.921600.upload.svl_baud=921600
 sfe_artemis_atp.upload.asb_baud=115200
 
 sfe_artemis_atp.menu.loader.option_asb.upload.tool=asb
-sfe_artemis_atp.menu.loader.option_asb.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_atp.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
 
 sfe_artemis_atp.menu.loader.option_svl.upload.tool=svl
-sfe_artemis_atp.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
+sfe_artemis_atp.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
 
 ###############################################################
 
-sfe_artemis_dk.name=SparkFun RedBoard Artemis Dev Kit
-sfe_artemis_dk.build.variant=SFE_ARTEMIS_DK
-sfe_artemis_dk.build.arch=APOLLO3
-sfe_artemis_dk.build.board=APOLLO3_SFE_ARTEMIS_DK
-sfe_artemis_dk.build.export_format=bin
-sfe_artemis_dk.build.defines=
-sfe_artemis_dk.build.includes=
-sfe_artemis_dk.build.libs=
-
-sfe_artemis_dk.build.ldscript={build.variant.path}/0xC000.ld
-
-###############################################################
-
-sfe_artemis_module.name=SparkFun Artemis Module
-sfe_artemis_module.build.variant=SFE_ARTEMIS_MODULE
-sfe_artemis_module.build.arch=APOLLO3
-sfe_artemis_module.build.board=APOLLO3_SFE_ARTEMIS_MODULE
-sfe_artemis_module.build.export_format=bin
-sfe_artemis_module.build.defines=
-sfe_artemis_module.build.includes=
-sfe_artemis_module.build.libs=
-
-sfe_artemis_module.menu.svl_baud.921600=921600
-sfe_artemis_module.menu.svl_baud.460800=460800
-sfe_artemis_module.menu.svl_baud.230400=230400
-sfe_artemis_module.menu.svl_baud.115200=115200
-sfe_artemis_module.menu.svl_baud.57600=57600
-sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
-sfe_artemis_module.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
-
-sfe_artemis_module.menu.svl_baud.57600.upload.svl_baud=57600
-sfe_artemis_module.menu.svl_baud.115200.upload.svl_baud=115200
-sfe_artemis_module.menu.svl_baud.230400.upload.svl_baud=230400
-sfe_artemis_module.menu.svl_baud.460800.upload.svl_baud=460800
-sfe_artemis_module.menu.svl_baud.921600.upload.svl_baud=921600
-
-sfe_artemis_module.upload.asb_baud=115200
-
-sfe_artemis_module.menu.loader.option_asb.upload.tool=asb
-sfe_artemis_module.menu.loader.option_asb.build.ldscript={build.variant.path}/0xC000.ld
-
-sfe_artemis_module.menu.loader.option_svl.upload.tool=svl
-sfe_artemis_module.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
-
-###############################################################
-
-sfe_artemis_nano.name=SparkFun RedBoard Artemis Nano
+sfe_artemis_nano.name=RedBoard Artemis Nano
 sfe_artemis_nano.build.variant=SFE_ARTEMIS_NANO
 sfe_artemis_nano.build.arch=APOLLO3
 sfe_artemis_nano.build.board=APOLLO3_SFE_ARTEMIS_NANO
@@ -113,14 +113,14 @@ sfe_artemis_nano.menu.svl_baud.921600.upload.svl_baud=921600
 sfe_artemis_nano.upload.asb_baud=115200
 
 sfe_artemis_nano.menu.loader.option_asb.upload.tool=asb
-sfe_artemis_nano.menu.loader.option_asb.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_nano.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
 
 sfe_artemis_nano.menu.loader.option_svl.upload.tool=svl
-sfe_artemis_nano.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
+sfe_artemis_nano.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
 
 ###############################################################
 
-sfe_artemis_thing_plus.name=SparkFun Artemis Thing Plus
+sfe_artemis_thing_plus.name=Artemis Thing Plus
 sfe_artemis_thing_plus.build.variant=SFE_ARTEMIS_THING_PLUS
 sfe_artemis_thing_plus.build.arch=APOLLO3
 sfe_artemis_thing_plus.build.board=APOLLO3_SFE_ARTEMIS_THING_PLUS
@@ -146,14 +146,14 @@ sfe_artemis_thing_plus.menu.svl_baud.921600.upload.svl_baud=921600
 sfe_artemis_thing_plus.upload.asb_baud=115200
 
 sfe_artemis_thing_plus.menu.loader.option_asb.upload.tool=asb
-sfe_artemis_thing_plus.menu.loader.option_asb.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_thing_plus.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
 
 sfe_artemis_thing_plus.menu.loader.option_svl.upload.tool=svl
-sfe_artemis_thing_plus.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
+sfe_artemis_thing_plus.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
 
 ###############################################################
 
-sfe_edge.name=SparkFun Edge
+sfe_edge.name=Edge
 sfe_edge.build.variant=SFE_EDGE
 sfe_edge.build.arch=APOLLO3
 sfe_edge.build.board=APOLLO3_SFE_EDGE
@@ -184,14 +184,14 @@ sfe_edge.menu.asb_baud.115200.upload.asb_baud=115200
 sfe_edge.menu.asb_baud.921600.upload.asb_baud=921600
 
 sfe_edge.menu.loader.option_asb.upload.tool=asb
-sfe_edge.menu.loader.option_asb.build.ldscript={build.variant.path}/0xC000.ld
+sfe_edge.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
 
 sfe_edge.menu.loader.option_svl.upload.tool=svl
-sfe_edge.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
+sfe_edge.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
 
 ###############################################################
 
-sfe_edge2.name=SparkFun Edge2
+sfe_edge2.name=Edge2
 sfe_edge2.build.variant=SFE_EDGE2
 sfe_edge2.build.arch=APOLLO3
 sfe_edge2.build.board=APOLLO3_SFE_EDGE2
@@ -217,9 +217,40 @@ sfe_edge2.menu.svl_baud.921600.upload.svl_baud=921600
 sfe_edge2.upload.asb_baud=115200
 
 sfe_edge2.menu.loader.option_asb.upload.tool=asb
-sfe_edge2.menu.loader.option_asb.build.ldscript={build.variant.path}/0xC000.ld
+sfe_edge2.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
 
 sfe_edge2.menu.loader.option_svl.upload.tool=svl
-sfe_edge2.menu.loader.option_svl.build.ldscript={build.variant.path}/0x10000.ld
+sfe_edge2.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
 
 ###############################################################
+
+sfe_artemis_module.name=Artemis Module
+sfe_artemis_module.build.variant=SFE_ARTEMIS_MODULE
+sfe_artemis_module.build.arch=APOLLO3
+sfe_artemis_module.build.board=APOLLO3_SFE_ARTEMIS_MODULE
+sfe_artemis_module.build.export_format=bin
+sfe_artemis_module.build.defines=
+sfe_artemis_module.build.includes=
+sfe_artemis_module.build.libs=
+
+sfe_artemis_module.menu.svl_baud.921600=921600
+sfe_artemis_module.menu.svl_baud.460800=460800
+sfe_artemis_module.menu.svl_baud.230400=230400
+sfe_artemis_module.menu.svl_baud.115200=115200
+sfe_artemis_module.menu.svl_baud.57600=57600
+sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_module.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
+
+sfe_artemis_module.menu.svl_baud.57600.upload.svl_baud=57600
+sfe_artemis_module.menu.svl_baud.115200.upload.svl_baud=115200
+sfe_artemis_module.menu.svl_baud.230400.upload.svl_baud=230400
+sfe_artemis_module.menu.svl_baud.460800.upload.svl_baud=460800
+sfe_artemis_module.menu.svl_baud.921600.upload.svl_baud=921600
+
+sfe_artemis_module.upload.asb_baud=115200
+
+sfe_artemis_module.menu.loader.option_asb.upload.tool=asb
+sfe_artemis_module.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
+
+sfe_artemis_module.menu.loader.option_svl.upload.tool=svl
+sfe_artemis_module.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
