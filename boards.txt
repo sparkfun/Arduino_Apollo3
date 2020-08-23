@@ -17,7 +17,7 @@ sfe_artemis_dk.build.defines=
 sfe_artemis_dk.build.includes=
 sfe_artemis_dk.build.libs=
 
-sfe_artemis_dk.build.ldscript={build.variant.path}/0xC000.ld
+sfe_artemis_dk.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
 
 ###############################################################
 
