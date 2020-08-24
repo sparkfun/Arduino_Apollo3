@@ -34,6 +34,9 @@
 */
 
 void setup() {
+  Serial.begin(115200);
+  Serial.println("Apollo3 - analogWrite");
+
   // pinMode is not needed for PWM output
 
   analogWrite(LED_BUILTIN, 127);    // 50% duty cycle w/ 8-bit resolution
