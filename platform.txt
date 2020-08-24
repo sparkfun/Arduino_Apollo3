@@ -49,7 +49,7 @@ compiler.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{run
 compiler.ld.flags=@{build.variant.path}/mbed/.ld-flags {compiler.ld.extra_flags} --specs=nosys.specs -lsupc++ -lstdc++
 compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
-compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags}
+compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags} -O ihex
 
 # extra flags (can be overridden in platform.local.txt)
 compiler.preproc.extra_flags=
