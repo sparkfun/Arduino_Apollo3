@@ -5,7 +5,13 @@
 
 #include "SPI.h"
 
-arduino::MbedSPI::MbedSPI(int miso, int mosi, int sck) : _miso(miso), _mosi(mosi), _sck(sck) {
+arduino::MbedSPI::MbedSPI(pin_size_t miso, pin_size_t mosi, pin_size_t sck) {
+    _miso = pinNameByNumber(miso);
+    _mosi = pinNameByNumber(mosi);
+    _sck = pinNameByNumber(sck);
+}
+
+arduino::MbedSPI::MbedSPI(PinName miso, PinName mosi, PinName sck) : _miso(miso), _mosi(mosi), _sck(sck) {
 }
 
 uint8_t arduino::MbedSPI::transfer(uint8_t data) {
@@ -42,6 +48,9 @@ void arduino::MbedSPI::notUsingInterrupt(int interruptNumber) {
 }
 
 void arduino::MbedSPI::beginTransaction(SPISettings settings) {
+    if(!dev){
+        begin();
+    }
     if (settings != this->settings) {
         dev->format(8, settings.getDataMode());
         dev->frequency(settings.getClockFreq());

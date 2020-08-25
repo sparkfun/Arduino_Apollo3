@@ -45,6 +45,7 @@ void hearbeat( void ){
 
 void setup()
 {
+  Serial.begin(115200);
   printf("Apollo3 - detachInterrupt\n\n");
 
   pinMode(LED_BUILTIN, OUTPUT);

@@ -43,11 +43,17 @@ void setup() {
   analogWriteResolution(16);        // new range is 0 to 65535
   analogWrite(LED_BUILTIN, 32767);  // 50% duty cycle w/ 16-bit resolution
                                     // note: changing resolution does not
-                                    //       affect calls to analogWrite 
-  analogWriteResolution(8);
+                                    //       affect previous calls to analogWrite
+
+  analogWriteResolution(8);         // sets the resolution of analogWrite output
+                                    //    - maximum: 16 bits
+                                    //    - default:  8 bits
+                                    //    - minimum:  1 bit
 }
 
 void loop() {
+  // the goal is to make the built-in LED "breathe" by fading up / down
+
   static uint8_t val = 0;
   static     int dir = 1;
   

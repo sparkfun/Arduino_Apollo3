@@ -17,8 +17,10 @@
 #define AP3_ANALOG_FRAME_PERIOD (24000)
 #define AP3_MAX_ANALOG_WRITE_WIDTH (0x0000FFFF)
 #define AP3_MIN_ANALOG_WRITE_WIDTH (0x03)
-#define AP3_MAX_PWM_RESOLUTION (16)
+#define AP3_ANALOG_WRITE_RESOLUTION_MAX (16)
+#define AP3_ANALOG_WRITE_RESOLUTION_MIN (1)
 #define AP3_ANALOG_READ_RESOLUTION_MAX (16)
+#define AP3_ANALOG_READ_RESOLUTION_MIN (1)
 #define AP3_ADC_RESOLUTION (14)
 
 int ap3_analog_read(ap3_adc_channel_config_t* config);
@@ -49,6 +51,32 @@ ap3_adc_channel_config_t ap3_adc_channel_configs[] = {
     { 0,    AP3_ADC_INTERNAL_CHANNELS_VCC_DIV3, AM_HAL_ADC_SLOT_CHSEL_BATT,     0,                          },
     { 0,    AP3_ADC_INTERNAL_CHANNELS_VSS,      AM_HAL_ADC_SLOT_CHSEL_VSS,      0,                          },
 };
+
+float getTempDegF( void ) {
+    const float v_ref = 2.0;
+    uint16_t counts = analogReadTemp();
+
+    //
+    // Convert and scale the temperature.
+    // Temperatures are in Fahrenheit range -40 to 225 degrees.
+    // Voltage range is 0.825V to 1.283V
+    // First get the ADC voltage corresponding to temperature.
+    //
+    float volts = ((float)counts) * v_ref / ((float)(pow(2, _analogReadResolution)));
+
+    float fVT[3];
+    fVT[0] = volts;
+    fVT[1] = 0.0f;
+    fVT[2] = -123.456;
+    uint32_t ui32Retval = am_hal_adc_control(g_ADCHandle, AM_HAL_ADC_REQ_TEMP_CELSIUS_GET, fVT);
+    MBED_ASSERT(ui32Retval == AM_HAL_STATUS_SUCCESS);
+
+    return fVT[1]; // Get the temperature
+}
+
+float getVCCV( void ){
+    return ((float)analogReadVCCDiv3() * 6.0) / 16384.0;
+}
 
 int indexAnalogRead(pin_size_t index){
     // todo: replace with mbed "AnalogIn" functionality
@@ -157,8 +185,12 @@ void indexTone(pin_size_t index, unsigned int frequency, unsigned long duration)
 }
 
 ap3_err_t analogWriteResolution(uint8_t bits){
-    if (bits > AP3_MAX_PWM_RESOLUTION){
-        _analogWriteResolution = AP3_MAX_PWM_RESOLUTION;
+    if (bits > AP3_ANALOG_WRITE_RESOLUTION_MAX){
+        _analogWriteResolution = AP3_ANALOG_WRITE_RESOLUTION_MAX;
+        return AP3_ERR;
+    }
+    if (bits < AP3_ANALOG_WRITE_RESOLUTION_MIN){
+        _analogWriteResolution = AP3_ANALOG_WRITE_RESOLUTION_MIN;
         return AP3_ERR;
     }
     _analogWriteResolution = bits;
@@ -187,8 +219,12 @@ ap3_err_t analogWriteFrequency(float freq){
 }
 
 ap3_err_t servoWriteResolution(uint8_t bits){
-    if (bits > AP3_MAX_PWM_RESOLUTION){
-        _servoWriteResolution = AP3_MAX_PWM_RESOLUTION;
+    if (bits > AP3_ANALOG_WRITE_RESOLUTION_MAX){
+        _servoWriteResolution = AP3_ANALOG_WRITE_RESOLUTION_MAX;
+        return AP3_ERR;
+    }
+    if (bits < AP3_ANALOG_WRITE_RESOLUTION_MIN){
+        _servoWriteResolution = AP3_ANALOG_WRITE_RESOLUTION_MIN;
         return AP3_ERR;
     }
     _servoWriteResolution = bits;
@@ -222,6 +258,10 @@ ap3_err_t servoWrite(uint8_t pin, uint32_t val, uint16_t minMicros, uint16_t max
 ap3_err_t analogReadResolution(uint8_t bits){
     if(bits > AP3_ANALOG_READ_RESOLUTION_MAX){
         _analogReadResolution = AP3_ANALOG_READ_RESOLUTION_MAX;
+        return AP3_ERR;
+    }
+    if(bits < AP3_ANALOG_READ_RESOLUTION_MIN){
+        _analogReadResolution = AP3_ANALOG_READ_RESOLUTION_MIN;
         return AP3_ERR;
     }
     _analogReadResolution = bits;
@@ -306,10 +346,10 @@ uint32_t powerControlADC(bool on){
     uint32_t status = AM_HAL_STATUS_SUCCESS;
 
     if(on){
-        status = am_hal_adc_power_control(g_ADCHandle, AM_HAL_SYSCTRL_WAKE, false);
-        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
-        
         status = am_hal_adc_initialize(0, &g_ADCHandle);
+        if(status != AM_HAL_STATUS_SUCCESS){ return status; }
+
+        status = am_hal_adc_power_control(g_ADCHandle, AM_HAL_SYSCTRL_WAKE, false);
         if(status != AM_HAL_STATUS_SUCCESS){ return status; }
 
         adc_initialized = true;
@@ -395,21 +435,15 @@ int ap3_analog_read(ap3_adc_channel_config_t* config){
 
     // Clear the ADC interrupt.
     am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false);
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask)){
-        return 0; //Error
-    }
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_adc_interrupt_clear(g_ADCHandle, ui32IntMask));
 
     am_hal_adc_sw_trigger(g_ADCHandle);
 
     do { // Wait for interrupt
-        if (AM_HAL_STATUS_SUCCESS != am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false)){
-            return 0; //Error
-        }
+        MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_adc_interrupt_status(g_ADCHandle, &ui32IntMask, false));
     } while(!(ui32IntMask & AM_HAL_ADC_INT_CNVCMP));
 
-    if (AM_HAL_STATUS_SUCCESS != am_hal_adc_samples_read(g_ADCHandle, false, NULL, &ui32NumSamples, &Sample)){
-        return 0; //Error
-    }
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_adc_samples_read(g_ADCHandle, false, NULL, &ui32NumSamples, &Sample));
 
     uint32_t result = Sample.ui32Sample;
 

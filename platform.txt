@@ -46,7 +46,7 @@ compiler.preproc.flags={compiler.cxx.flags} -w -x c++ -E -CC {compiler.preproc.e
 compiler.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags {compiler.asm.extra_flags}
 compiler.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags {compiler.c.extra_flags}
 compiler.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags {compiler.cxx.extra_flags}
-compiler.ld.flags=@{build.variant.path}/mbed/.ld-flags {compiler.ld.extra_flags} --specs=nosys.specs -lsupc++ -lstdc++
+compiler.ld.flags=@{build.variant.path}/mbed/.ld-flags {compiler.ld.extra_flags} --specs=nano.specs -lsupc++ -lstdc++ -lm
 compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
 compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags} -O ihex
@@ -79,6 +79,7 @@ recipe.ar.pattern="{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" 
 recipe.c.combine.pattern="{compiler.gcc.cmd}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.ld.flags} {defines.ld}
 recipe.objcopy.bin.pattern="{compiler.objcopy.cmd}" {compiler.axf2bin.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"
 recipe.objcopy.hex.pattern="{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.hex"
+recipe.objcopy.hex.pattern.windows=
 recipe.size.pattern="{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=\.text\s+([0-9]+).*
 recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*

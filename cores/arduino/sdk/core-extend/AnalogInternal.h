@@ -33,6 +33,9 @@ int analogReadTemp( void );
 int analogReadVCCDiv3( void );
 int analogReadVSS( void );
 
+float getTempDegF( void );
+float getVCCV( void );
+
 uint32_t initializeADC( void );
 
 #endif // _ARDUINO_SDK_CORE_EXTEND_ANALOG_INTERNAL_H_
