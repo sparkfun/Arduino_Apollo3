@@ -72,8 +72,8 @@ const ap3_gpio_pad_t ap3_variant_pinmap[AP3_VARIANT_NUM_PINS] = {
     45,
     AP3_GPIO_PAD_UNUSED, //The other one pad not broken out of the Apollo3 on the Artemis
     AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
-    AP3_GPIO_PAD_UNUSED,
+    48,
+    49,
 };
 
 // Uart Definitions
