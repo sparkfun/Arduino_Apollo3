@@ -92,3 +92,5 @@ extern const ap3_gpio_pin_t ap3_analog_A12 = 12;
 extern const ap3_gpio_pin_t ap3_analog_A32 = 32;
 extern const ap3_gpio_pin_t ap3_analog_A33 = 33;
 extern const ap3_gpio_pin_t ap3_analog_A35 = 35;
+extern const ap3_gpio_pin_t ap3_analog_DIFF0 = AP3_ADC_DIFF0_PAD;
+extern const ap3_gpio_pin_t ap3_analog_DIFF1 = AP3_ADC_DIFF1_PAD;
