@@ -41,6 +41,16 @@ ap3_gpio_pad_t ap3_gpio_pin2pad(ap3_gpio_pin_t pin)
     return ap3_variant_pinmap[pin];
 }
 
+ap3_gpio_pin_t ap3_gpio_pad2pin(ap3_gpio_pad_t pad)
+{
+    for (int x = 0; x < AP3_VARIANT_NUM_PINS; x++)
+    {
+        if (ap3_variant_pinmap[x] == pad)
+            return (x);
+    }
+    return (AP3_GPIO_PAD_UNUSED);
+}
+
 typedef void (*voidFuncPtr)(void);
 typedef void (*voidFuncPtrArg)(void *);
 typedef struct

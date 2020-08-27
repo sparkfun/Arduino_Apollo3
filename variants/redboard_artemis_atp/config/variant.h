@@ -58,6 +58,8 @@ extern Uart Serial1;
 #define A32 ap3_analog_A32
 #define A33 ap3_analog_A33
 #define A35 ap3_analog_A35
+#define ADIFF0 ap3_analog_DIFF0
+#define ADIFF1 ap3_analog_DIFF1
 
 // Promise the existence of analog pin names
 extern const ap3_gpio_pin_t ap3_analog_A29;
@@ -70,6 +72,8 @@ extern const ap3_gpio_pin_t ap3_analog_A12;
 extern const ap3_gpio_pin_t ap3_analog_A32;
 extern const ap3_gpio_pin_t ap3_analog_A33;
 extern const ap3_gpio_pin_t ap3_analog_A35;
+extern const ap3_gpio_pin_t ap3_analog_DIFF0;
+extern const ap3_gpio_pin_t ap3_analog_DIFF1;
 
 #define LED_BUILTIN 5
 

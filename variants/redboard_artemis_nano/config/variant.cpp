@@ -65,3 +65,4 @@ const ap3_gpio_pin_t ap3_analog_A5 = 5;
 const ap3_gpio_pin_t ap3_analog_A14 = 14;
 const ap3_gpio_pin_t ap3_analog_A15 = 15;
 const ap3_gpio_pin_t ap3_analog_A16 = 16;
+const ap3_gpio_pin_t ap3_analog_DIFF0 = AP3_ADC_DIFF0_PAD;
