@@ -29,6 +29,8 @@
 */
 
 /*
+          Apollo3 UART pad mapping
+
        uart0         | |       uart1   
 ---------------------------------------------
  tx | rx | rts | cts | | tx | rx | rts | cts  
@@ -48,25 +50,36 @@
                      | |      47            
 */
 
-//// uncomment to use these names if defined for your board
-//// (these are also the pins used for Serial1, which is 
-//// available on applicable boards)
-//#define HAS_SERIAL1
-//UART mySerial(SERIAL1_TX, SERIAL1_RX);
+// uncomment to define SERIAL1_TX and SERIAL1_RX as custom pin numbers in case they
+// are not defined by default (look up the correct pad <--> pin mapping for your board
+#define SERIAL1_TX 35
+#define SERIAL1_RX 13
+
+// uncomment to use these names if defined for your board
+// (these are also the pins used for Serial1, which is 
+// available on applicable boards)
+#define HAS_SERIAL1
+UART mySerial(SERIAL1_TX, SERIAL1_RX);
 
 #define BAUD 115200       // any number, common choices: 9600, 115200, 230400, 921600
 #define CONFIG SERIAL_8N1 // a config value from HardwareSerial.h (defaults to SERIAL_8N1)
 
 void setup() {
   Serial.begin(BAUD);     // set the baud rate with the begin() method
-  Serial.println("Apollo3 = Serial");
-  Serial.println("Echo Back Character");
+  Serial.println("\n\nApollo3 - Serial");
+
+  // the Apollo3 core supports printf on Serial
+  for (size_t idx = 0; idx < 10; idx++){
+    Serial.printf("printf supports printing formatted strings! count: %d\n", idx);
+  }
+
+  Serial.println("\nEcho... (type characters into the Serial Monitor to see them echo back)\n");
   
 
 #ifdef HAS_SERIAL1
   mySerial.begin(BAUD, CONFIG); // specify the config setting as the secnd argument
-  mySerial.println("Apollo3 = mySerial");
-  mySerial.println("Echo Back Character");
+  mySerial.println("\n\nApollo3 - mySerial");
+  mySerial.println("\nEcho... (type characters into the Serial Monitor to see them echo back)\n");
 #endif
 }
 
