@@ -1,0 +1,20 @@
+# Syntax Coloring Map For 'libraries/Servo'
+
+# Datatypes (KEYWORD1)
+Servo	KEYWORD1
+
+# Functions (KEYWORD2)
+Servo	KEYWORD2
+attach	KEYWORD2
+write	KEYWORD2
+writeMicroseconds	KEYWORD2
+detach	KEYWORD2
+read	KEYWORD2
+attached	KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+_APOLLO3_LIBRARIES_SERVO_H_	LITERAL1
+
+# Properties (LITERAL2)

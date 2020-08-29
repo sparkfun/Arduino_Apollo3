@@ -1,0 +1,113 @@
+# This file is subject to the terms and conditions defined in
+# file 'LICENSE.md', which is part of this source code package.
+
+name=SparkFun Apollo3
+version=2.0.0
+
+# paths
+cores.path={runtime.platform.path}/cores
+variant.path={build.variant.path}
+
+# defines
+defines.arduino=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
+defines.mbed=-DMBED_NO_GLOBAL_USING_DIRECTIVE
+defines.variant={build.defines}
+defines.extra=
+defines.all={defines.variant} {defines.arduino} {defines.mbed} {defines.extra} -DCORDIO_ZERO_COPY_HCI
+defines.preproc={defines.mbed.cxx}
+defines.asm={defines.all} @{build.variant.path}/mbed/.asm-symbols
+defines.c={defines.all} @{build.variant.path}/mbed/.c-symbols
+defines.cxx={defines.all} @{build.variant.path}/mbed/.cxx-symbols
+defines.ld={defines.all} @{build.variant.path}/mbed/.ld-symbols
+
+# includes
+includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" -include {cores.path}/arduino/sdk/ArduinoSDK.h
+includes.mbed=@{build.variant.path}/mbed/.includes
+includes.variant={build.includes}
+includes.extra=
+includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
+
+# libraries
+libs.core=-Wl,--whole-archive {archive_file_path} -Wl,--no-whole-archive
+libs.mbed={build.variant.path}/mbed/libmbed-os.a
+libs.variant={build.libs}
+libs.extra=
+libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
+
+# warnings
+compiler.warning_flags=
+compiler.warning_flags.none=
+compiler.warning_flags.default=-Wall -Werror=return-type
+compiler.warning_flags.more={compiler.warning_flags.default}
+compiler.warning_flags.all={compiler.warning_flags.default} -Wextra
+
+# flags
+compiler.preproc.flags={compiler.cxx.flags} -w -x c++ -E -CC {compiler.preproc.extra_flags}
+compiler.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags {compiler.asm.extra_flags}
+compiler.c.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags {compiler.c.extra_flags}
+compiler.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags {compiler.cxx.extra_flags}
+compiler.ld.flags=@{build.variant.path}/mbed/.ld-flags {compiler.ld.extra_flags} --specs=nano.specs -lsupc++ -lstdc++ -lm
+compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
+compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
+compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags} -O ihex
+
+# extra flags (can be overridden in platform.local.txt)
+compiler.preproc.extra_flags=
+compiler.asm.extra_flags=
+compiler.c.extra_flags=
+compiler.cxx.extra_flags=
+compiler.ld.extra_flags=
+compiler.ar.extra_flags=
+compiler.axf2bin.extra_flags=
+compiler.axf2hex.extra_flags=
+
+# compiler information
+compiler.path={runtime.tools.arm-none-eabi-gcc-8-2018-q4-major.path}/bin
+compiler.prefix={compiler.path}/arm-none-eabi-
+compiler.gcc.cmd={compiler.prefix}gcc
+compiler.gxx.cmd={compiler.prefix}g++
+compiler.ar.cmd={compiler.prefix}ar
+compiler.objcopy.cmd={compiler.prefix}objcopy
+compiler.size.cmd={compiler.prefix}size
+
+# arduino recipes
+recipe.preproc.macros="{compiler.gxx.cmd}" {compiler.preproc.flags} {defines.preproc} {includes.all} "{source_file}" -o "{preprocessed_file_path}"
+recipe.S.o.pattern="{compiler.gcc.cmd}" {compiler.asm.flags} {defines.asm} {includes.all} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.gcc.cmd}" {compiler.c.flags} {defines.c} {defines.all} {includes.all} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.gxx.cmd}" {compiler.cxx.flags} {defines.cxx} {includes.all} "{source_file}" -o "{object_file}"
+recipe.ar.pattern="{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
+recipe.c.combine.pattern="{compiler.gcc.cmd}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.ld.flags} {defines.ld}
+recipe.objcopy.bin.pattern="{compiler.objcopy.cmd}" {compiler.axf2bin.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"
+recipe.objcopy.hex.pattern="{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.hex"
+recipe.objcopy.hex.pattern.windows=
+recipe.size.pattern="{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
+recipe.size.regex=\.text\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
+recipe.output.tmp_file={build.project_name}.{build.export_format}
+recipe.output.save_file={build.project_name}.{build.export_format}
+
+# tools
+tools.asb.pgm={runtime.platform.path}/tools/uploaders/asb/dist/linux/asb
+tools.asb.pgm.macosx={runtime.platform.path}/tools/uploaders/asb/dist/macosx/asb
+tools.asb.pgm.windows="{runtime.platform.path}/tools/uploaders/asb/dist/windows/asb.exe"
+tools.asb.args=--bin "{build.path}/{build.project_name}.bin" --load-address-blob 0x20000 --magic-num 0xCB -o {build.path}/{build.project_name} --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2 {upload.verbose}
+tools.asb.upload.protocol=asb
+tools.asb.upload.params.verbose=-v
+tools.asb.upload.params.quiet=
+tools.asb.bootloader.params.verbose=-v
+tools.asb.bootloader.params.quiet=
+tools.asb.erase.params.verbose=-v
+tools.asb.erase.params.quiet=
+tools.asb.erase.pattern=
+tools.asb.upload.pattern={pgm} {args}
+tools.asb.bootloader.pattern={pgm} --bin "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/svl.bin" --load-address-blob 0x20000 --magic-num 0xCB -o "{runtime.platform.path}/tools/uploaders/svl/bootloader/gcc/artemis_module/bin/intermediate" --version 0x0 --load-address-wired 0xC000 -i 6 --options 0x1 -b {upload.asb_baud} -port "{serial.port}" -r 2 {bootloader.verbose}
+tools.asb.erase.pattern=
+
+tools.svl.pgm={runtime.platform.path}/tools/uploaders/svl/dist/linux/svl
+tools.svl.pgm.macosx={runtime.platform.path}/tools/uploaders/svl/dist/macosx/svl
+tools.svl.pgm.windows="{runtime.platform.path}/tools/uploaders/svl/dist/windows/svl.exe"
+tools.svl.args="{serial.port}" -f "{build.path}/{build.project_name}.bin" -b {upload.svl_baud} {upload.verbose}
+tools.svl.upload.protocol=svl
+tools.svl.upload.params.verbose=-v
+tools.svl.upload.params.quiet=
+tools.svl.upload.pattern={pgm} {args}

@@ -1,0 +1,27 @@
+# Syntax Coloring Map For 'libraries/EEPROM'
+
+# Datatypes (KEYWORD1)
+EEPROMClass	KEYWORD1
+
+# Functions (KEYWORD2)
+EEPROMClass	KEYWORD2
+config	KEYWORD2
+configSramUsage	KEYWORD2
+read	KEYWORD2
+write	KEYWORD2
+update	KEYWORD2
+erase	KEYWORD2
+get	KEYWORD2
+put	KEYWORD2
+operator[]	KEYWORD2
+
+# Structures (KEYWORD3)
+eeprom_config_t	KEYWORD3
+
+# Constants (LITERAL1)
+_APOLLO3_LIBRARIES_EEPROM_H_	LITERAL1
+EEPROM_DEFAULT_SRAM_USAGE	LITERAL1
+
+# Properties (LITERAL2)
+sram_bytes	LITERAL2
+EEPROM	LITERAL2

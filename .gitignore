@@ -1,0 +1,5 @@
+# vscode configurations
+*.vscode*
+
+# osx
+.DS_Store

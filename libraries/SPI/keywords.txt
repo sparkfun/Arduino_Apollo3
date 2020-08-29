@@ -1,0 +1,30 @@
+# Syntax Coloring Map For 'libraries/SPI'
+
+# Datatypes (KEYWORD1)
+MbedSPI	KEYWORD1
+
+# Functions (KEYWORD2)
+MbedSPI	KEYWORD2
+transfer	KEYWORD2
+transfer16	KEYWORD2
+usingInterrupt	KEYWORD2
+notUsingInterrupt	KEYWORD2
+beginTransaction	KEYWORD2
+endTransaction	KEYWORD2
+attachInterrupt	KEYWORD2
+detachInterrupt	KEYWORD2
+begin	KEYWORD2
+end	KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+_APOLLO3_LIBRARIES_SPI_H_	LITERAL1
+
+# Properties (LITERAL2)
+SPI	LITERAL2
+SPI1	LITERAL2
+SPI2	LITERAL2
+SPI3	LITERAL2
+SPI4	LITERAL2
+SPI5	LITERAL2

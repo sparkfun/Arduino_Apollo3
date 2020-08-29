@@ -1,0 +1,12 @@
+# Syntax Coloring Map For 'libraries/Apollo3'
+
+# Datatypes (KEYWORD1)
+
+# Functions (KEYWORD2)
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+_APOLLO3_LIBRARIES_APOLLO3_H_	LITERAL1
+
+# Properties (LITERAL2)

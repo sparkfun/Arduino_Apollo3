@@ -1,0 +1,7 @@
+# This file is subject to the terms and conditions defined in
+# file 'LICENSE.md', which is part of this source code package.
+
+asb_programmer.name=Ambiq Secure Bootloader
+asb_programmer.communication=serial
+asb_programmer.program.tool=asb
+asb_programmer.bootloader.tool=asb

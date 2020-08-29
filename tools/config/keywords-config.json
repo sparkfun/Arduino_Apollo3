@@ -1,0 +1,14 @@
+{
+    "libraries": {
+        "expansion-params": [
+            "{Apollo3,EEPROM,PDM,RTC,Servo,SoftwareSerial,SPI,Wire}"
+        ],
+        "pathspec": "libraries/{}/src/*",
+        "dest": "libraries/{}"
+    },
+    "core-extensions": {
+        "pathspec": "cores/arduino/{mbed-bridge/core-extend,sdk/core-extend}/*",
+        "dest": ".",
+        "recursive": true
+    }
+}

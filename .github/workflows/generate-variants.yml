@@ -1,0 +1,106 @@
+on:
+  push:
+    branches:
+      - spoof-dev
+
+name: Generate Variants
+
+
+jobs:
+  build:
+    name: Generate Variants
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out code
+        uses: actions/checkout@v2.3.1
+        with:
+          path: arduino-apollo3
+          fetch-depth: 0
+
+      - name: build variant libs
+        id: buildvariants
+        uses: oclyke-actions/run-mbed-jobs@v1
+        with:
+          jobs: |
+            [
+              {"name": "artemis-redboard-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS", "loc": "variants/SFE_ARTEMIS"}}},
+              {"name": "artemis-redboard-atp-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_ATP", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}},
+              {"name": "artemis-dev-kit-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_DK", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
+              {"name": "artemis-redboard-nano-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_NANO", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_NANO", "loc": "variants/SFE_ARTEMIS_NANO"}}},
+              {"name": "artemis-thing-plus-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_THING_PLUS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_THING_PLUS", "loc": "variants/SFE_ARTEMIS_THING_PLUS"}}},
+              {"name": "edge-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE", "loc": "variants/SFE_EDGE"}}},
+              {"name": "edge2-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE2", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE2", "loc": "variants/SFE_EDGE2"}}}
+            ]
+          mbed: |
+            {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-arduino"}
+
+      - name: configure git
+        run: |
+          git config --global user.email "arduino-apollo3-builder@sparkfun.com"
+          git config --global user.name "arduino-apollo3-builder"
+
+      - name: copy libs to variants
+        run: |
+          cd arduino-apollo3
+
+          git fetch --all
+          git pull --all
+          git checkout spoof-dev
+          git checkout spoof-release-candidate
+          git rebase spoof-dev
+
+          jobs='${{ steps.buildvariants.outputs.jobs }}'
+          job_count=0
+
+          for row in $(echo ${jobs} | jq -r '.[] | @base64'); do
+            name="$(echo ${row} | base64 --decode | jq -r '.name')"
+            loc="$(echo ${row} | base64 --decode | jq -r '.loc')"
+            config="$(echo ${row} | base64 --decode | jq -r '.config')"
+            user="$(echo ${row} | base64 --decode | jq -r '.user')"
+
+            tgt="$(echo ${config} | jq -r -c '.tgt')"
+            tool="$(echo ${config} | jq -r -c '.tool')"
+            build_root="$(echo ${loc} | jq -r -c '.root')"
+            build_id="$(echo ${loc} | jq -r -c '.id')"
+            variant_root="$(echo ${user} | jq -r '.variant.loc')"
+
+            echo ""
+            echo "${job_count}:"
+            echo "'${name}'"
+
+            # copy the mbed static library
+            src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/libmbed-os.a"
+            dest="./${variant_root}/mbed/libmbed-os.a"
+            echo "copying '${src}' to '${dest}'"
+            mkdir -p $(dirname $dest)
+            cp $src $dest
+            git add ${dest}
+
+            # copy mbed_config.h
+            src="./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/mbed_config.h"
+            dest="./${variant_root}/mbed/mbed_config.h"
+            echo "copying '${src}' to '${dest}'"
+            mkdir -p $(dirname $dest)
+            cp $src $dest
+            git add ${dest}
+
+            # generate files from mbed profiles
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-asm  -d ./${variant_root}/mbed/. -t asm -b ./tools/config/blocklist.json -v
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-c    -d ./${variant_root}/mbed/. -t c -b ./tools/config/blocklist.json -v
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-cxx  -d ./${variant_root}/mbed/. -t cxx -b ./tools/config/blocklist.json -v
+            python3 ./tools/scripts/transmute-profiles.py -p ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.profile-ld   -d ./${variant_root}/mbed/. -t ld -b ./tools/config/blocklist.json -v
+            git add ./${variant_root}/mbed/.asm*
+            git add ./${variant_root}/mbed/.c*
+            git add ./${variant_root}/mbed/.cxx*
+            git add ./${variant_root}/mbed/.ld*
+
+            # generate includes file
+            python3 ./tools/scripts/transmute-includes.py -i ./../${build_root}/BUILD/libraries/${build_id}/${tgt}/${tool}/.includes_* -d ./${variant_root}/mbed/.includes -b ./tools/config/blocklist.json -v
+            git add ./${variant_root}/mbed/.includes
+
+            job_count="$((job_count + 1))"
+          done
+
+          git commit -a -m "generated variants mbed resources"
+          git push -f
+          cd ${GITHUB_WORKSPACE}

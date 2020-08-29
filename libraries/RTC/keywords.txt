@@ -1,0 +1,43 @@
+# Syntax Coloring Map For 'libraries/RTC'
+
+# Datatypes (KEYWORD1)
+Apollo3RTC	KEYWORD1
+
+# Functions (KEYWORD2)
+Apollo3RTC	KEYWORD2
+getTime	KEYWORD2
+getEpoch	KEYWORD2
+setTime	KEYWORD2
+setToCompilerTime	KEYWORD2
+setEpoch	KEYWORD2
+getAlarm	KEYWORD2
+setAlarm	KEYWORD2
+setAlarmMode	KEYWORD2
+attachInterrupt	KEYWORD2
+detachInterrupt	KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+_APOLLO3_LIBRARIES_RTC_H_	LITERAL1
+
+# Properties (LITERAL2)
+weekday	LITERAL2
+century	LITERAL2
+year	LITERAL2
+month	LITERAL2
+dayOfMonth	LITERAL2
+hour	LITERAL2
+minute	LITERAL2
+seconds	LITERAL2
+hundredths	LITERAL2
+textWeekday	LITERAL2
+alarmWeekday	LITERAL2
+alarmMonth	LITERAL2
+alarmDayOfMonth	LITERAL2
+alarmHour	LITERAL2
+alarmMinute	LITERAL2
+alarmSeconds	LITERAL2
+alarmHundredths	LITERAL2
+alarmTextWeekday	LITERAL2
+RTC	LITERAL2
