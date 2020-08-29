@@ -1,0 +1,33 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+WDT	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+configure	KEYWORD2
+start		KEYWORD2
+stop		KEYWORD2
+restart		KEYWORD2
+clear		KEYWORD2
+getCounter	KEYWORD2
+configure	KEYWORD2
+setClock	KEYWORD2
+setInterrupt	KEYWORD2
+setReset	KEYWORD2
+WDT_OFF	KEYWORD2
+WDT_128HZ	KEYWORD2
+WDT_16	KEYWORD2
+WDT_1HZ	KEYWORD2
+WDT1_16HZ	KEYWORD2
+    
+#######################################
+# Constants (LITERAL1)
+#######################################
