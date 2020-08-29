@@ -17,9 +17,6 @@
   is used to blink the onboard LED and another thread is used to print status messages 
   over Serial.
 
-  This sketch, written without an RTOS, would be growing into a nest of coniditonal 
-  statements all written in one main loop. Instead 
-
 */
 
 #define STATUS_COUNT_TOTAL (10)
