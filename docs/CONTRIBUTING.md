@@ -1,3 +1,14 @@
+Development Lifecycle
+=====================
+A typical contribution to this repo follows this path:
+* fork the repo
+* make a new branch for your work (based on any branch that suits your needs)
+* make a pull request into the ```dev``` branch
+  * when merged this will trigger CI jobs
+* merged PRs in the dev branch will be mirrored in the ```release-candidate``` branch automatically
+* maintainers will merge ```release-candidate``` into ```master``` when a new release is created
+  * this maintains the ```master``` branch even with the latest release, and the ```dev``` branch as the cutting-edge
+
 What to Contribute
 ==================
 Goals of this Arduino core, listed in order of priority, are:
