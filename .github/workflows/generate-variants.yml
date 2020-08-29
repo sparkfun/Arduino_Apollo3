@@ -1,10 +1,9 @@
 on:
   push:
     branches:
-      - spoof-dev
+      - dev
 
 name: Generate Variants
-
 
 jobs:
   build:
@@ -45,9 +44,9 @@ jobs:
 
           git fetch --all
           git pull --all
-          git checkout spoof-dev
-          git checkout spoof-release-candidate
-          git rebase spoof-dev
+          git checkout dev
+          git checkout release-candidate
+          git rebase dev
 
           jobs='${{ steps.buildvariants.outputs.jobs }}'
           job_count=0
