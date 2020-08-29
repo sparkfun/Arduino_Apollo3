@@ -64,6 +64,24 @@ artemis.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scri
 
 ###############################################################
 
+amap3adk.name=SparkFun Artemis Dev Kit
+amap3adk.build.variant=artemis_dk
+amap3adk.build.board=AM_AP3_SFE_ARTEMIS_DK
+amap3adk.upload.maximum_size=960000
+amap3adk.upload.sbl_baud=115200
+amap3adk.build.arch=APOLLO3
+amap3adk.build.mcu=cortex-m4
+amap3adk.build.f_cpu=48000000L
+amap3adk.build.core=arduino
+amap3adk.build.includes="-I{build.variant.path}/config" "-I{build.variant.path}/bsp"
+amap3adk.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
+amap3adk.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
+amap3adk.build.preferred_export_format=bin
+amap3adk.build.defs=
+amap3adk.build.libs=
+
+###############################################################
+
 amap3redboard.name=SparkFun RedBoard Artemis
 amap3redboard.build.variant=redboard_artemis
 amap3redboard.build.board=AM_AP3_SFE_BB_ARTEMIS
