@@ -42,6 +42,7 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
   * Analog Input: ✅
   * Timing / Delays: ✅
 
+
 **Standard Libraries**
   * Wire
     * Controller: ✅
@@ -49,6 +50,7 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
   * SPI
     * Controller: ✅
     * Peripheral: 🤔
+  * EEPROM: ✅
 
 **Apollo3 Specialty Peripherals**
   * PDM Microphones / I2S: ✅
@@ -56,7 +58,6 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
   * RTC: ✅
   * Watchdog Timer: 🤔
   * Multi-bit SPI: 🤔
-  * I2C/SPI Peripheral Mode: 🤔
 
 ## More
 ### [License](./docs/ISSUES.md)
