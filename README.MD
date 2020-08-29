@@ -20,7 +20,8 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
 ## Installation
 ### **Arduino Boards Manager** (recommended)
   - Copy / paste the JSON package URL into the 'Additional Boards Manager URLs' field in Arduino preferences
-    [https://raw.githubusercontent.com/sparkfun/Arduino_Apollo3/master/package_sparkfun_apollo3_index.json](https://raw.githubusercontent.com/sparkfun/Arduino_Apollo3/master/package_sparkfun_apollo3_index.json) (raw)
+    ```https://raw.githubusercontent.com/sparkfun/Arduino_Apollo3/master/package_sparkfun_apollo3_index.json```
+    [https://raw.githubusercontent.com/sparkfun/Arduino_Apollo3/master/package_sparkfun_apollo3_index.json](https://raw.githubusercontent.com/sparkfun/Arduino_Apollo3/master/package_sparkfun_apollo3_index.json)
   - Open 'Boards Manager' and select 'SparkFun Apollo3 Boards' - install the latest version
     
 ### **Git** (development)
@@ -32,10 +33,7 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
 
 ## Development Status
 
-- v2.0.0 based on an [mbed-os](https://github.com/ARMmbed/mbed-os) framework
-
-#### Priorities
-- support additional capabilities using Apollo3 peripherals
+* v2.0.0 based on an [mbed-os](https://github.com/ARMmbed/mbed-os) framework
 
 **Main Arduino Features**
   * Serial: ✅
@@ -47,17 +45,18 @@ An mbed-os enabled Arduino core for Ambiq Apollo3 based boards
 **Standard Libraries**
   * Wire
     * Controller: ✅
-    * Peripheral: ❌
+    * Peripheral: 🤔
   * SPI
     * Controller: ✅
-    * Peripheral: ❌
-  * Software Serial: ✅
+    * Peripheral: 🤔
 
 **Apollo3 Specialty Peripherals**
   * PDM Microphones / I2S: ✅
   * BLE: ✅
+  * RTC: ✅
+  * Watchdog Timer: 🤔
   * Multi-bit SPI: 🤔
-  * I2C/SPI Peripheral: 🤔
+  * I2C/SPI Peripheral Mode: 🤔
 
 ## More
 ### [License](./docs/ISSUES.md)
