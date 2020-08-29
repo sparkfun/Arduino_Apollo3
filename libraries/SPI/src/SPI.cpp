@@ -16,7 +16,8 @@ arduino::MbedSPI::MbedSPI(PinName miso, PinName mosi, PinName sck) : _miso(miso)
 
 uint8_t arduino::MbedSPI::transfer(uint8_t data) {
     uint8_t ret;
-    dev->write((const char*)&data, 1, (char*)&ret, 1);
+    uint32_t tx = data;
+    dev->write((const char*)&tx, 1, (char*)&ret, 1);
     return ret;
 }
 
@@ -72,7 +73,7 @@ void arduino::MbedSPI::detachInterrupt() {
 
 void arduino::MbedSPI::begin() {
     if(!dev){
-        dev = new mbed::SPI((PinName)_mosi, (PinName)_miso, (PinName)_sck);
+        dev = new mbed::SPI(_mosi, _miso, _sck);
     }
 }
 
