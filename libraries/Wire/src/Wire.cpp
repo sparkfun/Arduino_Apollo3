@@ -8,12 +8,16 @@
 arduino::MbedI2C::MbedI2C(int sda, int scl) : _sda(sda), _scl(scl), usedTxBuffer(0) {}
 
 void arduino::MbedI2C::begin() {
-	master = new mbed::I2C((PinName)_sda, (PinName)_scl);
+	if(!master){
+		master = new mbed::I2C((PinName)_sda, (PinName)_scl);
+	}
 }
 
 void arduino::MbedI2C::begin(uint8_t slaveAddr) {
 #ifdef DEVICE_I2CSLAVE
-	slave = new mbed::I2CSlave((PinName)_sda, (PinName)_scl);
+	if(!slave){
+		slave = new mbed::I2CSlave((PinName)_sda, (PinName)_scl);
+	}
 	slave->address(slaveAddr << 1);
 	slave_th.start(mbed::callback(this, &arduino::MbedI2C::receiveThd));
 #endif
