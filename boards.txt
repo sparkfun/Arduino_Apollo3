@@ -9,6 +9,7 @@ menu.asb_baud=Ambiq Secure Bootloader Baud Rate
 ###############################################################
 
 sfe_artemis_dk.name=Artemis Dev Kit
+sfe_artemis_dk.build.core=arduino
 sfe_artemis_dk.build.variant=SFE_ARTEMIS_DK
 sfe_artemis_dk.build.arch=APOLLO3
 sfe_artemis_dk.build.board=APOLLO3_SFE_ARTEMIS_DK
@@ -22,6 +23,7 @@ sfe_artemis_dk.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000
 ###############################################################
 
 sfe_artemis.name=RedBoard Artemis
+sfe_artemis.build.core=arduino
 sfe_artemis.build.variant=SFE_ARTEMIS
 sfe_artemis.build.arch=APOLLO3
 sfe_artemis.build.board=APOLLO3_SFE_ARTEMIS
@@ -55,6 +57,7 @@ sfe_artemis.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/
 ###############################################################
 
 sfe_artemis_atp.name=RedBoard Artemis ATP
+sfe_artemis_atp.build.core=arduino
 sfe_artemis_atp.build.variant=SFE_ARTEMIS_ATP
 sfe_artemis_atp.build.arch=APOLLO3
 sfe_artemis_atp.build.board=APOLLO3_SFE_ARTEMIS_ATP
@@ -88,6 +91,7 @@ sfe_artemis_atp.menu.loader.option_svl.build.ldscript={runtime.platform.path}/to
 ###############################################################
 
 sfe_artemis_nano.name=RedBoard Artemis Nano
+sfe_artemis_nano.build.core=arduino
 sfe_artemis_nano.build.variant=SFE_ARTEMIS_NANO
 sfe_artemis_nano.build.arch=APOLLO3
 sfe_artemis_nano.build.board=APOLLO3_SFE_ARTEMIS_NANO
@@ -121,6 +125,7 @@ sfe_artemis_nano.menu.loader.option_svl.build.ldscript={runtime.platform.path}/t
 ###############################################################
 
 sfe_artemis_thing_plus.name=Artemis Thing Plus
+sfe_artemis_thing_plus.build.core=arduino
 sfe_artemis_thing_plus.build.variant=SFE_ARTEMIS_THING_PLUS
 sfe_artemis_thing_plus.build.arch=APOLLO3
 sfe_artemis_thing_plus.build.board=APOLLO3_SFE_ARTEMIS_THING_PLUS
@@ -154,6 +159,7 @@ sfe_artemis_thing_plus.menu.loader.option_svl.build.ldscript={runtime.platform.p
 ###############################################################
 
 sfe_edge.name=Edge
+sfe_edge.build.core=arduino
 sfe_edge.build.variant=SFE_EDGE
 sfe_edge.build.arch=APOLLO3
 sfe_edge.build.board=APOLLO3_SFE_EDGE
@@ -192,6 +198,7 @@ sfe_edge.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/upl
 ###############################################################
 
 sfe_edge2.name=Edge2
+sfe_edge2.build.core=arduino
 sfe_edge2.build.variant=SFE_EDGE2
 sfe_edge2.build.arch=APOLLO3
 sfe_edge2.build.board=APOLLO3_SFE_EDGE2
@@ -225,6 +232,7 @@ sfe_edge2.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/up
 ###############################################################
 
 sfe_artemis_module.name=Artemis Module
+sfe_artemis_module.build.core=arduino
 sfe_artemis_module.build.variant=SFE_ARTEMIS_MODULE
 sfe_artemis_module.build.arch=APOLLO3
 sfe_artemis_module.build.board=APOLLO3_SFE_ARTEMIS_MODULE
