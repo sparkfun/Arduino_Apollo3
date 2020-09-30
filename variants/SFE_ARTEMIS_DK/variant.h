@@ -30,4 +30,10 @@
 #define VARIANT_Wire_SDA    I2C_SDA
 #define VARIANT_Wire_SCL    I2C_SCL
 
+// temporary patch to support Arduino SD library
+#define SS 0
+#define MOSI SPI_SDO
+#define MISO SPI_SDI
+#define SCK SPI_CLK
+
 #endif // _VARIANT_H_
