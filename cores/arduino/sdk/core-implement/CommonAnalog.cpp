@@ -52,7 +52,7 @@ ap3_adc_channel_config_t ap3_adc_channel_configs[] = {
     { 0,    AP3_ADC_INTERNAL_CHANNELS_VSS,      AM_HAL_ADC_SLOT_CHSEL_VSS,      0,                          },
 };
 
-float getTempDegF( void ) {
+float getTempDegC( void ) {
     const float v_ref = 2.0;
     uint16_t counts = analogReadTemp();
 
@@ -72,6 +72,11 @@ float getTempDegF( void ) {
     MBED_ASSERT(ui32Retval == AM_HAL_STATUS_SUCCESS);
 
     return fVT[1]; // Get the temperature
+}
+
+float getTempDegF( void ) {
+    float temp_deg_c = getTempDegC();
+    return ((9.0f/5.0f)*temp_deg_c) + 32.0f;
 }
 
 float getVCCV( void ){
