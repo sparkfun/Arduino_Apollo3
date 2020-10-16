@@ -33,6 +33,7 @@ int analogReadTemp( void );
 int analogReadVCCDiv3( void );
 int analogReadVSS( void );
 
+float getTempDegC( void );
 float getTempDegF( void );
 float getVCCV( void );
 
