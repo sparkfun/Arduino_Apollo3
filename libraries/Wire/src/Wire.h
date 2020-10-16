@@ -7,7 +7,6 @@
 #define _APOLLO3_LIBRARIES_WIRE_H_
 
 #include "Arduino.h"
-#include "Print.h"
 #include "drivers/I2C.h"
 #include "drivers/I2CSlave.h"
 #include "rtos.h"
