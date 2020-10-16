@@ -245,6 +245,40 @@ sfe_edge2.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/up
 
 ###############################################################
 
+sfe_artemis_mm_pb.name=Artemis Micro Mod Processor
+sfe_artemis_mm_pb.build.core=arduino
+sfe_artemis_mm_pb.build.variant=SFE_ARTEMIS_MM_PB
+sfe_artemis_mm_pb.build.arch=APOLLO3
+sfe_artemis_mm_pb.build.board=APOLLO3_SFE_ARTEMIS_MM_PB
+sfe_artemis_mm_pb.build.export_format=bin
+sfe_artemis_mm_pb.build.defines=
+sfe_artemis_mm_pb.build.includes=
+sfe_artemis_mm_pb.build.libs=
+
+sfe_artemis_mm_pb.menu.svl_baud.921600=921600
+sfe_artemis_mm_pb.menu.svl_baud.460800=460800
+sfe_artemis_mm_pb.menu.svl_baud.230400=230400
+sfe_artemis_mm_pb.menu.svl_baud.115200=115200
+sfe_artemis_mm_pb.menu.svl_baud.57600=57600
+sfe_artemis_mm_pb.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
+sfe_artemis_mm_pb.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+
+sfe_artemis_mm_pb.menu.svl_baud.57600.upload.svl_baud=57600
+sfe_artemis_mm_pb.menu.svl_baud.115200.upload.svl_baud=115200
+sfe_artemis_mm_pb.menu.svl_baud.230400.upload.svl_baud=230400
+sfe_artemis_mm_pb.menu.svl_baud.460800.upload.svl_baud=460800
+sfe_artemis_mm_pb.menu.svl_baud.921600.upload.svl_baud=921600
+
+sfe_artemis_mm_pb.upload.asb_baud=115200
+
+sfe_artemis_mm_pb.menu.loader.option_asb.upload.tool=asb
+sfe_artemis_mm_pb.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
+
+sfe_artemis_mm_pb.menu.loader.option_svl.upload.tool=svl
+sfe_artemis_mm_pb.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
+
+###############################################################
+
 sfe_artemis_module.name=Artemis Module
 sfe_artemis_module.build.core=arduino
 sfe_artemis_module.build.variant=SFE_ARTEMIS_MODULE
