@@ -25,4 +25,10 @@
 // UART
 extern UART Serial1;
 
+// temporary patch to support Arduino SD library
+#define SS 0
+#define MOSI SPI_SDO
+#define MISO SPI_SDI
+#define SCK SPI_CLK
+
 #endif // _VARIANT_H_
