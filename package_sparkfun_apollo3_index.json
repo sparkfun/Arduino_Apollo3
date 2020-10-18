@@ -10,12 +10,12 @@
           {
             "name": "SparkFun Apollo3 Boards",
             "architecture": "apollo3",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "category": "Contributed",
-            "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.0.1/Arduino_Apollo3.tar.gz",
+            "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.0.2/Arduino_Apollo3.tar.gz",
             "archiveFileName": "Arduino_Apollo3.tar.gz",
-            "checksum": "SHA-256:e093db648879da9c827628d2d35c9480c7809c0ba20ed87969374fcb40b1b9d2",
-            "size": "303554344",
+            "checksum": "SHA-256:9f9dbf796bb694d5dd7b674a82ee2ea8079a21926567b64c68b0e20936dd7d8e",
+            "size": "326568020",
             "help": {
               "online": "https://learn.sparkfun.com/tutorials/installing-arduino-ide/board-add-ons-with-arduino-board-manager"
             },
