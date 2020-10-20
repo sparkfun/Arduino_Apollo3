@@ -6,47 +6,8 @@
 //! @brief Functions to aid with configuring the GPIOs.
 //!
 //! @addtogroup BSP Board Support Package (BSP)
-//! @addtogroup apollo3_fpga_bsp BSP for the Apollo3 Hotshot FPGA
 //! @ingroup BSP
 //! @{
-//
-//*****************************************************************************
-
-//*****************************************************************************
-//
-// Copyright (c) 2019, Ambiq Micro
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-// 
-// 1. Redistributions of source code must retain the above copyright notice,
-// this list of conditions and the following disclaimer.
-// 
-// 2. Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the following disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// 
-// 3. Neither the name of the copyright holder nor the names of its
-// contributors may be used to endorse or promote products derived from this
-// software without specific prior written permission.
-// 
-// Third party software included in this distribution is subject to the
-// additional license terms as defined in the /docs/licenses directory.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
-//
-// This is part of revision v2.0.0 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -78,25 +39,37 @@ extern "C"
 
 //*****************************************************************************
 //
-// PDM Microphone
+// Primary I2C.
 //
 //*****************************************************************************
-#define AM_BSP_PDM_CHANNEL                  AM_HAL_PDM_CHANNEL_RIGHT
-#define AM_BSP_PDM_DATA                     AM_BSP_GPIO_MIC_DATA
-#define AM_BSP_PDM_CLOCK                    AM_BSP_GPIO_MIC_CLK
-#define g_AM_BSP_PDM_DATA                   g_AM_BSP_GPIO_MIC_DATA
-#define g_AM_BSP_PDM_CLOCK                  g_AM_BSP_GPIO_MIC_CLK
-
+#define AM_BSP_PRIM_I2C_IOM                 4
+#define AM_BSP_PRIM_I2C_SDA_PIN             AM_BSP_GPIO_SDA
+#define AM_BSP_PRIM_I2C_SCL_PIN             AM_BSP_GPIO_SCL
+#define g_AM_BSP_PRIM_I2C_SDA               g_AM_BSP_GPIO_SDA
+#define g_AM_BSP_PRIM_I2C_SCL               g_AM_BSP_GPIO_SCL
 
 //*****************************************************************************
 //
-// Qwiic Connector.
+// Primary SPI Pins
 //
 //*****************************************************************************
-#define AM_BSP_QWIIC_I2C_IOM                4
-#define AM_BSP_QWIIC_I2C_SDA_PIN            AM_BSP_GPIO_IOM4_SDA
-#define AM_BSP_QWIIC_I2C_SCL_PIN            AM_BSP_GPIO_IOM4_SCL
+#define AM_BSP_PRIM_SPI_IOM                 3
+#define AM_BSP_PRIM_SPI_CLK_PIN             AM_BSP_GPIO_SPI_SCK
+#define AM_BSP_PRIM_SPI_SDO_PIN             AM_BSP_GPIO_SPI_SDO
+#define AM_BSP_PRIM_SPI_SDI_PIN             AM_BSP_GPIO_SPI_SDI
+#define g_AM_BSP_PRIM_SPI_CLK               g_AM_BSP_GPIO_SPI_SCK
+#define g_AM_BSP_PRIM_SPI_SDO               g_AM_BSP_GPIO_SPI_SDO
+#define g_AM_BSP_PRIM_SPI_SDI               g_AM_BSP_GPIO_SPI_SDI
 
+//*****************************************************************************
+//
+// Primary UART Pins
+//
+//*****************************************************************************
+#define AM_BSP_PRIM_UART_TX_PIN             AM_BSP_GPIO_COM_UART_TX
+#define AM_BSP_PRIM_UART_RX_PIN             AM_BSP_GPIO_COM_UART_RX
+#define g_AM_BSP_PRIM_UART_TX               g_AM_BSP_GPIO_COM_UART_TX
+#define g_AM_BSP_PRIM_UART_RX               g_AM_BSP_GPIO_COM_UART_RX
 
 //*****************************************************************************
 //
@@ -111,10 +84,9 @@ extern am_devices_led_t am_bsp_psLEDs[AM_BSP_NUM_LEDS];
 #define AM_BSP_LED_BLUE      AM_BSP_LED0
 
 // Corresponding GPIO Numbers
-#define AM_BSP_GPIO_LED             AM_BSP_GPIO_LED_BLUE
-#define AM_BSP_GPIO_LED0            AM_BSP_GPIO_LED_BLUE
-#define AM_BSP_GPIO_LED37           AM_BSP_GPIO_LED_BLUE
-
+#define AM_BSP_GPIO_LED0         AM_BSP_GPIO_LED_BLUE
+#define AM_BSP_GPIO_LED19        AM_BSP_GPIO_LED_BLUE
+#define AM_BSP_GPIO_LED_STAT     AM_BSP_GPIO_LED_BLUE
 
 //*****************************************************************************
 //
@@ -122,12 +94,12 @@ extern am_devices_led_t am_bsp_psLEDs[AM_BSP_NUM_LEDS];
 //
 //*****************************************************************************
 //
-// The ATP PWM LED is pad 5
+// The Artemis MM PB LED0 is pad 19
 //
 #define AM_BSP_PIN_PWM_LED                  AM_BSP_GPIO_LED0
-#define AM_BSP_PWM_LED_TIMER                2
-#define AM_BSP_PWM_LED_TIMER_SEG            AM_HAL_CTIMER_TIMERA
-#define AM_BSP_PWM_LED_TIMER_INT            AM_HAL_CTIMER_INT_TIMERA2C0
+#define AM_BSP_PWM_LED_TIMER                1
+#define AM_BSP_PWM_LED_TIMER_SEG            AM_HAL_CTIMER_TIMERB
+#define AM_BSP_PWM_LED_TIMER_INT            AM_HAL_CTIMER_INT_TIMERB1C0
 
 //*****************************************************************************
 //
@@ -141,6 +113,34 @@ extern am_devices_led_t am_bsp_psLEDs[AM_BSP_NUM_LEDS];
 #define AM_BSP_UART_IOS_INST                0
 #define AM_BSP_UART_PRINT_INST              0
 #define AM_BSP_UART_BOOTLOADER_INST         0
+
+//*****************************************************************************
+//
+// Aliases for MicroMod connector pins.
+//
+//*****************************************************************************
+#define AM_BSP_GPIO_CAM_MCLK    AM_BSP_GPIO_AUD_OUT
+#define AM_BSP_GPIO_CAM_PCLK    AM_BSP_GPIO_AUD_IN
+
+#define AM_BSP_GPIO_SPI_SCK1    AM_BSP_GPIO_SDIO_CLK
+#define AM_BSP_GPIO_SPI_SDO1    AM_BSP_GPIO_SDIO_CMD
+#define AM_BSP_GPIO_SPI_SDI1    AM_BSP_GPIO_SDIO_DATA0
+#define AM_BSP_GPIO_SPI_CS1     AM_BSP_GPIO_SDIO_DATA3
+
+#define AM_BSP_GPIO_BUS0    AM_BSP_GPIO_G0
+#define AM_BSP_GPIO_BUS1    AM_BSP_GPIO_G1
+#define AM_BSP_GPIO_BUS2    AM_BSP_GPIO_G2
+#define AM_BSP_GPIO_BUS3    AM_BSP_GPIO_G3
+#define AM_BSP_GPIO_BUS4    AM_BSP_GPIO_G4
+#define AM_BSP_GPIO_BUS5    AM_BSP_GPIO_G5
+#define AM_BSP_GPIO_BUS6    AM_BSP_GPIO_G6
+#define AM_BSP_GPIO_BUS7    AM_BSP_GPIO_G7
+
+#define AM_BSP_GPIO_ADC_DM  AM_BSP_GPIO_G9
+#define AM_BSP_GPIO_ADC_DP  AM_BSP_GPIO_G10
+
+#define AM_BSP_GPIO_CAM_HSYNC   AM_BSP_GPIO_G9
+#define AM_BSP_GPIO_CAM_VSYNC   AM_BSP_GPIO_G10
 
 //*****************************************************************************
 //
@@ -206,6 +206,7 @@ extern void am_bsp_itm_printf_disable(void);
 
 extern void am_bsp_uart_string_print(char *pcString);
 extern void am_bsp_uart_printf_enable(void);
+extern void am_bsp_uart_printf_enable_custom(const am_hal_uart_config_t* p_config);
 extern void am_bsp_uart_printf_disable(void);
 
 extern void am_bsp_buffered_uart_printf_enable(void);
@@ -218,9 +219,3 @@ extern uint32_t am_bsp_com_uart_transfer(const am_hal_uart_transfer_t *psTransfe
 #endif
 
 #endif // AM_BSP_H
-//*****************************************************************************
-//
-// End Doxygen group.
-//! @}
-//
-//*****************************************************************************
