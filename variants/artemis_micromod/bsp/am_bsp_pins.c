@@ -250,7 +250,7 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_SDIO_DATA2 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_SDIO_DATA3 =
 {
-    .uFuncSel            = AM_HAL_PIN_23_MSPI3
+    .uFuncSel            = AM_HAL_PIN_23_MSPI13
 };
 
 //*****************************************************************************
@@ -1211,7 +1211,7 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_MSPI_D2 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_MSPI_D3 =
 {
-    .uFuncSel            = AM_HAL_PIN_23_MSPI3,
+    .uFuncSel            = AM_HAL_PIN_23_MSPI13,
     .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_8MA,
     .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_LO2HI,
     .uIOMnum             = 6
