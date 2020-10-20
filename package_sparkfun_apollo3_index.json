@@ -37,18 +37,18 @@
           {
             "name": "SparkFun Apollo3 Boards",
             "architecture": "apollo3",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "category": "Contributed",
-            "url": "https://github.com/sparkfun/Arduino_Apollo3/archive/v1.1.2_ble-beta.tar.gz",
-            "archiveFileName": "Arduino_Apollo3-1.1.2_ble-beta.tar.gz",
-            "checksum": "SHA-256:8f1377d92d206f78d737a337626d24ed8e80c55a82f9a3c99bad3944a5727f5b",
-            "size": "73604683",
+            "url": "https://github.com/sparkfun/Arduino_Apollo3/archive/v1.2.0.tar.gz",
+            "archiveFileName": "Arduino_Apollo3-1.2.0.tar.gz",
+            "checksum": "SHA-256:89c19130dd1826cccfc25c2ade1c455cbb496ce79d287549f37f47df45529e8c",
+            "size": "73160477",
             "help": {
               "online": "https://learn.sparkfun.com/tutorials/installing-arduino-ide/board-add-ons-with-arduino-board-manager"
             },
             "boards": [
               { "name": "Artemis Module" },
-              { "name": "Artemis Dev Kit"},
+              { "name": "Artemis Dev Kit" },
               { "name": "Artemis Thing Plus" },
               { "name": "RedBoard Artemis" },
               { "name": "RedBoard Artemis ATP" },
