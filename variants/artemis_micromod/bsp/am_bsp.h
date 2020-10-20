@@ -141,6 +141,7 @@ extern am_devices_led_t am_bsp_psLEDs[AM_BSP_NUM_LEDS];
 
 #define AM_BSP_GPIO_CAM_HSYNC   AM_BSP_GPIO_G9
 #define AM_BSP_GPIO_CAM_VSYNC   AM_BSP_GPIO_G10
+#define AM_BSP_GPIO_CAM_TRIG    AM_BSP_GPIO_D1
 
 //*****************************************************************************
 //
