@@ -245,7 +245,7 @@ sfe_edge2.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/up
 
 ###############################################################
 
-sfe_artemis_mm_pb.name=Artemis Micro Mod Processor
+sfe_artemis_mm_pb.name=Artemis MicroMod Processor
 sfe_artemis_mm_pb.build.core=arduino
 sfe_artemis_mm_pb.build.variant=SFE_ARTEMIS_MM_PB
 sfe_artemis_mm_pb.build.arch=APOLLO3
