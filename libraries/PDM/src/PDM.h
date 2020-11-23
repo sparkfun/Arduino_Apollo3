@@ -117,10 +117,9 @@ public:
 
     uint32_t getData(uint16_t *externalBuffer, uint32_t bufferSize);
 
-    void pdm_isr(void);
+    void pdm_isr(uint32_t ui32Status);
 
 private:
-    void *_PDMhandle;
     am_hal_pdm_config_t _PDMconfig;
     pin_size_t _pinPDMData;
     pin_size_t _pinPDMClock;

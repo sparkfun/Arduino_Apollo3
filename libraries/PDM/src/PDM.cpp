@@ -21,7 +21,8 @@ SOFTWARE.
 */
 #include "PDM.h"
 
-AP3_PDM *ap3_pdm_handle = 0;
+AP3_PDM* ap3_pdm_handle = NULL;
+static void* pdm_handle = NULL; // the apollo3 blue only has one PDM instance so let's keep it simple
 
 // AP3_PDM::AP3_PDM(uint16_t *userBuffer, uint32_t bufferSize)
 // {
@@ -34,7 +35,8 @@ AP3_PDM *ap3_pdm_handle = 0;
 
 bool AP3_PDM::begin(pin_size_t pinPDMData, pin_size_t pinPDMClock)
 {
-    _PDMhandle = NULL;
+    pdm_handle = NULL;
+    ap3_pdm_handle = NULL;
     _PDMconfig = ap3_pdm_config_default;
     _pinPDMData = pinPDMData;
     _pinPDMClock = pinPDMClock;
@@ -78,7 +80,7 @@ uint32_t AP3_PDM::_begin(void)
     }
     pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
     retval = am_hal_gpio_pinconfig(_pinPDMData, pincfg);
-    if (retval != AP3_OK)
+    if (retval != AM_HAL_STATUS_SUCCESS)
     {
         return retval;
     }
@@ -90,7 +92,7 @@ uint32_t AP3_PDM::_begin(void)
     }
     pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
     retval = am_hal_gpio_pinconfig(_pinPDMClock, pincfg);
-    if (retval != AP3_OK)
+    if (retval != AM_HAL_STATUS_SUCCESS)
     {
         return retval;
     }
@@ -98,51 +100,62 @@ uint32_t AP3_PDM::_begin(void)
     // Initialize, power-up, and configure the PDM.
 
     // //User may want to change settings mid-sketch. Only init PDM if it's new.
-    if (_PDMhandle == NULL)
+    if (pdm_handle == NULL)
     {
         // Now that pins are initialized start the actual driver
-        retval = (uint32_t)am_hal_pdm_initialize(0, &_PDMhandle);
-        if (retval != AP3_OK)
+        retval = (uint32_t)am_hal_pdm_initialize(0, &pdm_handle);
+        if (retval != AM_HAL_STATUS_SUCCESS)
         {
             return retval;
         }
     }
-    retval = (uint32_t)am_hal_pdm_power_control(_PDMhandle, AM_HAL_PDM_POWER_ON, false);
-    if (retval != AP3_OK)
+    retval = (uint32_t)am_hal_pdm_power_control(pdm_handle, AM_HAL_PDM_POWER_ON, false);
+    if (retval != AM_HAL_STATUS_SUCCESS)
     {
         return retval;
     }
-    retval = (uint32_t)am_hal_pdm_configure(_PDMhandle, &_PDMconfig);
-    if (retval != AP3_OK)
+    retval = (uint32_t)am_hal_pdm_configure(pdm_handle, &_PDMconfig);
+    if (retval != AM_HAL_STATUS_SUCCESS)
     {
         return retval;
     }
-    retval = (uint32_t)am_hal_pdm_enable(_PDMhandle);
-    if (retval != AP3_OK)
+    retval = (uint32_t)am_hal_pdm_enable(pdm_handle);
+    if (retval != AM_HAL_STATUS_SUCCESS)
     {
         return retval;
     }
+
+    Serial.println("pdm initialized and configured. now need to enable interrupts");
 
     //
     // Configure and enable PDM interrupts (set up to trigger on DMA
     // completion).
     //
-    am_hal_pdm_interrupt_enable(_PDMhandle, (AM_HAL_PDM_INT_DERR | AM_HAL_PDM_INT_DCMP | AM_HAL_PDM_INT_UNDFL | AM_HAL_PDM_INT_OVF));
-    //am_hal_interrupt_master_enable();
+    uint32_t ui32Status = 0x00;
+    am_hal_pdm_interrupt_status_get(pdm_handle, &ui32Status, false);
+    am_hal_pdm_interrupt_clear(pdm_handle, ui32Status);
+    am_hal_pdm_interrupt_enable(pdm_handle, (AM_HAL_PDM_INT_DERR | AM_HAL_PDM_INT_DCMP | AM_HAL_PDM_INT_UNDFL | AM_HAL_PDM_INT_OVF));
+    am_hal_interrupt_master_enable();
     NVIC_EnableIRQ(PDM_IRQn);
 
-    // Register the class into the local list
+    Serial.println("interrupts enabled");
+
     ap3_pdm_handle = this;
+
+    Serial.println("object registered");
 
     // Configure DMA and set target address of internal buffer.
     sTransfer.ui32TargetAddr = (uint32_t)_pdmDataBuffer;
     sTransfer.ui32TotalCount = _pdmBufferSize * 2;
 
     // Start the data transfer.
-    am_hal_pdm_enable(_PDMhandle);
+    am_hal_pdm_enable(pdm_handle);
     am_util_delay_ms(100);
-    am_hal_pdm_fifo_flush(_PDMhandle);
-    am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
+    am_hal_pdm_fifo_flush(pdm_handle);
+    am_hal_pdm_dma_start(pdm_handle, &sTransfer);
+
+    Serial.println("dma transfer started");
+    Serial.println(retval);
 
     return retval;
 }
@@ -230,9 +243,9 @@ uint32_t AP3_PDM::getDecimationRate()
 bool AP3_PDM::updateConfig(am_hal_pdm_config_t newConfiguration)
 {
     _PDMconfig = newConfiguration;
-    uint32_t retval = (uint32_t)am_hal_pdm_configure(_PDMhandle, &_PDMconfig);
+    uint32_t retval = (uint32_t)am_hal_pdm_configure(pdm_handle, &_PDMconfig);
 
-    am_hal_pdm_enable(_PDMhandle); //Reenable after changes
+    am_hal_pdm_enable(pdm_handle); //Reenable after changes
 
     if (retval != AP3_OK)
     {
@@ -322,14 +335,8 @@ uint32_t AP3_PDM::getData(uint16_t *externalBuffer, uint32_t externalBufferSize)
     return (externalBufferSize);
 }
 
-inline void AP3_PDM::pdm_isr(void)
+inline void AP3_PDM::pdm_isr(uint32_t ui32Status)
 {
-    uint32_t ui32Status;
-
-    // Read the interrupt status.
-    am_hal_pdm_interrupt_status_get(_PDMhandle, &ui32Status, true);
-    am_hal_pdm_interrupt_clear(_PDMhandle, ui32Status);
-
     if (ui32Status & AM_HAL_PDM_INT_DCMP)
     {
         uint32_t tempReadAmt = _pdmBufferSize;
@@ -389,7 +396,7 @@ inline void AP3_PDM::pdm_isr(void)
         }
 
         //Start next conversion
-        am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
+        am_hal_pdm_dma_start(pdm_handle, &sTransfer);
     }
 }
 
@@ -400,5 +407,12 @@ inline void AP3_PDM::pdm_isr(void)
 //*****************************************************************************
 extern "C" void am_pdm_isr(void)
 {
-    ap3_pdm_handle->pdm_isr();
+    uint32_t ui32Status;
+    // Read the interrupt status.
+    am_hal_pdm_interrupt_status_get(pdm_handle, &ui32Status, true);
+    am_hal_pdm_interrupt_clear(pdm_handle, ui32Status);
+
+    if(ap3_pdm_handle){
+        ap3_pdm_handle->pdm_isr(ui32Status);
+    }
 }
