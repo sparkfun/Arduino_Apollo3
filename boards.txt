@@ -315,30 +315,34 @@ sfe_artemis_module.menu.loader.option_asb.build.ldscript={runtime.platform.path}
 sfe_artemis_module.menu.loader.option_svl.upload.tool=svl
 sfe_artemis_module.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
 
+
 ###############################################################
 
 lora_thing_plus.name=LoRa Thing Plus expLoRaBLE
-lora_thing_plus.build.variant=expLoRaBLE
-lora_thing_plus.build.board=expLoRaBLE
-lora_thing_plus.upload.maximum_size=960000
+lora_thing_plus.build.core=arduino
+lora_thing_plus.build.variant=LoRa_THING_PLUS_expLoRaBLE
+lora_thing_plus.build.board=LoRa_THING_PLUS_expLoRaBLE
+lora_thing_plus.upload.maximum_size=983040
+lora_thing_plus.upload.maximum_data_size=393216
+lora_thing_plus.build.export_format=bin
 lora_thing_plus.upload.sbl_baud=115200
 lora_thing_plus.build.arch=APOLLO3
 lora_thing_plus.build.mcu=cortex-m4
 lora_thing_plus.build.f_cpu=48000000L
-lora_thing_plus.build.core=arduino
-lora_thing_plus.build.includes="-I{build.variant.path}/config" "-I{build.variant.path}/bsp"
-lora_thing_plus.build.extra_flags=-DPART_apollo3 -DAM_PACKAGE_BGA -DAM_PART_APOLLO3 
-lora_thing_plus.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
+lora_thing_plus.build.includes=
+lora_thing_plus.build.defines=
 lora_thing_plus.build.preferred_export_format=bin
 lora_thing_plus.build.defs=
 lora_thing_plus.build.libs=
+
+
 lora_thing_plus.menu.svl_baud.921600=921600
 lora_thing_plus.menu.svl_baud.460800=460800
 lora_thing_plus.menu.svl_baud.230400=230400
 lora_thing_plus.menu.svl_baud.115200=115200
 lora_thing_plus.menu.svl_baud.57600=57600
-lora_thing_plus.menu.loader.sparkfun_svl=SparkFun Variable Loader (Recommended)
-lora_thing_plus.menu.loader.ambiq_sbl=Ambiq Secure Bootloader (Advanced)
+lora_thing_plus.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
+lora_thing_plus.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
 
 lora_thing_plus.menu.svl_baud.57600.upload.svl_baud=57600
 lora_thing_plus.menu.svl_baud.115200.upload.svl_baud=115200
@@ -346,8 +350,11 @@ lora_thing_plus.menu.svl_baud.230400.upload.svl_baud=230400
 lora_thing_plus.menu.svl_baud.460800.upload.svl_baud=460800
 lora_thing_plus.menu.svl_baud.921600.upload.svl_baud=921600
 
-lora_thing_plus.menu.loader.ambiq_sbl.upload.tool=ambiq_bin2board
-lora_thing_plus.menu.loader.ambiq_sbl.build.ldscript={build.variant.path}/linker_scripts/gcc/ambiq_sbl_app.ld
+lora_thing_plus.upload.asb_baud=115200
 
-lora_thing_plus.menu.loader.sparkfun_svl.upload.tool=artemis_svl
-lora_thing_plus.menu.loader.sparkfun_svl.build.ldscript={build.variant.path}/linker_scripts/gcc/artemis_sbl_svl_app.ld
+
+lora_thing_plus.menu.loader.option_asb.upload.tool=asb
+lora_thing_plus.menu.loader.option_asb.build.ldscript={runtime.platform.path}/tools/uploaders/asb/0xC000.ld
+
+lora_thing_plus.menu.loader.option_svl.upload.tool=svl
+lora_thing_plus.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/uploaders/svl/0x10000.ld
