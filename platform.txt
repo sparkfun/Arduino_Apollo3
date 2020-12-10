@@ -29,7 +29,7 @@ includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
 
 # libraries
 libs.core=-Wl,--whole-archive {archive_file_path} -Wl,--no-whole-archive
-libs.mbed=-Wl,--allow-multiple-definition -Wl,--whole-archive {build.variant.path}/mbed/libmbed-os.a -Wl,--no-whole-archive
+libs.mbed=-Wl,--whole-archive {build.variant.path}/mbed/libmbed-os.a -Wl,--no-whole-archive
 libs.variant={build.libs}
 libs.extra=
 libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
