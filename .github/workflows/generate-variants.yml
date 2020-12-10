@@ -28,7 +28,7 @@ jobs:
               {"name": "artemis-redboard-nano-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_NANO", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_NANO", "loc": "variants/SFE_ARTEMIS_NANO"}}},
               {"name": "artemis-thing-plus-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_THING_PLUS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_THING_PLUS", "loc": "variants/SFE_ARTEMIS_THING_PLUS"}}},
               {"name": "edge-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE", "loc": "variants/SFE_EDGE"}}},
-              {"name": "edge2-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE2", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE2", "loc": "variants/SFE_EDGE2"}}},
+              {"name": "edge2-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_EDGE2", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE2", "loc": "variants/SFE_EDGE2"}}}
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-arduino"}
