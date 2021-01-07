@@ -41,8 +41,8 @@ sfe_artemis.menu.svl_baud.460800=460800
 sfe_artemis.menu.svl_baud.230400=230400
 sfe_artemis.menu.svl_baud.115200=115200
 sfe_artemis.menu.svl_baud.57600=57600
-sfe_artemis.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_artemis.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_artemis.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 sfe_artemis.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_artemis.menu.svl_baud.115200.upload.svl_baud=115200
@@ -77,8 +77,8 @@ sfe_artemis_atp.menu.svl_baud.460800=460800
 sfe_artemis_atp.menu.svl_baud.230400=230400
 sfe_artemis_atp.menu.svl_baud.115200=115200
 sfe_artemis_atp.menu.svl_baud.57600=57600
-sfe_artemis_atp.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_artemis_atp.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_artemis_atp.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_atp.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 sfe_artemis_atp.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_artemis_atp.menu.svl_baud.115200.upload.svl_baud=115200
@@ -113,8 +113,8 @@ sfe_artemis_nano.menu.svl_baud.460800=460800
 sfe_artemis_nano.menu.svl_baud.230400=230400
 sfe_artemis_nano.menu.svl_baud.115200=115200
 sfe_artemis_nano.menu.svl_baud.57600=57600
-sfe_artemis_nano.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_artemis_nano.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_artemis_nano.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_nano.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 sfe_artemis_nano.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_artemis_nano.menu.svl_baud.115200.upload.svl_baud=115200
@@ -149,8 +149,8 @@ sfe_artemis_thing_plus.menu.svl_baud.460800=460800
 sfe_artemis_thing_plus.menu.svl_baud.230400=230400
 sfe_artemis_thing_plus.menu.svl_baud.115200=115200
 sfe_artemis_thing_plus.menu.svl_baud.57600=57600
-sfe_artemis_thing_plus.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_artemis_thing_plus.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_artemis_thing_plus.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_thing_plus.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 sfe_artemis_thing_plus.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_artemis_thing_plus.menu.svl_baud.115200.upload.svl_baud=115200
@@ -226,8 +226,8 @@ sfe_edge2.menu.svl_baud.460800=460800
 sfe_edge2.menu.svl_baud.230400=230400
 sfe_edge2.menu.svl_baud.115200=115200
 sfe_edge2.menu.svl_baud.57600=57600
-sfe_edge2.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_edge2.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_edge2.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_edge2.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 sfe_edge2.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_edge2.menu.svl_baud.115200.upload.svl_baud=115200
@@ -245,7 +245,7 @@ sfe_edge2.menu.loader.option_svl.build.ldscript={runtime.platform.path}/tools/up
 
 ###############################################################
 
-sfe_artemis_mm_pb.name=Artemis Micro Mod Processor
+sfe_artemis_mm_pb.name=Artemis MicroMod Processor
 sfe_artemis_mm_pb.build.core=arduino
 sfe_artemis_mm_pb.build.variant=SFE_ARTEMIS_MM_PB
 sfe_artemis_mm_pb.build.arch=APOLLO3
@@ -262,8 +262,8 @@ sfe_artemis_mm_pb.menu.svl_baud.460800=460800
 sfe_artemis_mm_pb.menu.svl_baud.230400=230400
 sfe_artemis_mm_pb.menu.svl_baud.115200=115200
 sfe_artemis_mm_pb.menu.svl_baud.57600=57600
-sfe_artemis_mm_pb.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_artemis_mm_pb.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_artemis_mm_pb.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_mm_pb.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 sfe_artemis_mm_pb.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_artemis_mm_pb.menu.svl_baud.115200.upload.svl_baud=115200
@@ -298,8 +298,9 @@ sfe_artemis_module.menu.svl_baud.460800=460800
 sfe_artemis_module.menu.svl_baud.230400=230400
 sfe_artemis_module.menu.svl_baud.115200=115200
 sfe_artemis_module.menu.svl_baud.57600=57600
-sfe_artemis_module.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+
 
 sfe_artemis_module.menu.svl_baud.57600.upload.svl_baud=57600
 sfe_artemis_module.menu.svl_baud.115200.upload.svl_baud=115200
