@@ -299,7 +299,7 @@ sfe_artemis_module.menu.svl_baud.230400=230400
 sfe_artemis_module.menu.svl_baud.115200=115200
 sfe_artemis_module.menu.svl_baud.57600=57600
 sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
-sfe_artemis_module.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+sfe_artemis_module.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 
 sfe_artemis_module.menu.svl_baud.57600.upload.svl_baud=57600
