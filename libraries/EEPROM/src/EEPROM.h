@@ -7,6 +7,7 @@
 #define _APOLLO3_LIBRARIES_EEPROM_H_
 
 #include "Arduino.h"
+#include "FlashIAPBlockDevice.h"
 
 #define EEPROM_DEFAULT_SRAM_USAGE (1024)
 
@@ -14,7 +15,7 @@ typedef struct _eeprom_config_t {
     mbed::bd_size_t sram_bytes = EEPROM_DEFAULT_SRAM_USAGE;
 } eeprom_config_t;
 
-class EEPROMClass : protected FlashIAPBlockDevice {
+class EEPROMClass : public FlashIAPBlockDevice {
 private:
     eeprom_config_t _cfg;
 
@@ -35,17 +36,17 @@ public:
     }
     uint8_t read(int idx){
         uint8_t val = 0x00;
-        read(&val, idx, 1);
+        read(idx, &val, 1);
         return val;
     }
     void write(int idx, uint8_t* data, uint32_t size){
         mbed::bd_size_t scratch_size = (_cfg.sram_bytes+3)/4;
         uint32_t scratch[scratch_size];
         FlashIAPBlockDevice::read((uint8_t*)scratch, 0, _cfg.sram_bytes);   // keep all of flash in sram in case we need to erase
-        if(memcmp((void*)(((uint8_t*)scratch) + idx), data, size)){         // compare desired data (data) to existing information in flash (scratch)
+		if(memcmp((void*)(((uint8_t*)scratch) + idx), data, size)){         // compare desired data (data) to existing information in flash (scratch)
             erase();
+			memcpy(scratch, data, size);
             int result = FlashIAPBlockDevice::program((uint8_t*)scratch, 0, 4*scratch_size);
-            printf("updating flash. result: %d\n", result);
             return;
         }
         printf("contents already match\n");
@@ -66,7 +67,7 @@ public:
     }
 
     template <typename T> T &get(int idx, T &t){
-        read((uint8_t*)&t, idx, sizeof(T)/sizeof(uint8_t));
+        read(idx,(uint8_t*)&t, sizeof(T)/sizeof(uint8_t));
         return t;
     }
 

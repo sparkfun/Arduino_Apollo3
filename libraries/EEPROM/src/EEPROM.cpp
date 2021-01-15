@@ -14,14 +14,14 @@ EEPROMClass EEPROM;
 #define EEPROM_ADDRESS(A) ((A/AM_HAL_FLASH_PAGE_SIZE) * AM_HAL_FLASH_PAGE_SIZE)
 #define EEPROM_SIZE(S) (((S+(AM_HAL_FLASH_PAGE_SIZE-1))/AM_HAL_FLASH_PAGE_SIZE) * AM_HAL_FLASH_PAGE_SIZE)
 
-EEPROMClass::EEPROMClass(uint32_t address, uint32_t size)
+EEPROMClass::EEPROMClass(uint32_t address, uint32_t size) :
     FlashIAPBlockDevice(EEPROM_ADDRESS(address), EEPROM_SIZE(size))
 {
 
 }
 
 EEPROMClass::EEPROMClass(void) :
-    EEPROM(DEFAULT_ADDRESS, DEFAULT_SIZE)
+    FlashIAPBlockDevice(DEFAULT_ADDRESS, DEFAULT_SIZE)
 {
 
 }
