@@ -150,7 +150,7 @@ int analogReadVSS( void ){
 void indexAnalogWrite(pin_size_t index, int val){
     // todo: replace with mbed "PwmOut" functionality
 
-    pin_size_t pinNumber = pinNumberByIndex(index);
+    pin_size_t pinNumber = pinNameByIndex(index);
     if(pinNumber == (pin_size_t)NC){ return; }
     ap3_gpio_pad_t pad = pinNumber;
 
