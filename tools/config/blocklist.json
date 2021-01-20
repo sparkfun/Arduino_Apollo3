@@ -12,7 +12,20 @@
         },
         "cxx": {
             "flags": [
-                "-MMD"
+                "-Wvla",
+                "-Wall",
+                "-Wextra",
+                "-Wno-missing-field-initializers",
+                "-Wno-unused-parameter"
+            ]
+        },
+        "c": {
+            "flags": [
+                "-Wvla",
+                "-Wall",
+                "-Wextra",
+                "-Wno-missing-field-initializers",
+                "-Wno-unused-parameter"
             ]
         }
     }
