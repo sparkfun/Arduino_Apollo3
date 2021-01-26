@@ -341,8 +341,8 @@ lora_thing_plus.menu.svl_baud.460800=460800
 lora_thing_plus.menu.svl_baud.230400=230400
 lora_thing_plus.menu.svl_baud.115200=115200
 lora_thing_plus.menu.svl_baud.57600=57600
-lora_thing_plus.menu.loader.option_asb=Ambiq Secure Bootloader (Recommended)
-lora_thing_plus.menu.loader.option_svl=SparkFun Variable Loader (Out of Order)
+lora_thing_plus.menu.loader.option_svl=SparkFun Variable Loader (Recommended)
+lora_thing_plus.menu.loader.option_asb=Ambiq Secure Bootloader (Advanced)
 
 lora_thing_plus.menu.svl_baud.57600.upload.svl_baud=57600
 lora_thing_plus.menu.svl_baud.115200.upload.svl_baud=115200
