@@ -15,21 +15,21 @@ defines.variant={build.defines}
 defines.extra=
 defines.all={defines.variant} {defines.arduino} {defines.mbed} {defines.extra} -DCORDIO_ZERO_COPY_HCI
 defines.preproc={defines.all}
-defines.asm={defines.all} @{build.variant.path}/mbed/.asm-symbols
-defines.c={defines.all} @{build.variant.path}/mbed/.c-symbols
-defines.cxx={defines.all} @{build.variant.path}/mbed/.cxx-symbols
-defines.ld={defines.all} @{build.variant.path}/mbed/.ld-symbols
+defines.asm={defines.all} "@{build.variant.path}/mbed/.asm-symbols"
+defines.c={defines.all} "@{build.variant.path}/mbed/.c-symbols"
+defines.cxx={defines.all} "@{build.variant.path}/mbed/.cxx-symbols"
+defines.ld={defines.all} "@{build.variant.path}/mbed/.ld-symbols"
 
 # includes
 includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" 
-includes.mbed=@{build.variant.path}/mbed/.includes
+includes.mbed="@{build.variant.path}/mbed/.includes"
 includes.variant={build.includes}
 includes.extra=
 includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
 
 # libraries
-libs.core=-Wl,--whole-archive {archive_file_path} -Wl,--no-whole-archive
-libs.mbed=-Wl,--whole-archive {build.variant.path}/mbed/libmbed-os.a -Wl,--no-whole-archive
+libs.core=-Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
+libs.mbed=-Wl,--whole-archive "{build.variant.path}/mbed/libmbed-os.a" -Wl,--no-whole-archive
 libs.variant={build.libs}
 libs.extra=
 libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
@@ -43,10 +43,10 @@ compiler.warning_flags.all={compiler.warning_flags.default} -Wextra
 
 # flags
 compiler.preproc.flags={compiler.cxx.flags} -w -x c++ -E -CC {compiler.preproc.extra_flags}
-compiler.asm.flags=-include {build.variant.path}/mbed/mbed_config.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.asm-flags {compiler.asm.extra_flags}
-compiler.c.flags=-iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.c-flags {compiler.c.extra_flags}
-compiler.cxx.flags=-include {build.variant.path}/mbed/mbed_config.h -include {cores.path}/arduino/sdk/ArduinoSDK.h -iprefix{runtime.platform.path}/cores/ @{build.variant.path}/mbed/.cxx-flags {compiler.cxx.extra_flags}
-compiler.ld.flags=@{build.variant.path}/mbed/.ld-flags {compiler.ld.extra_flags} --specs=nano.specs -lsupc++ -lstdc++ -lm
+compiler.asm.flags=-include "{build.variant.path}/mbed/mbed_config.h" -iprefix "{runtime.platform.path}/cores/" "@{build.variant.path}/mbed/.asm-flags" {compiler.asm.extra_flags}
+compiler.c.flags=-iprefix "{runtime.platform.path}/cores/" "@{build.variant.path}/mbed/.c-flags" {compiler.c.extra_flags}
+compiler.cxx.flags=-include "{build.variant.path}/mbed/mbed_config.h" -include "{cores.path}/arduino/sdk/ArduinoSDK.h" -iprefix "{runtime.platform.path}/cores/" "@{build.variant.path}/mbed/.cxx-flags" {compiler.cxx.extra_flags}
+compiler.ld.flags="@{build.variant.path}/mbed/.ld-flags" {compiler.ld.extra_flags} --specs=nano.specs -lsupc++ -lstdc++ -lm
 compiler.ar.flags=rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 compiler.axf2bin.flags={compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
 compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags} -O ihex
