@@ -12,6 +12,7 @@
         },
         "cxx": {
             "flags": [
+                "-MMD",
                 "-Wvla",
                 "-Wall",
                 "-Wextra",
@@ -21,6 +22,7 @@
         },
         "c": {
             "flags": [
+                "-MMD",
                 "-Wvla",
                 "-Wall",
                 "-Wextra",

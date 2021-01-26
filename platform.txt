@@ -24,7 +24,7 @@ defines.ld={defines.all} @{build.variant.path}/mbed/.ld-symbols
 includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" 
 includes.mbed=@{build.variant.path}/mbed/.includes
 includes.variant={build.includes}
-includes.extra="-I{cores.path}/mbed-os/drivers/"
+includes.extra=
 includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
 
 # libraries
@@ -54,8 +54,8 @@ compiler.axf2hex.flags={compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_fl
 # extra flags (can be overridden in platform.local.txt)
 compiler.preproc.extra_flags=
 compiler.asm.extra_flags=
-compiler.c.extra_flags=
-compiler.cxx.extra_flags=
+compiler.c.extra_flags=-MMD
+compiler.cxx.extra_flags=-MMD
 compiler.ld.extra_flags=
 compiler.ar.extra_flags=
 compiler.axf2bin.extra_flags=
