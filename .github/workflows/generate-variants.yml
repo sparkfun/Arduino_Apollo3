@@ -22,6 +22,7 @@ jobs:
         with:
           jobs: |
             [
+              {"name": "lora-thing-plus-explorable-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "LoRa_THING_PLUS_expLoRaBLE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "LoRa_THING_PLUS_expLoRaBLE", "loc": "variants/LoRa_THING_PLUS_expLoRaBLE"}}},
               {"name": "artemis-redboard-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS", "loc": "variants/SFE_ARTEMIS"}}},
               {"name": "artemis-redboard-atp-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_ATP", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}},
               {"name": "artemis-dev-kit-lib", "config": {"base": "compile --library --source=mbed-os", "tgt": "SFE_ARTEMIS_DK", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
