@@ -10,13 +10,18 @@
 
 #include "config/pins.h"
 
-#define VARIANT_SPI_INTFCS  1
+#define VARIANT_SPI_INTFCS  2
 #define VARIANT_WIRE_INTFCS 1
 
 // SPI
 #define VARIANT_SPI_SDI     SPI_SDI
 #define VARIANT_SPI_SDO     SPI_SDO
 #define VARIANT_SPI_CLK     SPI_CLK
+
+//LoRa SPI Pins
+#define VARIANT_SPI1_SDI     D43
+#define VARIANT_SPI1_SDO     D38
+#define VARIANT_SPI1_CLK     D42
 
 // Wire
 #define VARIANT_Wire_SDA    I2C_SDA

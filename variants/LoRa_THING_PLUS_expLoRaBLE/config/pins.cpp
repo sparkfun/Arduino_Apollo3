@@ -5,7 +5,7 @@
 
 #include "bridge/pins.h"
 
-const pin_size_t variantPinCount = 25;
+const pin_size_t variantPinCount = 33;
 
 PinState variantPinStates[variantPinCount] = {
     {D0, 0, NULL, /*NULL, NULL, NULL,*/ NULL},
@@ -34,11 +34,12 @@ PinState variantPinStates[variantPinCount] = {
     {D23, 23, NULL, /*NULL, NULL, NULL,*/ NULL},
     {D24, 24, NULL, /*NULL, NULL, NULL,*/ NULL},
 	
-	//{D36, 36, NULL, /*NULL, NULL, NULL,*/ NULL},
-    //{D38, 38, NULL, /*NULL, NULL, NULL,*/ NULL},
-    //{D39, 39, NULL, /*NULL, NULL, NULL,*/ NULL},
-    //{D42, 42, NULL, /*NULL, NULL, NULL,*/ NULL},
-	//{D43, 43, NULL, /*NULL, NULL, NULL,*/ NULL},
-    //{D44, 44, NULL, /*NULL, NULL, NULL,*/ NULL},
-    //{D47, 47, NULL, /*NULL, NULL, NULL,*/ NULL},
+	{D36, 36, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D38, 38, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D39, 39, NULL, /*NULL, NULL, NULL,*/ NULL},
+	{D40, 40, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D42, 42, NULL, /*NULL, NULL, NULL,*/ NULL},
+	{D43, 43, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D44, 44, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D47, 47, NULL, /*NULL, NULL, NULL,*/ NULL},
 };
