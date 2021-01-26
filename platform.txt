@@ -21,15 +21,15 @@ defines.cxx={defines.all} @{build.variant.path}/mbed/.cxx-symbols
 defines.ld={defines.all} @{build.variant.path}/mbed/.ld-symbols
 
 # includes
-includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api"
+includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" 
 includes.mbed=@{build.variant.path}/mbed/.includes
 includes.variant={build.includes}
-includes.extra=
+includes.extra="-I{cores.path}/mbed-os/drivers/"
 includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
 
 # libraries
 libs.core=-Wl,--whole-archive {archive_file_path} -Wl,--no-whole-archive
-libs.mbed={build.variant.path}/mbed/libmbed-os.a
+libs.mbed=-Wl,--whole-archive {build.variant.path}/mbed/libmbed-os.a -Wl,--no-whole-archive
 libs.variant={build.libs}
 libs.extra=
 libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
