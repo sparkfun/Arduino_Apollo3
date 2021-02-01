@@ -10,9 +10,9 @@
           {
             "name": "SparkFun Apollo3 Boards",
             "architecture": "apollo3",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "category": "Contributed",
-            "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.0.4/Arduino_Apollo3.tar.gz",
+            "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.0.5/Arduino_Apollo3.tar.gz",
             "archiveFileName": "Arduino_Apollo3.tar.gz",
             "checksum": "SHA-256:858B729EF8711740395F355A2B050159195CA5C2FE51EAD041BADF78A4C30D71",
             "size": "348333929",
