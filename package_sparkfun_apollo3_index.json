@@ -29,7 +29,7 @@
               { "name": "Edge" },
               { "name": "Edge2" },
               { "name": "MicroMod Artemis Processor" },
-              { "name": "LoRa Thing Plus expLoRaBLE" },
+              { "name": "LoRa Thing Plus expLoRaBLE" }
             ],
             "toolsDependencies": [
               { "packager": "SparkFun", "name": "arm-none-eabi-gcc", "version": "8-2018-q4-major" }
