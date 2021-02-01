@@ -15,6 +15,7 @@ setAlarm	KEYWORD2
 setAlarmMode	KEYWORD2
 attachInterrupt	KEYWORD2
 detachInterrupt	KEYWORD2
+clearInterrupt	KEYWORD2
 
 # Structures (KEYWORD3)
 
