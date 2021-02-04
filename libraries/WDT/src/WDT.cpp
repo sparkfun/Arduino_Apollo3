@@ -5,10 +5,10 @@
 
 #include "WDT.h"
 
-Apollo3WDT WDT;
+Apollo3WDT wdt;
 
 // Constructor
-Apollo3WDT::Apollo3WDT() {
+Apollo3WDT::Apollo3WDT()
 {
     // The watchdog only runs off of the LFRC
     am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_LFRC_START, 0);
@@ -98,4 +98,3 @@ uint32_t Apollo3WDT::getCounter()
 {
   return am_hal_wdt_counter_get();
 }
-

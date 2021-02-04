@@ -8,8 +8,8 @@
 
 #include <Arduino.h>
 
-#ifdef WDT
-#undef WDT
+#ifdef wdt
+#undef wdt
 #endif
 
 // Simplified WDT Clock Divider Selections
@@ -51,6 +51,6 @@ public:
   void setReset(uint8_t reset); // Set number of ticks before the watchdog will issue a system reset
 };
 
-extern Apollo3WDT WDT;
+extern Apollo3WDT wdt;
 
 #endif // _APOLLO3_LIBRARIES_RTC_H_

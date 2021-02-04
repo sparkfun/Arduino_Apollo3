@@ -40,10 +40,10 @@ void setup()
 
   // Configure the watchdog timer
   // See Example2_WDT_Config for more information on how to configure the watchdog
-  WDT.configure(WDT_16HZ, 160, 240); // 16 Hz clock, 10-second interrupt period, 15-second reset period
+  wdt.configure(WDT_16HZ, 160, 240); // 16 Hz clock, 10-second interrupt period, 15-second reset period
 
   // Start the watchdog
-  WDT.start();
+  wdt.start();
 }
 
 void loop()
@@ -73,10 +73,10 @@ void loop()
 // Print the RTC's current date and time
 void printDateTime()
 {
-  rtc.getTime();
+  RTC.getTime();
   Serial.printf("20%02d-%02d-%02d %02d:%02d:%02d.%02d\n",
-                rtc.year, rtc.month, rtc.dayOfMonth,
-                rtc.hour, rtc.minute, rtc.seconds, rtc.hundredths);
+                RTC.year, RTC.month, RTC.dayOfMonth,
+                RTC.hour, RTC.minute, RTC.seconds, RTC.hundredths);
 }
 
 // Power down gracefully
@@ -154,7 +154,7 @@ extern "C" void am_watchdog_isr(void)
   // Perform system reset after 10 watchdog interrupts (should not occur)
   if ( watchdogInterrupt < 10 )
   {
-    WDT.restart(); // "Pet" the dog
+    wdt.restart(); // "Pet" the dog
   }
   else {
     digitalWrite(LED_BUILTIN, HIGH); // Visual indication of system reset trigger

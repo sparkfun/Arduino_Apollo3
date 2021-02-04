@@ -35,7 +35,7 @@ void setup() {
   Serial.println("Artemis Watchdog Timer Example");
 
   // Start the watchdog
-  WDT.start();
+  wdt.start();
 }
 
 void loop()
@@ -63,12 +63,12 @@ void loop()
 extern "C" void am_watchdog_isr(void)
 {
   // Clear the watchdog interrupt
-  WDT.clear();
+  wdt.clear();
 
   // Catch the first four watchdog interrupts, but let the fifth through untouched
   if ( watchdogInterrupt < 4 )
   {
-    WDT.restart(); // "Pet" the dog
+    wdt.restart(); // "Pet" the dog
   }
   else {
     digitalWrite(LED_BUILTIN, HIGH); // Visual indication of system reset trigger

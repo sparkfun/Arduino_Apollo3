@@ -57,8 +57,8 @@ void setup()
   // Set watchdog interrupt to 1 seconds (128 ticks / 128 Hz = 1 second)
   // Set watchdog reset ~2 seconds (255 ticks / 128 Hz = 1.99 seconds)
   // Note: Ticks are limited to 255 (8-bit)
-  WDT.configure(WDT_128HZ, 128, 255); // Equivalent to: wdt.configure(1, 128, 255);
-  WDT.start(); // Start the watchdog
+  wdt.configure(WDT_128HZ, 128, 255); // Equivalent to: wdt.configure(1, 128, 255);
+  wdt.start(); // Start the watchdog
 }
 
 void loop()
@@ -74,9 +74,9 @@ void loop()
     Serial.print(" Period: "); Serial.print(currentMillis); Serial.println(" ms");
 
     // The watchdog configurations can also be set individually
-    WDT.setClock(WDT_16HZ); // Set watchdog timer clock to 16 Hz
-    WDT.setInterrupt(64); // Set watchdog interrupt to 4 second (64 ticks / 16 Hz = 4 seconds)
-    WDT.setReset(96); // Set watchdog reset to 8 seconds (96 ticks / 16 Hz = 8 seconds)
+    wdt.setClock(WDT_16HZ); // Set watchdog timer clock to 16 Hz
+    wdt.setInterrupt(64); // Set watchdog interrupt to 4 second (64 ticks / 16 Hz = 4 seconds)
+    wdt.setReset(96); // Set watchdog reset to 8 seconds (96 ticks / 16 Hz = 8 seconds)
 
     if (watchdogInterrupt == 9)
     {
@@ -91,12 +91,12 @@ void loop()
 extern "C" void am_watchdog_isr(void)
 {
   // Clear the watchdog interrupt
-  WDT.clear();
+  wdt.clear();
 
   // Catch the first eight watchdog interrupts, but let the ninth through untouched
   if ( watchdogInterrupt < 8 )
   {
-    WDT.restart(); // "Pet" the dog
+    wdt.restart(); // "Pet" the dog
   }
   else
   {
