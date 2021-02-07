@@ -27,8 +27,14 @@ public:
     void config(eeprom_config_t cfg){
         _cfg = cfg;
     }
+    mbed::bd_size_t length(void){
+        return(_cfg.sram_bytes);
+    }
     void configSramUsage(mbed::bd_size_t bytes){
         _cfg.sram_bytes = bytes;
+    }
+    void setLength(mbed::bd_size_t bytes){ //Old function to maintain compatibility
+        configSramUsage(bytes);
     }
 
     void read(int idx, uint8_t* data, uint32_t size){
@@ -40,29 +46,15 @@ public:
         return val;
     }
     void write(int idx, uint8_t* data, uint32_t size){
-        mbed::bd_size_t scratch_size = (_cfg.sram_bytes+3)/4;
-        uint32_t scratch[scratch_size];
+        mbed::bd_size_t scratch_size = _cfg.sram_bytes;
+        uint8_t scratch[scratch_size];
 
         FlashIAPBlockDevice::read((uint8_t*)scratch, 0, _cfg.sram_bytes);   // keep all of flash in sram in case we need to erase
 
         if(memcmp((void*)(((uint8_t*)scratch) + idx), data, size)){         // compare desired data (data) to existing information in flash (scratch)
-
-            if(idx % 4 == 0)
-            {
-			    memcpy(scratch + idx/4, data, size); //We have byte alignment
-            }
-            else
-            {
-                //Move data to byte alignment
-                uint8_t alignedData[size + (idx % 4)];
-			    memcpy(alignedData + (idx % 4), data, size + (idx % 4)); //Shift data
-
-			    memcpy(scratch + (idx / 4), alignedData, size + (idx % 4)); //Paint aligned data back onto scratch
-            }
-
+		    memcpy(scratch + idx, data, size);
             erase();
-            int result = FlashIAPBlockDevice::program((uint8_t*)scratch, 0, 4*scratch_size);
-
+            int result = FlashIAPBlockDevice::program((uint8_t*)scratch, 0, scratch_size);
             return;
         }
     }
