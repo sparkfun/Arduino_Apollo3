@@ -49,7 +49,7 @@ public:
             int result = FlashIAPBlockDevice::program((uint8_t*)scratch, 0, 4*scratch_size);
             return;
         }
-        printf("contents already match\n");
+        //printf("contents already match\n");
     }
     void write(int idx, uint8_t val){
         write(idx, &val, 1);
