@@ -46,7 +46,19 @@ public:
         FlashIAPBlockDevice::read((uint8_t*)scratch, 0, _cfg.sram_bytes);   // keep all of flash in sram in case we need to erase
 
         if(memcmp((void*)(((uint8_t*)scratch) + idx), data, size)){         // compare desired data (data) to existing information in flash (scratch)
-    	    memcpy(scratch + idx/4, data, size);
+
+            if(idx % 4 == 0)
+            {
+			    memcpy(scratch + idx/4, data, size); //We have byte alignment
+            }
+            else
+            {
+                //Move data to byte alignment
+                uint8_t alignedData[size + (idx % 4)];
+			    memcpy(alignedData + (idx % 4), data, size + (idx % 4)); //Shift data
+
+			    memcpy(scratch + (idx / 4), alignedData, size + (idx % 4)); //Paint aligned data back onto scratch
+            }
 
             erase();
             int result = FlashIAPBlockDevice::program((uint8_t*)scratch, 0, 4*scratch_size);
