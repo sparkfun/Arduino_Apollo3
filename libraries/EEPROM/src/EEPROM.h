@@ -42,14 +42,17 @@ public:
     void write(int idx, uint8_t* data, uint32_t size){
         mbed::bd_size_t scratch_size = (_cfg.sram_bytes+3)/4;
         uint32_t scratch[scratch_size];
+
         FlashIAPBlockDevice::read((uint8_t*)scratch, 0, _cfg.sram_bytes);   // keep all of flash in sram in case we need to erase
-		if(memcmp((void*)(((uint8_t*)scratch) + idx), data, size)){         // compare desired data (data) to existing information in flash (scratch)
+
+        if(memcmp((void*)(((uint8_t*)scratch) + idx), data, size)){         // compare desired data (data) to existing information in flash (scratch)
+    	    memcpy(scratch + idx/4, data, size);
+
             erase();
-			memcpy(scratch, data, size);
             int result = FlashIAPBlockDevice::program((uint8_t*)scratch, 0, 4*scratch_size);
+
             return;
         }
-        //printf("contents already match\n");
     }
     void write(int idx, uint8_t val){
         write(idx, &val, 1);
