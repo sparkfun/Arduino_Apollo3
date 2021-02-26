@@ -8,8 +8,8 @@
 
 #include <Arduino.h>
 
-#ifdef RTC
-#undef RTC
+#ifdef rtc
+#undef rtc
 #endif
 
 class Apollo3RTC {
@@ -57,6 +57,6 @@ public:
     const char *alarmTextWeekday;
 };
 
-extern Apollo3RTC RTC;
+extern Apollo3RTC rtc;
 
 #endif // _APOLLO3_LIBRARIES_RTC_H_

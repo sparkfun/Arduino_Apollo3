@@ -41,4 +41,4 @@ alarmMinute	LITERAL2
 alarmSeconds	LITERAL2
 alarmHundredths	LITERAL2
 alarmTextWeekday	LITERAL2
-RTC	LITERAL2
+rtc	LITERAL2

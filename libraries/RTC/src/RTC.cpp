@@ -6,7 +6,7 @@
 #include "RTC.h"
 #include <time.h>
 
-Apollo3RTC RTC;
+Apollo3RTC rtc;
 
 am_hal_rtc_time_t hal_time;
 am_hal_rtc_time_t alm_time;
