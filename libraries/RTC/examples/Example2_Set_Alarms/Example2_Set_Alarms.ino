@@ -28,13 +28,13 @@ void setup()
   Serial.println("SparkFun RTC Set Alarm Example");
 
   // // Easily set RTC using the system __DATE__ and __TIME__ macros from compiler
-  // RTC.setToCompilerTime();
+  // rtc.setToCompilerTime();
 
   // Manually set RTC date and time
-  RTC.setTime(0, 50, 59, 12, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
+  rtc.setTime(0, 50, 59, 12, 3, 6, 20); // 12:59:50.000, June 3rd, 2020 (hund, ss, mm, hh, dd, mm, yy)
 
   // Set the RTC's alarm
-  RTC.setAlarm(0, 0, 0, 13, 3, 6); // 13:00:00.000, June 3rd (hund, ss, mm, hh, dd, mm). Note: No year alarm register
+  rtc.setAlarm(0, 0, 0, 13, 3, 6); // 13:00:00.000, June 3rd (hund, ss, mm, hh, dd, mm). Note: No year alarm register
   
   // Set the RTC alarm mode
   /*
@@ -47,8 +47,8 @@ void setup()
     6: Alarm match every minute (hundredths, seconds)
     7: Alarm match every second (hundredths)
   */
-  RTC.setAlarmMode(6); // Set the RTC alarm to match on minutes rollover
-  RTC.attachInterrupt(); // Attach RTC alarm interrupt
+  rtc.setAlarmMode(6); // Set the RTC alarm to match on minutes rollover
+  rtc.attachInterrupt(); // Attach RTC alarm interrupt
 
   // Print the RTC's alarm date and time
   Serial.print("Next alarm: "); printAlarm();
@@ -77,31 +77,29 @@ void loop()
 // Print the RTC's current date and time
 void printDateTime()
 {
-  RTC.getTime();
-  char dateTimeBuffer[25];
-  sprintf(dateTimeBuffer, "20%02d-%02d-%02d %02d:%02d:%02d.%03d",
-          RTC.year, RTC.month, RTC.dayOfMonth,
-          RTC.hour, RTC.minute, RTC.seconds, RTC.hundredths);
-  Serial.println(dateTimeBuffer);
+  rtc.getTime();
+  Serial.printf("20%02d-%02d-%02d %02d:%02d:%02d.%03d\n",
+          rtc.year, rtc.month, rtc.dayOfMonth,
+          rtc.hour, rtc.minute, rtc.seconds, rtc.hundredths);
 }
 
 // Print the RTC's alarm
 void printAlarm()
 {
-  RTC.getAlarm();
-  char alarmBuffer[25];
-  sprintf(alarmBuffer, "2020-%02d-%02d %02d:%02d:%02d.%03d",
-          RTC.alarmMonth, RTC.alarmDayOfMonth,
-          RTC.alarmHour, RTC.alarmMinute,
-          RTC.alarmSeconds, RTC.alarmHundredths);
-  Serial.println(alarmBuffer);
+  rtc.getAlarm();
+
+  Serial.printf("2020-%02d-%02d %02d:%02d:%02d.%03d\n",
+          rtc.alarmMonth, rtc.alarmDayOfMonth,
+          rtc.alarmHour, rtc.alarmMinute,
+          rtc.alarmSeconds, rtc.alarmHundredths);
+  Serial.println();
 }
 
 // Interrupt handler for the RTC
 extern "C" void am_rtc_isr(void)
 {
   // Clear the RTC alarm interrupt.
-  am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
+  rtc.clearInterrupt();
 
   // Set alarm flag
   alarmFlag = true;
