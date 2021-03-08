@@ -17,6 +17,7 @@
 "-iwithprefixbeforembed-os/components/wifi"
 "-iwithprefixbeforembed-os/components/wifi/esp8266-driver"
 "-iwithprefixbeforembed-os/components/wifi/esp8266-driver/ESP8266"
+"-iwithprefixbeforembed-os/drivers"
 "-iwithprefixbeforembed-os/drivers/internal"
 "-iwithprefixbeforembed-os/events"
 "-iwithprefixbeforembed-os/events/internal"
