@@ -9,6 +9,9 @@
                 "-Wl,--wrap,_malloc_r",
                 "-Wl,--wrap,_realloc_r"
             ]
+			"macros": [
+				"ARDUINO"
+			]
         },
         "cxx": {
             "flags": [
@@ -19,6 +22,9 @@
                 "-Wno-missing-field-initializers",
                 "-Wno-unused-parameter"
             ]
+			"macros": [
+				"ARDUINO"
+			]
         },
         "c": {
             "flags": [
@@ -29,6 +35,9 @@
                 "-Wno-missing-field-initializers",
                 "-Wno-unused-parameter"
             ]
+			"macros": [
+				"ARDUINO"
+			]
         }
     }
 }
