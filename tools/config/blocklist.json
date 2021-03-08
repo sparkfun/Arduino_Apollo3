@@ -8,10 +8,7 @@
                 "-Wl,--wrap,_free_r",
                 "-Wl,--wrap,_malloc_r",
                 "-Wl,--wrap,_realloc_r"
-            ],
-			"macros": [
-				"ARDUINO"
-			]
+            ]
         },
         "cxx": {
             "flags": [
@@ -21,10 +18,7 @@
                 "-Wextra",
                 "-Wno-missing-field-initializers",
                 "-Wno-unused-parameter"
-            ],
-			"macros": [
-				"ARDUINO"
-			]
+            ]
         },
         "c": {
             "flags": [
@@ -34,15 +28,7 @@
                 "-Wextra",
                 "-Wno-missing-field-initializers",
                 "-Wno-unused-parameter"
-            ],
-			"macros": [
-				"ARDUINO"
-			]
-        },
-		"asm": {
-			"macros": [
-				"ARDUINO"
-			]
+            ]
         }
     }
 }

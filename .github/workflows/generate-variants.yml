@@ -22,15 +22,15 @@ jobs:
         with:
           jobs: |
             [
-              {"name": "lora-thing-plus-explorable-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "LORA_THING_PLUS_EXPLORABLE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "LoRa_THING_PLUS_expLoRaBLE", "loc": "variants/LoRa_THING_PLUS_expLoRaBLE"}}},
-              {"name": "artemis-redboard-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_ARTEMIS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS", "loc": "variants/SFE_ARTEMIS"}}},
-              {"name": "artemis-redboard-atp-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_ARTEMIS_ATP", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}},
-              {"name": "artemis-dev-kit-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_ARTEMIS_DK", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
-              {"name": "artemis-redboard-nano-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_ARTEMIS_NANO", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_NANO", "loc": "variants/SFE_ARTEMIS_NANO"}}},
-              {"name": "artemis-thing-plus-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_ARTEMIS_THING_PLUS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_THING_PLUS", "loc": "variants/SFE_ARTEMIS_THING_PLUS"}}},
-              {"name": "edge-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_EDGE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE", "loc": "variants/SFE_EDGE"}}},
-              {"name": "edge2-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_EDGE2", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE2", "loc": "variants/SFE_EDGE2"}}},
-              {"name": "artemis-mm-pb-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO", "tgt": "SFE_ARTEMIS_MM_PB", "tool": "GCC_ARM"}, "user": {"variant": {"name": "SFE_ARTEMIS_MM_PB", "loc": "variants/SFE_ARTEMIS_MM_PB"}}}
+              {"name": "lora-thing-plus-explorable-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "LORA_THING_PLUS_EXPLORABLE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "LoRa_THING_PLUS_expLoRaBLE", "loc": "variants/LoRa_THING_PLUS_expLoRaBLE"}}},
+              {"name": "artemis-redboard-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_ARTEMIS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS", "loc": "variants/SFE_ARTEMIS"}}},
+              {"name": "artemis-redboard-atp-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_ARTEMIS_ATP", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_ATP", "loc": "variants/SFE_ARTEMIS_ATP"}}},
+              {"name": "artemis-dev-kit-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_ARTEMIS_DK", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_DEV_KIT", "loc": "variants/SFE_ARTEMIS_DK"}}},
+              {"name": "artemis-redboard-nano-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_ARTEMIS_NANO", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_NANO", "loc": "variants/SFE_ARTEMIS_NANO"}}},
+              {"name": "artemis-thing-plus-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_ARTEMIS_THING_PLUS", "tool": "GCC_ARM"}, "user": {"variant": {"name": "ARTEMIS_THING_PLUS", "loc": "variants/SFE_ARTEMIS_THING_PLUS"}}},
+              {"name": "edge-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_EDGE", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE", "loc": "variants/SFE_EDGE"}}},
+              {"name": "edge2-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_EDGE2", "tool": "GCC_ARM"}, "user": {"variant": {"name": "EDGE2", "loc": "variants/SFE_EDGE2"}}},
+              {"name": "artemis-mm-pb-lib", "config": {"base": "compile --library --source=mbed-os -D ARDUINO_BLE_FIX", "tgt": "SFE_ARTEMIS_MM_PB", "tool": "GCC_ARM"}, "user": {"variant": {"name": "SFE_ARTEMIS_MM_PB", "loc": "variants/SFE_ARTEMIS_MM_PB"}}}
             ]
           mbed: |
             {"url": "https://github.com/sparkfun/mbed-os-ambiq-apollo3", "branch": "ambiq-apollo3-arduino"}
