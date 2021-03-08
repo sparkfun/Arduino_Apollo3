@@ -38,6 +38,11 @@
 			"macros": [
 				"ARDUINO"
 			]
+        },
+		"asm": {
+			"macros": [
+				"ARDUINO"
+			]
         }
     }
 }
