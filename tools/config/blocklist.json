@@ -8,7 +8,7 @@
                 "-Wl,--wrap,_free_r",
                 "-Wl,--wrap,_malloc_r",
                 "-Wl,--wrap,_realloc_r"
-            ]
+            ],
 			"macros": [
 				"ARDUINO"
 			]
@@ -21,7 +21,7 @@
                 "-Wextra",
                 "-Wno-missing-field-initializers",
                 "-Wno-unused-parameter"
-            ]
+            ],
 			"macros": [
 				"ARDUINO"
 			]
@@ -34,7 +34,7 @@
                 "-Wextra",
                 "-Wno-missing-field-initializers",
                 "-Wno-unused-parameter"
-            ]
+            ],
 			"macros": [
 				"ARDUINO"
 			]
