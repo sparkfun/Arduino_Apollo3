@@ -80,7 +80,7 @@ float getTempDegF( void ) {
 }
 
 float getVCCV( void ){
-    return ((float)analogReadVCCDiv3() * 6.0) / 16384.0;
+    return ((float)analogReadVCCDiv3() * 2.0) / 16384.0;
 }
 
 int indexAnalogRead(pin_size_t index){
