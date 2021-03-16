@@ -85,7 +85,7 @@ float getVCCV( void ){
 
 int indexAnalogRead(pin_size_t index){
     // todo: replace with mbed "AnalogIn" functionality
-    pin_size_t pinNumber = pinNumberByIndex(index);
+    pin_size_t pinNumber = pinNameByIndex(index);
     if(pinNumber == (pin_size_t)NC){ return 0; }
     ap3_adc_channel_config_t* config = NULL;
     for(size_t idx = 0; idx < (sizeof(ap3_adc_channel_configs)/sizeof(ap3_adc_channel_config_t)); idx++){
