@@ -21,8 +21,8 @@ defines.cxx={defines.all} "@{build.variant.path}/mbed/.cxx-symbols"
 defines.ld={defines.all} "@{build.variant.path}/mbed/.ld-symbols"
 
 # includes
-includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" 
-includes.mbed="@{build.variant.path}/mbed/.includes"
+includes.core={includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/mbed-bridge" "-I{cores.path}/arduino/mbed-bridge/core-api" "-I{cores.path}/arduino/mbed-bridge/core-api/api/deprecated"
+includes.mbed="@{build.variant.path}/mbed/.includes" 
 includes.variant={build.includes}
 includes.extra=
 includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
