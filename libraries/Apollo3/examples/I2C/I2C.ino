@@ -36,6 +36,8 @@
  
 #include "Wire.h"
 
+void testPortI2C(TwoWire &i2c);
+
 // This thread will use the pre-defined SPI object if it exists
 #if VARIANT_WIRE_INTFCS > 0
 rtos::Thread wire_thread;
@@ -55,16 +57,18 @@ void wire1_thread_fn( void ){
   delay(100);
   Wire1.begin();
   while(1){
-    testPortWire(Wire1);
+    testPortI2C(Wire1);
     delay(1000);
   }
 }
 #endif
 
 // This thread will create its own MbedI2C object using IOM pins
-#define mySDA D25
-#define mySCL D27
-MbedI2C myWire(mySDA, mySCL);
+// Define your own pins below to try it
+//#define mySDA D25
+//#define mySCL D27
+#if (defined mySDA) && (defined mySCL)
+TwoWire myWire(mySDA, mySCL);
 rtos::Thread mywire_thread;
 void mywire_thread_fn( void ){
   delay(200);
@@ -74,8 +78,9 @@ void mywire_thread_fn( void ){
     delay(1000);
   }
 }
+#endif
 
-void testPortI2C(MbedI2C &i2c){
+void testPortI2C(TwoWire &i2c){
   Serial.printf("Scanning... (port: 0x%08X), time (ms): %d\n", (uint32_t)&i2c, millis());
 
   uint8_t detected = 0;
@@ -111,7 +116,9 @@ void setup() {
   wire1_thread.start(wire1_thread_fn);
 #endif
 
+#if (defined mySDA) && (defined mySCL)
    mywire_thread.start(mywire_thread_fn);
+#endif   
 }
 
 void loop() {
