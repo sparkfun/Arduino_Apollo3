@@ -46,11 +46,12 @@
 // define pins to create a custom SPI port
 // using mbed PinNames or Arduino pin numbers
 // (must be all pins from one IOM module)
-#define mySDI D25
-#define mySDO D28
-#define myCLK D27
-
+//#define mySDI D25
+//#define mySDO D28
+//#define myCLK D27
+#if (defined mySDI) && (defined mySDO) && (defined myCLK)
 MbedSPI mySPI(mySDI, mySDO, myCLK); // declare the custom MbedSPI object mySPI
+#endif
 
 // define a macro to aid testing
 #define TEST_SPI_PORT(P)  SERIAL_PORT.printf("testing %s\n\ttime (ms): %d\n\tbyte transer: %s\n\tbuffer transfer: %s\n\n", #P, millis(), ((test_byte_transfer(P) == 0) ? "pass" : "fail"), ((test_buffer_transfer(P) == 0) ? "pass" : "fail"))
@@ -68,7 +69,9 @@ void spi_thread_fn( void ){
 #endif
 }
 
+
 // this thread tests the custom mySPI object
+#if (defined mySDI) && (defined mySDO) && (defined myCLK)
 extern "C" SPIName spi_get_peripheral_name(PinName mosi, PinName miso, PinName sclk); // this mbed internal function determines the IOM module number for a set of pins
 rtos::Thread myspi_thread;
 void myspi_thread_fn( void ){
@@ -80,6 +83,7 @@ void myspi_thread_fn( void ){
     delay(500);
   }
 }
+#endif
 
 int test_byte_transfer( SPIClass &spi  ){
   uint8_t tx = random(1, 256);
@@ -125,7 +129,9 @@ void setup() {
   digitalWrite(CS_PIN, HIGH);
 
   spi_thread.start(spi_thread_fn);
+  #if (defined mySDI) && (defined mySDO) && (defined myCLK)
   myspi_thread.start(myspi_thread_fn);  
+  #endif
 }
 
 void loop() {

@@ -10,6 +10,7 @@ arduino::MbedI2C::MbedI2C(int sda, int scl) : _sda(sda), _scl(scl), usedTxBuffer
 void arduino::MbedI2C::begin() {
 	if(!master){
 		master = new mbed::I2C((PinName)_sda, (PinName)_scl);
+		setClock(100000); //Default to 100kHz
 	}
 }
 

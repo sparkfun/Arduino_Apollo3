@@ -80,12 +80,12 @@ float getTempDegF( void ) {
 }
 
 float getVCCV( void ){
-    return ((float)analogReadVCCDiv3() * 6.0) / 16384.0;
+    return ((float)analogReadVCCDiv3() * 2.0) / 16384.0;
 }
 
 int indexAnalogRead(pin_size_t index){
     // todo: replace with mbed "AnalogIn" functionality
-    pin_size_t pinNumber = pinNumberByIndex(index);
+    pin_size_t pinNumber = pinNameByIndex(index);
     if(pinNumber == (pin_size_t)NC){ return 0; }
     ap3_adc_channel_config_t* config = NULL;
     for(size_t idx = 0; idx < (sizeof(ap3_adc_channel_configs)/sizeof(ap3_adc_channel_config_t)); idx++){
