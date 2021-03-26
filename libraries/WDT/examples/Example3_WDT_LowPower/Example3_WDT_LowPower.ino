@@ -1,6 +1,6 @@
 /*
   Author: Adam Garbo
-  Created: February 1st, 2021
+  Created: March 26, 2021
   License: MIT. See SparkFun Arduino Apollo3 Project for more information
 
   This example demonstrates the combined use of the Artemis Watchdog Timer (WDT)
@@ -9,10 +9,10 @@
   Both RTC and WDT interrupts will wake the system, print the date and time,
   and then re-enter deep sleep.
 
-  The WDT is configured to trigger every 10 seconds. If the WDT is not "pet" 
+  The WDT is configured to trigger every 10 seconds. If the WDT is not "pet"
   after 100 seconds, a system reset will be triggered.
-  
-  The RTC alarm is configured to trigger every minute and enter deep sleep 
+
+  The RTC alarm is configured to trigger every minute and enter deep sleep
   between interrupts. Alarm interuptswill also restart the WDT and reset
   the watchdog interrput counter.
 */
@@ -104,11 +104,9 @@ void goToSleep()
   for (int x = 0 ; x < 50 ; x++)
     am_hal_gpio_pinconfig(x, g_AM_HAL_GPIO_DISABLE);
 
-  //Power down Flash, SRAM, cache
-  am_hal_pwrctrl_memory_deepsleep_powerdown(AM_HAL_PWRCTRL_MEM_CACHE); // Turn off CACHE
-  am_hal_pwrctrl_memory_deepsleep_powerdown(AM_HAL_PWRCTRL_MEM_FLASH_512K); // Turn off everything but lower 512k
-  //am_hal_pwrctrl_memory_deepsleep_powerdown(AM_HAL_PWRCTRL_MEM_SRAM_64K_DTCM); // Turn off everything but lower 64k
-  //am_hal_pwrctrl_memory_deepsleep_powerdown(AM_HAL_PWRCTRL_MEM_ALL); //Turn off all memory (doesn't recover)
+  //Power down CACHE, flashand SRAM
+  am_hal_pwrctrl_memory_deepsleep_powerdown(AM_HAL_PWRCTRL_MEM_ALL); // Turn off CACHE and flash
+  am_hal_pwrctrl_memory_deepsleep_retain(AM_HAL_PWRCTRL_MEM_SRAM_384K); // Retain all SRAM (0.6 uA)
 
   // Keep the 32kHz clock running for RTC
   am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
@@ -123,9 +121,6 @@ void goToSleep()
 // Power up gracefully
 void wakeUp()
 {
-  // Power up SRAM, turn on entire Flash
-  am_hal_pwrctrl_memory_deepsleep_powerdown(AM_HAL_PWRCTRL_MEM_MAX);
-
   // Go back to using the main clock
   am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
   am_hal_stimer_config(AM_HAL_STIMER_HFRC_3MHZ);
@@ -136,10 +131,10 @@ void wakeUp()
 
   // Renable power to UART0
   am_hal_pwrctrl_periph_enable(AM_HAL_PWRCTRL_PERIPH_UART0);
-  
+
   // Enable ADC
   initializeADC();
-  
+
   // Enable ADC
   initializeADC();
 
@@ -168,7 +163,7 @@ extern "C" void am_watchdog_isr(void)
     wdt.restart(); // "Pet" the dog
   }
   else {
-    digitalWrite(LED_BUILTIN, HIGH); // Visual indication of system reset trigger
+    while (1); // Wait for reset to occur
   }
 
   watchdogFlag = true; // Set the watchdog flag
