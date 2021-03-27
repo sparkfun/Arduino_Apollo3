@@ -213,6 +213,11 @@ void APM3_RTC::detachInterrupt()
   am_hal_rtc_int_disable(AM_HAL_RTC_INT_ALM);
 }
 
+void Apollo3RTC::clearInterrupt() {
+  // Clear the RTC alarm interrupt
+  am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
+}
+
 // mthToIndex() converts a string indicating a month to an index value.
 // The return value is a value 0-12, with 0-11 indicating the month given
 // by the string, and 12 indicating that the string is not a month.
