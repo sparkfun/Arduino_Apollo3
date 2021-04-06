@@ -11,6 +11,9 @@
 #include "drivers/I2CSlave.h"
 #include "rtos.h"
 
+#define AP3_WIRE_RX_BUFFER_LEN 256
+#define AP3_WIRE_TX_BUFFER_LEN 256
+
 typedef void (*voidFuncPtrParamInt)(int);
 
 namespace arduino {
@@ -52,8 +55,8 @@ private:
     int _sda;
     int _scl;
     int _address;
-    RingBufferN<256> rxBuffer;
-    uint8_t txBuffer[256];
+    RingBufferN<AP3_WIRE_RX_BUFFER_LEN> rxBuffer;
+    uint8_t txBuffer[AP3_WIRE_TX_BUFFER_LEN];
     uint32_t usedTxBuffer;
     voidFuncPtrParamInt onReceiveCb = NULL;
     voidFuncPtr onRequestCb = NULL;
