@@ -18,13 +18,13 @@ void setup()
   Serial.println("SparkFun RTC Set UNIX Epoch Time Example");
 
   // Set the RTC time using UNIX Epoch time
-  RTC.setEpoch(1591185600); // E.g. 12:00:00, June 3rd, 2020 
+  rtc.setEpoch(1591185600); // E.g. 12:00:00, June 3rd, 2020 
 }
 
 void loop()
 {
   // Print UNIX Epoch timestamp
-  Serial.print("Epoch time: "); Serial.println(RTC.getEpoch());
+  Serial.print("Epoch time: "); Serial.println(rtc.getEpoch());
   
   // Print RTC's date and time
   Serial.print("Timestamp: "); printDateTime();
@@ -35,10 +35,9 @@ void loop()
 // Print the RTC's current date and time
 void printDateTime()
 {
-  RTC.getTime();
-  char dateTime[20];
-  sprintf(dateTime, "20%02d-%02d-%02d %02d:%02d:%02d",
-          RTC.year, RTC.month, RTC.dayOfMonth,
-          RTC.hour, RTC.minute, RTC.seconds);
-  Serial.println(dateTime);
+  rtc.getTime();
+  Serial.printf("20%02d-%02d-%02d %02d:%02d:%02d\n",
+          rtc.year, rtc.month, rtc.dayOfMonth,
+          rtc.hour, rtc.minute, rtc.seconds);
+  Serial.println();
 }
