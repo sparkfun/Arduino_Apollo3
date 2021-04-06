@@ -23,15 +23,6 @@ SOFTWARE.
 
 AP3_PDM *ap3_pdm_handle = 0;
 
-// AP3_PDM::AP3_PDM(uint16_t *userBuffer, uint32_t bufferSize)
-// {
-//     _userBuffer = userBuffer;
-//     _userBufferSize = bufferSize;
-
-//     _readHead = 0;
-//     _writeHead = 0;
-// }
-
 bool AP3_PDM::begin(pin_size_t pinPDMData, pin_size_t pinPDMClock)
 {
     _PDMhandle = NULL;
@@ -48,7 +39,6 @@ bool AP3_PDM::begin(pin_size_t pinPDMData, pin_size_t pinPDMClock)
 
 bool AP3_PDM::available(void)
 {
-    //   if (_readHead != _writeHead)
     if (buff1New || buff2New)
         return (true);
     return (false);
@@ -76,6 +66,7 @@ uint32_t AP3_PDM::_begin(void)
     {
         return retval;
     }
+
     pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
     retval = am_hal_gpio_pinconfig(_pinPDMData, pincfg);
     if (retval != AP3_OK)
@@ -88,6 +79,7 @@ uint32_t AP3_PDM::_begin(void)
     {
         return retval;
     }
+
     pincfg.uFuncSel = funcsel; // set the proper function select option for this instance/pin/type combination
     retval = am_hal_gpio_pinconfig(_pinPDMClock, pincfg);
     if (retval != AP3_OK)
@@ -107,16 +99,19 @@ uint32_t AP3_PDM::_begin(void)
             return retval;
         }
     }
+
     retval = (uint32_t)am_hal_pdm_power_control(_PDMhandle, AM_HAL_PDM_POWER_ON, false);
     if (retval != AP3_OK)
     {
         return retval;
     }
+
     retval = (uint32_t)am_hal_pdm_configure(_PDMhandle, &_PDMconfig);
     if (retval != AP3_OK)
     {
         return retval;
     }
+
     retval = (uint32_t)am_hal_pdm_enable(_PDMhandle);
     if (retval != AP3_OK)
     {
@@ -128,7 +123,6 @@ uint32_t AP3_PDM::_begin(void)
     // completion).
     //
     am_hal_pdm_interrupt_enable(_PDMhandle, (AM_HAL_PDM_INT_DERR | AM_HAL_PDM_INT_DCMP | AM_HAL_PDM_INT_UNDFL | AM_HAL_PDM_INT_OVF));
-    //am_hal_interrupt_master_enable();
     NVIC_EnableIRQ(PDM_IRQn);
 
     // Register the class into the local list
@@ -312,12 +306,6 @@ uint32_t AP3_PDM::getData(uint16_t *externalBuffer, uint32_t externalBufferSize)
         }
         buff2New = false;
     }
-    // for (int x = 0; x < externalBufferSize; x++)
-    // {
-    //     externalBuffer[x] = _userBuffer[_readHead];
-    //     _readHead++;                  //Advance the read head
-    //     _readHead %= _userBufferSize; //Wrap if necessary
-    // }
 
     return (externalBufferSize);
 }
@@ -327,69 +315,42 @@ inline void AP3_PDM::pdm_isr(void)
     uint32_t ui32Status;
 
     // Read the interrupt status.
-    am_hal_pdm_interrupt_status_get(_PDMhandle, &ui32Status, true);
-    am_hal_pdm_interrupt_clear(_PDMhandle, ui32Status);
-
-    if (ui32Status & AM_HAL_PDM_INT_DCMP)
+    if(_PDMhandle)
     {
-        uint32_t tempReadAmt = _pdmBufferSize;
+        am_hal_pdm_interrupt_status_get(_PDMhandle, &ui32Status, true);
+        am_hal_pdm_interrupt_clear(_PDMhandle, ui32Status);
 
-        // if (_writeHead + _pdmBufferSize > _userBufferSize)
-        // {
-        //     //Goes past the end of our buffer, adjust the amout to read so we hit end of buffer
-        //     tempReadAmt = _userBufferSize - _writeHead; //16384 - 16000 = 384
-        // }
-
-        // int i;
-        // for (i = 0; i < tempReadAmt; i++)
-        // {
-        //     _userBuffer[_writeHead + i] = _pdmDataBuffer[i];
-        // }
-
-        // _writeHead += tempReadAmt;     //Advance the head
-        // _writeHead %= _userBufferSize; //Wrap the head
-
-        // if (tempReadAmt < _pdmBufferSize)
-        // {
-        //     //Finish the read where i had left off
-        //     for (; i < _pdmBufferSize; i++)
-        //     {
-        //         _userBuffer[i - tempReadAmt] = _pdmDataBuffer[i];
-        //     }
-
-        //     _writeHead += _pdmBufferSize - tempReadAmt;
-        // }
-        //Check for overflow
-        //if (_writeHead + pdmBufferSize
-
-        //Store in the first available buffer
-        if (buff1New == false)
+        if (ui32Status & AM_HAL_PDM_INT_DCMP)
         {
-            for (int i = 0; i < _pdmBufferSize; i++)
+            uint32_t tempReadAmt = _pdmBufferSize;
+
+            //Store in the first available buffer
+            if (buff1New == false)
             {
-                outBuffer1[i] = pi16Buffer[i];
+                for (int i = 0; i < _pdmBufferSize; i++)
+                {
+                    outBuffer1[i] = pi16Buffer[i];
+                }
+                buff1New = true;
             }
-            buff1New = true;
-        }
-        else if (buff2New == false)
-        {
-            for (int i = 0; i < _pdmBufferSize; i++)
+            else if (buff2New == false)
             {
-                outBuffer2[i] = pi16Buffer[i];
+                for (int i = 0; i < _pdmBufferSize; i++)
+                {
+                    outBuffer2[i] = pi16Buffer[i];
+                }
+                buff2New = true;
             }
-            buff2New = true;
-        }
-        else
-        {
-            _overrun = true;
-            //Used for debugging
-            Serial.println("\n\rOver flow!");
-            while (1)
-                ;
-        }
+            else
+            {
+                _overrun = true;
+                buff2New=false;
+                buff1New=false;
+            }
 
-        //Start next conversion
-        am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
+            //Start next conversion
+            am_hal_pdm_dma_start(_PDMhandle, &sTransfer);
+        }
     }
 }
 
@@ -398,7 +359,7 @@ inline void AP3_PDM::pdm_isr(void)
 // PDM interrupt handler.
 //
 //*****************************************************************************
-extern "C" void am_pdm_isr(void)
+extern "C" void am_pdm0_isr(void)
 {
     ap3_pdm_handle->pdm_isr();
 }
