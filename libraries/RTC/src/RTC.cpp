@@ -6,7 +6,7 @@
 #include "RTC.h"
 #include <time.h>
 
-Apollo3RTC RTC;
+Apollo3RTC rtc;
 
 am_hal_rtc_time_t hal_time;
 am_hal_rtc_time_t alm_time;
@@ -199,6 +199,11 @@ void Apollo3RTC::detachInterrupt() {
 
     // Disable the RTC interrupt.
     am_hal_rtc_int_disable(AM_HAL_RTC_INT_ALM);
+}
+
+void Apollo3RTC::clearInterrupt() {
+    // Clear the RTC alarm interrupt
+    am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 }
 
 // mthToIndex() converts a string indicating a month to an index value.

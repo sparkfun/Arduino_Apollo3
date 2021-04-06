@@ -1,0 +1,29 @@
+# Syntax Coloring Map For 'libraries/WDT'
+
+# Datatypes (KEYWORD1)
+Apollo3WDT	KEYWORD1
+
+# Functions (KEYWORD2)
+configure	KEYWORD2
+start	KEYWORD2
+stop	KEYWORD2
+restart	KEYWORD2
+clear	KEYWORD2
+getCounter	KEYWORD2
+configure	KEYWORD2
+setClock	KEYWORD2
+setInterrupt	KEYWORD2
+setReset	KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+_APOLLO3_LIBRARIES_WDT_H_	LITERAL1
+
+# Properties (LITERAL2)
+WDT_OFF	KEYWORD2
+WDT_128HZ	KEYWORD2
+WDT_16	KEYWORD2
+WDT_1HZ	KEYWORD2
+WDT1_16HZ	KEYWORD2
+wdt	LITERAL2
