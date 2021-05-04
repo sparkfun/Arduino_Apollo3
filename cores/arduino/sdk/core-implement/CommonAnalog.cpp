@@ -213,10 +213,11 @@ ap3_err_t analogWriteFrameWidth(uint32_t width){
 
 ap3_err_t analogWriteFrequency(float freq){    
     uint32_t new_width = (uint32_t)(AP3_ANALOG_CLK_FREQ / freq);
+
     if (new_width > AP3_MAX_ANALOG_WRITE_WIDTH){
         return AP3_ERR;
     }
-    if (new_width < AP3_MAX_ANALOG_WRITE_WIDTH){
+    if (new_width < AP3_MIN_ANALOG_WRITE_WIDTH){
         return AP3_ERR;
     }
     _analogWriteWidth = new_width;
