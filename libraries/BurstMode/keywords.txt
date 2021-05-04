@@ -1,0 +1,16 @@
+# Syntax Coloring Map For 'libraries/BurstMode'
+
+# Datatypes (KEYWORD1)
+
+
+# Functions (KEYWORD2)
+enableBurstMode KEYWORD2
+disableBurstMode KEYWORD2
+getCpuFreqMHz KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+
+# Properties (LITERAL2)
+
