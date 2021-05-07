@@ -13,6 +13,7 @@
 void setup() {
   SERIAL.begin(115200);
   SERIAL.println("EEPROM Example1_PutGet");
+  EEPROM.init();
 
   // use EEPROM.get(int index, T type) to retrieve
   // an arbitrary type from flash memory

@@ -33,6 +33,8 @@ void setup() {
   Serial.begin(115200);
 
   Serial.println("Artemis Watchdog Timer Example");
+  
+  pinMode(LED_BUILTIN, OUTPUT);
 
   // Start the watchdog
   wdt.start();

@@ -43,6 +43,7 @@ void setup()
 
   Serial.println("Artemis Watchdog Timer Example");
 
+  pinMode(LED_BUILTIN, OUTPUT);
   // Configure the watchdog
   /*
     Available watchdog timer clock dividers.
