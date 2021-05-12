@@ -15,6 +15,7 @@ setAlarm	KEYWORD2
 setAlarmMode	KEYWORD2
 attachInterrupt	KEYWORD2
 detachInterrupt	KEYWORD2
+clearInterrupt	KEYWORD2
 
 # Structures (KEYWORD3)
 
@@ -40,4 +41,4 @@ alarmMinute	LITERAL2
 alarmSeconds	LITERAL2
 alarmHundredths	LITERAL2
 alarmTextWeekday	LITERAL2
-RTC	LITERAL2
+rtc	LITERAL2

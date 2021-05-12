@@ -14,7 +14,7 @@ defines.mbed=-DMBED_NO_GLOBAL_USING_DIRECTIVE
 defines.variant={build.defines}
 defines.extra=
 defines.all={defines.variant} {defines.arduino} {defines.mbed} {defines.extra} -DCORDIO_ZERO_COPY_HCI
-defines.preproc={defines.all}
+defines.preproc={defines.all} "@{build.variant.path}/mbed/.cxx-symbols"
 defines.asm={defines.all} "@{build.variant.path}/mbed/.asm-symbols"
 defines.c={defines.all} "@{build.variant.path}/mbed/.c-symbols"
 defines.cxx={defines.all} "@{build.variant.path}/mbed/.cxx-symbols"
@@ -31,7 +31,7 @@ includes.all={includes.core} {includes.mbed} {includes.variant} {includes.extra}
 libs.core=-Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
 libs.mbed=-Wl,--whole-archive "{build.variant.path}/mbed/libmbed-os.a" -Wl,--no-whole-archive
 libs.variant={build.libs}
-libs.extra=
+libs.extra=-Wl,--whole-archive "{cores.path}/mbed-os/targets/TARGET_Ambiq_Micro/TARGET_Apollo3/sdk/CMSIS/ARM/Lib/ARM/libarm_cortexM4lf_math.a" -Wl,--no-whole-archive
 libs.all={libs.core} {libs.mbed} {libs.variant} {libs.extra}
 
 # warnings

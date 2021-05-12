@@ -36,8 +36,8 @@ void setup()
 
   // The variant files for Artemis carrier boards have Mic data and clock pins defined
   // but these pins can be passed to the the .begin function
-  //if (myPDM.begin() == false) //Use Data, clock defines from variant file
-  if (myPDM.begin(22, 23) == false) //Data, clock on Artemis Nano - These are the pin names from variant file, not pad names
+  if (myPDM.begin() == false) //Use Data, clock defines from variant file
+  //if (myPDM.begin(22, 23) == false) //Data, clock on Artemis Nano - These are the pin names from variant file, not pad names
   {
     Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
     while (1)
