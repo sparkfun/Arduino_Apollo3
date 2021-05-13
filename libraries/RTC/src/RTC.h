@@ -21,6 +21,7 @@ public:
   void setAlarmMode(uint8_t mode); //Set the RTC alarm repeat interval
   void attachInterrupt(); //Attach the RTC alarm interrupt
   void detachInterrupt(); //Detach the RTC alarm interrupt
+  void clearInterrupt(); //Clear RTC alarm interrupt
 
   uint32_t weekday; //0 to 6 representing the day of the week
   uint32_t century;
