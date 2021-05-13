@@ -90,7 +90,7 @@ compiler.flags.axf2bin={compiler.extra_flags.axf2bin} -O binary
 
 includes.all={includes.variant} {includes.core} {includes.ambiq_sdk} {includes.cmsis} {includes.extra}
 defines.all={defines.variant} {defines.hw} {defines.arduino} {defines.extra}
-libs.all={archive_file_path} {libs.extra} {libs.ambiq_sdk} {libs.cmsis} {libs.core} {libs.variant} {libs.extra}
+libs.all="{archive_file_path}" {libs.extra} {libs.ambiq_sdk} {libs.cmsis} {libs.core} {libs.variant} {libs.extra}
 
 
 ## Arduino Patterns
