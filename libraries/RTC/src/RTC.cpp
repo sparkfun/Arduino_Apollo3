@@ -213,7 +213,7 @@ void APM3_RTC::detachInterrupt()
   am_hal_rtc_int_disable(AM_HAL_RTC_INT_ALM);
 }
 
-void Apollo3RTC::clearInterrupt() {
+void APM3_RTC::clearInterrupt() {
   // Clear the RTC alarm interrupt
   am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 }
