@@ -53,6 +53,12 @@ void arduino::MbedSPI::beginTransaction(SPISettings settings) {
         begin();
     }
     if (settings != this->settings) {
+        //If requested to set frequency above max, just set to max.
+        if(settings.getClockFreq() > AM_HAL_IOM_MAX_FREQ)
+        {
+            settings = SPISettings(AM_HAL_IOM_MAX_FREQ, settings.getBitOrder(), settings.getDataMode());
+        }
+
         dev->format(8, settings.getDataMode());
         dev->frequency(settings.getClockFreq());
         this->settings = settings;
