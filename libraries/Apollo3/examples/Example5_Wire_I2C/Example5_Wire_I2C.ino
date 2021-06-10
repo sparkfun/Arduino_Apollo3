@@ -19,7 +19,7 @@
   - declaring your own MbedI2C object using pins that correspond to the correct IOM
 
   Once you have an MbedI2C object to work with you can use all the standard 
-  Arduino SPI API methods on it
+  Arduino Wire API methods on it
   https://www.arduino.cc/en/reference/wire
 
   This example will use threads to organize I2C operations based on board
@@ -33,56 +33,21 @@
   GND <--> sensor GND
 
 */
- 
+
 #include "Wire.h"
 
 void testPortI2C(TwoWire &i2c);
 
-// This thread will use the pre-defined SPI object if it exists
-#if VARIANT_WIRE_INTFCS > 0
-rtos::Thread wire_thread;
-void wire_thread_fn( void ){
-  Wire.begin();
-  while(1){
-    testPortI2C(Wire);
-    delay(1000);
-  }
-}
-#endif
-
-// This thread will use the pre-defined SPI1 object if it exists
-#if VARIANT_WIRE_INTFCS > 1
-rtos::Thread wire1_thread;
-void wire1_thread_fn( void ){
-  delay(100);
-  Wire1.begin();
-  while(1){
-    testPortI2C(Wire1);
-    delay(1000);
-  }
-}
-#endif
-
 // This thread will create its own MbedI2C object using IOM pins
 // Define your own pins below to try it
-//#define mySDA D25
-//#define mySCL D27
+#define mySDA D25
+#define mySCL D27
 #if (defined mySDA) && (defined mySCL)
 TwoWire myWire(mySDA, mySCL);
-rtos::Thread mywire_thread;
-void mywire_thread_fn( void ){
-  delay(200);
-  myWire.begin();
-  while(1){
-    testPortI2C(myWire);
-    delay(1000);
-  }
-}
 #endif
 
 void testPortI2C(TwoWire &i2c){
   Serial.printf("Scanning... (port: 0x%08X), time (ms): %d\n", (uint32_t)&i2c, millis());
-
   uint8_t detected = 0;
   for(uint8_t addr = 1; addr < 127; addr++ ){
     // use endTransmission to determine if a device is present at address
@@ -94,11 +59,9 @@ void testPortI2C(TwoWire &i2c){
       detected++;
     }
   }
-
   if(!detected){
     Serial.printf("\tNo device detected!\n");
   }
-
   Serial.println();
 }
  
@@ -109,19 +72,27 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
 #if VARIANT_WIRE_INTFCS > 0
-  wire_thread.start(wire_thread_fn);
+  Wire.begin();
 #endif
-
 #if VARIANT_WIRE_INTFCS > 1
-  wire1_thread.start(wire1_thread_fn);
+  Wire1.begin();
 #endif
-
 #if (defined mySDA) && (defined mySCL)
-   mywire_thread.start(mywire_thread_fn);
+   myWire.begin();
 #endif   
 }
 
 void loop() {
+#if VARIANT_WIRE_INTFCS > 0
+  testPortI2C(Wire);
+#endif
+#if VARIANT_WIRE_INTFCS > 1
+  testPortI2C(Wire1);
+#endif
+#if (defined mySDA) && (defined mySCL)
+   testPortI2C(myWire);
+#endif   
+
   digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
   digitalWrite(LED_BUILTIN, HIGH);

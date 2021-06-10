@@ -51,39 +51,11 @@
 //#define myCLK D27
 #if (defined mySDI) && (defined mySDO) && (defined myCLK)
 MbedSPI mySPI(mySDI, mySDO, myCLK); // declare the custom MbedSPI object mySPI
+extern "C" SPIName spi_get_peripheral_name(PinName mosi, PinName miso, PinName sclk); // this mbed internal function determines the IOM module number for a set of pins
 #endif
 
 // define a macro to aid testing
 #define TEST_SPI_PORT(P)  SERIAL_PORT.printf("testing %s\n\ttime (ms): %d\n\tbyte transer: %s\n\tbuffer transfer: %s\n\n", #P, millis(), ((test_byte_transfer(P) == 0) ? "pass" : "fail"), ((test_buffer_transfer(P) == 0) ? "pass" : "fail"))
-
-// this thread will test the pre-defined SPI object if it exists
-rtos::Thread spi_thread;
-void spi_thread_fn( void ){
-#if VARIANT_SPI_INTFCS > 0
-  delay(100);
-  SPI.begin();
-  while(1){
-    TEST_SPI_PORT(SPI);
-    delay(500);
-  }
-#endif
-}
-
-
-// this thread tests the custom mySPI object
-#if (defined mySDI) && (defined mySDO) && (defined myCLK)
-extern "C" SPIName spi_get_peripheral_name(PinName mosi, PinName miso, PinName sclk); // this mbed internal function determines the IOM module number for a set of pins
-rtos::Thread myspi_thread;
-void myspi_thread_fn( void ){
-  delay(300);
-  SERIAL_PORT.printf("starting mySPI on IOM %d\n", spi_get_peripheral_name(mySDO, mySDI, myCLK));
-  mySPI.begin();
-  while(1){
-    TEST_SPI_PORT(mySPI);
-    delay(500);
-  }
-}
-#endif
 
 int test_byte_transfer( SPIClass &spi  ){
   uint8_t tx = random(1, 256);
@@ -128,13 +100,22 @@ void setup() {
   pinMode(CS_PIN, OUTPUT);
   digitalWrite(CS_PIN, HIGH);
 
-  spi_thread.start(spi_thread_fn);
-  #if (defined mySDI) && (defined mySDO) && (defined myCLK)
-  myspi_thread.start(myspi_thread_fn);  
-  #endif
+  SPI.begin();
+
+#if (defined mySDI) && (defined mySDO) && (defined myCLK)
+  SERIAL_PORT.printf("starting mySPI on IOM %d\n", spi_get_peripheral_name(mySDO, mySDI, myCLK));
+  mySPI.begin();
+#endif
 }
 
 void loop() {
+  Serial.println("test");
+  TEST_SPI_PORT(SPI);
+  
+#if (defined mySDI) && (defined mySDO) && (defined myCLK)
+  TEST_SPI_PORT(mySPI);
+#endif
+
   digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
   digitalWrite(LED_BUILTIN, LOW);
