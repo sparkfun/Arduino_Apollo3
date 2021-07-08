@@ -149,12 +149,12 @@
 	  {
             "name": "SparkFun Apollo3 Boards",
             "architecture": "apollo3",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "category": "Contributed",
-            "url": "https://github.com/sparkfun/Arduino_Apollo3/archive/v1.2.2.tar.gz",
-            "archiveFileName": "Arduino_Apollo3-1.2.2.tar.gz",
-            "checksum": "SHA-256:48BBE9DA9D5EEC9D2CBD01CB3663FD23D9F5920C2D1CB14E7FFA43DCD012CD30",
-            "size": "81766450",
+            "url": "https://github.com/sparkfun/Arduino_Apollo3/archive/v1.2.3.tar.gz",
+            "archiveFileName": "Arduino_Apollo3-1.2.3.tar.gz",
+            "checksum": "SHA-256:084EAA69FE52861A21B4C5ACD215182E4ACBC13845F65E34AE92F61D15647E5D",
+            "size": "81766440",
             "help": {
               "online": "https://learn.sparkfun.com/tutorials/installing-arduino-ide/board-add-ons-with-arduino-board-manager"
             },
