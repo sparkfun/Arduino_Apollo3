@@ -1,5 +1,5 @@
 /*
-  Author: Adam Garbo and Nathan Seidle
+  Author: rserranosmith, Adam Garbo, and Nathan Seidle
   Created: June 3rdrd, 2020
 
   This example demonstrates how to read and set rolling RTC alarms. Each time
@@ -47,7 +47,10 @@ void setup()
     6: Alarm match every minute (hundredths, seconds)
     7: Alarm match every second (hundredths)
   */
-  rtc.setAlarmMode(6); // Set the RTC alarm to match on minutes rollover
+  rtc.setAlarmMode(1); // Set the RTC alarm interval to a year, not particularly important if you are rolling alarms
+                       // typical use case for this would be "I want an alarm every day at XX:YY:ZZ.WWW time" if this
+                       // was the case you would want to 4 (every day). since we are setting a new alarm when the previous
+                       // is triggered we would want this to just be larger than the largest period between alarms
   rtc.attachInterrupt(); // Attach RTC alarm interrupt
 
   // Print the RTC's alarm date and time
@@ -65,14 +68,16 @@ void loop()
     // Clear alarm flag
     alarmFlag = false;
 
+    int secs = (rtc.seconds + alarmSeconds);
+    int mins = (rtc.minute + alarmMinutes + (int)(secs/60));
+    int hours = (rtc.hour + alarmHours + (int)(mins/60));
     // Set the RTC's rolling alarm
     rtc.setAlarm(0,
-                 (rtc.seconds + alarmSeconds) % 60,
-                 (rtc.minute + alarmMinutes) % 60,
-                 (rtc.hour + alarmHours) % 24,
+                 secs % 60,
+                 mins % 60,
+                 hours % 24,
                  rtc.dayOfMonth,
                  rtc.month);
-    rtc.setAlarmMode(6);
 
     // Print next RTC alarm date and time
     Serial.print("Next rolling alarm: "); printAlarm();
