@@ -40,8 +40,8 @@ void testPortI2C(TwoWire &i2c);
 
 // This thread will create its own MbedI2C object using IOM pins
 // Define your own pins below to try it
-#define mySDA D25
-#define mySCL D27
+//#define mySDA D25
+//#define mySCL D27
 #if (defined mySDA) && (defined mySCL)
 TwoWire myWire(mySDA, mySCL);
 #endif
