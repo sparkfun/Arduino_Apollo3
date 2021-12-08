@@ -1,6 +1,6 @@
 {
     "name": "framework-arduinoapollo3",
     "description": "Arduino Wiring-based Framework (Apollo3 Core)",
-    "version": "1.0.23",
+    "version": "1.2.3",
     "url": "https://github.com/sparkfun/Arduino_Apollo3"
 }
