@@ -10,6 +10,34 @@
 	  {
             "name": "SparkFun Apollo3 Boards",
             "architecture": "apollo3",
+            "version": "2.2.0",
+            "category": "Contributed",
+            "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.2.0/Arduino_Apollo3.tar.gz",
+            "archiveFileName": "Arduino_Apollo3.tar.gz",
+            "checksum": "SHA-256:8E69C6D7130BD2076D7F95A39E3BF3CEC081954878A43ADC9C201B2F1BCDCCA3",
+            "size": "103185638",
+            "help": {
+              "online": "https://learn.sparkfun.com/tutorials/installing-arduino-ide/board-add-ons-with-arduino-board-manager"
+            },
+            "boards": [
+              { "name": "Artemis Module" },
+              { "name": "Artemis Dev Kit"},
+              { "name": "Artemis Thing Plus" },
+              { "name": "RedBoard Artemis" },
+              { "name": "RedBoard Artemis ATP" },
+              { "name": "RedBoard Artemis Nano" },
+              { "name": "Edge" },
+              { "name": "Edge2" },
+              { "name": "MicroMod Artemis Processor" },
+              { "name": "LoRa Thing Plus expLoRaBLE" }
+            ],
+            "toolsDependencies": [
+              { "packager": "SparkFun", "name": "arm-none-eabi-gcc", "version": "8-2018-q4-major" }
+            ]
+          },
+	  {
+            "name": "SparkFun Apollo3 Boards",
+            "architecture": "apollo3",
             "version": "2.1.1",
             "category": "Contributed",
             "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.1.1/Arduino_Apollo3.tar.gz",
@@ -114,33 +142,6 @@
               { "name": "Edge2" },
               { "name": "MicroMod Artemis Processor" },
               { "name": "LoRa Thing Plus expLoRaBLE" }
-            ],
-            "toolsDependencies": [
-              { "packager": "SparkFun", "name": "arm-none-eabi-gcc", "version": "8-2018-q4-major" }
-            ]
-          },
-          {
-            "name": "SparkFun Apollo3 Boards",
-            "architecture": "apollo3",
-            "version": "2.0.4",
-            "category": "Contributed",
-            "url": "https://github.com/sparkfun/Arduino_Apollo3/releases/download/v2.0.4/Arduino_Apollo3.tar.gz",
-            "archiveFileName": "Arduino_Apollo3.tar.gz",
-            "checksum": "SHA-256:123A1F431EF38015BB36F00EDC03230A95417A50471ADE19161DA38780E9FBB1",
-            "size": "325830697",
-            "help": {
-              "online": "https://learn.sparkfun.com/tutorials/installing-arduino-ide/board-add-ons-with-arduino-board-manager"
-            },
-            "boards": [
-              { "name": "Artemis Module" },
-              { "name": "Artemis Dev Kit"},
-              { "name": "Artemis Thing Plus" },
-              { "name": "RedBoard Artemis" },
-              { "name": "RedBoard Artemis ATP" },
-              { "name": "RedBoard Artemis Nano" },
-              { "name": "Edge" },
-              { "name": "Edge2" },
-              { "name": "MicroMod Artemis Processor" }
             ],
             "toolsDependencies": [
               { "packager": "SparkFun", "name": "arm-none-eabi-gcc", "version": "8-2018-q4-major" }
