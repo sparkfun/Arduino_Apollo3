@@ -7,6 +7,7 @@
 #define _APOLLO3_LIBRARIES_WIRE_H_
 
 #include "Arduino.h"
+#include "core-api/api/HardwareI2C.h"
 #include "drivers/I2C.h"
 #include "drivers/I2CSlave.h"
 #include "rtos.h"
@@ -32,8 +33,8 @@ class MbedI2C : public HardwareI2C
     virtual uint8_t endTransmission(bool stopBit);
     virtual uint8_t endTransmission(void);
 
-    virtual uint8_t requestFrom(uint8_t address, size_t len, bool stopBit);
-    virtual uint8_t requestFrom(uint8_t address, size_t len);
+    virtual size_t requestFrom(uint8_t address, size_t len, bool stopBit);
+    virtual size_t requestFrom(uint8_t address, size_t len);
 
     virtual void onReceive(void(*)(int));
     virtual void onRequest(void(*)(void));

@@ -7,7 +7,7 @@
 #define _APOLLO3_LIBRARIES_SPI_H_
 
 #include "Arduino.h"
-
+#include "core-api/api/HardwareSPI.h"
 #include "drivers/SPI.h"
 
 namespace arduino {
