@@ -5,7 +5,7 @@
 
 #include "bridge/pins.h"
 
-const pin_size_t variantPinCount = 17;
+const pin_size_t variantPinCount = 22;
 
 PinState variantPinStates[variantPinCount] = {
     {D0, 0, NULL, /*NULL, NULL, NULL,*/ NULL},
@@ -25,4 +25,10 @@ PinState variantPinStates[variantPinCount] = {
     {D14, 14, NULL, /*NULL, NULL, NULL,*/ NULL},
     {D15, 15, NULL, /*NULL, NULL, NULL,*/ NULL},
     {D16, 16, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D17, 17, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D18, 18, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D19, 19, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D20, 20, NULL, /*NULL, NULL, NULL,*/ NULL},
+    {D21, 21, NULL, /*NULL, NULL, NULL,*/ NULL},
 };
+
