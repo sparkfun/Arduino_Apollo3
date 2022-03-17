@@ -32,6 +32,8 @@ void setup()
     {
         Serial.print("Unknown revision");
     }
+    Serial.println();
+    
     //Unique ChipID
     am_hal_mcuctrl_device_t sDevice;
     am_hal_mcuctrl_info_get(AM_HAL_MCUCTRL_INFO_DEVICEID, &sDevice);
