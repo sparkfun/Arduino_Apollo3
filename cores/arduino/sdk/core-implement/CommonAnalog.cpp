@@ -570,9 +570,20 @@ ap3_err_t ap3_pwm_output(ap3_gpio_pad_t pad, uint32_t th, uint32_t fw, uint32_t 
                                 AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA); //
 
     // if timer is running wait for timer value to roll over (will indicate that at least one pulse has been emitted)
+    uint32_t timer_enabled;
+    
     AM_CRITICAL_BEGIN // critical section when reading / writing config registers
-    if ((segment == AM_HAL_CTIMER_TIMERA && *((uint32_t *)CTIMERADDRn(CTIMER, timer, CTRL0)) & (CTIMER_CTRL0_TMRA0EN_Msk)) ||
-        (segment == AM_HAL_CTIMER_TIMERB && *((uint32_t *)CTIMERADDRn(CTIMER, timer, CTRL0)) & (CTIMER_CTRL0_TMRB0EN_Msk)))
+    if(segment == AM_HAL_CTIMER_TIMERA)
+    {
+        timer_enabled = *((uint32_t *)CTIMERADDRn(CTIMER, timer, CTRL0)) & (CTIMER_CTRL0_TMRA0EN_Msk);
+    }
+    else
+    {
+        timer_enabled = *((uint32_t *)CTIMERADDRn(CTIMER, timer, CTRL0)) & (CTIMER_CTRL0_TMRB0EN_Msk);
+    }
+    AM_CRITICAL_END  // end critical section
+
+    if (timer_enabled)
     {
         uint32_t current = 0;
         uint32_t last = 0;
@@ -582,7 +593,7 @@ ap3_err_t ap3_pwm_output(ap3_gpio_pad_t pad, uint32_t th, uint32_t fw, uint32_t 
             current = am_hal_ctimer_read(timer, segment);
         } while (current >= last);
     }
-    AM_CRITICAL_END // end critical section
+
 
     // clear timer (also stops the timer)
     am_hal_ctimer_clear(timer, segment);
