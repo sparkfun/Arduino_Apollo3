@@ -3,7 +3,7 @@
 The purpose of this document is to document the release process for future reference.
 
 ## Preparation
-1. Make sure that any desired to mbed are present on the [ambiq-apollo3-arduino](https://github.com/sparkfun/mbed-os-ambiq-apollo3/tree/ambiq-apollo3-arduino) branch in the sparkfun branch of Mbed.
+1. Make sure that any desired changes to mbed are present on the [ambiq-apollo3-arduino](https://github.com/sparkfun/mbed-os-ambiq-apollo3/tree/ambiq-apollo3-arduino) branch in the sparkfun branch of Mbed.
 2. Bring all commits and pull requests into the dev branch. If any submodules have been updated, don't forget to update the commit used in the dev branch
 3. Github actions will automatically generate the mbed variants after a commit into the dev branch. Allow these actions to finish, and the release-candidate branch will have have the latest commits, and the variants branch will be populated with the latest from the Mbed fork
 4. When ready for release, complete a pull request from release-candidate into main
