@@ -14,3 +14,4 @@ Contributors
 * Owen Lyke
 * Aaron Micyus
 * Nathan Seidle
+* Kyle Wenner
