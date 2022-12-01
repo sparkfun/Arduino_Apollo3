@@ -37,6 +37,26 @@ bool AP3_PDM::begin(pin_size_t pinPDMData, pin_size_t pinPDMClock)
     return (true);
 }
 
+bool AP3_PDM::end()
+{
+    uint32_t retval = am_hal_pdm_disable(_PDMhandle);
+    if (retval != AP3_OK)
+    {
+        return false;
+    }
+    retval = (uint32_t)am_hal_pdm_power_control(_PDMhandle, AM_HAL_PDM_POWER_OFF, false);
+    if (retval != AP3_OK)
+    {
+        return retval;
+    }
+    retval = am_hal_pdm_deinitialize(_PDMhandle);
+    if (retval != AP3_OK)
+    {
+        return false;
+    }
+    return true;
+}
+
 bool AP3_PDM::available(void)
 {
     if (buff1New || buff2New)
