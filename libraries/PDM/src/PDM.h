@@ -96,6 +96,7 @@ public:
     //AP3_PDM(uint16_t *userBuffer, uint32_t bufferSize);
 
     bool begin(pin_size_t pinPDMData = MIC_DATA, pin_size_t pinPDMClock = MIC_CLOCK);
+    bool end();
     bool available(void); //Goes true if circular buffer is not empty
     bool isOverrun(void); //Goes true if head crosses tail
 
